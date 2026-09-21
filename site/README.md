@@ -10,11 +10,14 @@ Use Node 22 or later:
 cd site
 npm ci --ignore-scripts
 npm test
+npm run test:integration
 npm run build
 npm run serve -- --host 127.0.0.1
 ```
 
 The unit fixtures are synthetic and never imported by the browser page. The shipped catalog is initially empty. Scaffolding is not a published, verified release and does not satisfy the first approved-capability demonstration by itself.
+
+The integration test requires Linux and a populated npm cache from `npm ci`. It installs dependencies offline into a uniquely named scratch directory, builds a synthetic nonempty catalog, checks HTML escaping and partial-coverage labels, checks that a sibling private canary is not copied, then confirms that invalid verification credit fails the actual build. It never changes production input or deploys the synthetic fixture. Scratch directories are retained for inspection and their paths are printed. This is build-level verification, not a browser interaction test.
 
 ## Public projection contract
 

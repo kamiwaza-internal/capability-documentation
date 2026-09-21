@@ -24,6 +24,7 @@ function evidence(record, build) {
 function capability(cap, build) {
   shape(cap, ['id', 'title', 'distribution', 'summary', 'conditions', 'limits', 'status', 'wholeClaim', 'evidence']);
   requireValue(typeof cap.id === 'string' && id.test(cap.id), 'Invalid capability identifier');
+  text(cap.id);
   requireValue(cap.distribution === 'public', 'Only approved public projections can be rendered');
   [cap.title, cap.summary].forEach(text);
   strings(cap.conditions); strings(cap.limits);
@@ -38,6 +39,7 @@ function capability(cap, build) {
 function release(value) {
   shape(value, ['id', 'version', 'channel', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities']);
   requireValue(typeof value.id === 'string' && id.test(value.id), 'Invalid release identifier');
+  text(value.id);
   requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(value.version), 'Invalid version');
   requireValue(['development', 'released'].includes(value.channel), 'Invalid release channel');
   text(value.build);
@@ -45,6 +47,7 @@ function release(value) {
   requireValue(typeof value.sourceRevision === 'string' && sha.test(value.sourceRevision), 'Source must be a full commit');
   requireValue(Number.isSafeInteger(value.publicationRevision) && value.publicationRevision > 0, 'Invalid publication revision');
   requireValue(typeof value.publishedAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value.publishedAt) && Number.isFinite(Date.parse(value.publishedAt)), 'Invalid publication timestamp');
+  requireValue(new Date(value.publishedAt).toISOString() === value.publishedAt.replace('Z', '.000Z'), 'Invalid publication calendar date');
   requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Release must contain approved capabilities');
   value.capabilities.forEach(cap => capability(cap, value.build));

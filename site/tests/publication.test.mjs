@@ -34,6 +34,9 @@ for (const [name, mutate] of [
   ['invalid source identity', x => x.releases[0].sourceRevision = 'main'],
   ['path traversal identifier', x => x.releases[0].id = '../private'],
   ['invalid timestamp', x => x.releases[0].publishedAt = 'yesterday'],
+  ['impossible calendar date', x => x.releases[0].publishedAt = '2026-02-31T00:00:00Z'],
+  ['internal capability identifier', x => x.releases[0].capabilities[0].id = 'vs-123'],
+  ['internal release identifier', x => x.releases[0].id = 'value-stream-12'],
   ['empty release', x => x.releases[0].capabilities = []],
   ['internal value-stream citation', x => x.releases[0].capabilities[0].summary = 'Value stream VS-123'],
 ]) test(`rejects ${name}`, () => { const input=snapshot(); mutate(input); assert.throws(() => validatePublication(input)); });
