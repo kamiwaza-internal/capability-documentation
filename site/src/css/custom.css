@@ -1,0 +1,12 @@
+:root { --ifm-color-primary: #18645d; --ifm-color-primary-dark: #155952; --ifm-color-primary-darker: #13544e; --ifm-color-primary-darkest: #104540; --ifm-color-primary-light: #1b6f68; --ifm-color-primary-lighter: #1d746c; --ifm-color-primary-lightest: #21847b; }
+[data-theme='dark'] { --ifm-color-primary: #70d3b7; }
+.catalogHero { padding: 4rem 0; background: #102f32; color: #f3faf7; }
+.catalogHero h1 { font-size: clamp(2rem, 5vw, 3.8rem); max-width: 850px; }
+.catalogHero p { max-width: 750px; font-size: 1.2rem; }
+.catalogHero .eyebrow { font-size: .8rem; letter-spacing: .16em; color: #91d5c3; }
+.catalogMain { padding-top: 2.5rem; padding-bottom: 4rem; max-width: 1080px; }
+.evidenceNotice { padding: 1rem 1.25rem; border-left: 4px solid var(--ifm-color-primary); background: var(--ifm-background-surface-color); margin-bottom: 2rem; }
+.emptyCatalog, .capability { border: 1px solid var(--ifm-color-emphasis-300); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+.release { margin-top: 3rem; scroll-margin-top: 5rem; }
+.status { display: inline-block; font-size: .8rem; border: 1px solid currentColor; border-radius: 20px; padding: .2rem .6rem; vertical-align: middle; }
+code { overflow-wrap: anywhere; }
