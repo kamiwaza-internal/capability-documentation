@@ -6,7 +6,6 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "test:integration": "node --test tests/site-build.integration.mjs",
-    "test:mcp": "node --test tests/mcp-runtime.integration.mjs",
     "build": "docusaurus build",
     "start": "docusaurus start",
     "serve": "docusaurus serve"

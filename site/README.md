@@ -2,8 +2,6 @@
 
 Docusaurus presentation for reviewed public capability snapshots. It does not read the repository's legacy `capabilities/`, `tests/`, `synthetic-data/` or `evidence/` trees. Private generation and evidence scoring belong to the capability framework, not this site.
 
-For optional release-pinned, read-only assistant retrieval, see the [MCP companion](../mcp/README.md). It consumes the same validated public snapshot, not the private corpus, and is not deployed with GitHub Pages.
-
 ## Local checks
 
 Use Node 22 or later:
