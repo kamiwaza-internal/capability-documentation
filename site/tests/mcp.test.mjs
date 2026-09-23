@@ -23,18 +23,20 @@ test('MCP-3 amendments and builds have distinct index identities', () => {
   p.releases[0].capabilities[0].limits.push('Additional limitation');
   assert.notEqual(makeBundle(p, 'synthetic-r1').library, first.library);
 });
-test('MCP-4 reader has no network, input mount, exposed port or inherited credentials', () => {
+test('MCP-4 reader has no network, writable input, exposed port or inherited credentials', () => {
   const args=dockerArgs('/tmp/synthetic-bundle', makeBundle(fixture(), 'synthetic-r1'), 'serve');
   assert.equal(args[args.indexOf('--network')+1], 'none');
   assert.ok(args.includes(IMAGE)); assert.match(IMAGE, /@sha256:[a-f0-9]{64}$/);
   assert.ok(args.includes('--read-only')); assert.ok(args.includes('stdio'));
-  assert.ok(!args.join(' ').includes('/input')); assert.ok(!args.includes('-p'));
+  assert.ok(args.includes('type=bind,src=/tmp/synthetic-bundle/documents,dst=/input,readonly')); assert.ok(!args.includes('-p'));
   assert.ok(!args.join(' ').includes('TOKEN')); assert.ok(!args.includes('--env-file'));
 });
 test('MCP-5 index can read only prepared input and never the repository', () => {
   const args=dockerArgs('/tmp/synthetic-bundle', makeBundle(fixture(), 'synthetic-r1'), 'index');
   assert.ok(args.includes('type=bind,src=/tmp/synthetic-bundle/documents,dst=/input,readonly'));
   assert.ok(args.includes('scrape'));
+  assert.ok(args.includes('--no-ignore-errors'));
+  assert.equal(args[args.indexOf('--max-pages')+1], '2');
   assert.throws(() => dockerArgs('/tmp/comma,injection', makeBundle(fixture(),'synthetic-r1'), 'index'));
   assert.throws(() => dockerArgs('/tmp/x', makeBundle(fixture(),'synthetic-r1'), 'delete'));
 });

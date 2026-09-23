@@ -14,7 +14,8 @@ if (operation === 'prepare') {
   const bundle=prepareBundle(publication,first,resolve(second));
   console.log(JSON.stringify({snapshotId:bundle.snapshotId,library:bundle.library,directory:resolve(second)}));
 } else if (operation === 'index') {
-  indexBundle(publication,resolve(first),args => spawnSync('docker',args,{stdio:'inherit',timeout:300000}));
+  indexBundle(publication,resolve(first),(args,options) => spawnSync('docker',args,
+    {stdio:options?.capture ? 'pipe' : 'inherit',encoding:'utf8',timeout:1800000,maxBuffer:4*1024*1024}));
 } else {
   const result=spawnSync('docker',readerArgs(publication,resolve(first)),{stdio:'inherit'});
   if (result.error) throw result.error;

@@ -1,5 +1,5 @@
 import {mkdirSync, writeFileSync, readFileSync, readdirSync, lstatSync, realpathSync} from 'node:fs';
-import {resolve, join} from 'node:path';
+import {resolve, join, dirname} from 'node:path';
 import {makeBundle, runtimeConfig, IMAGE} from './integration.mjs';
 
 const json = value => JSON.stringify(value, null, 2) + '\n';
@@ -8,6 +8,9 @@ function regular(path) { check(lstatSync(path).isFile() && !lstatSync(path).isSy
 
 export function prepareBundle(publication, snapshotId, directory) {
   const bundle = makeBundle(publication, snapshotId);
+  if (realpathSync(dirname(resolve(directory))) !== dirname(resolve(directory))) {
+    throw new Error('Use the real absolute parent path, not a symlinked parent');
+  }
   mkdirSync(directory, {mode: 0o700}); // Existing targets fail rather than overwrite.
   mkdirSync(join(directory, 'documents'), {mode: 0o700});
   mkdirSync(join(directory, 'data'), {mode: 0o700});

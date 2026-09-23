@@ -28,12 +28,13 @@ export function runtimeConfig(reader) {
     app: {storePath: '/data', telemetryEnabled: false, readOnly: reader},
     scraper: {security: {
       network: {mode: 'allowlist', allowedHosts: [], allowedCidrs: [], allowPrivateNetworks: false, allowInvalidTls: false},
-      fileAccess: {mode: reader ? 'disabled' : 'allowedRoots', allowedRoots: reader ? [] : ['/input'], followSymlinks: false, includeHidden: false},
+      fileAccess: {mode: 'allowedRoots', allowedRoots: ['/input'], followSymlinks: false, includeHidden: false},
     }},
   };
 }
 
 export function dockerArgs(directory, bundle, operation) {
+  if (process.getuid?.() === 0) throw new Error('Run as a non-root operator with Docker access; do not use sudo');
   if (!isAbsolute(directory) || /[,\r\n]/.test(directory)) throw new Error('Bundle path must be absolute and contain no commas or newlines');
   if (!['index', 'serve', 'list', 'search'].includes(operation)) throw new Error('Unsupported operation');
   const reader = operation !== 'index';
@@ -44,10 +45,11 @@ export function dockerArgs(directory, bundle, operation) {
     '--mount', `type=bind,src=${directory}/data,dst=/data`,
     '--mount', `type=bind,src=${directory}/${reader ? 'reader' : 'indexer'}.json,dst=/settings.json,readonly`];
   if (typeof process.getuid === 'function') args.push('--user', `${process.getuid()}:${process.getgid()}`);
-  if (!reader) args.push('--mount', `type=bind,src=${directory}/documents,dst=/input,readonly`);
+  args.push('--mount', `type=bind,src=${directory}/documents,dst=/input,readonly`);
   if (operation === 'serve') args.push('-i');
   args.push(IMAGE);
-  if (operation === 'index') args.push('scrape', bundle.library, 'file:///input', '--version', bundle.version);
+  if (operation === 'index') args.push('scrape', bundle.library, 'file:///input', '--version', bundle.version,
+    '--max-pages', String(Object.keys(bundle.documents).length + 1), '--no-ignore-errors');
   else if (operation === 'serve') args.push('mcp', '--protocol', 'stdio', '--read-only');
   else if (operation === 'list') args.push('list', '--output', 'json');
   else args.push('search', bundle.library);
