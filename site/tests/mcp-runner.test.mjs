@@ -19,12 +19,17 @@ test('MCP-10 successful explicit indexing permits only this snapshot reader', ()
   const dir=join(mkdtempSync(join(tmpdir(),'mcp-runner-')),'bundle');
   const p=fixture(); prepareBundle(p,'synthetic-r1',dir);
   const bundle=prepareListing(p);
-  assert.throws(() => indexBundle(p,dir,(args,options) => ({status:0,stdout:options?.capture ? '[]' : ''})),/Incomplete index/);
-  assert.equal(existsSync(join(dir,'ready.json')),false);
   indexBundle(p,dir,(args,options) => ({status:0,stdout:options?.capture ? JSON.stringify(bundle) : ''}));
   assert.ok(readerArgs(p,dir).includes('stdio'));
   assert.throws(() => indexBundle(p,dir,() => ({status:0})),/already indexed/);
   assert.throws(() => readerArgs({schema:1,releases:[]},dir),/not found/);
+});
+
+test('MCP-11 incomplete inventory never creates ready marker', () => {
+  const dir=join(mkdtempSync(join(tmpdir(),'mcp-runner-')),'bundle');
+  const p=fixture(); prepareBundle(p,'synthetic-r1',dir);
+  assert.throws(() => indexBundle(p,dir,(args,options) => ({status:0,stdout:options?.capture ? '[]' : ''})),/Incomplete index/);
+  assert.equal(existsSync(join(dir,'ready.json')),false);
 });
 
 import {makeBundle} from '../../mcp/integration.mjs';

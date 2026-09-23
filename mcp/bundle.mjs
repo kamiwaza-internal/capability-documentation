@@ -7,6 +7,7 @@ function check(ok) { if (!ok) throw new Error('Prepared bundle mismatch; rebuild
 function regular(path) { check(lstatSync(path).isFile() && !lstatSync(path).isSymbolicLink()); }
 
 export function prepareBundle(publication, snapshotId, directory) {
+  if (process.getuid?.() === 0) throw new Error('Run as a non-root operator with Docker access; do not use sudo');
   const bundle = makeBundle(publication, snapshotId);
   if (realpathSync(dirname(resolve(directory))) !== dirname(resolve(directory))) {
     throw new Error('Use the real absolute parent path, not a symlinked parent');
