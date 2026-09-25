@@ -5,8 +5,13 @@
       "id": "1.3.0-declared-r1",
       "version": "1.3.0",
       "channel": "development",
+      "approval": {
+        "status": "pending",
+        "approvedBy": null,
+        "approvedAt": null
+      },
       "build": "1.3.0; source baseline only; runtime unverified",
-      "sourceRevision": "eff8abf68909ac645c48a3364ea7ef1693ea6f7c",
+      "sourceRevision": "4dfd4119fcbd3862ff5ea86ea4ef5b6b1e9566da",
       "publicationRevision": 1,
       "publishedAt": "2026-09-25T00:00:00Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/3",
@@ -14,11 +19,9 @@
       "releaseBinding": "not-established",
       "omittedCapabilities": [
         "apps.app-garden",
-        "auth.enterprise-sso",
         "auth.local-user-administration",
         "auth.personal-access-tokens",
         "auth.session-revocation",
-        "authz.rebac-access-control",
         "catalog.dataset-registry",
         "catalog.secrets-management",
         "connectors.managed-data-sources",
@@ -33,25 +36,19 @@
         "extensions.developer-path",
         "federation.cluster-pairing",
         "federation.execution-gates",
-        "federation.federated-retrieval",
         "federation.remote-jobs",
         "ingestion.multimedia-extraction",
-        "ingestion.scheduled-ingest",
         "ingestion.security-markings",
         "kaizen.custom-agents",
         "kaizen.data-chat",
         "models.discover-and-download",
         "models.external-endpoints",
-        "models.gpu-placement",
         "models.local-deployment",
-        "models.openai-compatible-inference",
         "ontology.workroom-knowledge-graph",
         "platform.admin-copilot",
-        "platform.airgapped-install",
         "platform.app-generation-path",
         "platform.kubernetes-install",
         "platform.observability",
-        "platform.usage-and-audit",
         "retrieval.async-retrieval-jobs",
         "security.consent-and-banners",
         "skills.skills-library",
@@ -70,6 +67,196 @@
         "workrooms.shared-threads"
       ],
       "capabilities": [
+        {
+          "id": "auth.enterprise-sso",
+          "title": "Sign in through enterprise identity: SAML/OIDC brokering, CAC/PKI, sessions",
+          "distribution": "public",
+          "summary": "- browser-login\n- saml-login\n- saml-metadata\n- saml-acs\n- cac-login\n- issue-token\n- refresh-session\n- logout\n- register-idp",
+          "conditions": [
+            "The deployment runs auth-enabled with the platform Keycloak reachable; SAML and CAC login are each configuration-gated and default off."
+          ],
+          "limits": [
+            "- SAML and CAC logins mint platform-local JWTs with no refresh token and no Keycloak session; only the OIDC and password paths carry Keycloak-issued tokens. A claim that all SSO flows produce IdP-session-backed tokens would be wrong.\n- CAC certificate validation is performed on material forwarded by a trusted edge (mutual TLS terminates at ingress; the shared-secret header is what makes the forwarding trustworthy), not by in-process TLS peer verification.\n- Local-account password policy is deliberately minimal and documented as such (no character-class rules, history, forced expiry, or per-user lockout); the admin guide directs deployments that require those controls to an external IdP — which is this capability's path.\n- Who may do what once signed in is authorization, claimed separately as `authz.rebac-access-control`. Machine credentials are a separate concern with no capability document yet — uncharacterized in the kit, not claimed elsewhere."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "f35b7538e6334bc3ba0c8cfdce34f56547dd7bc57b75494badf08ff3a485493f",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/api.py",
+                "symbol": "auth_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/api.py",
+                "symbol": "_build_cac_claims",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/idp_api.py",
+                "symbol": "_normalise_provider_payload",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/idp_api.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/settings.py",
+                "symbol": "AuthGatewaySettings.auth_gateway_saml_enabled",
+                "kind": "config-schema",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/keycloak/auth.py",
+                "symbol": "gateway_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/auth.py",
+                "symbol": "AuthService",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from kamiwaza, kamiwaza-sdk at the exact revisions recorded in declared_by (971ed14ca09d, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "authz.rebac-access-control",
+          "title": "Govern access with relationship-based access control and attribute gates",
+          "distribution": "public",
+          "summary": "- check-access\n- write-tuple\n- delete-tuple\n- list-tuples\n- diff-manifest\n- revoke-from-manifest\n- export-tuples\n- upsert-subject\n- manage-local-groups\n- map-idp-groups\n- manage-resource-grants\n- inspect-effective-policy\n- bind-dataset-attribute-gate",
+          "conditions": [
+            "ReBAC enforcement is enabled and callers carry the identity attributes the configured gates evaluate."
+          ],
+          "limits": [
+            "- The master flag defaults off and the clearance-enforcement flag (`AUTH_CLEARANCE_ENFORCED`) defaults off independently; a deployment has this capability only as configured, and the deployment guide's rollout sequence (auth enabled, IdP claims, flag, backend, session store) is the enabling path.\n- Decision history for the export surface is a bounded in-memory buffer (default 2000 events); there is no internal audit database, and retention is the customer's log backend per the admin guide.\n- The tuple routes mount under `/auth/tuples/`; the authz administration routers mount under `/authz`; gate bindings under `/catalog`. The inventory's bare `/tuples/` label is the mounted subpath, recorded here for readers wiring clients.\n- Docs claims are consistent with code on the load-bearing points read this cycle (deny-by-default, decision logging fields, parity mode, guard-coverage boundary); the validation checklist gives the eight-step manual proof procedure, including the deny path asserting \"the request does not silently succeed\"."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "d1da2566b62c362c14170f86e5571ffac71ef58fc52fa202cd544dafb8635078",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/constants.py",
+                "symbol": "ALLOWED_RELATIONS",
+                "kind": "registry",
+                "closed": true,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/constants.py",
+                "symbol": "ALLOWED_OBJECT_NAMESPACES",
+                "kind": "registry",
+                "closed": true,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/constants.py",
+                "symbol": "ALLOWED_SUBJECT_NAMESPACES",
+                "kind": "registry",
+                "closed": true,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/routes.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/flags.py",
+                "symbol": "rebac_enabled",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/backend_config.py",
+                "symbol": "get_backend_name",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/gates/api.py",
+                "symbol": "dataset_attribute_gate_binding_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/gates/registry.py",
+                "symbol": "get_attribute_gate",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/decision_logging.py",
+                "symbol": "log_rebac_decision",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/security/capco.py",
+                "symbol": "ClassificationLevel",
+                "kind": "enum",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/authz.py",
+                "symbol": "AuthzService",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from kamiwaza, kamiwaza-sdk at the exact revisions recorded in declared_by (971ed14ca09d, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
         {
           "id": "catalog.registered-sources",
           "title": "Register S3 and PostgreSQL sources, then scan into the governed catalog",
@@ -374,6 +561,85 @@
           }
         },
         {
+          "id": "federation.federated-retrieval",
+          "title": "Discover and retrieve data from federated clusters, query-in-place",
+          "distribution": "public",
+          "summary": "- discover-remote-datasets\n- submit-remote-retrieval\n- stream-results\n- open-flight-stream\n- enforce-receiver-authorization",
+          "conditions": [
+            "A paired federation, the brokered subject on the receiver allowlist, and explicit ReBAC grants on the target datasets at the receiver."
+          ],
+          "limits": [
+            "- **Three preconditions, all of which fail as 403s that look alike.** Pairing, an active allowlist entry, and per-dataset grants are each required, and the operations documentation carries distinct troubleshooting paths for HMAC signature failures and ReBAC denials. Expect first-time federated retrieval to be a configuration exercise rather than a single call.\n- **The admin-bypass exclusion surprises people.** It is the correct behavior and it is the property a receiving customer should want, but an operator testing federated retrieval with their own admin account will be denied and may read it as a broken pairing.\n- **Query-in-place is a property of this path, not of the platform.** Nothing here prevents a user with the underlying access from exporting results and moving them. The claim is that this capability does not move data, not that data cannot be moved."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "585c2e12b58ae032ec86864b4149c45db280bc11501c92ade809613198e0833f",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/mesh/api.py",
+                "symbol": "mesh_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/retrieval/api.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/retrieval/adapters/__init__.py",
+                "symbol": "build_default_registry",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/enforcement/requester.py",
+                "symbol": "_build_effective_requester",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/catalog/api/datasets.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/retrieval_federation.py",
+                "symbol": "RetrievalAPI.list",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/retrieval_flight.py",
+                "symbol": "open_flight_stream",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from kamiwaza, kamiwaza-sdk at the exact revisions recorded in declared_by (971ed14ca09d, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
           "id": "ingestion.document-translation",
           "title": "Translate parsed documents through OmniParse",
           "distribution": "public",
@@ -432,6 +698,61 @@
             ],
             "basis": "curated-source-review",
             "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "ingestion.scheduled-ingest",
+          "title": "Run and schedule ingestion jobs against connected sources",
+          "distribution": "public",
+          "summary": "- create-ingest-job\n- run-ingest\n- check-ingest-status\n- trigger-connector-ingest",
+          "conditions": [
+            "The caller holds ingestion authority and, where the claim is workroom-scoped, an active workroom context."
+          ],
+          "limits": [
+            "- \"Active source\" means an immediate pull-mode run of a registered plugin with the supplied connection arguments — not a source flagged active in a database.\n- The eligibility check the journey corpus expects for triggering (`J05/SC-06`, decline when the connector is not eligible) is narrower in code: the trigger path checks existence, permission, and decryptable configuration, but does not consult the connector's enabled flag at the pinned revision.\n- The docs page's ingestion-service section lists the three endpoints and describes scheduling a connector run with cron syntax, and elsewhere offers one-time or recurring runs; the recurring half is not supported by the code path this document is grounded in. The same page's DDE connector paths are stale (`/api/ingestion/api/dde/...` versus the shipped `/api/dde/...`). Where docs and code disagree, this document follows the code.\n- DDE connector management itself (create, list, update, disable, security metadata) is adjacent surface exercised by the `data-connectors/J05` journey; this capability claims the run-and-trigger slice."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "85809127ae5d92cc96be1673bf1e0230b638a9cd5f74ba71763fbcabd0333a3b",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/ingestion/services.py",
+                "symbol": "IngestionService._register_plugins",
+                "kind": "registry",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/ingestion/api/sources.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/ingestion.py",
+                "symbol": "IngestionService",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/ingestion/scheduler/cron.py",
+                "symbol": "CronScheduler",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from kamiwaza, kamiwaza-sdk at the exact revisions recorded in declared_by (971ed14ca09d, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
             "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
           }
         },
@@ -1339,6 +1660,132 @@
           }
         },
         {
+          "id": "models.gpu-placement",
+          "title": "Control model placement across hardware classes, including fractional GPU serving",
+          "distribution": "public",
+          "summary": "- estimate-model-vram\n- place-deployment\n- reserve-memory-budget\n- classify-hardware\n- serve-fractionally\n- disable-fractional-sharing\n- report-no-fit\n- inspect-placement",
+          "conditions": [
+            "The cluster exposes accelerator nodes with the labels placement classifies from, and the serving stack is installed."
+          ],
+          "limits": [
+            "- On managed clusters, placement respects whatever GPU sharing the cluster admin configured through the GPU Operator (MIG partitions, time-slicing, MPS) and requires no privileged access beyond the one-time install steps (a CRD and a read-only role for node labels). Without a configured sharing strategy, deployments still work but density is limited to one model per GPU.\n- On hardware-isolated cards, capacity is the partition size, not the card: a model larger than the largest configured partition fails with a structured no-fit error even when the card as a whole is big enough.\n- macOS installs run the control plane in a VM while model processes run natively on the host for Metal GPU access; they appear as standalone topology with the `metal_spawner` sharing class.\n- The `surface` front matter above declares UI and API, while the estimator guarantee names the SDK method `client.serving.estimate_model_vram()`. The declared value is reproduced verbatim from the 2026-08-09 inventory run and is left as recorded rather than corrected here, so a consumer reading `surface` should not infer that the SDK estimator is unavailable. Reconciling the declaration is a change for the inventory's next pass."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "f8e5a5b8b2bff864d5a051f94d51bc8ef2dfb13988dd78c548dae8a391fe80cc",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/api.py",
+                "symbol": "estimate_model_vram",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/models/models.py",
+                "symbol": "DBModelDeployment",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/engines/k8s_gpu.py",
+                "symbol": "VRAM_GB_GPU_PREFIX",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/placement_cr_client.py",
+                "symbol": "NoFitEnvelope",
+                "kind": "config-schema",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/deploy",
+                "path": "charts/placement-operator/values.yaml",
+                "symbol": "placement.vramPluginV2.enabled",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "98bf315093a3f3136ba10854690e045c407b3f73"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from deploy, kamiwaza at the exact revisions recorded in declared_by (98bf315093a3, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "title": "Serve every model behind an OpenAI-compatible inference API",
+          "distribution": "public",
+          "summary": "- resolve-deployment-base-url\n- list-models\n- chat-completions\n- embeddings\n- audio-transcriptions\n- images-generations\n- get-openai-client\n- filter-deployments-by-capability",
+          "conditions": [
+            "An active deployment of the requested model and an authenticated caller session."
+          ],
+          "limits": [
+            "- Requests address a deployment by its base URL; the `model` field in the request body does not route between deployments (the documented pattern passes a placeholder such as `\"model\"`). Selecting a model means selecting which deployment's URL you call, or which identifier you hand `get_client`.\n- Compatibility is at the wire-format level for the capabilities a deployment declares; provider- or engine-specific features beyond those endpoints are not claimed here.\n- Authentication is required end to end: the compatible surface sits behind the platform gateway and expects the bearer credential the SDK injects."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "4557377c6e5fefefbd68fbb2dbac71795e38cc8f89056a662cd420b06afc699a",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/constants.py",
+                "symbol": "RUNTIME_MODELS_PREFIX",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/model_estimation.py",
+                "symbol": "ROUTE_SUFFIXES",
+                "kind": "registry",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/deployment_capabilities.py",
+                "symbol": "_ENGINE_CAPABILITIES",
+                "kind": "registry",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/instance.py",
+                "symbol": "ServingInstance._handle_external_chat_request",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/openai.py",
+                "symbol": "OpenAIService.get_client",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from kamiwaza, kamiwaza-sdk at the exact revisions recorded in declared_by (971ed14ca09d, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
           "id": "models.two-node-serving",
           "title": "Serve models on an SSH-paired second GPU node",
           "distribution": "public",
@@ -1397,6 +1844,69 @@
             ],
             "basis": "curated-source-review",
             "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.airgapped-install",
+          "title": "Install offline from verified bundle artifacts (air-gapped)",
+          "distribution": "public",
+          "summary": "- obtain-offline-bundle\n- verify-bundle-checksums\n- recombine-bundle-parts\n- install-offline\n- size-staging-volumes",
+          "conditions": [
+            "A supported host and substrate, a valid licence, and staging volumes sized against the real partitions backing /, /tmp and /var/lib."
+          ],
+          "limits": [
+            "- **This is the thinnest-sourced capability in the corpus, and deliberately so.** It rests on documentation alone. The bundle build tooling lives outside the repositories this cycle swept, so there is no code citation behind it and no SDK surface. It is claimed because offline installability is procurement-deciding and the published procedure is detailed enough to stand behind — not because the platform sources demonstrate it.\n- **The storage contract is in flux on `develop` and the replacement may not be published.** The offline page states that it describes the contract *after bundled storage removal*, directs readers of an older release to that release's versioned documentation, and says explicitly that it does not claim a qualifying release handoff artifact has been published. Anyone quoting air-gapped install to a customer must confirm which release they mean and whether its storage path is qualified. This is the condition most likely to turn a confident claim into a failed install.\n- **\"Air-gapped\" describes the install, not the running platform.** Nothing here establishes what the platform does or does not reach at runtime."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "46e31f033303b2333ba98d447466d41fcec69972977957d63dc2ca28e03044cc",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/deploy",
+                "path": "scripts/install-dev.sh",
+                "symbol": "DEPLOYMENT_MODE",
+                "kind": "config-schema",
+                "closed": true,
+                "read_at": "98bf315093a3f3136ba10854690e045c407b3f73"
+              },
+              {
+                "repo": "kamiwaza-internal/deploy",
+                "path": "ansible/roles/dependencies/tasks/tools_rhel.yml",
+                "symbol": "prereq_install_source",
+                "kind": "config-schema",
+                "closed": true,
+                "read_at": "98bf315093a3f3136ba10854690e045c407b3f73"
+              },
+              {
+                "repo": "kamiwaza-internal/deploy",
+                "path": "ansible/roles/dependencies/tasks/tools_bundle_prepare.yml",
+                "symbol": "offline prerequisite bundle verification tasks",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "98bf315093a3f3136ba10854690e045c407b3f73"
+              },
+              {
+                "repo": "kamiwaza-internal/deploy",
+                "path": "charts/common/templates/_imageref.tpl",
+                "symbol": "global.airgap.registry.url",
+                "kind": "config-schema",
+                "closed": false,
+                "read_at": "98bf315093a3f3136ba10854690e045c407b3f73"
+              },
+              {
+                "repo": "kamiwaza-internal/deploy",
+                "path": "charts/core/files/catalog/garden/v3/baseline.json",
+                "symbol": "bundled offline catalog baseline (siblings: apps.json, tools.json, connectors.json, available-releases.json, catalog.lock.json)",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "98bf315093a3f3136ba10854690e045c407b3f73"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from deploy at the exact revisions recorded in declared_by (98bf315093a3); a source snapshot on the development line, not an assertion that any deployed image contains it.",
             "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
           }
         },
@@ -1533,6 +2043,61 @@
           }
         },
         {
+          "id": "platform.usage-and-audit",
+          "title": "Record and query user activity and audit events",
+          "distribution": "public",
+          "summary": "- list-recent-activity\n- query-auth-audit-events\n- record-authorization-decision",
+          "conditions": [
+            "The caller holds an administrative role permitting activity reads."
+          ],
+          "limits": [
+            "- **This is substrate, not reporting, and the distinction matters commercially.** The events are recorded and queryable. The reporting and collection tooling an auditor would actually be handed — a usage report, an audit bundle, a redaction pass — does not exist in the pinned sources. Presenting this capability as \"audit reporting\" overstates it; presenting it as \"the events are recorded and retrievable\" is exact.\n- **Retention is not characterised.** How long activity and decision records persist, and whether they are exportable, are not established here.\n- **No documentation page describes any of it.** The claims rest on platform code and one SDK method."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "1f7df952825c9f16888d93159387998d561e96eb182ac3915fe69b1872c24abc",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/activity/api.py",
+                "symbol": "activity_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/auth/api.py",
+                "symbol": "audit_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/authz/decision_logging.py",
+                "symbol": "_DECISION_EVENTS",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "f991d3e6536622d43f304d947f51c1e0c17d1ea5"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-sdk",
+                "path": "kamiwaza_sdk/services/activity.py",
+                "symbol": "ActivityService.get_recent_activity",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "971ed14ca09dde6d71ae1f3fbb2e3b986b5a2910"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Declared from kamiwaza, kamiwaza-sdk at the exact revisions recorded in declared_by (971ed14ca09d, f991d3e65366); a source snapshot on the development line, not an assertion that any deployed image contains it.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
           "id": "workrooms.org-decommission",
           "title": "Retire every workroom in an organization under a confirmed plan",
           "distribution": "public",
@@ -1563,12 +2128,7 @@
             "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
           }
         }
-      ],
-      "approval": {
-        "status": "pending",
-        "approvedBy": null,
-        "approvedAt": null
-      }
+      ]
     }
   ]
 }
