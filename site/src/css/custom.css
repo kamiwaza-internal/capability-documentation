@@ -10,3 +10,4 @@
 .release { margin-top: 3rem; scroll-margin-top: 5rem; }
 .status { display: inline-block; font-size: .8rem; border: 1px solid currentColor; border-radius: 20px; padding: .2rem .6rem; vertical-align: middle; }
 code { overflow-wrap: anywhere; }
+:root .capability p { white-space: pre-wrap; overflow-wrap: anywhere; }

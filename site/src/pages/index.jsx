@@ -39,12 +39,12 @@ export default function Catalog() {
           <p>{release.baselineKind ? 'Source baseline (not a tested build)' : 'Tested build'}: <code>{release.build}</code></p>
           <p><a href={'/releases/' + release.id + '/bundle.json'}>Download evidence bundle (JSON)</a> · <a href={'/releases/' + release.id + '/bundle.md'}>Plain-text bundle</a></p>
           {release.baselineKind && <p>Tier 1: declared in the cited development sources. Binding to a shipped 1.3.0 release is not established. Tier 2: runtime verification pending. {release.omittedCapabilities.length} other kit capabilities are not included; their status is not inferred.</p>}
-          <p>Source revision: <code>{release.sourceRevision}</code> · <a href={release.reviewReference}>Publication review</a></p>
+          <p>{release.baselineKind ? 'Kit revision' : 'Source revision'}: <code>{release.sourceRevision}</code> · <a href={release.reviewReference}>Publication review</a></p>
           <p>{release.capabilities.length} capabilities in this public snapshot. This is not a complete platform inventory.</p>
           <p>{Object.entries(countStatuses(release.capabilities)).map(([label, count]) => `${count} ${label}`).join(' · ')}. Counts cover the full snapshot, not search results.</p>
           {filterCapabilities(release.capabilities, query, status).length === 0 && <p role="status">No matching capabilities in this snapshot. This does not mean unsupported.</p>}
           {filterCapabilities(release.capabilities, query, status).map(cap => <article className="capability" id={release.id + '--' + cap.id} key={cap.id}>
-            <h3>{cap.title} <span className="status">{cap.status}</span></h3>
+            <h3>{cap.title} <span className="status">{cap.declaration ? 'Tier 1 declared · runtime untested' : cap.status}</span></h3>
             <p><code>{cap.id}</code></p><p>{cap.summary}</p>
             <TextList title="Prerequisites" items={cap.conditions}/>
             <TextList title="Conditions and limits" items={cap.limits}/>
