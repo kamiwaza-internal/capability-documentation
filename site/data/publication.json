@@ -1563,7 +1563,12 @@
             "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
           }
         }
-      ]
+      ],
+      "approval": {
+        "status": "pending",
+        "approvedBy": null,
+        "approvedAt": null
+      }
     }
   ]
 }

@@ -54,8 +54,18 @@ function declaration(value) {
     requireValue(typeof c.closed === 'boolean', 'Declaration closure required');
   }
 }
+function approval(value) {
+  shape(value, ['status', 'approvedBy', 'approvedAt']);
+  requireValue(['pending', 'approved'].includes(value.status), 'Invalid release approval status');
+  if (value.status === 'approved') {
+    text(value.approvedBy);
+    requireValue(typeof value.approvedAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value.approvedAt) && Number.isFinite(Date.parse(value.approvedAt)), 'Approved release requires an approval timestamp');
+  } else {
+    requireValue(value.approvedBy === null && value.approvedAt === null, 'A pending release cannot name an approver');
+  }
+}
 function release(value, sourceOnly) {
-  const keys = ['id', 'version', 'channel', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities'];
+  const keys = ['id', 'version', 'channel', 'approval', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities'];
   shape(value, sourceOnly ? [...keys, 'baselineKind', 'releaseBinding', 'omittedCapabilities'] : keys);
   if (sourceOnly) {
     requireValue(value.baselineKind === 'source-declaration' && value.channel === 'development' && value.releaseBinding === 'not-established', 'Source baseline cannot claim released-build binding');
@@ -66,6 +76,7 @@ function release(value, sourceOnly) {
   text(value.id);
   requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(value.version), 'Invalid version');
   requireValue(['development', 'released'].includes(value.channel), 'Invalid release channel');
+  approval(value.approval);
   text(value.build);
   requireValue(value.build === value.version || value.build.startsWith(value.version + '; '), 'Build must identify the selected version');
   requireValue(typeof value.sourceRevision === 'string' && sha.test(value.sourceRevision), 'Source must be a full commit');

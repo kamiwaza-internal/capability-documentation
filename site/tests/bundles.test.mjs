@@ -8,7 +8,7 @@ import {emitBundles} from '../scripts/published-bundles.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
 
 const fixture = () => ({schema: 2, releases: [{
-  id: 'synthetic-r1', version: '1.3.0', channel: 'development',
+  id: 'synthetic-r1', version: '1.3.0', channel: 'development', approval: {status: 'pending', approvedBy: null, approvedAt: null},
   build: '1.3.0; source only', sourceRevision: 'a'.repeat(40), publicationRevision: 1,
   publishedAt: '2026-09-25T00:00:00Z',
   reviewReference: 'https://github.com/kamiwaza-internal/capability-documentation/pull/3',
