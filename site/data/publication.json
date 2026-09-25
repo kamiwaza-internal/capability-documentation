@@ -10,8 +10,8 @@
         "approvedBy": null,
         "approvedAt": null
       },
-      "build": "1.3.0; source baseline only; runtime unverified",
-      "sourceRevision": "4dfd4119fcbd3862ff5ea86ea4ef5b6b1e9566da",
+      "build": "1.3.0; develop-line source baseline; not a released 1.3.0 artifact; runtime unverified",
+      "sourceRevision": "14d0f0739b02786bd479588fdf2a1b852ad63c85",
       "publicationRevision": 1,
       "publishedAt": "2026-09-25T00:00:00Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/3",
