@@ -12,6 +12,7 @@ module.exports = async function config() {
     onBrokenLinks: 'throw',
     onDuplicateRoutes: 'throw',
     staticDirectories: [],
+    plugins: [require.resolve('./scripts/published-bundles.mjs')],
     presets: [['classic', {docs: false, blog: false, theme: {customCss: './src/css/custom.css'}}]],
     themeConfig: {
       navbar: {title: 'Kamiwaza · Capabilities', items: [{to: '/', label: 'Release catalog', position: 'left'}]},
