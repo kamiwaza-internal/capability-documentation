@@ -1,6 +1,10 @@
 # Kamiwaza Capability Documentation
 
-The evidence-backed record of what the Kamiwaza platform actually does. Every capability described here is backed by a specific, dated test run — not a specification, and not a marketing claim.
+The publishing layer for [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/).
+The private capability-kit remains the source of truth. Published records distinguish
+Tier 1 source declarations from Tier 2 runtime verification; a declaration is not a
+passing test. See [the site contract](site/README.md) for release-binding limits and
+downloadable evidence bundles. Only reviewed main merges publish automatically.
 
 ## How this works
 
