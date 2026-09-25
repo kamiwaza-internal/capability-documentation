@@ -32,9 +32,10 @@ export default function Catalog() {
             {['verified', 'partial', 'failed', 'untested'].map(value => <option key={value} value={value}>{value}</option>)}
           </select></label>
         </div>
-        <nav aria-label="Published releases"><ul>{publication.releases.map(release => <li key={release.id}><a href={'#' + release.id}>{release.version} · {release.channel} · revision {release.publicationRevision}</a></li>)}</ul></nav>
+        <nav aria-label="Published releases"><ul>{publication.releases.map(release => <li key={release.id}><a href={'#' + release.id}>{release.version} · {release.channel} · {release.approval.status} · revision {release.publicationRevision}</a></li>)}</ul></nav>
         {publication.releases.map(release => <section className="release" id={release.id} key={release.id}>
-          <h2>{release.version} <span className="status">{release.channel}</span></h2>
+          <h2>{release.version} <span className="status">{release.channel}</span> <span className="status">{release.approval.status}</span></h2>
+          {release.approval.status === 'pending' ? <aside className="evidenceNotice"><strong>Pending release-manager sign-off.</strong> This release is published before approval. It is accurate to the evidence held at publication time, may change before approval, and is not a release commitment.</aside> : null}
           <p>Publication revision {release.publicationRevision} · <time dateTime={release.publishedAt}>{release.publishedAt}</time></p>
           <p>{release.baselineKind ? 'Source baseline (not a tested build)' : 'Tested build'}: <code>{release.build}</code></p>
           <p><a href={'/releases/' + release.id + '/bundle.json'}>Download evidence bundle (JSON)</a> · <a href={'/releases/' + release.id + '/bundle.md'}>Plain-text bundle</a></p>
