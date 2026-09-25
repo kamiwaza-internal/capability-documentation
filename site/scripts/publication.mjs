@@ -21,8 +21,13 @@ function evidence(record, build) {
   requireValue(['passed', 'passed_with_notes', 'failed', 'skipped'].includes(record.outcome), 'Invalid evidence outcome');
   text(record.summary);
 }
-function capability(cap, build) {
-  shape(cap, ['id', 'title', 'distribution', 'summary', 'conditions', 'limits', 'status', 'wholeClaim', 'evidence']);
+function capability(cap, build, sourceOnly) {
+  const keys = ['id', 'title', 'distribution', 'summary', 'conditions', 'limits', 'status', 'wholeClaim', 'evidence'];
+  shape(cap, sourceOnly ? [...keys, 'declaration'] : keys);
+  if (sourceOnly) {
+    requireValue(cap.status === 'untested' && cap.wholeClaim === false && cap.evidence.length === 0, 'Source baseline cannot claim runtime credit');
+    declaration(cap.declaration);
+  }
   requireValue(typeof cap.id === 'string' && id.test(cap.id), 'Invalid capability identifier');
   text(cap.id);
   requireValue(cap.distribution === 'public', 'Only approved public projections can be rendered');
@@ -36,12 +41,42 @@ function capability(cap, build) {
     requireValue(cap.wholeClaim && cap.evidence.length > 0 && cap.evidence.every(e => e.outcome === 'passed'), 'Verified requires whole-claim clean evidence');
   }
 }
-function release(value) {
-  shape(value, ['id', 'version', 'channel', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities']);
+function declaration(value) {
+  shape(value, ['documentSha256', 'citations', 'basis', 'scope', 'mechanicalValidation']);
+  requireValue(/^[a-f0-9]{64}$/.test(value.documentSha256), 'Invalid document hash');
+  requireValue(value.basis === 'curated-source-review', 'Unsupported declaration basis');
+  text(value.scope); text(value.mechanicalValidation);
+  requireValue(Array.isArray(value.citations) && value.citations.length > 0, 'Missing declaration citations');
+  for (const c of value.citations) {
+    shape(c, ['repo', 'path', 'symbol', 'kind', 'closed', 'read_at']);
+    [c.repo, c.path, c.symbol, c.kind].forEach(text);
+    requireValue(sha.test(c.read_at), 'Declaration must pin source revision');
+    requireValue(typeof c.closed === 'boolean', 'Declaration closure required');
+  }
+}
+function approval(value) {
+  shape(value, ['status', 'approvedBy', 'approvedAt']);
+  requireValue(['pending', 'approved'].includes(value.status), 'Invalid release approval status');
+  if (value.status === 'approved') {
+    text(value.approvedBy);
+    requireValue(typeof value.approvedAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value.approvedAt) && Number.isFinite(Date.parse(value.approvedAt)), 'Approved release requires an approval timestamp');
+  } else {
+    requireValue(value.approvedBy === null && value.approvedAt === null, 'A pending release cannot name an approver');
+  }
+}
+function release(value, sourceOnly) {
+  const keys = ['id', 'version', 'channel', 'approval', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities'];
+  shape(value, sourceOnly ? [...keys, 'baselineKind', 'releaseBinding', 'omittedCapabilities'] : keys);
+  if (sourceOnly) {
+    requireValue(value.baselineKind === 'source-declaration' && value.channel === 'development' && value.releaseBinding === 'not-established', 'Source baseline cannot claim released-build binding');
+    strings(value.omittedCapabilities); unique(value.omittedCapabilities);
+    requireValue(value.omittedCapabilities.every(x => id.test(x) && !value.capabilities.some(c => c.id === x)), 'Invalid omitted capability');
+  }
   requireValue(typeof value.id === 'string' && id.test(value.id), 'Invalid release identifier');
   text(value.id);
   requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(value.version), 'Invalid version');
   requireValue(['development', 'released'].includes(value.channel), 'Invalid release channel');
+  approval(value.approval);
   text(value.build);
   requireValue(value.build === value.version || value.build.startsWith(value.version + '; '), 'Build must identify the selected version');
   requireValue(typeof value.sourceRevision === 'string' && sha.test(value.sourceRevision), 'Source must be a full commit');
@@ -50,14 +85,14 @@ function release(value) {
   requireValue(new Date(value.publishedAt).toISOString() === value.publishedAt.replace('Z', '.000Z'), 'Invalid publication calendar date');
   requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Release must contain approved capabilities');
-  value.capabilities.forEach(cap => capability(cap, value.build));
+  value.capabilities.forEach(cap => capability(cap, value.build, sourceOnly));
   unique(value.capabilities.map(cap => cap.id));
 }
 export function validatePublication(input) {
   shape(input, ['schema', 'releases']);
-  requireValue(input.schema === 1, 'Unsupported publication schema');
+  requireValue([1, 2].includes(input.schema), 'Unsupported publication schema');
   requireValue(Array.isArray(input.releases) && input.releases.length <= 500, 'Invalid releases list');
-  input.releases.forEach(release);
+  input.releases.forEach(value => release(value, input.schema === 2));
   unique(input.releases.map(r => r.id));
   return input;
 }

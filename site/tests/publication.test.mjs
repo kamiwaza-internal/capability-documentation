@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {validatePublication} from '../scripts/publication.mjs';
 
 const snapshot = () => ({schema: 1, releases: [{
-  id: '1.3.0-development-r1', version: '1.3.0', channel: 'development',
+  id: '1.3.0-development-r1', version: '1.3.0', channel: 'development', approval: {status: 'pending', approvedBy: null, approvedAt: null},
   build: '1.3.0; core=' + 'a'.repeat(40), sourceRevision: 'b'.repeat(40),
   publicationRevision: 1, publishedAt: '2026-09-21T00:00:00Z',
   reviewReference: 'https://github.com/kamiwaza-internal/capability-documentation/pull/1',
@@ -46,3 +46,25 @@ test('whole-claim clean evidence can retain the upstream verified label', () => 
   c.status='verified'; c.wholeClaim=true; c.evidence[0].outcome='passed';
   assert.equal(validatePublication(input).releases[0].capabilities[0].status, 'verified');
 });
+
+test('a release publishes while pending release-manager sign-off', () => {
+  const input = snapshot();
+  assert.equal(validatePublication(input).releases[0].approval.status, 'pending');
+});
+test('an approved release records who signed it off and when', () => {
+  const input = snapshot();
+  input.releases[0].approval = {status: 'approved', approvedBy: 'release-manager', approvedAt: '2026-09-25T00:00:00Z'};
+  assert.equal(validatePublication(input).releases[0].approval.approvedBy, 'release-manager');
+});
+for (const [name, mutate] of [
+  ['approved without an approver', x => x.releases[0].approval = {status: 'approved', approvedBy: null, approvedAt: '2026-09-25T00:00:00Z'}],
+  ['approved without a timestamp', x => x.releases[0].approval = {status: 'approved', approvedBy: 'release-manager', approvedAt: null}],
+  ['pending release naming an approver', x => x.releases[0].approval = {status: 'pending', approvedBy: 'release-manager', approvedAt: null}],
+  ['unknown approval status', x => x.releases[0].approval.status = 'maybe'],
+  ['missing approval axis', x => delete x.releases[0].approval],
+]) {
+  test(`rejects ${name}`, () => {
+    const input = snapshot(); mutate(input);
+    assert.throws(() => validatePublication(input));
+  });
+}

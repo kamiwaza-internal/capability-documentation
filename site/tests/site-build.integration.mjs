@@ -20,7 +20,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   assert.equal(install.status, 0, install.stdout + install.stderr);
   writeFileSync(join(root, 'private-canary.md'), 'PRIVATE_CANARY_NOT_FOR_EXPORT');
   const release = {
-    id: 'synthetic-development-r1', version: '0.0.0', channel: 'development',
+    id: 'synthetic-development-r1', version: '0.0.0', channel: 'development', approval: {status: 'pending', approvedBy: null, approvedAt: null},
     build: '0.0.0; core=' + 'a'.repeat(40), sourceRevision: 'b'.repeat(40),
     publicationRevision: 1, publishedAt: '2026-09-21T00:00:00Z',
     reviewReference: 'https://github.com/kamiwaza-internal/capability-documentation/pull/1',

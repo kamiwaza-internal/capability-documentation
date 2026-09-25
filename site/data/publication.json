@@ -1,4 +1,1574 @@
 {
-  "schema": 1,
-  "releases": []
+  "schema": 2,
+  "releases": [
+    {
+      "id": "1.3.0-declared-r1",
+      "version": "1.3.0",
+      "channel": "development",
+      "build": "1.3.0; source baseline only; runtime unverified",
+      "sourceRevision": "eff8abf68909ac645c48a3364ea7ef1693ea6f7c",
+      "publicationRevision": 1,
+      "publishedAt": "2026-09-25T00:00:00Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/3",
+      "baselineKind": "source-declaration",
+      "releaseBinding": "not-established",
+      "omittedCapabilities": [
+        "apps.app-garden",
+        "auth.enterprise-sso",
+        "auth.local-user-administration",
+        "auth.personal-access-tokens",
+        "auth.session-revocation",
+        "authz.rebac-access-control",
+        "catalog.dataset-registry",
+        "catalog.secrets-management",
+        "connectors.managed-data-sources",
+        "connectors.user-oauth-authorization",
+        "connectors.workroom-surface-access",
+        "context.workroom-document-search",
+        "delegation.brokered-resource-access",
+        "delegation.capability-grants",
+        "delegation.consent-and-approval-gates",
+        "delegation.run-claims-lifecycle",
+        "delegation.workload-identity-and-attestation",
+        "extensions.developer-path",
+        "federation.cluster-pairing",
+        "federation.execution-gates",
+        "federation.federated-retrieval",
+        "federation.remote-jobs",
+        "ingestion.multimedia-extraction",
+        "ingestion.scheduled-ingest",
+        "ingestion.security-markings",
+        "kaizen.custom-agents",
+        "kaizen.data-chat",
+        "models.discover-and-download",
+        "models.external-endpoints",
+        "models.gpu-placement",
+        "models.local-deployment",
+        "models.openai-compatible-inference",
+        "ontology.workroom-knowledge-graph",
+        "platform.admin-copilot",
+        "platform.airgapped-install",
+        "platform.app-generation-path",
+        "platform.kubernetes-install",
+        "platform.observability",
+        "platform.usage-and-audit",
+        "retrieval.async-retrieval-jobs",
+        "security.consent-and-banners",
+        "skills.skills-library",
+        "tools.mcp-tool-shed",
+        "workrooms.admin-oversight",
+        "workrooms.app-launch",
+        "workrooms.app-runtime-binding",
+        "workrooms.archive-and-delete",
+        "workrooms.create",
+        "workrooms.export-bundle",
+        "workrooms.membership-and-roles",
+        "workrooms.presence",
+        "workrooms.s3-object-storage",
+        "workrooms.session-scoping",
+        "workrooms.shared-credentials",
+        "workrooms.shared-threads"
+      ],
+      "capabilities": [
+        {
+          "id": "catalog.registered-sources",
+          "title": "Register S3 and PostgreSQL sources, then scan into the governed catalog",
+          "distribution": "public",
+          "summary": "- register\n- list registered sources\n- scan",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "SourceRegistrationRequest closes source types to s3/postgres. Ingestion-admin and scoped workroom authorization, catalog secret references; registration does not materialize data. Distinct from connector manifest administration and generic catalog dataset CRUD.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "fc9c96d06d46752cf634c6a51bd4b9aede1d8610137ea6fa91a0af01ea267768",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/ingestion/api/sources.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/catalog/api/containers.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "catalog.writable-datasets",
+          "title": "Manage file content inside platform-managed datasets",
+          "distribution": "public",
+          "summary": "- upload\n- list\n- read content\n- conditional replace\n- tombstone\n- admin force-purge",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "This capability manages dataset manifests, revisions and stored content, unlike the metadata-only `catalog.dataset-registry` or workroom raw-file store. It is enabled by default but requires a healthy file/object backend. POST never replaces an existing live path; PUT requires `If-Match`. Default limits are 100 MiB per item, 2 GiB per dataset and 10,000 objects, with seven-day tombstone retention. Non-secret workroom S3 override redirects are disabled by default. Delete creates a tombstone; bytes are purged after retention or an audited administrator force-purge.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "48623bcbf0d796ba341443587ad5f33340fc3784ade3ed716a70f5c27e6080f6",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/catalog/api/datasets.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "connectors.ai-assisted-connector-setup",
+          "title": "Model-assisted connector setup and repair",
+          "distribution": "public",
+          "summary": "- preview plan without saving\n- automatic setup\n- bounded repair",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Requires platform-served or configured gateway model plus credentials appropriate to preview/repair. Bounded attempts can fail; no guarantee arbitrary APIs can be repaired. Separate from deterministic connector authoring.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "2b70c94448abc0a3ebd67c49e82aa83e00e5fbb3e6de8a49cec0ee510d2f64f6",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-connector-builder",
+                "path": "apps/connector-builder/src/tool_connector_builder/automatic_setup_api.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "b6dc4da0b604e2ae96601ac3def9804c3ffd3f1b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-connector-builder",
+                "path": "apps/connector-builder/src/tool_connector_builder/automatic_repair.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "b6dc4da0b604e2ae96601ac3def9804c3ffd3f1b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "connectors.connector-builder",
+          "title": "Build and deploy data connectors from API descriptions",
+          "distribution": "public",
+          "summary": "- import\n- test definition\n- generate tool package\n- deploy dedicated runtime",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Alpha app/tool integration. Deterministic path need not use a model. Requires platform authorization and runtime resources. Credentials absent can leave runtime suspended. Not universal API compatibility or all workbook sharing/governance requirements.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "c3a024941518b911ff17b498fc9b97ed8962ca7960629d5d7df11eab18f9744d",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-connector-builder",
+                "path": "apps/connector-builder/src/tool_connector_builder/server.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "b6dc4da0b604e2ae96601ac3def9804c3ffd3f1b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "connectors.oauth-tool-policies",
+          "title": "Per-tool OAuth operation policies",
+          "distribution": "public",
+          "summary": "- create a tool policy (`POST /oauth-broker/policies/`)\n- read a tool policy by ID (`GET /oauth-broker/policies/{policy_id}`)\n- list tool policies, optionally filtered by app or tool (`GET /oauth-broker/policies/`)\n- update a policy's allowed operations, allowed scope subset or metadata (`PATCH /oauth-broker/policies/{policy_id}`)\n- delete a tool policy (`DELETE /oauth-broker/policies/{policy_id}`)\n- enforce the allowed operations before a call on the broker's standard proxy path (and at legacy ephemeral token minting), answering 403 on a violation",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default, API only. The OAuth broker router is mounted with no feature flag, and the policy routes sit under it at `/oauth-broker/policies`. No SDK method calls these routes. The UI source holds only generated API types for them; no shipped UI screen was found.\n\nCreating, reading, changing or deleting a policy requires the caller to own its app installation or to be an administrator; anyone else gets 403, and an unknown policy id gets 404 before that check. A list request without an app filter returns every policy to an administrator and only the policies of the caller's own app installations to anyone else.\n\nEnforcement denies by default. A proxied call is refused unless the tool is in the app installation's `allowed_tools`, a policy exists for that app, tool and provider, and the requested operation is in the policy's `allowed_operations`. A tool with no policy for a provider cannot make any call to that provider through the standard proxy.\n\nThe check runs on the broker's standard proxy path (`/oauth-broker/proxy/{provider}/{service}/{operation}`) and on legacy ephemeral token minting, where it is checked as the operation `token.mint`. The delegated-workload execution path does not call it; that path authorizes each call with a one-use lease instead. Policies govern those two broker paths only, not tool execution in general. The broker's connector routes (`POST /oauth-broker/connectors/{connector_id}/proxy` and `/identity-proxy`, and `POST /oauth-broker/tokens/connectors/{connector_id}/mint`) do not check tool policies (`kamiwaza/services/oauth_broker/api/connector_proxy.py:34`, `kamiwaza/services/oauth_broker/api/connector_proxy.py:38`, `kamiwaza/services/oauth_broker/api/tokens.py:37`, `kamiwaza/services/oauth_broker/api/tokens.py:152`). All three require the caller to be the connector's bound workload (`kamiwaza/services/oauth_broker/connector_token_service.py:245`). The two proxy routes also enforce the connector's egress allowlist (`kamiwaza/services/oauth_broker/connector_proxy_service.py:68`, `kamiwaza/services/oauth_broker/connector_proxy_service.py:109`). The mint route has no egress check: it checks the requested scopes against the granted ones and returns the provider token to the connector (`kamiwaza/services/oauth_broker/connector_token_service.py:177`, `kamiwaza/services/oauth_broker/connector_token_service.py:114`). For a per-user connection that token is the connection's own provider token, not narrowed to the requested scopes; the scopes are recorded on the lease and returned as `granted_scopes` (`kamiwaza/services/oauth_broker/connector_token_service.py:178`, `kamiwaza/services/oauth_broker/connector_token_service.py:101`, `kamiwaza/services/oauth_broker/connector_token_service.py:116`).\n\nOperation names come from the broker's registered operation list. At this revision only Google operations are registered: Gmail (`gmail.search`, `gmail.getMessage`, `gmail.send`, `gmail.listLabels`, `gmail.modify`), Drive (`drive.listFiles`, `drive.getFile`) and Calendar (`calendar.list`, `calendar.events`). The create route stores the submitted operation names without checking them against that list.\n\nA read-only Gmail tool is possible: a policy that lists `gmail.search` and `gmail.getMessage` but not `gmail.send` refuses sends. The email tool deployment does not start that way. When the tool service provisions OAuth for an email tool, it creates a policy for `email-mcp` that allows `gmail.send` and `gmail.modify`. An owner must update that policy to make the tool read-only.\n\n`allowed_scope_subset` is checked only when a legacy ephemeral token is minted, and an empty list places no limit there. The proxy path does not check it.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "6e1c3479bd3b85ffc20c6f006bac7884ef72671a135a886af329c770cd51209b",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/oauth_broker/api/tool_policies.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "context.dataset-indexing",
+          "title": "Bind a catalog dataset to a searchable semantic/lexical index",
+          "distribution": "public",
+          "summary": "- create binding\n- list/get\n- job diagnostics\n- retry\n- delete\n- search\n- readiness",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "The inspected implementation establishes API support only. An asynchronous service-principal executor performs the work; the requesting user must be authorized for the source workroom. Two profiles are declared: `semantic_lexical` and `semantic_lexical_graph`; their infrastructure prerequisites still apply. Reading the creation endpoint does not prove end-to-end source synchronization. This source-binding lifecycle is distinct from generic document uploads, and no runtime success is claimed.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "152a3f842dbd6695188e082cc2cf7682b935ef87b2ae434f11b88ab5b7fb760a",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/context/api/dataset_indexes.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "context.workroom-ingestion-summary",
+          "title": "Workroom ingestion statistics",
+          "distribution": "public",
+          "summary": "- get the workroom's ingestion summary (`GET /workrooms/{workroom_id}/ingestion/summary`)\n- get the same summary from the SDK (`client.workrooms.get_ingestion_summary(workroom_id)`)",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default, API and SDK. The workroom router is mounted with no feature flag. The UI source holds only generated API types for this route; no shipped UI screen was found.\n\nThe caller needs view permission on the workroom. The service then loads the workroom as one the caller can read in their tenant. An unknown workroom answers 404.\n\nThe counts come from two places. Data-source counts, the per-type breakdown, the date range and the error count come from the platform's DDE data-source records tagged with the workroom. The date range is the earliest and latest source creation time. The error count adds up each source's stored error count. `catalog_entries` counts the catalog datasets tagged with the workroom.\n\nThe summary is best effort. Each backing query is wrapped so that a failure is logged and that part of the summary falls back to zero or empty. The response carries no marker that a part failed. `warning_count` is always 0 at this revision. Do not present this as complete or real-time ingestion health.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "809a43bffef694f0e633c4770a1f549ac6fc46127c51028e9a2132771f9f4aac",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/workrooms/api.py",
+                "symbol": "workroom_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "context.workroom-raw-file-store",
+          "title": "Store, list, read and update workroom raw files",
+          "distribution": "public",
+          "summary": "- create\n- list\n- get\n- update",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Workroom read/write gates, archive protection, decoded-size cap; backend object store required. No delete route established. Marking aggregation has soft-launch components, so do not claim full marking enforcement from optional display. Separate file API from existing workrooms.s3-object-storage backend configuration.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "bf4e8038ac220b8d34e6fbb75a6a011bae279e15f0a9a9bf87f56eeb9a6905bf",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/context/api/storage.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "delegation.pending-approval-queue",
+          "title": "Pending-approval queue for delegated actions",
+          "distribution": "public",
+          "summary": "- list the effects waiting for approval in a tenant (`GET /api/v1/delegated-workloads/effects/pending-approval?tenant_id=...`, SDK `DelegatedApprovalAPI.list_pending`)\n- watch the queue by polling it (SDK `DelegatedApprovalAPI.watch_pending`)\n- approve or deny a pending effect (`POST /api/v1/delegated-workloads/effects/{effect_id}/approval`, SDK `DelegatedApprovalAPI.decide`); this decision route is also described in `delegation.consent-and-approval-gates`",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Default state depends on how Core is configured. The delegated-workload contract is published by default (`DELEGATED_WORKLOADS_ENABLED`, default `true`). The effect routes, including this queue, are added only when Core builds the delegated authority runtime. Core's own settings hold that runtime by default. `DELEGATED_WORKLOADS_ALLOWED_RETURN_URI_PREFIXES` defaults to empty, and while it is empty the runtime is not built. The signing-key, run-reference-key, nonce-secret, issuer and audience settings also default to empty, and with all five empty the runtime is held too. With the runtime held, the queue path is not published at all.\n\nThe core Helm chart in `deploy` fills in the key paths and the return prefix by default. `delegatedWorkloads.enabled` defaults to `true`. When it is enabled, the chart renders the signing-key and run-reference-key paths, and an empty return-prefix list becomes `https://<global.domain>`. The render fails if `global.domain` is empty. This batch did not trace a default Helm install end to end to a built runtime. A deployment that runs Core without these settings gets no queue.\n\nOnly approvers can read the queue. The caller needs a signed-in member session whose roles include `admin` or `it_approver`; any other member gets `approver_authority_required`. The `tenant_id` in the request must be the caller's own tenant, or the call fails with `approver_tenant_unavailable`. The list holds the effects in that tenant whose decision is pending approval and whose status is reserved, oldest first.\n\nA decision needs the same approver roles and a valid `X-CSRF-Token` header. The request names the effect digest, the policy version and `approve` or `deny`.\n\nWatching is client-side polling. `watch_pending` is a generator that lists the queue, then sleeps. The interval must be positive and defaults to 5 seconds. There is no server push and no notification.\n\nThe SDK class `kamiwaza_sdk.delegated_workloads.DelegatedApprovalAPI` is built from a base URL and a member session.\n\nThe existing `delegation.consent-and-approval-gates` document says there is no pending-decision queue. At these revisions that is out of date for the API and SDK. That document is unchanged by this batch.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "73fb1020db46ecf1c928708b4118dfbe784e56f51b1fca7fa890607bc2d5a4b2",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/delegated_workloads/api.py",
+                "symbol": "_add_effect_read_routes",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/delegated_workloads/governance_api.py",
+                "symbol": "add_effect_approval_route",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "ingestion.document-translation",
+          "title": "Translate parsed documents through OmniParse",
+          "distribution": "public",
+          "summary": "- translate\n- list translations\n- retrieve translated Markdown",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Extension REST surface, not an established Core ingestion translation pipeline. Default enablement true but endpoint is mandatory; source auto-detection is model-dependent. Default target en and default model name translategemma are configuration, not a closed language/model support set.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "757b3ba5f98dc73a44a2e56e7d31336c7351755f431d87494813c0dbb21ebb13",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-omniparse",
+                "path": "src/omniparse/facades/rest/app.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "ac1b245dcdba7fd48510c7e5ea185b6b6789f730"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "ingestion.parse-from-url",
+          "title": "Parse a document fetched from a public URL",
+          "distribution": "public",
+          "summary": "- submit a URL (`POST /v1/documents/from-url`)\n- check the URL and every redirect against the fetch policy\n- store the fetched document as a record\n- read the stored document as Markdown or HTML (`GET /v1/documents/{doc_id}/markdown`, `GET /v1/documents/{doc_id}/html`)",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "OmniParse extension REST surface, not the Core ingestion pipeline. On by default: `URL_FETCH_ENABLE` defaults to `true` (`src/omniparse/settings.py:73`), and the extension manifest does not override it. When it is `false`, the request is refused (`src/omniparse/service/_service_url.py:80`). The OmniParse container needs outbound network access.\n\nThe fetch accepts only `http` and `https` (`src/omniparse/service/_public_url.py:26`), ports 80 and 443, and URLs without credentials. The host must resolve only to public addresses (`src/omniparse/service/_public_url.py:100`). Private, loopback and link-local addresses are rejected, so intranet URLs do not work. Every redirect is checked again, up to `URL_MAX_REDIRECTS` (default 10). Content is capped at `URL_MAX_SIZE_MB` (default 100) (`src/omniparse/settings.py:79`). The content type must be on the same `ALLOWED_MIME` list as uploads: PDF, DOCX, PPTX, HTML, plain text, Markdown and common image formats (`src/omniparse/settings.py:67`). `BLOCKED_DOMAINS` is empty by default.\n\nThe fetch stores the bytes and a record, and the heavy Docling conversion runs later, when an export or chunks are requested (`src/omniparse/facades/rest/app.py:343`). Requests need Kamiwaza authentication when `KAMIWAZA_USE_AUTH` is true (`src/omniparse/facades/rest/app.py:128`), which the manifest sets (`kamiwaza.json:59`). An MCP tool with the same name exists, but the MCP facade runs only in `combined` mode; the manifest default is `rest` (`kamiwaza.json:39`). The README's URL example posts JSON to `/v1/documents` (`README.md:104`). At this revision that route requires a multipart file (`src/omniparse/facades/rest/app.py:237`), so URL input goes to `/v1/documents/from-url`.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "7d46a0b99e43ced501322957c1a384cbb7d0c52099f07c76eb0381e97ee51e3a",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-omniparse",
+                "path": "src/omniparse/facades/rest/app.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "ac1b245dcdba7fd48510c7e5ea185b6b6789f730"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "ingestion.structured-document-outputs",
+          "title": "Extract document tables, figures and chunks",
+          "distribution": "public",
+          "summary": "- tables\n- figures\n- chunks",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Requires the appropriate parser, pipeline and models. Full Docling/layout JSON is excluded: `_service_export.py:163-165` returns a placeholder despite the upstream README claim. Annotated PDF overlays are also excluded: `annotate_pdf` produces a placeholder page rather than annotating the source document. Endpoint existence does not establish either capability. Extraction quality and format preservation are unverified.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "0d3307286c04f5e6c5ed709617928857878140974624ba0d443f6cf2544b941c",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-omniparse",
+                "path": "src/omniparse/facades/rest/app.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "ac1b245dcdba7fd48510c7e5ea185b6b6789f730"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "ingestion.video-frame-analysis",
+          "title": "Describe video keyframes with a vision model",
+          "distribution": "public",
+          "summary": "- submit a video analysis job, choosing I-frame or fixed-interval keyframe sampling, a keyframe cap, a simple or structured prompt, and per-request vision and transcription endpoint overrides\n- poll job status\n- extract keyframes and the audio track\n- describe each keyframe with an OpenAI-compatible vision model\n- transcribe the audio track\n- retrieve the combined analysis, the transcript (JSON or Markdown), the keyframe descriptions, and a single keyframe image",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "This is the OmniParse extension's REST API (`src/omniparse/facades/rest/app.py:873`). Frame descriptions are off by default. `VISION_MODEL_ENABLE` defaults to `false` in code (`src/omniparse/settings.py:120`) and in the App Garden manifest (`kamiwaza.json:40`). If vision is disabled and the request passes no `vision_*` override, or if no vision endpoint is set, the description step raises an error (`src/omniparse/service/_service_video.py:372`, `src/omniparse/service/_service_video.py:385`) and the job is marked failed (`src/omniparse/service/_service_video.py:258`). Keyframe images are saved only inside that description step (`src/omniparse/service/_service_video.py:484`), so a job stopped by either check returns no frames.\n\nA job also needs:\n\n- ffmpeg and ffprobe in the container (`src/omniparse/service/_service_video.py:109`).\n- Transcription enabled. `TRANSCRIPTION_MODEL_ENABLE` defaults to `true` (`src/omniparse/settings.py:166`) and is checked at submit time (`src/omniparse/service/_service_video.py:103`).\n- A transcription endpoint that is configured, passed with the request or found by auto-discovery (`src/omniparse/service/_service_transcription.py:273`). The job resolves it even for a video with no audio track (`src/omniparse/service/_service_video.py:275`).\n\nDefaults are I-frame sampling (`src/omniparse/settings.py:214`), a 5-second step in interval mode (`src/omniparse/settings.py:217`), at most 120 keyframes (`src/omniparse/settings.py:220`), the simple prompt style (`src/omniparse/settings.py:227`), a 500 MB upload cap (`src/omniparse/settings.py:205`) and an allowlist of MP4, QuickTime, Matroska, WebM, AVI and MPEG types (`src/omniparse/settings.py:210`). Job status is kept for one hour by default (`src/omniparse/settings.py:230`). The keyframe sampling modes are exactly `iframes` and `interval` (`src/omniparse/schemas.py:509`).\n\nA configured vision model that fails is different: if the call fails on a frame, including because the model cannot be reached, that frame is still saved with an error object as its description, and the job completes (`src/omniparse/service/_service_video.py:481`, `src/omniparse/service/_service_video.py:543`). A failed transcription call is not: transcription runs before any keyframe is described (`src/omniparse/service/_service_video.py:232`), and when it fails, after any retries, the job is marked failed with no keyframe saved (`src/omniparse/service/_service_video.py:258`). A description is whatever the configured model returns for a short prompt about people, objects, actions and on-screen text (`src/omniparse/service/_service_video.py:84`), or for a JSON prompt in structured mode (`src/omniparse/service/_service_video.py:76`). This path does no face or identity matching. When a request overrides the vision endpoint with an untrusted host and supplies no key, the operator's vision key is not sent (`src/omniparse/adapters/transcription_adapter.py:435`).\n\nThe routes require Kamiwaza authentication by default. `KAMIWAZA_USE_AUTH` defaults to `true` (`src/omniparse/settings.py:280`) and the route dependency checks it (`src/omniparse/facades/rest/app.py:128`). A `GET /v1/video/analysis/status` route is registered after `GET /v1/video/analysis/{doc_id}` (`src/omniparse/facades/rest/app.py:1074`, `src/omniparse/facades/rest/app.py:1000`). With first-match routing the status path would go to the analysis lookup, so it is not listed as an operation. That is inferred from route order and was not run. An MCP tool for the same job exists (`src/omniparse/facades/mcp/server.py:949`), but the default mode serves REST only (`src/omniparse/main.py:155`).\n\nThe Core context ingestion worker also sends video files to this endpoint (`kamiwaza/services/context/pipeline/jobs/worker.py:238`, `kamiwaza/services/context/adapters/omniparse.py:1127`) and turns each described keyframe into a text chunk (`kamiwaza/services/context/pipeline/jobs/worker.py:393`). It fails the file when no vision model (`kamiwaza/services/context/pipeline/jobs/worker.py:251`) or transcription model (`kamiwaza/services/context/pipeline/jobs/worker.py:258`) is configured or auto-linked. The existing `ingestion.multimedia-extraction` document says no frame-level video analysis is claimed; this document claims it.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. The keyframe-mode enum is a closed declaration. The route table is open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "6263bab37e99f54daf5adccc53615350aa8f3e225e7ab0d74f9d01e5523a505d",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-omniparse",
+                "path": "src/omniparse/facades/rest/app.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "ac1b245dcdba7fd48510c7e5ea185b6b6789f730"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-omniparse",
+                "path": "src/omniparse/schemas.py",
+                "symbol": "VideoKeyframeMode",
+                "kind": "enum",
+                "closed": true,
+                "read_at": "ac1b245dcdba7fd48510c7e5ea185b6b6789f730"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.admin-settings-console",
+          "title": "Admin settings console",
+          "distribution": "public",
+          "summary": "- list\n- update\n- reset\n- effective-config\n- diff",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Admin-only; CONFIG_STORE_ENABLED is true in kamiwaza.json:172 and docker-compose.yml:266 but false in bare Python Settings default. Apply modes vary; not every setting hot-applies.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "9521b128fc26f7a700589dbc770725a56edc534e24d320e698c441ca6312fb26",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/ops_settings.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.agent-auto-routing",
+          "title": "Automatic specialist help in chat, with member pin and exclude policy",
+          "distribution": "public",
+          "summary": "- read my routing policy (Auto or a pinned agent, excluded agents, specialist help)\n- set my routing policy\n- read and set which agents each agent may call as sub-agents\n- give a chat turn on Default, or on a pinned agent, a one-turn grant to consult one specialist the server picks",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default. `AGENT_ROUTING_ENABLED` defaults to `True` (`src/kaizen/config.py:1164`), even though the comment above it (`src/kaizen/config.py:1161`) and the mount comment (`src/kaizen/member/app.py:272`) still say it is disabled by default. The code default is what ships. Administrators can switch it as a live setting (`src/kaizen/admin/catalog.py:282`). When it is off, the policy and sub-agent routes return not found (`src/kaizen/member/routes/routing_policy.py:40`, `src/kaizen/member/routes/agent_subagent_selection.py:90`), and no consult grant is issued (`src/kaizen/member/chat_routing.py:79`, `src/kaizen/member/chat_routing.py:122`).\n\nRouting is server-side and rule-based in this build. A specialist is picked only when the message matches a reviewed routing tag on a routable chat agent and one agent scores highest; no match, or a tie, picks nobody (`src/kaizen/agents/routing.py:435`, `src/kaizen/agents/routing.py:447`). Candidates are capped at `AGENT_ROUTING_MAX_CANDIDATES`, default 5 (`src/kaizen/config.py:1166`). The consult path uses only this rule-based gate (`src/kaizen/member/chat_routing.py:394`). A model-based selector exists but is not wired into serving (`src/kaizen/agents/routing.py:540`), so do not claim that a model chooses the agent. Agents with web search or fetch tools are skipped unless the turn needs outside sources (`src/kaizen/agents/routing.py:416`).\n\nOn Default, or on the member's pinned agent when the policy allows specialist help (`src/kaizen/member/chat_routing.py:550`), a turn can get a one-turn grant to consult one specialist, and the serving agent keeps the answer (`src/kaizen/member/chat_routing.py:473`). The grant is issued only when the specialist adds a capability the serving agent lacks (`src/kaizen/member/chat_routing.py:380`). The specialist comes from the member's sub-agent choices for that agent plus any delegation links in the agent's reviewed definition, such as Default to the Web Researcher (`src/kaizen/member/chat_routing.py:308`, `src/kaizen/member/chat_routing.py:313`). The member's own sub-agent choices start empty (`src/kaizen/agents/routing.py:742`). A durable conversation keeps its selected agent and can only receive the one-turn grant (`src/kaizen/member/chat_routing.py:98`).\n\nExclusions narrow only the pinned path, which skips excluded agents (`src/kaizen/member/chat_routing.py:514`). A consult on Default ignores them: its pool is the sub-agent choices and reviewed delegation links (`src/kaizen/member/chat_routing.py:417`), and nothing on that path reads the exclusion list.\n\nThe policy belongs to the signed-in member; a request cannot name another owner (`src/kaizen/member/schemas.py:1911`). A pinned agent must be a chat agent the member can currently select, or the update is rejected (`src/kaizen/agents/routing.py:711`). Unknown excluded ids are dropped without an error (`src/kaizen/agents/routing.py:697`).\n\nIn the web app, the Agents screen's Use action saves the choice as a pin, or as Auto when the Default agent is chosen (`web/kaizen/src/lib/agentLaunch.ts:28`, `web/kaizen/src/lib/agents.ts:117`). The chat composer's Assist checkbox adds or removes an exclusion (`web/kaizen/src/lib/useComposerMenu.ts:411`). In Auto mode the web app sends the Default agent's id with each turn (`web/kaizen/src/lib/useComposerMenu.ts:95`), so an Auto turn in the web app runs on Default and can get at most the one-turn consult, and the Assist checkbox does not change which specialist Default may consult. A turn gets at most one specialist; planned multi-agent delegation is covered by `kaizen.multi-agent-orchestration`.\n\nNot declared: the `auto` hand-off. The code can also hand a turn sent with agent `auto` to one specialist, which then owns the visible turn (`src/kaizen/agents/routing.py:5`), chosen from the member's selectable chat agents minus their exclusions (`src/kaizen/member/chat_routing.py:254`, `src/kaizen/agents/routing.py:237`). Nothing a member uses reaches it. The branch (`src/kaizen/member/chat_routing.py:70`) hands off only on the direct chat stream (`src/kaizen/member/member_chat_stream.py:56`), whose only caller outside tests is the inbound A2A runner (`src/kaizen/member/a2a.py:561`); a durable conversation keeps its selected agent (`src/kaizen/member/chat_routing.py:98`). Inbound A2A is off by default (`src/kaizen/config.py:1222`, `kamiwaza.json:146`). When it is on, a mapping made through the admin setup must resolve to a shared local chat agent (`src/kaizen/member/a2a_setup.py:343`), and every inbound call resolves the mapped id again as a selectable chat agent, answering 404 otherwise (`src/kaizen/member/routes/a2a.py:350`, `src/kaizen/member/routes/a2a.py:358`). A mapping can reach the branch only if `auto` resolves as an agent id; this batch did not establish whether any can.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "9516d83bc95fea0aa05d3e671dc6e4d303f4704b63e59b3c513c59fbd25e064f",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/routing_policy.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/chat_routing.py",
+                "symbol": "resolve_direct_chat_route",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/agent_subagent_selection.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.agent-publication-approval",
+          "title": "Admin approval for member-proposed agents and packages",
+          "distribution": "public",
+          "summary": "- draft an agent proposal (a new agent, or a change to an agent you own) or a package proposal\n- list, view, edit and delete your own drafts\n- test a draft chat agent in a private sandbox chat\n- submit a draft for approval\n- (administrator) view the approval queue\n- (administrator) approve a proposal, which makes it live\n- (administrator) reject a proposal\n- (administrator) disable or enable an agent\n- (administrator) view an agent's version history and diffs, and roll it back",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default. `AGENT_STUDIO_ENABLED` defaults to `True` (`src/kaizen/config.py:2003`). The member proposal routes and the administrator routes both sit behind it and return not found when it is off (`src/kaizen/member/app.py:316`). Administrators can switch it as a live setting (`src/kaizen/admin/catalog.py:281`).\n\nReview is API only. The web source contains administrator review and proposal panels (`web/kaizen/src/screens/agents/ManagePanel.tsx:401`, `web/kaizen/src/screens/agents/ProposalsPanel.tsx:130`), but no mounted screen renders them, and the old `/proposals` and `/review` paths redirect to the Agents hub (`web/kaizen/src/routes.tsx:113`, `web/kaizen/src/routes.tsx:114`). Members can also draft and submit in chat: the Agent Builder and Package Creator agents are instructed to use the `draft_agent`, `draft_package` and `submit_agent_proposal` tools (`src/kaizen/agents/seed.py:263`, `src/kaizen/agents/seed.py:352`, `src/kaizen/agents/seed.py:273`), and a matching `submit_package_proposal` tool exists (`src/kaizen/agents/studio/submit_tools.py:191`).\n\nNot every agent needs approval. A member can create a private agent directly, and it is live at once with no approval (`src/kaizen/member/routes/agents.py:94`). This capability is the separate proposal lane that an administrator reviews.\n\nOnly the current workroom's Kaizen administrator can review (`src/kaizen/member/authz.py:169`). Approval is the only route that makes a proposed agent or package active: a proposal becomes approved only in the two approve mutations (`src/kaizen/agents/studio/lifecycle_agent_mutations.py:342`, `src/kaizen/agents/studio/lifecycle_package_mutations.py:215`), which only the admin approve routes call (`src/kaizen/member/routes/ops_agents.py:234`, `src/kaizen/member/routes/ops_agents.py:256`). The member proposal routes are list, create, read, update, submit, delete and sandbox, with no review action (`src/kaizen/member/routes/studio.py:205`, `src/kaizen/member/routes/studio.py:352`). Members see and change only their own proposals (`src/kaizen/member/routes/studio.py:209`, `src/kaizen/agents/studio/proposals.py:317`). A proposal that changes an existing agent requires the member to own that agent or be an administrator (`src/kaizen/member/routes/studio.py:231`). Submit re-validates the content and moves a draft or rejected proposal to pending approval (`src/kaizen/agents/studio/proposals.py:495`). The sandbox test is owner-only, read-only and not saved to chat history (`src/kaizen/member/routes/studio.py:360`); search presets cannot be tested there (`src/kaizen/member/routes/studio.py:376`).\n\n`kaizen.custom-agents` lists publication approval as unestablished because its sources did not include the Kaizen extension. This document declares it from the Kaizen 0.6.0 source.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "b3ca990e1102afbbe1376d1af1fba291bf8f3571865d73a96831e1101344be50",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/studio.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/ops_agents.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.answer-feedback",
+          "title": "Rate chat answers with thumbs up or down",
+          "distribution": "public",
+          "summary": "- rate a chat answer up or down",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default. `MEMBER_CHAT_FEEDBACK_ENABLED` defaults to `True` (`src/kaizen/config.py:1856`). When it is off, the route returns not found (`src/kaizen/member/routes/feedback.py:74`). Administrators can switch it as a live setting (`src/kaizen/admin/catalog.py:238`).\n\nIn the web app, each answer that has a turn id shows thumbs-up and thumbs-down buttons (`web/kaizen/src/screens/chat/messages.tsx:735`), and a click sends the vote (`web/kaizen/src/screens/chat/messages.tsx:95`). The API takes the answer's turn id, a vote of `up` or `down`, and an optional conversation id (`src/kaizen/member/schemas.py:1424`).\n\nThe vote is a signal only. It is stored as a `member.chat.feedback` audit event (`src/kaizen/member/routes/feedback.py:46`), not in the source-feedback store that the auto-retire sweep reads (`src/kaizen/member/routes/feedback.py:4`). The feedback-driven curation jobs also ship off: auto-retire (`src/kaizen/config.py:510`), question clustering (`src/kaizen/config.py:527`) and auto-publish (`src/kaizen/config.py:564`). Do not claim that votes change answers, retire sources or train a model. Administrator metrics and usage summaries count votes and down-votes (`src/kaizen/observability/ops_metrics_sources.py:145`, `src/kaizen/observability/ops_usage_sources.py:266`).\n\nRecording is best effort. If the write fails, the vote is dropped, a warning is logged, and the request still succeeds (`src/kaizen/member/routes/feedback.py:57`). Any signed-in member can vote. The route records the turn id it is given (`src/kaizen/member/routes/feedback.py:48`) and does not look the turn up. The only route is a `POST` that records a vote (`src/kaizen/member/routes/feedback.py:67`); there is no route to change or withdraw one.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "dd69a81a53178627c025530251d88703460d9e4ee2c230270cd353a3048ced5c",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/feedback.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.artifacts",
+          "title": "Versioned artifacts",
+          "distribution": "public",
+          "summary": "- create\n- read\n- revise\n- versions\n- fork\n- publish\n- unpublish",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Shared slug still requires member authentication. Governed structured-data artifacts cannot widen audience through rename/attach/publish. Reviewed renderers opt-in; referenced results fallback-only.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "90d52ad616131e9c963e4af0566a03a823d9a78370470e50e73d795274f25f35",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/artifacts.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.context-compression",
+          "title": "Member chat compression controls",
+          "distribution": "public",
+          "summary": "- read my compression settings and what is in effect\n- set my compression settings: a master switch plus Tool-result compression, Plain-speak and Prompt trim\n- view compression statistics for me and for a conversation I can read\n- reset my compression statistics\n- compact a conversation I own, with optional guidance, and follow its progress",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Available by default; each member opts in. `MEMBER_COMPRESSION_ENABLED` defaults to `True` (`src/kaizen/config.py:1886`), and so do the three per-control flags (`src/kaizen/config.py:1887`, `src/kaizen/config.py:1888`, `src/kaizen/config.py:1891`). A member's settings start with everything off (`src/kaizen/domain/compression.py:36`). A control takes effect only when the deployment allows it and the member has turned on both the master switch and that control (`src/kaizen/domain/compression.py:158`). When `MEMBER_COMPRESSION_ENABLED` is off, the settings and statistics routes return not found (`src/kaizen/member/app.py:498`). Administrators can switch it as a live setting (`src/kaizen/admin/catalog.py:242`).\n\nWhere the three controls take effect was traced through the Pi agent adapter (`src/kaizen/agents/adapters/pi_core.py:48`, `src/kaizen/agents/adapters/pi_run_loop.py:740`); other agent runtimes were not checked.\n\nWhat each control does:\n\n- Tool-result compression applies to code-execution output. The sandbox worker runs a pinned RTK pass over captured stdout and stderr and returns the raw output beside a compressed copy (`src/kaizen/sandbox/rpc.py:229`).\n- Plain-speak turns on the bundled third-party Caveman skill at its default intensity for visible prose (`src/kaizen/services/plain_speak_directive.py:24`). Its activation text tells the model that the skill must not change tool use, citations or approvals (`src/kaizen/services/plain_speak_directive.py:32`), and that a toggle change applies from the next turn (`src/kaizen/services/plain_speak_directive.py:30`); these are instructions to the model, not separately enforced. The skill is pinned to an upstream commit and MIT-licensed (`src/kaizen/skills/caveman/PROVENANCE.md:5`, `src/kaizen/skills/caveman/PROVENANCE.md:9`).\n- Prompt trim removes listed filler from the copy of a message sent to the model; the transcript keeps the member's own words (`src/kaizen/services/prompt_fluff_stripper.py:4`). Unusual hedging survives because the rule list is fixed (`src/kaizen/services/prompt_fluff_stripper.py:8`).\n\nNo savings figure is guaranteed. Token savings are reported as estimates (`src/kaizen/member/routes/compression.py:127`), and Plain-speak's eligible size is itself estimated (`src/kaizen/member/routes/compression.py:123`). The 65% figure in the bundled skill text is the upstream author's claim (`src/kaizen/skills/caveman/SKILL.md:4`), not a Kaizen measurement. Reset clears only the member-level statistics (`src/kaizen/member/routes/compression.py:340`). Conversation statistics appear only for conversations the member can read (`src/kaizen/member/routes/compression.py:279`).\n\nManual compaction does not depend on the compression flag. It lives on the conversation routes, which are mounted without it (`src/kaizen/member/app.py:238`), and it is owner-only: shared readers and other members get not found (`src/kaizen/member/manual_compaction.py:56`). It runs in the background and streams progress events (`src/kaizen/member/routes/conversations.py:341`).\n\nIn the web app, Settings > Compression holds the switches (`web/kaizen/src/routes.tsx:126`), and chat offers a \"Compact this chat\" command, `/compact` (`web/kaizen/src/lib/commands.ts:68`, `web/kaizen/src/lib/manualCompactionCommand.ts:1`), which starts a compaction (`web/kaizen/src/screens/chat/use-manual-compaction-command.tsx:170`).\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "f31d749fb56c0fb1e778500e5817ba44c81d5d1832b3c010745ff85d31db0c43",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/compression.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/conversations.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.conversation-event-streaming",
+          "title": "Stream Kaizen conversation events",
+          "distribution": "public",
+          "summary": "- open a conversation's event stream (`GET /api/conversations/{conversation_id}/events`, SDK `ConversationService.stream_events_canonical`)\n- replay events after a journal position (`after` query parameter; the server also accepts a `Last-Event-ID` header)\n- send a message and wait for this turn's reply over the stream (SDK `ConversationService.chat_canonical`)",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default in Kaizen 0.6.0. The event route is registered with no route flag and the member API that carries it is mounted under `/api` while `MEMBER_API_ENABLED` is true, which is its default. In the SDK these methods live on `client.conversations` and take the Kaizen instance's `base_url` and an optional workroom ID.\n\nThe caller must be a Kaizen member. Access is resolved each time a stream is opened, and a conversation the member cannot access answers `not_found`. A cursor the journal rejects answers `collaboration_conflict` (\"replay requires resync\"). If a request sends both `after` and `Last-Event-ID`, they must match.\n\n`stream_events_canonical` returns the raw streamed response. The caller parses the event frames and closes the response, and the method does not reconnect. Its socket read timeout defaults to 30 seconds. `chat_canonical` submits the message through the conversation's `/inputs` route and then reads the stream from the accepted position. It reopens the stream from the last position it saw when opening the stream raises `APIError` (`kamiwaza_sdk/services/kaizen.py:1086`) or the stream closes before the turn ends (`kamiwaza_sdk/services/kaizen.py:1150`), until its wait budget runs out (default 60 seconds). It then raises `ConversationError` if its last attempt to open the stream failed, and `TimeoutError` otherwise. An error while reading an open stream is not retried and raises `ConversationError` (`kamiwaza_sdk/services/kaizen.py:301`): at once for a broken connection, or when the socket read timeout, set to the remaining budget (`kamiwaza_sdk/services/kaizen.py:1084`), expires on a stream that has gone silent. It also raises `ConversationError` if the run ends in failure. Other errors while opening, such as `AuthenticationError`, are not `APIError` subclasses (`kamiwaza_sdk/exceptions.py:103`) and are raised at once. Passing no budget submits the message and returns without reading the stream.\n\nThis document makes no claim about how long past events stay available for replay.\n\nKaizen Legacy 2.0.4 (catalog identity `kaizen-legacy`) does not use this contract. Its events route returns paginated JSON (offset and limit), and the SDK reads it with `get_events`. The existing `kaizen.data-chat` document says the SDK has no streaming; that is out of date for the SDK at this revision and is unchanged by this batch.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. The SDK side is the 1.3.0 development-line `kamiwaza-sdk` source snapshot, not a frozen release. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "11accb8aa4223f5076ab60e74365e872496a847282499db0895604a0123bf14e",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/collaboration_runtime.py",
+                "symbol": "build_runtime_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.conversation-search",
+          "title": "Conversation and content search",
+          "distribution": "public",
+          "summary": "- query\n- filter\n- open-result",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Primary history search on; indexed history retrieval flag off by default. Legacy keyword event search is distinct from primary hybrid/unified semantics.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "c49866abdc3a4a676c1a0d22963b1e475d82f9b9c0909795b0d89b0414edcdc5",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/search.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.document-canvas-export",
+          "title": "Open documents in an editable canvas; export to Word or PDF through the API",
+          "distribution": "public",
+          "summary": "- open in canvas\n- export as md, docx or pdf\n- download export",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default in the packaged install. The whole upload surface, including the canvas and export routes, is mounted only when DOCUMENT_IMPORT_ENABLED is true (src/kaizen/member/app.py:348). The packaged install sets it to true (kamiwaza.json:130); the bare Settings default is false (src/kaizen/config.py:2047). Export and download also need DOCUMENT_EXPORT_ENABLED, which defaults to true (src/kaizen/config.py:2117, kamiwaza.json:131) and is a live flag in Kaizen Admin (src/kaizen/admin/catalog.py:332). With it off, the export routes return 404 (src/kaizen/member/routes/uploads.py:1292) while opening and editing keep working.\n\nOwner only. Every canvas and export route resolves the document for the signed-in owner and returns 404 for anyone else (src/kaizen/member/routes/uploads.py:388). Only processed, text-extractable documents open in the canvas, so images do not (src/kaizen/member/routes/uploads.py:1200). Opening again returns the existing canvas (src/kaizen/member/routes/uploads.py:1203). A save appends a new version rather than overwriting (src/kaizen/member/routes/artifacts.py:353). Export uses the latest canvas version, or the extracted text if the canvas was never opened (src/kaizen/member/routes/uploads.py:1247). Exports are stored under the document and are removed with it (src/kaizen/member/routes/uploads.py:1280).\n\nExport formats are exactly md, docx and pdf; there is no other export format. PDF layout is best-effort (src/kaizen/services/document_export.py:12). Images are embedded only from the member's own content. A remote, missing or unreadable image renders as its alt text, and export never fetches an image URL: remote and `data:` image targets are dropped before any lookup (src/kaizen/services/document_export.py:83, src/kaizen/services/export_images.py:89).\n\nUI reach. Members open the canvas from the Documents screen (web/kaizen/src/screens/Documents.tsx:578) and save edits in the artifact panel (web/kaizen/src/components/ArtifactPanel.tsx:1358). The web client defines a function for the export route (web/kaizen/src/lib/api/endpoints.ts:854), but no screen calls it at this revision. DOCX and PDF export is established as API only.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. The export-format declaration is closed (md, docx, pdf). The route declaration is open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "fd2608a9d41bdbe48d8054a1e9aab9a30305f0e4267ca1727eecd16189c1530a",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/uploads.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/services/document_export.py",
+                "symbol": "EXPORT_CONTENT_TYPES",
+                "kind": "registry",
+                "closed": true,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.document-collections",
+          "title": "Document collections / working sets",
+          "distribution": "public",
+          "summary": "- create\n- list\n- update\n- add-remove-document\n- share",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Primary collection membership never overrides document ACL. Legacy /saved-searches stores workroom file sets, not identical primary collection schema.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "b5bc262daf5c0f6960a2da81dda1825396db8fc6e11f033861aab3b86867e463",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/collections.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.member-token-budget",
+          "title": "Daily model-token budget per member",
+          "distribution": "public",
+          "summary": "- set the per-member daily cap (through the settings update route, which `kaizen.admin-settings-console` declares)\n- check a member's usage before a direct model call\n- refuse the call once the cap is reached",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default, with a cap of 10,000,000 tokens per member per day (src/kaizen/config.py:330, kamiwaza.json:135). The install manifest lists it as \"Daily model-token budget per member\" (kamiwaza.json:593). Kaizen admins can change it as a live setting in the Rate limits group of the admin Settings screen (src/kaizen/admin/catalog.py:581, web/kaizen/src/routes.tsx:157). The settings routes require a Kaizen admin (src/kaizen/member/routes/ops.py:37). A setting is editable only when the config store is on (src/kaizen/admin/service.py:193). The packaged install turns the config store on (kamiwaza.json:172); the bare Settings default is off (src/kaizen/config.py:1663).\n\nUsage is the sum of prompt and response tokens on successful calls in Kaizen's LLM audit ledger since the start of the current UTC day (src/kaizen/repositories/llm_audit.py:59). The check compares usage already recorded with the cap before the call runs (src/kaizen/llm_gateway/policy.py:92). It does not reserve the cost of the call about to run, so one call can take a member past the cap. Embedding calls made by Kaizen's system requester, which it uses for connector and uploaded-document ingestion, skip the check (src/kaizen/llm_gateway/policy.py:86).\n\nThe check runs on Kaizen's direct model gateway (src/kaizen/llm_gateway/factory.py:134, src/kaizen/llm_gateway/client.py:357) and on the model proxy used by the agent runtime, which answers an over-cap request with HTTP 429 `budget_exceeded` (src/kaizen/member/routes/pi_model_proxy.py:309). The setting's source comment says over-cap calls fail closed with `BudgetExceeded` and use the existing fallback path (src/kaizen/config.py:328); that fallback was not traced for this document. This document does not establish that every model call in Kaizen passes through these two paths.\n\nThe cap counts tokens, per member, per UTC day. It is not a currency spending cap and not a total across all members. It is separate from the platform's delegated-model caps (delegation.brokered-resource-access) and from the platform's activity records (platform.usage-and-audit).\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "defb2221cac29570c10dd79cff3d6c9d4b9af771e2e55d11e72c9d8377db4438",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/llm_gateway/policy.py",
+                "symbol": "DirectModelPolicy",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/admin/catalog.py",
+                "symbol": "CATALOG",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.metrics-dashboard",
+          "title": "Primary Kaizen administrator metrics and usage",
+          "distribution": "public",
+          "summary": "- metrics\n- usage\n- member-usage",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Primary Kaizen administrator-only, content-free metrics; member-usage disclosure is separately audited. This entry does not claim Legacy analytics tabs or cross-product feature parity.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "b5a620b5c685a85844f44b891446793234bba8579271efdbeb0767091257ac79",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/ops_metrics.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.multi-agent-orchestration",
+          "title": "Governed multi-agent delegation",
+          "distribution": "public",
+          "summary": "- plan\n- delegate\n- trace\n- resume\n- cancel",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Member-created agent rosters are disabled by default. The reviewed built-in delegation paths and per-chat choices remain constrained by member permissions and configured limits, with one level of delegation. Evaluator-optimizer behavior is disabled by default. The source review covered only part of the dispatch paths; this declaration is limited to the named operations and does not establish an exhaustive set of supported combinations or runtime success.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "45dffbc44d14d5ec9992f5e03862db02168146520fbc9120645d8d03e999b7dd",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/orchestration_supervisor.py",
+                "symbol": "OrchestrationSupervisor",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.notifications-inbox",
+          "title": "Durable notification inbox",
+          "distribution": "public",
+          "summary": "- list\n- unread-count\n- read\n- read-all",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "No email/Slack delivery claim: outbound notifier log-only default. Attendance rules suppress notifications for work watched live.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "958b7b6d44787dd1b8adbeec607a91b2475dc63399ede687706b8b0b14c15f89",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/notifications.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.platform-operator-tools",
+          "title": "Governed platform inspection and demo actions",
+          "distribution": "public",
+          "summary": "- inspect\n- preview\n- apply",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "No arbitrary SDK call, URL, credentials, delete or raw payload. Apply requires confirmation bound to environment/preview digests. Generic Core/MCP exact tools still opt-in; empty allowlist fail-closed.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "aa16e7bdeabae620e388d83a427ced9e0c9ffd4f885f82b8cb806df66d014c37",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/agents/kamiwaza_sdk_tools.py",
+                "symbol": "InspectKamiwazaTool",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/agents/kamiwaza_sdk_tools.py",
+                "symbol": "ManageKamiwazaDemoTool",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.prebuilt-agents",
+          "title": "Prebuilt specialist agents",
+          "distribution": "public",
+          "summary": "- provision the bundled agents at startup\n- list them in the Agents gallery\n- choose one for a chat turn",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default. At startup Kaizen provisions every bundle in its agent-bundle directory unless AGENT_BUNDLES_ENABLED is false (src/kaizen/agents/bundles.py:533, src/kaizen/config.py:2014). The image copies the four bundles into that directory (docker/Dockerfile:143), and the service runs the loader before it starts serving (src/kaizen/main.py:322). Loading is best-effort: a bundle that fails is logged and skipped, and startup continues (src/kaizen/agents/bundles.py:543). If an agent with the same name already exists and the bundle did not create it, the bundle leaves it alone and does not add its own (src/kaizen/agents/bundles.py:433).\n\nBundle agents are created shared and protected (src/kaizen/agents/bundles.py:482, src/kaizen/agents/bundles.py:490). A shared agent is published to all members with use access (src/kaizen/repositories/studio.py:940, src/kaizen/repositories/studio.py:1105). Members see them in the Agents gallery (web/kaizen/src/screens/Agents.tsx:590), which needs MEMBER_AGENTS_ENABLED (src/kaizen/member/routes/agents.py:611), default true (src/kaizen/config.py:1923). A chat request picks an agent by `agent_id` (src/kaizen/member/schemas.py:322). Each of the four bundles marks its agent routable (for example agent_bundles/web-researcher/bundle.yaml:27), so the agents can also be candidates for automatic routing; that routing is a separate capability.\n\nThe roster is the set of bundle directories, not a Python list, so the declaration is open. At this revision the directories are Web Researcher (agent_bundles/web-researcher/bundle.yaml:20), Software Engineer (agent_bundles/software-engineer/bundle.yaml:13), Ontology Builder (agent_bundles/ontology-builder/bundle.yaml:9) and Demo Builder (agent_bundles/demo-builder/bundle.yaml:8).\n\n- Web Researcher searches and reads the public web through its pi-web-access package (agent_bundles/web-researcher/bundle.yaml:10). Inferred from that description, not tested: it needs outbound internet access to be useful.\n- Ontology Builder produces a Kaizen graph artifact and is told not to create or query a Graphiti instance (agent_bundles/ontology-builder/bundle.yaml:32). It is not persistent graph memory.\n- Demo Builder is described as a staff workflow for Kamiwaza and Kaizen demos (agent_bundles/demo-builder/bundle.yaml:20). Its package README says it reconciles live demo resources through Kaizen's `inspect_kamiwaza` and `manage_kamiwaza_demo` tools (agent_bundles/demo-builder/packages/@kaizen__demo-builder@1.0.0/README.md:13).\n\nShipping an agent does not establish that its model output is correct or useful.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "0add8f65d3370f432cfb42adb614e36339215f229ce795ac6fa92dc8483f75ec",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/agents/bundles.py",
+                "symbol": "load_bundles",
+                "kind": "catalog",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/agents.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.privacy-guard",
+          "title": "Warn about or redact sensitive text before a chat message is sent",
+          "distribution": "public",
+          "summary": "- set a conversation's Privacy Guard mode: off, warn or redact\n- set an agent's default mode in the agent wizard\n- read a conversation's effective mode\n- scan message text before send\n- warn: review the findings, then send redacted, send as typed or keep editing\n- redact: replace each finding with `<REDACTED>` and send",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "This is Kaizen Legacy 2.0.4 (`kamiwaza-extensions-kaizen`), not the primary Kaizen 0.6.0. In Kaizen 0.6.0 the LLM gateway states that Kaizen does not apply a redaction policy to model input (`src/kaizen/llm_gateway/policy.py:104` in `kamiwaza-extensions-tomo`).\n\nPrivacy Guard is off by default. When neither the conversation nor its agent sets a valid mode, the effective mode is `off` (`backend/app/api/v1/conversations.py:2166`). A conversation override wins. Otherwise the agent's `agent_context.privacy_filter` mode applies (`backend/app/api/v1/conversations.py:2157`), which the agent wizard writes when the chosen mode is not off (`frontend/app/components/agent-creation-wizard.tsx:608`). The backend accepts only `off`, `warn` and `redact` (`backend/app/api/v1/conversations.py:1989`, `backend/app/api/v1/conversations.py:2020`). While a conversation's settings are loading, or if they fail to load, the chat page uses warn mode (`frontend/app/conversations/[id]/page.tsx:486`, `frontend/app/conversations/[id]/page.tsx:488`).\n\nThe check runs in the browser, in the message box's send handler (`frontend/app/components/chat/message-input.tsx:106`). The settings panel calls it a light browser-side review (`frontend/app/components/chat/conversation-settings-panel.tsx:525`). The backend stores and returns the mode, and a search of the backend Python at this revision found no code that applies it to message text. So a client that calls the message API directly is not checked; that is inferred from where the check lives, not run.\n\nDetection is a fixed list of regular expressions (`frontend/lib/privacy-guard.ts:29`): email addresses, US-style phone numbers, SSNs written as `123-45-6789`, IPv4 addresses, `sk-` keys and several key, token, secret and password patterns (`frontend/lib/privacy-guard.ts:49`). It is not data-loss prevention and will miss identifiers outside those patterns. Only the typed text is scanned; attached images are sent unchanged (`frontend/app/components/chat/message-input.tsx:115`). In warn mode the user can still send the original text (`frontend/app/components/chat/message-input.tsx:370`).\n\nThe settings routes are `GET` and `PATCH /api/conversations/{conversation_id}/settings` (`backend/app/main.py:210`, `backend/app/api/v1/conversations.py:1918`, `backend/app/api/v1/conversations.py:2735`). Changing a conversation's mode requires ownership of the conversation (`backend/app/api/v1/conversations.py:2806`) and, in a shared workroom, a write-capable role: owner, editor, contributor or member (`backend/app/utils/workroom_access.py:34`, checked at `backend/app/api/v1/conversations.py:2787`).\n\nKaizen Legacy 2.0.4 source (kamiwaza-extensions-kaizen); not the primary Kaizen 0.6.0 and not an assertion that a deployed image contains this snapshot. The privacy-mode registry is a closed declaration. The route table is open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "f1f3ef395c77b41c22b8c134a6aefb74b932061a9593f2221c021f17dc07165f",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-kaizen",
+                "path": "backend/app/api/v1/conversations.py",
+                "symbol": "_VALID_PRIVACY_FILTER_MODES",
+                "kind": "registry",
+                "closed": true,
+                "read_at": "f0fe4dcd095295e87d39f9fb900a8af2492a5f9c"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-kaizen",
+                "path": "backend/app/api/v1/conversations.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f0fe4dcd095295e87d39f9fb900a8af2492a5f9c"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Kaizen Legacy 2.0.4 source (kamiwaza-extensions-kaizen); not the primary Kaizen 0.6.0 and not an assertion that a deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.projects",
+          "title": "Shared project workspaces",
+          "distribution": "public",
+          "summary": "- create\n- list\n- update\n- archive\n- invite\n- link-library-item",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "PROJECT_WORKSPACES_ENABLED and shared collaboration gates; linking is not copying and does not confer wider authority.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "223f40d5998c7e1b68229a6be633786f97dc560c2aff0986e1e328207e8b4109",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/projects.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/project_collaboration.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.prompt-library-and-chains",
+          "title": "Prompt library and multi-step workflows",
+          "distribution": "public",
+          "summary": "- create\n- edit\n- version\n- validate\n- debug\n- run",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "MEMBER_PROMPTS_ENABLED and MEMBER_PROMPT_CHAINS_ENABLED. Resource/tool permission checks remain; scheduling belongs to Tasks and readiness gates.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "3bf041ce6ac33ef21ba262dd7f8ea398a81576ae742affcf3e8482fadd923030",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/prompt_chains.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/prompts.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/prompt_chain_supervisor.py",
+                "symbol": "PromptChainSupervisor",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.recipes",
+          "title": "Save tool calls as recipes that agents can look up",
+          "distribution": "public",
+          "summary": "- save a tool call from search results as a recipe\n- list recipes\n- view a recipe's arguments and result\n- rename a recipe or edit its notes\n- delete a recipe\n- look up recipes from an agent by tool name or keyword",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "This is Kaizen Legacy 2.0.4 (`kamiwaza-extensions-kaizen`), not the primary Kaizen 0.6.0.\n\nRecipes are on by default, with no feature flag. The recipe routes are mounted under `/api/recipes` (`backend/app/main.py:231`, `backend/app/api/v1/recipes.py:34`). The lookup tool is added to every OpenHands agent when a conversation is created (`backend/app/services/conversation_manager.py:1434`) and when it resumes (`backend/app/services/conversation_manager.py:2892`), and a per-conversation tool selection keeps it (`backend/app/services/conversation_manager.py:1148`). In the UI, recipes live on the Search page (`frontend/app/components/navigation.tsx:21`). A tool-call result has a Save as Recipe button (`frontend/app/search/page.tsx:641`), only tool-call events can be saved (`frontend/app/search/page.tsx:184`), and the Recipes tab lists what was saved (`frontend/app/search/page.tsx:712`).\n\nSaving replaces sensitive values with `[REDACTED]` (`backend/app/utils/recipe_payload.py:9`). That covers values under keys such as password, secret, token, API key, authorization, cookie and private key (`backend/app/utils/recipe_payload.py:13`), and strings that look like bearer tokens, `sk-` or `rk-` keys, AWS access keys or JWTs (`backend/app/utils/recipe_payload.py:24`). The arguments and the result are each capped at 128 KB (`backend/app/utils/recipe_payload.py:10`), and a larger payload gets HTTP 413 (`backend/app/api/v1/recipes.py:54`). After saving, only the name and notes can change (`backend/app/api/v1/recipes.py:154`, `backend/app/schemas/recipe.py:18`).\n\nVisibility follows the workroom. In a shared workroom every member sees the workroom's recipes; in the Global workroom each user sees only their own (`backend/app/utils/resource_scope.py:41`, `backend/app/utils/resource_scope.py:42`). Rename and delete use the same filter, so in a shared workroom any member with a write-capable role (owner, editor, contributor or member) can change or remove another member's recipe (`backend/app/api/v1/recipes.py:188`, `backend/app/utils/workroom_access.py:34`).\n\nThe agent lookup needs a tool name or a keyword (`backend/app/api/v1/agent_context.py:1441`). The keyword matches recipe names, notes and arguments (`backend/app/api/v1/agent_context.py:1469`). It searches within the conversation's user and workroom (`backend/app/api/v1/agent_context.py:1457`) and returns at most the 20 newest matches (`backend/app/api/v1/agent_context.py:1473`). The text the agent reads cuts arguments and results at 500 characters each (`backend/agent_tools/recipe_lookup/schemas.py:63`). A recipe returns the stored arguments and result as saved (`backend/app/api/v1/agent_context.py:1483`, `backend/app/api/v1/agent_context.py:1484`). Nothing re-runs or checks them, so a recipe does not show that the call still works.\n\nKaizen Legacy 2.0.4 source (kamiwaza-extensions-kaizen); not the primary Kaizen 0.6.0 and not an assertion that a deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "01d7e7a4e50b84fd5cae62bd8cd5a608bbc885a58676c44900ae6894ee613850",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-kaizen",
+                "path": "backend/app/api/v1/recipes.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f0fe4dcd095295e87d39f9fb900a8af2492a5f9c"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-kaizen",
+                "path": "backend/app/api/v1/agent_context.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f0fe4dcd095295e87d39f9fb900a8af2492a5f9c"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Kaizen Legacy 2.0.4 source (kamiwaza-extensions-kaizen); not the primary Kaizen 0.6.0 and not an assertion that a deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.scheduled-tasks",
+          "title": "Scheduled and background agent tasks",
+          "distribution": "public",
+          "summary": "- preview\n- create\n- activate\n- run\n- history\n- pause\n- delete",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Setting `TASKS_ENABLED=true` is not sufficient. Scheduling also requires server-owned delegated-workload readiness across all 20 v1 families, attestation and resource/model checks, a current readiness report, and rollout approval. When the platform is unavailable, the scheduler holds work rather than executing it. This declaration does not assert that scheduling is available on the current live instance.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "903c3592eebbb84a2f0bff2ae7ef528dbdffdcb276c8a09b1751686b78edfe5a",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/tasks.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/tasks/service.py",
+                "symbol": "TaskService",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.shared-chat-typing-indicators",
+          "title": "Typing indicators in shared chats",
+          "distribution": "public",
+          "summary": "- join chat presence by opening the live event stream\n- set or clear typing\n- leave chat presence",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default wherever a chat has been shared. The event, typing and presence routes are mounted without a flag of their own (src/kaizen/member/app.py:240). Other members reach a chat through shared-chat invitations (src/kaizen/member/routes/collaboration.py:176) or through project access. The invitation routes are request-gated by SHARED_CHAT_COLLABORATION_ENABLED (src/kaizen/member/app.py:487), and project access also requires that flag (src/kaizen/services/project_workspace_features.py:14). It defaults to true (src/kaizen/config.py:1770).\n\nSetting typing needs write access to the conversation (src/kaizen/member/conversation_live.py:293). Opening the event stream opens a presence lease, keyed to the tab's connection id when the client sends one (src/kaizen/member/routes/collaboration_runtime.py:226, src/kaizen/member/conversation_live.py:422). Leaving removes only that tab's lease (src/kaizen/member/conversation_live.py:508). A member never sees their own typing, and only members with a live presence lease are shown as typing (src/kaizen/member/conversation_presence.py:67, src/kaizen/member/conversation_presence.py:69). The web client sends typing only in a collaborative room (web/kaizen/src/screens/Chat.tsx:982) and shows \"... is typing\" in the chat (web/kaizen/src/screens/chat/participant-strip.tsx:150, web/kaizen/src/screens/Chat.tsx:2502).\n\nState is ephemeral and kept in Valkey (src/kaizen/member/conversation_presence.py:1, src/kaizen/config.py:1845). Leases are short-lived: the presence TTL is at most 30 seconds (src/kaizen/config.py:1834) and the typing TTL at most 10 seconds (src/kaizen/member/conversation_live.py:193). If the store is unavailable, presence reports itself unavailable with no typing members (src/kaizen/member/conversation_live.py:608), and the indicator is hidden (web/kaizen/src/screens/chat/participant-strip.tsx:157).\n\nThis is Kaizen's own chat-scoped presence. It is not platform workroom presence (workrooms.presence), which lists teammate typing indicators as not supported.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "1dc82283d5a829b1c34a77aa83a02569b2ceb63574488313fe2987c413f93489",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/collaboration_runtime.py",
+                "symbol": "build_runtime_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.workroom-notes",
+          "title": "Workroom notes and in-pane text editing",
+          "distribution": "public",
+          "summary": "- create a note from the workroom Files panel\n- create a note from the chat agent\n- list workroom files and notes\n- open a file's details and download link\n- edit a text file's content\n- rename a note and edit its content\n- delete a file",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "This is Kaizen Legacy 2.0.4 (`kamiwaza-extensions-kaizen`), not the primary Kaizen 0.6.0.\n\nThe backend side is on by default. The `create_note` tool is added to every OpenHands agent when a conversation is created (`backend/app/services/conversation_manager.py:1451`) and when it resumes (`backend/app/services/conversation_manager.py:2909`). The file routes are mounted under `/api/v1/context/storage/raw` (`backend/app/main.py:227`, `backend/app/context/api.py:183`).\n\nThe in-pane editor and the New note button sit behind the frontend flag `NEXT_PUBLIC_FLAG_METADATA_EXPLORER`. The flag reads as off when unset (`frontend/lib/feature-flags.ts:18`). The frontend image build defaults it to `true` (`frontend/Dockerfile:62`), and the App Garden manifest sets it to `\"true\"` (`kamiwaza.json:44`) even though the manifest's own description calls it default-off (`kamiwaza.json:203`). With the flag off, the conversation page shows the older files panel (`frontend/app/components/workroom-panels/workroom-shell-slot.tsx:313`). That panel has no editor, so New note does not appear (`frontend/app/components/chat/workroom-files-panel.tsx:64`).\n\nNotes are Markdown files under `kaizen-notes/` ending in `.md` (`backend/app/context/api.py:4419`, `backend/app/context/api.py:4420`). The agent route builds the file name from a slug of the title (`backend/app/api/v1/agent_context.py:2031`). Creating a note whose file name already exists is rejected (`backend/app/api/v1/agent_context.py:2167`, `backend/app/context/api.py:4503`). Only notes can be renamed (`backend/app/context/api.py:4438`).\n\nEditing is limited to text types. The default allowlist is `text/*`, JSON, YAML and TOML (`backend/app/core/config.py:167`), and other types stored in Kaizen's local store get HTTP 415 (`backend/app/context/api.py:4618`); edits to platform files are forwarded without that check (`backend/app/context/api.py:4644`), and the platform's Context Service applies its own allowlist, by default only Markdown and plain text (`kamiwaza/services/context/config.py:168`, `kamiwaza/services/context/services/object_storage_service.py:913`). A content edit is capped at 65,535 bytes of UTF-8 (`backend/app/context/schemas.py:1214`, `backend/app/context/schemas.py:1245`) and must not be blank (`backend/app/context/schemas.py:1253`). An agent note body is capped at 87,380 base64 characters, about 64 KB (`backend/app/api/v1/agent_context.py:2001`).\n\nWrites need a write-capable workroom role: owner, editor, contributor or member (`backend/app/utils/workroom_access.py:34`, checked at `backend/app/context/api.py:4602` and `backend/app/context/api.py:4669`). The UI hides New note and the edit controls from other roles (`frontend/lib/file-editor/role-gate.ts:16`). In the Global workroom, Kaizen keeps each user's files in a separate folder (`backend/app/services/workroom_raw_store.py:79`).\n\nKaizen stores notes and inline files on its own volume, `/app/storage/workroom_raw_files` by default (`backend/app/services/workroom_raw_store.py:35`). The file list merges these local files with the platform's (`backend/app/context/api.py:4571`). An edit to a file that is not in the local store is forwarded to the platform Context Service (`backend/app/context/api.py:4644`), which applies its own rules. That forwarding is a proxy, not a second storage engine. In the Global workroom such an edit returns 404 (`backend/app/context/api.py:4639`).\n\nKaizen Legacy 2.0.4 source (kamiwaza-extensions-kaizen); not the primary Kaizen 0.6.0 and not an assertion that a deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "84c065f6b1dcdd93847db1738029c9d5ce67e23d48abe67275c2f9090dac2d49",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-kaizen",
+                "path": "backend/app/context/api.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f0fe4dcd095295e87d39f9fb900a8af2492a5f9c"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-kaizen",
+                "path": "backend/app/api/v1/agent_context.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "f0fe4dcd095295e87d39f9fb900a8af2492a5f9c"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Kaizen Legacy 2.0.4 source (kamiwaza-extensions-kaizen); not the primary Kaizen 0.6.0 and not an assertion that a deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "models.two-node-serving",
+          "title": "Serve models on an SSH-paired second GPU node",
+          "distribution": "public",
+          "summary": "- attach a paired node (`POST /cluster/attach_pairing`)\n- detach the paired node (`POST /cluster/detach_pairing`)\n- start model containers on the paired node (vLLM two-node Ray worker, llama.cpp)\n- sync downloaded model files to the paired node\n- report the paired node and its GPU inventory in cluster capabilities",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Off until an administrator attaches a node. There is no separate feature flag: the settings are disabled when no remote host is stored (`kamiwaza/serving/two_node.py:190`), and the dataclass default is `enabled: bool = False` (`kamiwaza/serving/two_node.py:96`). The attach and detach routes are on the cluster router, which every install mounts (`kamiwaza/app.py:738`). Both routes require the admin role (`kamiwaza/cluster/api.py:64`). Setting `KAMIWAZA_PAIRED_NODE` in the API environment also attaches a node, after the same SSH check, when the settings first load (`kamiwaza/serving/two_node.py:156`).\n\nAttach checks that the node answers over SSH before it saves anything (`kamiwaza/serving/two_node.py:223`). Only one paired node is supported; a second attach is refused (`kamiwaza/cluster/nodes.py:438`). SSH host-key checking is off unless the caller sets `strict_host_key_checking` (`kamiwaza/cluster/schemas/cluster.py:661`). vLLM starts a container on the paired node only when the launch targets it. `auto` stays local (`kamiwaza/serving/engines/VLLMEngine.py:3780`), and the two-node Ray launch puts the worker there by default (`kamiwaza/serving/two_node_launcher.py:372`). llama.cpp starts every container on the paired node while one is attached (`kamiwaza/serving/engines/LlamaCppEngine.py:1744`).\n\nThe path is Docker over SSH in the vLLM and llama.cpp engines. The Kubernetes engine adapters do not call the two-node runner at this revision, so support on a Kubernetes install is not established. The two-node guide was retired, and `platform.kubernetes-install` lists a published two-node topology as not supported. This document records only that the source ships the admin API and the serving path. It is not evidence of other multi-node layouts or of every GPU vendor.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "815271df75a30e2103da86803ef5b91385a9a7f9622bb33519b6649637c36d6c",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/cluster/api.py",
+                "symbol": "cluster_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.access-requests",
+          "title": "Request resource access and record grantor approval/denial",
+          "distribution": "public",
+          "summary": "- request\n- resolve approved/denied\n- notify grantors/requester",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Authenticated tenant, current resource grantor only; requests rate-limited and deduplicated. IMPORTANT: inspected resolve implementation updates decision/operation/notifications but does not write access grants. Do not claim automatic permission provisioning. API support; shipped UI not established.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "828519c05e82a6cbd866d32f752afd608b7134aba3c42e2209269dce68f455f2",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/console/api.py",
+                "symbol": "console_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.api-reference",
+          "title": "Serve machine-readable OpenAPI and offline interactive reference",
+          "distribution": "public",
+          "summary": "- OpenAPI schema\n- Swagger UI\n- ReDoc\n- auth annotations",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Same-origin vendored JS/CSS and no Google fonts. Schema auth annotations describe route policies, not runtime proof; route visibility/auth boundaries remain deployment-dependent. Does not imply SDK method coverage matches all API routes.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "77b7601c154f590db341f482ade0a3c0183abaa056aa9fc2eed34989355978c0",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/app.py",
+                "symbol": "create_app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.licensing-and-eula",
+          "title": "Validate signed license files and surface commercial-term status",
+          "distribution": "public",
+          "summary": "- startup signature/file validation\n- runtime health enforcement\n- license status headers/banner",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Signed-file validity/freshness enforcement is distinct from commercial-term expiry warnings. EULA acceptance chart guard corroborated. Offline signature validation does not establish a license-server dependency.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "3da3fb767f9e251419e00b7798c62a886c7d3b715b9474e36b9e0ea382d04acc",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/licenses/gate.py",
+                "symbol": "enforce_startup_license_gate",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/licenses/runtime_enforcement.py",
+                "symbol": "require_runtime_license_healthy",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.news-feed",
+          "title": "Display configured vendor news with offline fallback",
+          "distribution": "public",
+          "summary": "- quadrant feed\n- legacy latest feed",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "KAMIWAZA_NEWS_JSON_URL unset/blank causes static fallback without network request. Configured remote feed cached and falls back on failure. Core code does not itself establish Deploy chart's URL default; defer that claim to chart review. Buyer significance low but real surface.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "e75f6ea930c4bde5388c7a428efac95aa9f724691fa31868b27d2964ab634917",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/news/api.py",
+                "symbol": "news_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.operations-and-notifications",
+          "title": "Read persistent per-user operations and notification feeds",
+          "distribution": "public",
+          "summary": "- tray\n- list/get operations\n- list/get notifications\n- mark seen\n- dismiss",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Authenticated identity/recipient-scoped. API exists and mounted; ui-v2 source is not proof that UI is shipped. No outbound delivery claim. Existing platform.usage-and-audit is related but not same per-user operation lifecycle.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "d82a4efed4c25630c187184cd30d8b3c018e17af583188fbcba79a3d03eac6eb",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/console/operation_api.py",
+                "symbol": "operation_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "workrooms.org-decommission",
+          "title": "Retire every workroom in an organization under a confirmed plan",
+          "distribution": "public",
+          "summary": "- list the organization's room inventory\n- create a decommission plan (strategy, cutoff, retention contact)\n- confirm a plan with the organization name\n- delete the planned rooms at the cutoff (background task)\n- read a room's tombstone\n- read and update organization room settings (organization name, room creation policy)",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Administrator API, with one exception: reading a room's tombstone is open to any signed-in member of the tenant. The routes are on `room_control_router`, which the console router includes (`kamiwaza/services/console/api.py:46`) and every install mounts (`kamiwaza/app.py:841`). Every route except the tombstone read requires the admin role (`kamiwaza/services/console/room_api.py:23`). No decommission happens until an administrator creates a plan: an organization with no settings row reports `decommission_state` `none` and `creation_policy` `anyone` (`kamiwaza/services/console/room_controls.py:376`). Plans are scoped to the caller's tenant. The room creation policy in the settings is `anyone`, `admins` or `off` (`kamiwaza/services/console/room_schemas.py:14`): `admins` limits room creation to administrators, and `off` refuses it to everyone (`kamiwaza/services/console/room_policy.py:10`, `kamiwaza/services/console/room_policy.py:12`).\n\nCreating a plan needs a future, timezone-aware cutoff (`kamiwaza/services/console/room_controls.py:486`) and turns room creation off at once (`kamiwaza/services/console/room_controls.py:500`). It stays off while the plan waits for confirmation: the settings update refuses any other creation policy while a draft plan exists (`kamiwaza/services/console/room_controls.py:451`), and the room-control routes have no way to cancel a plan. The earlier policy comes back only when a confirmation with the correct organization name finds that the cutoff has passed, before or during the confirmation, and discards the expired draft (`kamiwaza/services/console/room_controls.py:538`, `kamiwaza/services/console/room_controls.py:558`, `kamiwaza/services/console/room_controls.py:574`, `kamiwaza/services/console/room_controls.py:598`). Confirmation needs `confirm: true` (`kamiwaza/services/console/room_schemas.py:68`) and the exact organization name from the settings (`kamiwaza/services/console/room_controls.py:539`). It fails if the room inventory changed after the plan was created (`kamiwaza/services/console/room_controls.py:549`). That failure leaves the draft in place, and no new plan can be created while a draft exists (`kamiwaza/services/console/room_controls.py:495`): the draft can be confirmed only once the inventory matches it again, or is discarded by a correctly named confirmation after its cutoff. Room creation stays off meanwhile. While a plan is active, workroom changes return 409 (`kamiwaza/services/workrooms/api.py:706`) and room creation is refused (`kamiwaza/services/console/room_policy.py:11`). A background task started with the API looks for plans past their cutoff every 30 seconds (`kamiwaza/services/console/room_controls.py:722`). At the cutoff each room is marked deleted (`kamiwaza/services/console/room_controls.py:179`), then its access relations are cleaned up and its resources scheduled for purge.\n\nThe two strategy values, `retain_then_delete` and `delete`, behave the same at this revision: rooms are archived at confirmation and deleted at the cutoff (`kamiwaza/services/console/room_schemas.py:44`). Export planning is not offered and legal-hold counts are not available (`kamiwaza/services/console/room_schemas.py:37`). Any signed-in user in the tenant can read a tombstone. Its state is `read_only` before the cutoff and `tombstone` after. The global workroom is left out of the inventory.\n\nAPI only. The ui-v2 decommission page is not built into an image at this revision; the frontend image target builds `./frontend` (`docker-bake.hcl:367`), which has no decommission page. This is separate from `workrooms.archive-and-delete` (one room at a time) and `workrooms.admin-oversight` (list and delete).\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "untested",
+          "wholeClaim": false,
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "0ddbbb376cd682b4a87bf502d76f203b62cda753b2331489efc39ca7369a68a8",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/console/room_api.py",
+                "symbol": "room_control_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        }
+      ],
+      "approval": {
+        "status": "pending",
+        "approvedBy": null,
+        "approvedAt": null
+      }
+    }
+  ]
 }
