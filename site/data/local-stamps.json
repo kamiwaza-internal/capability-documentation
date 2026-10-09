@@ -1,0 +1,687 @@
+{
+  "schema": "local-stamp-projection.v1",
+  "kind": "local-scoped-verification",
+  "releaseVerified": false,
+  "notAReleaseStamp": true,
+  "targetVersion": "1.3.2",
+  "environment": "local",
+  "runWindow": {
+    "earliestStartedAt": "2026-10-08T20:47:53.196714Z",
+    "latestFinishedAt": "2026-10-08T22:26:37.410352Z"
+  },
+  "source": {
+    "kitRepository": "kamiwaza-internal/capability-kit",
+    "kitCommit": "2084f77bf00fb8f7924aa08fc50fbf43ecb1163a",
+    "kitPullRequest": "https://github.com/kamiwaza-internal/capability-kit/pull/82",
+    "stampSetPath": "reports/2026-10-09-1.3.2-local-verification-stamps/local-verification-stamps.json",
+    "packetPath": "reports/2026-10-08-1.3.2-local-full-run",
+    "stampSetSha256": "ab96c9acf6ac8c8d1460bd4c832116ee25422f05ed62c9adb6864eeb480564e0"
+  },
+  "coreSource": {
+    "ref": "release/1.3.0",
+    "commit": "602b17433eca0a3ec4edda910d8ed85abc277681"
+  },
+  "limits": [
+    "Each stamp covers only the listed scoped scenarios, not the whole capability.",
+    "These are not release stamps and do not make any capability release verified.",
+    "These are not human sign-off.",
+    "Each stamp is bound to the image identity recorded in the source packet, not to any later image.",
+    "The record build strings and the observed running pods name different core image digests; the packet does not reconcile them and neither do these stamps.",
+    "Original failures, superseded attempts and the harness setup error remain in the source packet.",
+    "Capabilities with a failed latest scenario get no stamp, even where other scenarios passed."
+  ],
+  "counts": {
+    "capabilitiesInPacket": 107,
+    "capabilitiesWithoutFreshRecord": 63,
+    "stamps": 34,
+    "notStampedFailed": 10,
+    "stampedScenarioEntries": 47
+  },
+  "stamps": [
+    {
+      "capability": "apps.app-garden",
+      "stampSha256": "b56cb42836941c1a2d817e4bce85b12f09047059e9d1325b40febe1b13016a54",
+      "scenarios": [
+        {
+          "scenarioId": "app-garden-deploy-lifecycle-and-reserved-environment-key-boundary",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "6fbca21d757506f606f8c827b6eaae1d49cebf62e45c8f1cc7325c178b9e74af"
+        }
+      ]
+    },
+    {
+      "capability": "auth.local-user-administration",
+      "stampSha256": "7ab9bcff04a0bea75861433676f7dac06bd68b6f3d4de224ae961d3a202cffd1",
+      "scenarios": [
+        {
+          "scenarioId": "local-user-administration-with-non-admin-denial",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "5983cf4eb0813e0a6d141b14fc04326689d5c21dd7ddfbf6a147067ebe7990e8"
+        }
+      ]
+    },
+    {
+      "capability": "auth.personal-access-tokens",
+      "stampSha256": "dd18cb16d5836e6e544b670e6f6bd042b97731c8e140ac623128f7ddd26ed452",
+      "scenarios": [
+        {
+          "scenarioId": "personal-access-token-authentication-and-revocation",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "5fc3f7a0654c4414375b83c89b3ecc8dc5adb1f3a035900f456a75bcc0d78c62"
+        },
+        {
+          "scenarioId": "personal-access-token-inventory-and-individual-revocation",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "8032e2c435cedbb92cc714f267e7f58cdfaa658d6130f05e989700a500193e0c"
+        }
+      ]
+    },
+    {
+      "capability": "auth.session-revocation",
+      "stampSha256": "dc2a72627ca1cade4212eed294625aff4264adeca03291ed02cb449b016d87b6",
+      "scenarios": [
+        {
+          "scenarioId": "logout-and-administrator-session-revocation-lifecycle",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "1afd94a99cb48b7c1796fdc87fe493715f4cdec85db7f2c65b7a48529b0a6fb0"
+        }
+      ]
+    },
+    {
+      "capability": "authz.rebac-access-control",
+      "stampSha256": "c4c0a593152fb9a26ddffaea5a8b2d5f99f9816ad13acbc12e11f7ad5e7caf25",
+      "scenarios": [
+        {
+          "scenarioId": "rebac-attributable-allow-decisions-and-policy-shaped-denies",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "d0dfee80b42d606e46a316ce31c887c74d41d6274d3ccb391b22dad8581d0fd6"
+        }
+      ]
+    },
+    {
+      "capability": "catalog.dataset-registry",
+      "stampSha256": "44d4f3c5ded20bf6af896cb86d1f4c5da7de55f3aac0f99c512af2bf0250cf10",
+      "scenarios": [
+        {
+          "scenarioId": "catalog-container-lifecycle-and-dataset-membership-through-the-sdk-container-client",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "a1ec118afe2e0dd99e9f9dfa1ab1eb4bb53ccbefcec15ef28be42dc47ce3ff03"
+        },
+        {
+          "scenarioId": "catalog-dataset-and-container-endpoint-surface",
+          "lane": "sdk",
+          "status": "passed_with_notes",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "59633af1511241bdfeb1ca14474e4a0aa3a2ca9c6bc165bfa22da97ff9160a50"
+        },
+        {
+          "scenarioId": "catalog-dataset-lifecycle-through-the-sdk-dataset-client",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "df25c93da7c3008616fa37ace0e44be25e5e7cbb49da9e29928e80695d15b9ef"
+        },
+        {
+          "scenarioId": "catalog-dataset-registration-and-readback",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "816f4181420778b7879d8deb5be568e50ffcadd6660f31fcd7d4caf35b67b538"
+        },
+        {
+          "scenarioId": "catalog-s3-dataset-registration-inline-retrieval-and-deletion",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "de67554520e3fbf0b4feaf59fa9a18be8941ced0572d19925cd5564d041088db"
+        },
+        {
+          "scenarioId": "multi-source-catalog-ingestion",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "21d624f05aaea5e3c88fac8b5139b021c4369e9893bf7d60b43f086ebee9e44b"
+        }
+      ]
+    },
+    {
+      "capability": "catalog.registered-sources",
+      "stampSha256": "df61157e045c7653d543270b6b03941c7a4dea30f8f77402bf419bf0a0677770",
+      "scenarios": [
+        {
+          "scenarioId": "catalog-registered-sources-listing",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:46.801830Z",
+          "finishedAt": "2026-10-08T20:48:46.912286Z",
+          "recordSha256": "5d00f54fc2620aa3e87aa2ae66e425d74a5c71cf3d2c280804d9eec51722888d"
+        }
+      ]
+    },
+    {
+      "capability": "catalog.secrets-management",
+      "stampSha256": "2e42633a0b59c954b105e0c31826f4e5da585fb6c02823c6b94e780aa1f9af69",
+      "scenarios": [
+        {
+          "scenarioId": "catalog-governed-secret-lifecycle",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "44011dbd019c0de1449e69ae7aa5018a7de0d469d53fbf9604ed5af6e1450dfd"
+        }
+      ]
+    },
+    {
+      "capability": "connectors.oauth-tool-policies",
+      "stampSha256": "cae7bc572ecf1b50745f346bb4421fb0558b241029ec94f178b7662811fd5ddd",
+      "scenarios": [
+        {
+          "scenarioId": "oauth-tool-policy-listing-and-write-surface",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:51.632787Z",
+          "finishedAt": "2026-10-08T20:48:51.975688Z",
+          "recordSha256": "e724a351ea37d6ae911d77512408853c82a7c212c89adf6cde1006fe8a21252d"
+        }
+      ]
+    },
+    {
+      "capability": "context.dataset-indexing",
+      "stampSha256": "875ef1db000864278528f59ddd4f7981fbb7d748c51e5540f072021466e6ddf6",
+      "scenarios": [
+        {
+          "scenarioId": "dataset-index-binding-lookup",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:47.019496Z",
+          "finishedAt": "2026-10-08T20:48:47.146575Z",
+          "recordSha256": "96babb652fab0c28b9f21cdcefdd9e1360ced69f53778f3c4278c75d9552fb75"
+        }
+      ]
+    },
+    {
+      "capability": "context.workroom-document-search",
+      "stampSha256": "38ef561e80825872089b139dd688cb0152307e05472a2427fcb53f8c247b6013",
+      "scenarios": [
+        {
+          "scenarioId": "index-a-document-and-enforce-workroom-scoped-search",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T22:18:29.243552Z",
+          "finishedAt": "2026-10-08T22:22:29.018258Z",
+          "recordSha256": "e08aa282021ea100d216eb04e482a8f0f6ce906a5adb5e907cfa8057ebf4009c"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.admin-settings-console",
+      "stampSha256": "7fcde5930f1d4f529d2f7d65442c28c87808ff7aac60c9cc8c719f45710d55f6",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-admin-settings-catalogue",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:52.547723Z",
+          "finishedAt": "2026-10-08T20:55:53.023390Z",
+          "recordSha256": "960f30173a5d7c4eb60f7db24d7ee6e2a16c4973008a9ef405e26073edc5fc59"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.agent-publication-approval",
+      "stampSha256": "52fef67e81286c64ff4703f96a66a338bfabb0007c3cf1b8da6462f3f8543d67",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-agent-publication-approval-queue",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:53.023874Z",
+          "finishedAt": "2026-10-08T20:55:55.447065Z",
+          "recordSha256": "1861710bf64d385d7131a81494e244faf983caf3d47ed451aa3d0ece3d8fb1f1"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.answer-feedback",
+      "stampSha256": "29c5516b8c1f1e86b4ad5519e3e0b4b705d32871159d16246587e6a5ff5341cf",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-answer-feedback-contract",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:55.447707Z",
+          "finishedAt": "2026-10-08T20:55:55.955923Z",
+          "recordSha256": "2fa7edf2ecec642910ed3198d1f197740e1e9b741fd2b08b030e3c862196a63d"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.artifacts",
+      "stampSha256": "b20662ed14c080d94bae85f1e9ccdc4227a52617729664fc0ccbf0925a36c13d",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-artifact-listing-and-lookup",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:49.974507Z",
+          "finishedAt": "2026-10-08T20:55:50.587080Z",
+          "recordSha256": "e66f6edfadc8c4f591a9a3daf478142fd8577bedaa4c6e2c96cbb66f42ca4db3"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.context-compression",
+      "stampSha256": "37f2c680de76752024b964a38adda53314f241299720c63b83b0dcf905bca3a9",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-compression-configuration-and-stats",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:51.943437Z",
+          "finishedAt": "2026-10-08T20:55:52.391284Z",
+          "recordSha256": "b254e785ac87c407221769af0fb9992c9e4947e7213f0b25545a498208163d94"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.conversation-search",
+      "stampSha256": "4d66af6539cdc0a34e41831299d27123044226ef3f6081d1f12f36b7f7192c8a",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-conversation-search-contract",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:55.956818Z",
+          "finishedAt": "2026-10-08T20:55:56.772827Z",
+          "recordSha256": "481ce082eace8ab784bd38e86c6761dc06f889daa73d9d47be9b9525737f4814"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.document-canvas-export",
+      "stampSha256": "cc8308ce4b0ee2385fcbd318d3ade286df9f9a08482548966bfaa6ec9082673d",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-canvas-and-export-contract",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:56.773296Z",
+          "finishedAt": "2026-10-08T20:55:57.143602Z",
+          "recordSha256": "7a4746e28e1ef5baa838701fa0a92ee4fd25e21e82ccdcd88041f2607eb26328"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.document-collections",
+      "stampSha256": "196a8ecdee6f9c5fe1e7166ccf23597af8c2db190a0b12faaccbe45aaeade619",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-document-collection-listing-and-lookup",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:48.620040Z",
+          "finishedAt": "2026-10-08T20:55:49.973888Z",
+          "recordSha256": "26d69ec515a1658fafda46f412953047c842d2c585477b5f1dc12afef884473f"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.metrics-dashboard",
+      "stampSha256": "27a68af8702cf6f9b20273815891e58cf97ea9c109e193561f9589aa3a065cf7",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-ops-metrics-window",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:51.404756Z",
+          "finishedAt": "2026-10-08T20:55:51.942835Z",
+          "recordSha256": "c915b5386f42f0f3e1eec0d13d1aef5cadaeabdd9118daa80444a597496f2e5e"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.multi-agent-orchestration",
+      "stampSha256": "cad13f20ff180ae4861ec92cc866b0c9451d1a9e959f7bd3497568e9d279d0a8",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-a2a-orchestration-posture",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:57.144107Z",
+          "finishedAt": "2026-10-08T20:55:57.833392Z",
+          "recordSha256": "e9056f2a03e807b7856ee37c2d814721e2e9069728cbf9455dc95f31f4697ce3"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.projects",
+      "stampSha256": "554b580c315cf6f334f582bcb87b15313f62e009a2d7287797feccafad41293b",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-project-listing-and-lookup",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:46.561341Z",
+          "finishedAt": "2026-10-08T20:55:48.619539Z",
+          "recordSha256": "c9611e36618d8242f98fae52ea496f802df7bab55d4507d3f4b9294c8b1ad0ac"
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.prompt-library-and-chains",
+      "stampSha256": "b9669240177d312d80b7006d900c9608913258ee870139382cbb7e6d1116336c",
+      "scenarios": [
+        {
+          "scenarioId": "kaizen-prompt-library-listing-and-lookup",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:55:50.588051Z",
+          "finishedAt": "2026-10-08T20:55:51.073104Z",
+          "recordSha256": "f626f6653bc5ade7ef4ab797a9aabf3998c11e981e7becba200d8285d92542a6"
+        }
+      ]
+    },
+    {
+      "capability": "models.discover-and-download",
+      "stampSha256": "2675f8824cdfb4a5a4a446af551a7ec24196c3bab9be386e43baed1c54989de4",
+      "scenarios": [
+        {
+          "scenarioId": "cold-quantized-model-acquisition",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "4d2f00f524858067043ed2c107c04f35fda25e34070f915b34d865a70696eb83"
+        }
+      ]
+    },
+    {
+      "capability": "platform.access-requests",
+      "stampSha256": "6584ce84e33ff5487b7ed3b1d622adf349b8646fa10341c51cf3f7921b3a1c01",
+      "scenarios": [
+        {
+          "scenarioId": "access-request-submission-contract",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:34.680837Z",
+          "finishedAt": "2026-10-08T20:48:36.283808Z",
+          "recordSha256": "39d30b4eccb865b99a419a36c619ab8a1b5ec6dceda0a17ba00d82080b5409b1"
+        }
+      ]
+    },
+    {
+      "capability": "platform.api-reference",
+      "stampSha256": "8053499128a7426a5238d87d8551db6de2c76c04a8d3bd446a4be41388e3e95e",
+      "scenarios": [
+        {
+          "scenarioId": "api-reference-openapi-schema",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:36.393075Z",
+          "finishedAt": "2026-10-08T20:48:46.233419Z",
+          "recordSha256": "c620f4a2165a26d72ac26c3bb1d7a4badd66a1dbd169e540ffa1e0e8c8d29c09"
+        }
+      ]
+    },
+    {
+      "capability": "platform.news-feed",
+      "stampSha256": "cac3ce59733bdbc7ff8b24da0532ec78e45823e83fae29f9b80cb39a8fed7b15",
+      "scenarios": [
+        {
+          "scenarioId": "news-feed-quadrants-and-latest",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:50.471387Z",
+          "finishedAt": "2026-10-08T20:48:51.491186Z",
+          "recordSha256": "2d0a14ab56d23b102e0811195aebe9bb693a33996114eef386354c548b84655d"
+        }
+      ]
+    },
+    {
+      "capability": "platform.operations-and-notifications",
+      "stampSha256": "b3b60f980a33d420f7a256853b4abe693ef5572f5ee2b194fe805a5a620a49fe",
+      "scenarios": [
+        {
+          "scenarioId": "operations-tray-and-notification-lookup",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:52.067414Z",
+          "finishedAt": "2026-10-08T20:48:52.442158Z",
+          "recordSha256": "996e5599b1b064a6fd752fd03f7316c2668e041142af8b0c91a7e9cf7744c32d"
+        }
+      ]
+    },
+    {
+      "capability": "retrieval.async-retrieval-jobs",
+      "stampSha256": "6c00fc952e40a6846018bd79648573966fe90e5e93bfe386bf245deb0d5cadd9",
+      "scenarios": [
+        {
+          "scenarioId": "arrow-flight-retrieval-of-an-ingested-s3-dataset",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T22:26:03.803458Z",
+          "finishedAt": "2026-10-08T22:26:37.410352Z",
+          "recordSha256": "b4dda330f7f6f2a7ffb4e70fec8d25531c82ff3969a656e106167c1a5ff47813"
+        },
+        {
+          "scenarioId": "catalog-s3-dataset-registration-inline-retrieval-and-deletion",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "de67554520e3fbf0b4feaf59fa9a18be8941ced0572d19925cd5564d041088db"
+        },
+        {
+          "scenarioId": "multi-source-inline-and-sse-retrieval",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "d5b0c1acd52deef9750891e0c573715977565792ca85722ed4dce12fb346afd2"
+        }
+      ]
+    },
+    {
+      "capability": "skills.skills-library",
+      "stampSha256": "5592b10d1976379eaafab3e15e6763e5bf0c038bde6ae5c30394227b51d8ab4c",
+      "scenarios": [
+        {
+          "scenarioId": "skills-library-import-curation-export-and-soft-delete",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "939fd7bf1794830184d03fcfb45b4df4aecbf66ed0a0bba04c55094654bf0b4b"
+        }
+      ]
+    },
+    {
+      "capability": "tools.mcp-tool-shed",
+      "stampSha256": "43749aaaa88818fcdc44b4d9f25946f8aac132dee6c7cc95a039d3653569985d",
+      "scenarios": [
+        {
+          "scenarioId": "tool-shed-deploy-mcp-protocol-handshake-discovery-and-stop",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "99f8efe5782b1280256d640c17e1bc4a35c0adc9589d94e6eca11996e8507835"
+        }
+      ]
+    },
+    {
+      "capability": "workrooms.admin-oversight",
+      "stampSha256": "51a88e050501e747feb10d005ae2cb3f8826b402400516e4a141da50c34de09e",
+      "scenarios": [
+        {
+          "scenarioId": "J04/SC-01",
+          "lane": "ui",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:13.621244Z",
+          "finishedAt": "2026-10-08T20:48:24.664127Z",
+          "recordSha256": "885ab03109da264ad414e767800715ab9ddc62c8549a28d7543006ceceeda81c"
+        },
+        {
+          "scenarioId": "J04/SC-02",
+          "lane": "ui",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:24.664141Z",
+          "finishedAt": "2026-10-08T20:48:28.301564Z",
+          "recordSha256": "cefef77cfd1857592567439a5b77780a8f9c9139f3d610fa40cf3ae72814c6c7"
+        },
+        {
+          "scenarioId": "J04/SC-03",
+          "lane": "ui",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:28.301576Z",
+          "finishedAt": "2026-10-08T20:48:30.991851Z",
+          "recordSha256": "4e7d70e4e720fe76a87c78770cc6ac0118a26204d071c84cd08cee6358c05315"
+        },
+        {
+          "scenarioId": "administrator-finds-and-deletes-another-user-s-archived-workroom",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "b2e9c1475306002b0ed1729d2656ca040e80bd8a8b17adc4ba52f3ef06cbd508"
+        }
+      ]
+    },
+    {
+      "capability": "workrooms.create",
+      "stampSha256": "36686a6b802834fa85aceb61491febefd3d0f6ca8a29cfa7d4cdc1e639588f51",
+      "scenarios": [
+        {
+          "scenarioId": "SC-01",
+          "lane": "ui",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:47:53.196714Z",
+          "finishedAt": "2026-10-08T20:47:59.948683Z",
+          "recordSha256": "acebfff6b14227fb54620320bde1c27183b4a51c53299d4ff6e8e5a80f993587"
+        },
+        {
+          "scenarioId": "SC-02",
+          "lane": "ui",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:49:45.277477Z",
+          "finishedAt": "2026-10-08T20:50:07.234633Z",
+          "recordSha256": "deec2c1f54c56e21b9164d1411e97f42d4c738c6e7f52a397eb3742968713df8"
+        },
+        {
+          "scenarioId": "workroom-creation-and-crud-lifecycle",
+          "lane": "sdk",
+          "status": "passed",
+          "startedAt": "2026-10-08T21:05:55.323158Z",
+          "finishedAt": "2026-10-08T21:37:33.961508Z",
+          "recordSha256": "027ee0e6815741b08b68595803cd9df623a8141ac147a6ddc3942d4f2c755561"
+        }
+      ]
+    },
+    {
+      "capability": "workrooms.org-decommission",
+      "stampSha256": "3acb4c758c1804a975d08b83e510da38c36df95c06e9a1090bcf2bf931f7f6ca",
+      "scenarios": [
+        {
+          "scenarioId": "org-decommission-room-inventory",
+          "lane": "api",
+          "status": "passed",
+          "startedAt": "2026-10-08T20:48:52.572167Z",
+          "finishedAt": "2026-10-08T20:48:52.976349Z",
+          "recordSha256": "6cda13d3eefaa9156d0c6166de3fe8252b4509559938e776f864629cfbe6eda4"
+        }
+      ]
+    }
+  ],
+  "notStampedFailed": [
+    {
+      "capability": "catalog.writable-datasets",
+      "failedScenarios": [
+        "catalog-dataset-listing"
+      ]
+    },
+    {
+      "capability": "connectors.connector-builder",
+      "failedScenarios": [
+        "connector-builder-import-test-generate-deploy"
+      ]
+    },
+    {
+      "capability": "kaizen.notifications-inbox",
+      "failedScenarios": [
+        "kaizen-notification-inbox-shape"
+      ]
+    },
+    {
+      "capability": "kaizen.product-identity",
+      "failedScenarios": [
+        "kaizen-product-line-classification"
+      ]
+    },
+    {
+      "capability": "models.local-deployment",
+      "failedScenarios": [
+        "deploy-a-cross-platform-diffusion-model-through-the-sdk",
+        "generate-and-mask-edit-images-with-qwen-through-the-sdk",
+        "generate-images-through-the-openai-compatible-sdk-client"
+      ]
+    },
+    {
+      "capability": "models.openai-compatible-inference",
+      "failedScenarios": [
+        "openai-compatible-inference-operation-set"
+      ]
+    },
+    {
+      "capability": "workrooms.archive-and-delete",
+      "failedScenarios": [
+        "owner-archives-restores-previews-and-deletes-a-workroom"
+      ]
+    },
+    {
+      "capability": "workrooms.export-bundle",
+      "failedScenarios": [
+        "workroom-export-manifest-summary-and-bundle-enumerate-a-seeded-dataset"
+      ]
+    },
+    {
+      "capability": "workrooms.membership-and-roles",
+      "failedScenarios": [
+        "J05/SC-01",
+        "J05/SC-02"
+      ]
+    },
+    {
+      "capability": "workrooms.session-scoping",
+      "failedScenarios": [
+        "workroom-enter-and-leave-scope-catalog-datasets-to-the-session"
+      ]
+    }
+  ]
+}
