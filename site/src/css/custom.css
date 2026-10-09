@@ -14,3 +14,4 @@ code { overflow-wrap: anywhere; }
 .dateAxes dt { font-weight: 600; }
 .dateAxes dd { margin: 0 0 .6rem 0; }
 .gaps { margin: 1rem 0; }
+.stampHeadline { font-size: 1.3rem; }

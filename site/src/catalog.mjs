@@ -235,3 +235,8 @@ export function joinReleaseStamps(rows, data) {
     sourceContractOutside: outside(contracts.keys()),
   };
 }
+
+// Presentation only: the stamp wording for a row joined by joinReleaseStamps, or null. A release
+// stamp is never worded as an unqualified "release verified"; the row's status is not read or changed.
+export const stampStatus = (row, tag) => row.releaseStamp ? `Release stamped · ${tag}`
+  : row.sourceContractStamp ? `Source-contract verified · ${tag} · not runtime evidence` : null;
