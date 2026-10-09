@@ -66,6 +66,33 @@ function ScopedObservations({observation}) {
   </section>;
 }
 
+// Full inventory decision and individually scoped replay stamps are separate axes.
+function ReleaseStamps({snapshot}) {
+  const {counts: c, source, approval: decision} = snapshot;
+  return <section className="release" id={snapshot.id}>
+    <h2>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</h2>
+    <aside className="evidenceNotice">Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification. Full inventory release approval is {decision.status}.</aside>
+    <p>Exact source <code>{source.ref}@{source.sourceRevision}</code> · qualified running manifest <code>{snapshot.manifestId}</code>.</p>
+    <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>
+    <ul>{snapshot.images.map(image => <li key={image.component}>{image.component}: <code>{image.digest}</code></li>)}</ul>
+    <p>Fresh replay window (UTC): <time dateTime={snapshot.evidenceWindow.earliestStartedAt}>{snapshot.evidenceWindow.earliestStartedAt}</time> to <time dateTime={snapshot.evidenceWindow.latestFinishedAt}>{snapshot.evidenceWindow.latestFinishedAt}</time>. Snapshot generated <time dateTime={snapshot.generatedAt}>{snapshot.generatedAt}</time>; publication review opened <time dateTime={snapshot.publishedAt}>{snapshot.publishedAt}</time>. Review opening is not a deployment or approval date.</p>
+    <p><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped. Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner. These dispositions retain their own counts and grant no verification credit.</p>
+    {decision.status === 'approved' ? <p>Full inventory release decision by {decision.approvedBy}, <time dateTime={decision.approvedAt}>{decision.approvedAt}</time>. Exact public snapshot SHA-256: <code>{decision.snapshotSha256}</code>. Review verifies operator and approver identity; the digest establishes consistency.</p> : <p>Human release approval is pending. Scoped passing replays do not approve the release.</p>}
+    <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>Download scoped release stamps and inventory decision</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
+    <details><summary>All {c.catalog} inventory dispositions, stamps and failures</summary>
+      {snapshot.capabilities.map(cap => <article className="capability" key={cap.id}>
+        <h3><code>{cap.id}</code> · {cap.disposition} · {cap.status}</h3>
+        <p>{cap.scope}</p>
+        <TextList title="Replay assumptions" items={cap.assumptions}/>
+        <TextList title="Replay limits" items={cap.limits}/>
+        {cap.stamp && <p>Fresh replay finished <time dateTime={cap.stamp.finishedAt}>{cap.stamp.finishedAt}</time>; canonical stamp <code>{cap.stamp.id}</code>.</p>}
+        {cap.failures.length > 0 && <ul>{cap.failures.map((failure, index) => <li key={index}>{failure.summary} · <time dateTime={failure.finishedAt}>{failure.finishedAt}</time> · {failure.resolvedByStampId ? 'Resolved by the retained corrective replay stamp' : 'Unresolved failure'}</li>)}</ul>}
+        <p>Whole-capability verification is not established.</p>
+      </article>)}
+    </details>
+  </section>;
+}
+
 export default function Catalog() {
   const {siteConfig} = useDocusaurusContext();
   const [query, setQuery] = useState('');
@@ -78,6 +105,7 @@ export default function Catalog() {
     </div></header>
     <main className="container catalogMain">
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
+      {(publication.releaseStamps ?? []).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}
       {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
       <h2>Accepted historical pre-release baseline and source snapshots</h2>
       <p><a href="/releases/index.json">Machine-readable release index</a></p>

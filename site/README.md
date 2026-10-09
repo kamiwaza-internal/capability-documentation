@@ -140,3 +140,57 @@ bundles under /observations/, with an exact-byte SHA-256 index. This consumer
 validates structure and consistency; independent source reconciliation and privacy
 review remain necessary before publication. Public-site review and deployment
 gates are unchanged.
+
+
+## Scoped release stamps and full release sign-off
+
+Schema 6 adds `releaseStamps` beside unchanged schema-5 `releases` and
+`observations`. It does not rewrite historical objects or their bundle bytes.
+Every snapshot declares the full reviewed inventory: `included`, `excluded`,
+`deferred` and `other-owner` are explicit dispositions. Included capabilities
+have `release-stamped`, `failed` or `not-stamped` status. Counts are checked
+against unique rows; excluded or deferred rows do not become passes. Scoped
+stamps always retain `wholeClaim: false`, reviewed scope, assumptions and limits.
+
+`publishedAt` retains the existing publication-metadata convention: the actual
+publication review PR opening time, not deployment or human approval. It may
+precede the human decision; `approvedAt` is that separate decision time.
+
+The public projection names the intended release tag or branch/full source
+commit, qualified running manifest identity, Core/frontend image digests and
+original fresh replay window. A stamp projection binds its canonical ID,
+capability, intended release, source, manifest and execution date to that
+snapshot. Historical failures remain visible; a stamp can resolve a failure only
+with its retained corrective replay ID and a later execution date. Raw evidence
+paths, kit names, qualification receipts, private notes and credentials have no
+fields here. The synthetic fixture documents the exact allowlist and is never
+imported by the product page.
+
+Before publication, compare the complete capability ID set and dispositions
+against the pinned canonical Kit cycle/catalog. This consumer checks declared
+row consistency, not authenticated catalog completeness; a source reviewer must
+reject an omitted row even if the declared counts are self-consistent. Selected
+Core/frontend digests are public component projections, not a list of every
+image in the full captured manifest (which can include init images).
+
+Canonical stamp intake must reproduce the stamp from original build captures,
+qualified intended-source proof, complete scenario evidence, actual runner
+receipts and successful cleanup using the Kit lifecycle validator. This consumer
+does not execute that validator or authenticate an operator. Do not project an
+old observation or an assumed build as a fresh release stamp.
+
+Human release approval is separate. Its scope is `full-inventory`; an approved
+decision names the actual approved public role/person and time and binds
+`snapshotSha256` to `releaseSnapshotDigest(snapshot)`. That hash is SHA-256 of
+UTF-8 `JSON.stringify` of the exact public snapshot with the `approval` property
+omitted; property order is retained. Prepare this body before obtaining the
+human decision, and use a new immutable revision if it changes. A digest match
+only verifies consistency: reviewed intake must establish the genuine human
+observations and release-manager decision, including retained failures and
+exclusions. Pending approval has null identity, time and digest. Approval does
+not require every capability to pass, and never converts failures into passes.
+
+The site renders these snapshots separately and emits `/release-stamps/index.json`
+and immutable JSON/plain-text bundles. Adding a schema and passing synthetic
+tests grants no production verification, human sign-off, publication or deployment.
+Only a reviewed actual publication input update can expose a signed release.
