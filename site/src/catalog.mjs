@@ -1,7 +1,7 @@
 export function filterCapabilities(capabilities, query, status) {
   const needle = query.trim().toLowerCase();
   return capabilities.filter(cap => (status === 'all' || cap.status === status) &&
-    [cap.id, cap.title, cap.summary, ...cap.conditions, ...cap.limits]
+    [cap.id, cap.title, cap.summary, ...cap.conditions, ...cap.limits].filter(Boolean)
       .some(value => value.toLowerCase().includes(needle)));
 }
 
