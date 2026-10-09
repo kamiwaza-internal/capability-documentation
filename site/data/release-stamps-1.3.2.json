@@ -12,7 +12,7 @@
   "humanSignOff": false,
   "source": {
     "kitRepository": "kamiwaza-internal/capability-kit",
-    "kitCommit": "30384694ef1ef77376d9787f8377642d8d364da6",
+    "kitCommit": "a7bf42ab4e432af673555b33107c99c2a83f9c37",
     "kitPullRequest": "https://github.com/kamiwaza-internal/capability-kit/pull/83",
     "reportPath": "reports/2026-10-09-1.3.2-release-replay"
   },

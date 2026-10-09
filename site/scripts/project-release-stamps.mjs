@@ -8,7 +8,7 @@ import {validateReleaseStamps} from './release-stamps.mjs';
 
 // ponytail: provenance of the one replay published so far is pinned here, not derived from
 // the kit checkout, so regeneration stays byte-identical. Move to arguments when a second replay exists.
-const KIT_COMMIT = '30384694ef1ef77376d9787f8377642d8d364da6';
+const KIT_COMMIT = 'a7bf42ab4e432af673555b33107c99c2a83f9c37';
 const KIT_PULL_REQUEST = 'https://github.com/kamiwaza-internal/capability-kit/pull/83';
 const REPORT_PATH = 'reports/2026-10-09-1.3.2-release-replay';
 const TARGET = '1.3.2';
