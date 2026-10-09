@@ -26,7 +26,7 @@ function PrereleaseSummary({release}) {
       <dt>Evidence ingested</dt><dd>Each record shows when it entered the kit. Kit revision committed <time dateTime={release.sourceCommittedAt}>{release.sourceCommittedAt}</time>.</dd>
       <dt>Developer assessments</dt><dd><time dateTime={release.assessmentWindow.earliestAssessedAt}>{release.assessmentWindow.earliestAssessedAt}</time> to <time dateTime={release.assessmentWindow.latestAssessedAt}>{release.assessmentWindow.latestAssessedAt}</time>. Local contracts; no live scenario execution.</dd>
       <dt>Draft generated</dt><dd><time dateTime={release.generatedAt}>{release.generatedAt}</time>. Draft preparation, not publication or a test date.</dd>
-      <dt>Actual publication</dt><dd>{release.publishedAt ? <time dateTime={release.publishedAt}>{release.publishedAt}</time> : 'Pending; no publication timestamp recorded.'}</dd>
+      <dt>Publication review opened</dt><dd>{release.publishedAt ? <><time dateTime={release.publishedAt}>{release.publishedAt}</time>. When the publication review PR was opened, not the site deployment time.</> : 'Pending; no publication timestamp recorded.'}</dd>
       <dt>Tested builds</dt><dd>{release.testedBuilds.map(build => <code key={build}>{build} </code>)}</dd>
     </dl>
     <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
