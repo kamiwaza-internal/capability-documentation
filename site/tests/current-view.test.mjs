@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {countStatuses, currentCapabilityView, summarizeCurrentView} from '../src/catalog.mjs';
 
 const deepFreeze = value => {
@@ -151,4 +154,45 @@ test('CUR-F published data: 50 verifications retained, 4 later non-applicable fa
 test('CAT-5 statuses outside the original four are counted, never NaN', () => {
   assert.deepEqual(countStatuses([{status: 'prerelease-verified'}, {status: 'prerelease-verified'}, {status: 'untested'}]),
     {verified: 0, partial: 0, failed: 0, untested: 1, 'prerelease-verified': 2});
+});
+
+// ponytail: compiles the one component with the Babel that Docusaurus installs (a transitive
+// dependency). Move to a declared devDependency if a Docusaurus upgrade stops hoisting it.
+async function renderCurrentView(props) {
+  const {default: babel} = await import('@babel/core');
+  const {createElement} = await import('react');
+  const {renderToStaticMarkup} = await import('react-dom/server');
+  const {code} = babel.transformSync(readFileSync(new URL('../src/CurrentView.jsx', import.meta.url), 'utf8'),
+    {babelrc: false, configFile: false, presets: [fileURLToPath(import.meta.resolve('@babel/preset-react'))]});
+  const file = join(mkdtempSync(join(tmpdir(), 'current-view-')), 'CurrentView.mjs');
+  writeFileSync(file, code.replace("'./catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href)).replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react'))));
+  return renderToStaticMarkup(createElement((await import(file)).default, props));
+}
+const occurrences = (html, text) => html.split(text).length - 1;
+
+test('CUR-G rendered page: stamp badges, counts and paragraphs appear only for the publication the stamps were projected against', async () => {
+  const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
+  const localStamps = JSON.parse(readFileSync(new URL('../data/local-stamps.json', import.meta.url), 'utf8'));
+  const releaseStamps = JSON.parse(readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url), 'utf8'));
+  const badge = text => '<span class="status">' + text + '</span>';
+  const counts = html => [badge('Release stamped · v1.3.2'), badge('Source-contract verified · v1.3.2'), badge('Local 1.3.2 scoped stamp')].map(text => occurrences(html, text));
+
+  const real = await renderCurrentView({publication: published, localStamps, releaseStamps});
+  assert.deepEqual(counts(real), [29, 16, 30]);
+  assert.ok(real.includes('/local-stamps.json') && real.includes('/release-stamps-1.3.2.json'));
+
+  // Same rows under another baseline id: every stamped capability is still on the page, and none is badged.
+  const other = structuredClone(published);
+  other.releases.find(r => r.id === localStamps.baselineReleaseId).id = 'other-prerelease-r3';
+  const none = await renderCurrentView({publication: other, localStamps, releaseStamps});
+  assert.ok(none.includes('Current capability status') && none.includes('auth.session-revocation'));
+  for (const absent of ['Release stamped', 'release stamped', 'Source-contract verified', 'source-contract verified', 'scoped stamp', 'stamps.json', 'v1.3.2', 'capability-kit/pull']) {
+    assert.ok(!none.includes(absent), absent);
+  }
+
+  // Baseline present, named observation absent: the local stamps do not apply, the release stamps still do.
+  const noObservation = {...published, observations: []};
+  const releaseOnly = await renderCurrentView({publication: noObservation, localStamps, releaseStamps});
+  assert.deepEqual(counts(releaseOnly), [29, 16, 0]);
+  assert.ok(!releaseOnly.includes('scoped stamp') && !releaseOnly.includes('/local-stamps.json'));
 });

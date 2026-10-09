@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
+import localStamps from '../../data/local-stamps.json';
+import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {filterCapabilities, countStatuses, primaryCapabilities} from '../catalog.mjs';
 import CurrentView from '../CurrentView';
 
@@ -139,7 +141,7 @@ export default function Catalog() {
     </div></header>
     <main className="container catalogMain">
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
-      <CurrentView publication={publication}/>
+      <CurrentView publication={publication} localStamps={localStamps} releaseStamps={releaseStamps}/>
         <div className="catalogFilters">
           <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
