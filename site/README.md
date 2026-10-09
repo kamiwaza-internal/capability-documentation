@@ -82,3 +82,32 @@ Implemented here: Docusaurus catalog, public projection validator, source declar
 ## Dependency maintenance
 
 The lockfile overrides `serialize-javascript` to 7.0.5 and the `sockjs` dependency on `uuid` to 11.1.1. These address GHSA-5c6j-r48x-rmvq, GHSA-qj8w-gfj5-8c6v, and GHSA-w5hq-g745-h8pq. The latter retains the CommonJS `v4` API used by sockjs. Node 22 satisfies the patched serializer's runtime requirement. Re-run `npm ci --ignore-scripts`, tests, production build and `npm audit` when changing these overrides; remove them once the upstream dependency graph resolves patched versions normally. A clean audit is a point-in-time dependency check, not a security certification.
+
+
+## Project pre-release draft and assessment basis
+
+The new pre-release bundle is schema 4; the containing publication stays schema 2
+so previously published source-declaration objects and bundle bytes remain unchanged.
+The project baseline separates historical development-build scenarios from accepted
+local-contract developer assessments. Only the pinned private lifecycle scorer
+decides canonical project credit. A combined project total is never a count of
+live runtime passes, and no released-build or human approval credit is added.
+
+Scenario records carry their original execution and kit ingestion dates.
+Developer assessments carry assessment dates, observed source revision, conservative curated assumptions and capability
+specific limitations. Their kit ingestion date remains null when not established.
+Uncurated packet prose, internal URLs, local paths, logs, people, environment values
+and evidence-kit names are not exported. Source declarations retain their separate
+pinned source citations; an assessment does not establish source curation.
+
+Drafts carry actual generatedAt, publicationState draft, publishedAt null and
+reviewReference null. Actual publication and a real reviewed PR require a separately
+reviewed transition; neither may be guessed during candidate generation. The site
+build has its own timestamp and optional CI commit. Deferred federation IDs remain
+included unverified gaps. Unknown fields and contradictory credit, dates or build
+binding fail validation. This support does not waive the Customer Delivery review,
+protected PR and main build gates described above.
+
+Private accepted-packet identities and raw hashes are never public metadata. They are retained only in a separate private generation receipt, alongside the public-payload hash for audit. Public assessments expose no packet cross-reference or private-input digest.
+
+A new declaration is eligible only when the pinned lifecycle row has current source_curation.tier1 declared. A document projector or an accepted developer assessment does not resolve not-established or re-review-required source curation; those declarations are withheld in full.

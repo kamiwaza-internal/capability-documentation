@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Layout from '@theme/Layout';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import {filterCapabilities, countStatuses} from '../catalog.mjs';
 
@@ -7,19 +8,51 @@ function TextList({title, items}) {
   return <><h4>{title}</h4>{items.length ? <ul>{items.map((item, i) => <li key={i}>{item}</li>)}</ul> : <p>None specified in this publication.</p>}</>;
 }
 
+const prereleaseLabels = {
+  'prerelease-verified': 'Project pre-release verified · not release verified',
+  'failed-or-mixed': 'Failed or mixed',
+  'not-yet-verified': 'Not yet verified',
+};
+const outcomeLabels = {passed: 'passed', passed_with_notes: 'passed with notes', failed: 'failed'};
+
+// Distinct execution, assessment, ingestion, draft, publication and site-build dates.
+function PrereleaseSummary({release}) {
+  const {counts, evidenceWindow} = release;
+  const gaps = release.capabilities.filter(cap => cap.status !== 'prerelease-verified');
+  return <>
+    <p>Project pre-release baseline scored by the capability kit: historical scenario evidence from development builds plus accepted local-contract developer assessments. The combined count does not mean live runtime passes. It is not release verification, not whole-capability certification and not release approval. Binding to a shipped {release.version} release is not established. {release.omittedCapabilities.length} other kit capabilities are outside this scope; their status is not inferred.</p>
+    <dl className="dateAxes">
+      <dt>Test runs finished</dt><dd><time dateTime={evidenceWindow.earliestRunFinishedAt}>{evidenceWindow.earliestRunFinishedAt}</time> to <time dateTime={evidenceWindow.latestRunFinishedAt}>{evidenceWindow.latestRunFinishedAt}</time>. Each record below carries its own run date.</dd>
+      <dt>Evidence ingested</dt><dd>Each record shows when it entered the kit. Kit revision committed <time dateTime={release.sourceCommittedAt}>{release.sourceCommittedAt}</time>.</dd>
+      <dt>Developer assessments</dt><dd><time dateTime={release.assessmentWindow.earliestAssessedAt}>{release.assessmentWindow.earliestAssessedAt}</time> to <time dateTime={release.assessmentWindow.latestAssessedAt}>{release.assessmentWindow.latestAssessedAt}</time>. Local contracts; no live scenario execution.</dd>
+      <dt>Draft generated</dt><dd><time dateTime={release.generatedAt}>{release.generatedAt}</time>. Draft preparation, not publication or a test date.</dd>
+      <dt>Actual publication</dt><dd>{release.publishedAt ? <time dateTime={release.publishedAt}>{release.publishedAt}</time> : 'Pending; no publication timestamp recorded.'}</dd>
+      <dt>Tested builds</dt><dd>{release.testedBuilds.map(build => <code key={build}>{build} </code>)}</dd>
+    </dl>
+    <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
+    <details className="gaps"><summary>Current gaps: {counts.failedOrMixed} failed or mixed, {counts.notYetVerified} not yet verified</summary>
+      <p>A gap means no clean pre-release evidence is published here. It does not mean unsupported.</p>
+      <p>Deferred capabilities (included in the unverified count): {release.deferredCapabilities.map(cid => <code key={cid}>{cid} </code>)}</p>
+      <ul>{gaps.map(cap => <li key={cap.id}><a href={'#' + release.id + '--' + cap.id}><code>{cap.id}</code></a> · {prereleaseLabels[cap.status]}</li>)}</ul>
+    </details>
+  </>;
+}
+
 export default function Catalog() {
+  const {siteConfig} = useDocusaurusContext();
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
   return <Layout title="Release catalog" description="Reviewed Kamiwaza capabilities, conditions and exact-build verification status.">
     <header className="catalogHero"><div className="container">
       <p className="eyebrow">THE KAMIWAZA CAPABILITY CATALOG</p>
       <h1>Kamiwaza capability records</h1>
-      <p>Source declarations and runtime evidence, by version.</p>
+      <p>Source declarations, scenario evidence and developer assessments, by version.</p>
     </div></header>
     <main className="container catalogMain">
-      <aside className="evidenceNotice"><strong>Evidence, not assumptions.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
-      <h2>Published releases</h2>
+      <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
+      <h2>Capability snapshots</h2>
       <p><a href="/releases/index.json">Machine-readable release index</a></p>
+      <p>Site build: {siteConfig.customFields.buildRevision ? <>commit <code>{siteConfig.customFields.buildRevision}</code></> : 'revision not recorded (local build)'}. Site built <time dateTime={siteConfig.customFields.builtAt}>{siteConfig.customFields.builtAt}</time>. A site build or deployment is not a test run or a publication.</p>
       {publication.releases.length === 0 ? <section className="emptyCatalog">
         <h3>No approved releases published yet</h3>
         <p>This catalog is being prepared. Release pages will appear after their content and evidence summaries pass publication review.</p>
@@ -29,33 +62,44 @@ export default function Catalog() {
           <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
             <option value="all">All statuses</option>
-            {['verified', 'partial', 'failed', 'untested'].map(value => <option key={value} value={value}>{value}</option>)}
+            {['verified', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{value}</option>)}
           </select></label>
         </div>
         <nav aria-label="Published releases"><ul>{publication.releases.map(release => <li key={release.id}><a href={'#' + release.id}>{release.version} · {release.channel} · {release.approval.status} · revision {release.publicationRevision}</a></li>)}</ul></nav>
         {publication.releases.map(release => <section className="release" id={release.id} key={release.id}>
           <h2>{release.version} <span className="status">{release.channel}</span> <span className="status">{release.approval.status}</span></h2>
-          {release.approval.status === 'pending' ? <aside className="evidenceNotice"><strong>Pending release-manager sign-off.</strong> This release is published before approval. It is accurate to the evidence held at publication time, may change before approval, and is not a release commitment.</aside> : null}
-          <p>Publication revision {release.publicationRevision} · <time dateTime={release.publishedAt}>{release.publishedAt}</time></p>
-          <p>{release.baselineKind ? 'Source baseline (not a tested build)' : 'Tested build'}: <code>{release.build}</code></p>
+          {release.approval.status === 'pending' ? <aside className="evidenceNotice"><strong>Pending release-manager sign-off.</strong> Human release approval is pending. This snapshot is not a release commitment.</aside> : null}
+          <p>Publication revision {release.publicationRevision} · {release.publishedAt ? <><time dateTime={release.publishedAt}>{release.publishedAt}</time> (publication metadata, not a test date)</> : 'Draft candidate; publication pending'}</p>
+          <p>{release.baselineKind === 'prerelease-evidence' ? 'Project pre-release baseline (historical scenarios and local contracts)' : release.baselineKind ? 'Source baseline (not a tested build)' : 'Tested build'}: <code>{release.build}</code></p>
           <p><a href={'/releases/' + release.id + '/bundle.json'}>Download evidence bundle (JSON)</a> · <a href={'/releases/' + release.id + '/bundle.md'}>Plain-text bundle</a></p>
-          {release.baselineKind && <p>Tier 1: declared in the cited development sources. Binding to a shipped 1.3.0 release is not established. Tier 2: runtime verification pending. {release.omittedCapabilities.length} other kit capabilities are not included; their status is not inferred.</p>}
-          <p>{release.baselineKind ? 'Kit revision' : 'Source revision'}: <code>{release.sourceRevision}</code> · <a href={release.reviewReference}>Publication review</a></p>
+          {release.baselineKind === 'source-declaration' && <p>Tier 1: declared in the cited development sources. Binding to a shipped 1.3.0 release is not established. Tier 2: runtime verification pending. {release.omittedCapabilities.length} other kit capabilities are not included; their status is not inferred.</p>}
+          <p>{release.baselineKind ? 'Kit revision' : 'Source revision'}: <code>{release.sourceRevision}</code> · {release.reviewReference ? <a href={release.reviewReference}>Publication review</a> : 'Publication review pending'}</p>
           <p>{release.capabilities.length} capabilities in this public snapshot. This is not a complete platform inventory.</p>
-          <p>{Object.entries(countStatuses(release.capabilities)).map(([label, count]) => `${count} ${label}`).join(' · ')}. Counts cover the full snapshot, not search results.</p>
+          {release.baselineKind === 'prerelease-evidence' ? <PrereleaseSummary release={release}/> :
+            <p>{Object.entries(countStatuses(release.capabilities)).map(([label, count]) => `${count} ${label}`).join(' · ')}. Counts cover the full snapshot, not search results.</p>}
           {filterCapabilities(release.capabilities, query, status).length === 0 && <p role="status">No matching capabilities in this snapshot. This does not mean unsupported.</p>}
           {filterCapabilities(release.capabilities, query, status).map(cap => <article className="capability" id={release.id + '--' + cap.id} key={cap.id}>
-            <h3>{cap.title} <span className="status">{cap.declaration ? 'Tier 1 declared · runtime untested' : cap.status}</span></h3>
-            <p><code>{cap.id}</code></p><p>{cap.summary}</p>
-            <TextList title="Prerequisites" items={cap.conditions}/>
-            <TextList title="Conditions and limits" items={cap.limits}/>
+            <h3>{cap.title ?? cap.id} <span className="status">{cap.verificationBasis === 'developer-assessment' ? 'Local-contract developer-assessed · no live runtime pass' : prereleaseLabels[cap.status] ?? (cap.declaration ? 'Tier 1 declared · runtime untested' : cap.status)}</span>{cap.releaseStatus === 'failed' && <> <span className="status">Release check failed</span></>}</h3>
+            <p><code>{cap.id}</code></p>
+            {cap.summary === null ? <p>No curated declaration text is published for this capability in this revision. This does not mean unsupported.</p> : <>
+              <p>{cap.summary}</p>
+              <TextList title="Prerequisites" items={cap.conditions}/>
+              <TextList title="Conditions and limits" items={cap.limits}/>
+            </>}
             {cap.declaration && <section><h4>Tier 1 declaration evidence</h4>
               <p>{cap.declaration.scope}</p><p>{cap.declaration.mechanicalValidation}</p>
               <p>Kit document SHA-256: <code>{cap.declaration.documentSha256}</code></p>
               <ul>{cap.declaration.citations.map((c, i) => <li key={i}><code>{c.repo}/{c.path}</code> · {c.symbol} · revision <code>{c.read_at}</code> · {c.closed ? 'closed declaration' : 'open declaration'}</li>)}</ul>
             </section>}
+            {cap.assessment && <section><h4>Developer assessment basis</h4>
+              <p>{cap.assessment.scope}</p>
+              <p>Assessed <time dateTime={cap.assessment.assessedAt}>{cap.assessment.assessedAt}</time> · {cap.assessment.ingestedAt ? <>ingested <time dateTime={cap.assessment.ingestedAt}>{cap.assessment.ingestedAt}</time></> : 'Kit ingestion timestamp not established.'}</p>
+              <p>Observed source revision <code>{cap.assessment.observedSourceRevision}</code> (source only; no tested-build binding).</p>
+              <TextList title="Assessment assumptions" items={cap.assessment.assumptions}/>
+              <TextList title="Assessment limits" items={cap.assessment.limits}/>
+            </section>}
             <h4>Evidence summary</h4>
-            {cap.evidence.length ? <ul>{cap.evidence.map((e, i) => <li key={i}><strong>{e.outcome}</strong> — {e.summary}</li>)}</ul> : <p>No evidence in this snapshot.</p>}
+            {cap.evidence.length ? <ul>{cap.evidence.map((e, i) => <li key={i}><strong>{e.scenario ? outcomeLabels[e.outcome] : e.outcome}</strong> — {e.scenario ? <><code>{e.scenario}</code> on <code>{e.build}</code> · test run finished <time dateTime={e.runFinishedAt}>{e.runFinishedAt}</time> · ingested <time dateTime={e.ingestedAt}>{e.ingestedAt}</time></> : e.summary}</li>)}</ul> : <p>{cap.assessment ? 'No scenario runtime evidence in this snapshot; basis is the developer assessment above.' : 'No evidence in this snapshot.'}</p>}
             {!cap.wholeClaim && <p>Whole-claim verification is not established.</p>}
           </article>)}
         </section>)}

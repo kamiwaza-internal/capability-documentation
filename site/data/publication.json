@@ -3698,6 +3698,2504 @@
           }
         }
       ]
+    },
+    {
+      "id": "1.3.0-prerelease-r3",
+      "version": "1.3.0",
+      "channel": "development",
+      "approval": {
+        "status": "pending",
+        "approvedBy": null,
+        "approvedAt": null
+      },
+      "build": "1.3.0; project pre-release baseline: historical development-build scenarios and local-contract assessments; not a released 1.3.0 artifact; release unverified",
+      "sourceRevision": "43efad16b990c4fa5b9fda6212f0d4b0532b5702",
+      "sourceCommittedAt": "2026-10-08T00:40:22Z",
+      "publicationRevision": 3,
+      "publishedAt": null,
+      "reviewReference": null,
+      "publicationState": "draft",
+      "generatedAt": "2026-10-08T18:56:27Z",
+      "assessmentWindow": {
+        "earliestAssessedAt": "2026-10-06T04:40:33Z",
+        "latestAssessedAt": "2026-10-06T09:31:27Z"
+      },
+      "baselineKind": "prerelease-evidence",
+      "releaseBinding": "not-established",
+      "testedBuilds": [
+        "develop@030b2a2979",
+        "develop@030b2a297934f4b7ad1374cd419b08e01350ab8d",
+        "develop@1902515efc7f",
+        "develop@829e070c",
+        "development-branch@f991d3e6536622d43f304d947f51c1e0c17d1ea5",
+        "development-branch@fd262bc65e202e763c4f6679e7c7d72be92c5293"
+      ],
+      "evidenceWindow": {
+        "earliestRunFinishedAt": "2026-08-11T20:50:29Z",
+        "latestRunFinishedAt": "2026-09-30T17:06:32Z"
+      },
+      "counts": {
+        "included": 88,
+        "prereleaseVerified": 50,
+        "scenarioVerified": 33,
+        "developerAssessed": 17,
+        "failedOrMixed": 5,
+        "notYetVerified": 33,
+        "releaseVerified": 0,
+        "releaseFailed": 1
+      },
+      "omittedCapabilities": [
+        "connectors.workroom-surface-access",
+        "context.workroom-document-search",
+        "context.workroom-ingestion-summary",
+        "context.workroom-raw-file-store",
+        "kaizen.workroom-notes",
+        "ontology.workroom-knowledge-graph",
+        "workrooms.admin-oversight",
+        "workrooms.app-launch",
+        "workrooms.app-runtime-binding",
+        "workrooms.archive-and-delete",
+        "workrooms.create",
+        "workrooms.export-bundle",
+        "workrooms.membership-and-roles",
+        "workrooms.org-decommission",
+        "workrooms.presence",
+        "workrooms.s3-object-storage",
+        "workrooms.session-scoping",
+        "workrooms.shared-credentials",
+        "workrooms.shared-threads"
+      ],
+      "deferredCapabilities": [
+        "federation.cluster-pairing",
+        "federation.execution-gates",
+        "federation.federated-retrieval",
+        "federation.remote-jobs"
+      ],
+      "capabilities": [
+        {
+          "id": "apps.app-garden",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "APPS/BROWSE/SC-01",
+              "build": "develop@1902515efc7f",
+              "outcome": "passed",
+              "runFinishedAt": "2026-08-11T20:50:31Z",
+              "ingestedAt": "2026-08-11T21:44:44Z",
+              "recordSha256": "165a7322c22fe75a36907ba59fcb7aa645f9f1e084f2c566402d3dc41b0d4f7f"
+            },
+            {
+              "scenario": "app-garden-deploy-lifecycle-and-reserved-environment-key-boundary",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "99c04e9ba5986bd459af03befa9c0ce2596cacde246eb0df79835decbb227182"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "apps.deployment-baseline",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T04:40:33Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "af6f4bf903ec7ec2e2a641c49702f2ab877a6337",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Synthetic baseline files, a faked running version and an in-memory database were used. Packaged baseline, startup wiring, production locking and rollback were not exercised."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "apps.release-digest-pinning",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T04:40:33Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "af6f4bf903ec7ec2e2a641c49702f2ab877a6337",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Pin enforcement ran at local service boundaries with a faked version and in-memory database. Real publication requests and operator configuration were not exercised; existing retained releases are exempt."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "apps.sandbox-workload-provider",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "auth.enterprise-sso",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "AUTH/SSO/SC-01",
+              "build": "develop@1902515efc7f",
+              "outcome": "passed",
+              "runFinishedAt": "2026-08-11T20:50:29Z",
+              "ingestedAt": "2026-08-11T21:44:44Z",
+              "recordSha256": "a1b6602d50ef2175526a5a49d3467c719732af74b859f48d646167270b44c926"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "auth.local-user-administration",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "local-user-administration-with-non-admin-denial",
+              "build": "development-branch@f991d3e6536622d43f304d947f51c1e0c17d1ea5",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-23T22:46:49Z",
+              "ingestedAt": "2026-09-29T16:05:39Z",
+              "recordSha256": "51cb46c0d35085dba2f0f328e269298d979b78623a0fef2fbfa706ae4591c92c"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "auth.personal-access-tokens",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "personal-access-token-authentication-and-revocation",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "23c29ff17bcb11765178ee1354d7e029b12a377cdfae39f79a902a1ed1a1052a"
+            },
+            {
+              "scenario": "personal-access-token-inventory-and-individual-revocation",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "40a5a872478d8f9088e7cdad33cb6cec23ad67f3c4fcfa03106a424ab5290902"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "auth.session-revocation",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "tracked-session-removal-and-refresh-token-logout-with-fresh-control",
+              "build": "development-branch@fd262bc65e202e763c4f6679e7c7d72be92c5293",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-18T23:36:38Z",
+              "ingestedAt": "2026-09-22T23:13:37Z",
+              "recordSha256": "c47e8a2363c467a4f85bbbe5e4c14a810db52e5d23f3563c3429b31413d4157a"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "authz.rebac-access-control",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "rebac-attributable-allow-decisions-and-policy-shaped-denies",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "b38e3c5d224fc3d3e63361a8e3ae30f5d6c0b2e3c15bab57a9ab45c42d8e29ed"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "catalog.dataset-registry",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "failed-or-mixed",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "catalog-container-lifecycle-and-dataset-membership-through-the-sdk-container-client",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "cf27817b80d4ce1c7f924e04196a6ee8b286d7278365388bcdb14a8b23e95556"
+            },
+            {
+              "scenario": "catalog-dataset-and-container-endpoint-surface",
+              "build": "develop@030b2a2979",
+              "outcome": "passed_with_notes",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "036ad6ce7a71b92998e1e881f1712f1a90b293f6ddcac8f4768270e819903d7d"
+            },
+            {
+              "scenario": "catalog-dataset-and-secret-lifecycle",
+              "build": "develop@829e070c",
+              "outcome": "passed",
+              "runFinishedAt": "2026-08-25T20:28:14Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "9ff741933a5e7617a691386225e952b7c6f9e636c025851fbb7de1fa2a40758e"
+            },
+            {
+              "scenario": "catalog-dataset-lifecycle-through-the-sdk-dataset-client",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "f76376a8453ff4825a0e46ad3073612b00b0ee0711301fa6f36d2d115514666c"
+            },
+            {
+              "scenario": "catalog-dataset-registration-and-readback",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "0a44375e9306ea273758aceb9d89479b1b3765f9acdb524451b1bf23c0d6a09d"
+            },
+            {
+              "scenario": "catalog-ingest-to-retrieval-round-trip-inline-and-grpc",
+              "build": "develop@829e070c",
+              "outcome": "passed_with_notes",
+              "runFinishedAt": "2026-08-25T20:28:14Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "f3dad6ebf0a295005ee94d8bf1fd528ed8f7a6809649330a9c67196aeef8c8c5"
+            },
+            {
+              "scenario": "catalog-s3-dataset-registration-inline-retrieval-and-deletion",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "bd363b3724f80fe527be2146fad8520666ad531cc10375e77e5437b75589e716"
+            },
+            {
+              "scenario": "multi-source-catalog-ingestion",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "9cf898008b8a1087466adebd38dc2120d0833cb10931c1871517981818eb9f05"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "catalog.registered-sources",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "catalog-registered-sources-listing",
+              "build": "develop@030b2a297934f4b7ad1374cd419b08e01350ab8d",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-28T23:26:34Z",
+              "ingestedAt": "2026-09-28T23:37:06Z",
+              "recordSha256": "a13497f50cb444939ceb6eeab30156e2bfcfb460029903ff2c3cb9136d0db0b9"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "catalog.secrets-management",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "catalog-governed-secret-lifecycle",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "1093844b83ddfdc16b2ba243d4abe2a87fc6092f40f3d42ed5a2354f43160a02"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "catalog.writable-datasets",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "catalog-dataset-listing",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T14:54:59Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "597f5082edc2565edd7103edc79aa582a0a31f19f66f1bc9a3446adb6712b7fa"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "connectors.ai-assisted-connector-setup",
+          "title": "Model-assisted connector setup and repair",
+          "distribution": "public",
+          "summary": "- preview plan without saving\n- automatic setup\n- bounded repair",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Requires platform-served or configured gateway model plus credentials appropriate to preview/repair. Bounded attempts can fail; no guarantee arbitrary APIs can be repaired. Separate from deterministic connector authoring.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T04:44:28Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "969539e4efe4df74fc300a84f9b5cb0d49f9585c",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Model answers, API previews and deployment results were faked. The assessment covers local orchestration and repair checks, with no proof that a real external API can be configured."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "ed75343b6d6338a2e12a4129be8e4660f09a8932d1834be3e2d11c239a5d218e",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-connector-builder",
+                "path": "apps/connector-builder/src/tool_connector_builder/automatic_setup_api.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "b6dc4da0b604e2ae96601ac3def9804c3ffd3f1b"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-connector-builder",
+                "path": "apps/connector-builder/src/tool_connector_builder/automatic_repair.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "b6dc4da0b604e2ae96601ac3def9804c3ffd3f1b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "connectors.connector-builder",
+          "title": "Build and deploy data connectors from API descriptions",
+          "distribution": "public",
+          "summary": "- import\n- test definition\n- generate tool package\n- deploy dedicated runtime",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Alpha app/tool integration. Deterministic path need not use a model. Requires platform authorization and runtime resources. Credentials absent can leave runtime suspended. Not universal API compatibility or all workbook sharing/governance requirements.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "connector-builder-import-test-generate-deploy",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:21:37Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "1c5eb84bd107e22396e9a50154d33552d0823be21d898b863ea6b6a8fbbeaf3b"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "0354de842348fe82a5a84ab89e0f678ec87ae1722494cfba400482756f8d44ae",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-connector-builder",
+                "path": "apps/connector-builder/src/tool_connector_builder/server.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "b6dc4da0b604e2ae96601ac3def9804c3ffd3f1b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "connectors.managed-data-sources",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T09:31:27Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "6ebae9a19918b555ae82f4bb5c262a833e9a34e7",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Deployment readiness, real connector reads, authentication, configuration storage and catalog fetches were substituted. The administrative UI did not run, and source catalog changes still require separate source curation."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "connectors.oauth-tool-policies",
+          "title": "Per-tool OAuth operation policies",
+          "distribution": "public",
+          "summary": "- create a tool policy (`POST /oauth-broker/policies/`)\n- read a tool policy by ID (`GET /oauth-broker/policies/{policy_id}`)\n- list tool policies, optionally filtered by app or tool (`GET /oauth-broker/policies/`)\n- update a policy's allowed operations, allowed scope subset or metadata (`PATCH /oauth-broker/policies/{policy_id}`)\n- delete a tool policy (`DELETE /oauth-broker/policies/{policy_id}`)\n- enforce the allowed operations before a call on the broker's standard proxy path (and at legacy ephemeral token minting), answering 403 on a violation",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "On by default, API only. The OAuth broker router is mounted with no feature flag, and the policy routes sit under it at `/oauth-broker/policies`. No SDK method calls these routes. The UI source holds only generated API types for them; no shipped UI screen was found.\n\nCreating, reading, changing or deleting a policy requires the caller to own its app installation or to be an administrator; anyone else gets 403, and an unknown policy id gets 404 before that check. A list request without an app filter returns every policy to an administrator and only the policies of the caller's own app installations to anyone else.\n\nEnforcement denies by default. A proxied call is refused unless the tool is in the app installation's `allowed_tools`, a policy exists for that app, tool and provider, and the requested operation is in the policy's `allowed_operations`. A tool with no policy for a provider cannot make any call to that provider through the standard proxy.\n\nThe check runs on the broker's standard proxy path (`/oauth-broker/proxy/{provider}/{service}/{operation}`) and on legacy ephemeral token minting, where it is checked as the operation `token.mint`. The delegated-workload execution path does not call it; that path authorizes each call with a one-use lease instead. Policies govern those two broker paths only, not tool execution in general. The broker's connector routes (`POST /oauth-broker/connectors/{connector_id}/proxy` and `/identity-proxy`, and `POST /oauth-broker/tokens/connectors/{connector_id}/mint`) do not check tool policies (`kamiwaza/services/oauth_broker/api/connector_proxy.py:34`, `kamiwaza/services/oauth_broker/api/connector_proxy.py:38`, `kamiwaza/services/oauth_broker/api/tokens.py:37`, `kamiwaza/services/oauth_broker/api/tokens.py:152`). All three require the caller to be the connector's bound workload (`kamiwaza/services/oauth_broker/connector_token_service.py:245`). The two proxy routes also enforce the connector's egress allowlist (`kamiwaza/services/oauth_broker/connector_proxy_service.py:68`, `kamiwaza/services/oauth_broker/connector_proxy_service.py:109`). The mint route has no egress check: it checks the requested scopes against the granted ones and returns the provider token to the connector (`kamiwaza/services/oauth_broker/connector_token_service.py:177`, `kamiwaza/services/oauth_broker/connector_token_service.py:114`). For a per-user connection that token is the connection's own provider token, not narrowed to the requested scopes; the scopes are recorded on the lease and returned as `granted_scopes` (`kamiwaza/services/oauth_broker/connector_token_service.py:178`, `kamiwaza/services/oauth_broker/connector_token_service.py:101`, `kamiwaza/services/oauth_broker/connector_token_service.py:116`).\n\nOperation names come from the broker's registered operation list. At this revision only Google operations are registered: Gmail (`gmail.search`, `gmail.getMessage`, `gmail.send`, `gmail.listLabels`, `gmail.modify`), Drive (`drive.listFiles`, `drive.getFile`) and Calendar (`calendar.list`, `calendar.events`). The create route stores the submitted operation names without checking them against that list.\n\nA read-only Gmail tool is possible: a policy that lists `gmail.search` and `gmail.getMessage` but not `gmail.send` refuses sends. The email tool deployment does not start that way. When the tool service provisions OAuth for an email tool, it creates a policy for `email-mcp` that allows `gmail.send` and `gmail.modify`. An owner must update that policy to make the tool read-only.\n\n`allowed_scope_subset` is checked only when a legacy ephemeral token is minted, and an empty list places no limit there. The proxy path does not check it.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "oauth-tool-policy-listing-and-write-surface",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T14:54:59Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "2cfb7c4d9579258eb2cb58a0fcb283a94c6d509644600ac2efb665b328fa10c1"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "af9f39bbb7231e92642803b5e0d3fade638554caa646af7340da098a8cc23284",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/oauth_broker/api/tool_policies.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "connectors.user-oauth-authorization",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T09:31:27Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "6ebae9a19918b555ae82f4bb5c262a833e9a34e7",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Provider authorization, refresh and revocation, secret storage, browser behavior and real workload access were not exercised. Provider scopes and source catalog changes retain separate review requirements."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "context.dataset-indexing",
+          "title": "Bind a catalog dataset to a searchable semantic/lexical index",
+          "distribution": "public",
+          "summary": "- create binding\n- list/get\n- job diagnostics\n- retry\n- delete\n- search\n- readiness",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "The inspected implementation establishes API support only. An asynchronous service-principal executor performs the work; the requesting user must be authorized for the source workroom. Two profiles are declared: `semantic_lexical` and `semantic_lexical_graph`; their infrastructure prerequisites still apply. Reading the creation endpoint does not prove end-to-end source synchronization. This source-binding lifecycle is distinct from generic document uploads, and no runtime success is claimed.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "dataset-index-binding-lookup",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T14:54:59Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "38668fcd63a4a47c905d61fddbf5ccbe1e4afb441fe45058ed4b7009f3fa2d54"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "8d4b242c2ce3b73ba35631f9dc5eb467bbb0a5d8c268d9f2de446fffc90608f1",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/context/api/dataset_indexes.py",
+                "symbol": "router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "delegation.brokered-resource-access",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "delegation.capability-grants",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "delegation.consent-and-approval-gates",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "delegation.pending-approval-queue",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "delegation.run-claims-lifecycle",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T05:01:56Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "af6f4bf903ec7ec2e2a641c49702f2ab877a6337",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Routes, services and SDK ran against separate fakes; real attestation, cryptographic checks, transactions and locking were not exercised. The SDK journey requires a corrected test harness that is absent from the release."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "delegation.workload-identity-and-attestation",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "extensions.developer-path",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "federation.cluster-pairing",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "federation.execution-gates",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "federation.federated-retrieval",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "federation.remote-jobs",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "ingestion.document-translation",
+          "title": "Translate parsed documents through OmniParse",
+          "distribution": "public",
+          "summary": "- translate\n- list translations\n- retrieve translated Markdown",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Extension REST surface, not an established Core ingestion translation pipeline. Default enablement true but endpoint is mandatory; source auto-detection is model-dependent. Default target en and default model name translategemma are configuration, not a closed language/model support set.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T04:45:00Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "0cf063aa8156b173ef2c8d2ab5ef3e221695deca",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Translation responses and parsed Markdown were faked. No translation model ran; translation quality, language coverage and automatic source-language detection are unassessed."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "87c8411a31ea3160c64a61060313c8cd7066cd84b8b06002c9bfc10be742bd14",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-omniparse",
+                "path": "src/omniparse/facades/rest/app.py",
+                "symbol": "app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "ac1b245dcdba7fd48510c7e5ea185b6b6789f730"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "ingestion.multimedia-extraction",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "ingestion.parse-from-url",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T05:05:07Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "0cf063aa8156b173ef2c8d2ab5ef3e221695deca",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Only synthetic HTML over local plain HTTP and a same-address redirect ran through conversion. Public DNS, outbound HTTPS, authentication, other formats and the separate tool process were not exercised."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "ingestion.scheduled-ingest",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "ingestion.security-markings",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "dde-security-marking-parse-and-admission",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:21:27Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "df3e2384ec39a601473ca8ef522f134bec83e1e7dc8149ce7496ec0fb0fb3d2a"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "ingestion.structured-document-outputs",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T09:26:02Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "2ff1fb794c82fec7f0bce8b5ccf996604daf71a3",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Real HTML conversion preserves table structure and picture identity. Figure geometry and image metadata remain empty for HTML; populated metadata was shown only with constructed adapter items. No paginated document was converted, and earlier source failures remain valid for that earlier revision."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "ingestion.video-frame-analysis",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.admin-settings-console",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-admin-settings-catalogue",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:06:31Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "ba71afc23fdeb4afd4f71700c075863f9aa561b47cd0801e786a05d203c0033a"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.agent-auto-routing",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T04:45:00Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "29c742f7232cd12eb73df091865423384f84699b",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Routing decisions and grants were passed to stub orchestration. No agent runtime, model, specialist consultation, live persistence, browser UI or administrative toggle was exercised."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.agent-packages",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.agent-publication-approval",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-agent-publication-approval-queue",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:06:32Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "e5f9f2a597271221fcb93ca5d270b3a871a1afc9e037fa4bad0035a0a8368805"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.answer-feedback",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-answer-feedback-contract",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:06:32Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "980fe62f6d7c9c37016f8db3a7f2f254777198464c2b501c4b2c50dea3586c79"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.artifacts",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-artifact-listing-and-lookup",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "b1f72ccc2d8253c540890a3c8dc1f5d7f9d3fe43bb1c68d0cc7b0f3202a4473c"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.context-compression",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-compression-configuration-and-stats",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:16Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "7626a459674f30e956e420ef2810124aec506ee88962391ba4a46eb0cd034e49"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.conversation-event-streaming",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.conversation-search",
+          "title": "Conversation and content search",
+          "distribution": "public",
+          "summary": "- query\n- filter\n- open-result",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Primary history search on; indexed history retrieval flag off by default. Legacy keyword event search is distinct from primary hybrid/unified semantics.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-conversation-search-contract",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:06:32Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "2e1fe8c9b30b792406513292afab49a44245e1561756bd3f0321c8c4016f79e8"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "c8cd43423ecdf71804c0e78741f2c7f5db76c2351e3a430eaa607cf6725e75bb",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/search.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.custom-agents",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T08:53:52Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "82a7bb3c263909ca8daf2a7554033e0774148b3c",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Authentication, skill lookups and database behavior were substituted. Browser creation, live agent behavior, production concurrency, startup and image binding were not exercised; SDK seam tests have separate review limits."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.data-chat",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.document-canvas-export",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-canvas-and-export-contract",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:06:32Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "143902fa5346ac25f199a5a8b5b58ac41e310f68d0bb927e81d26df6725cdd69"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.document-collections",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-document-collection-listing-and-lookup",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "41b5d8e75b939ece7d0a8abf737c1e581fe4e7ebc7ca2d5ac28733536c04e89a"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.member-token-budget",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.metrics-dashboard",
+          "title": "Primary Kaizen administrator metrics and usage",
+          "distribution": "public",
+          "summary": "- metrics\n- usage\n- member-usage",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Primary Kaizen administrator-only, content-free metrics; member-usage disclosure is separately audited. This entry does not claim Legacy analytics tabs or cross-product feature parity.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-ops-metrics-window",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "ee037576eecf8c4597c19f9f2ca6c7093ecf01bc6754414f69929c6017fc0874"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "d4a5cbcf717d25df6ada1324b68763c91ad409c125bf54a15305c8ef1e8f69fb",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/ops_metrics.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.multi-agent-orchestration",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-a2a-orchestration-posture",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:06:32Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "5a8a65a45cc0b614086eb5d5f43ef67bbee459c9faf8269e93fca8b876808ee5"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.notifications-inbox",
+          "title": "Durable notification inbox",
+          "distribution": "public",
+          "summary": "- list\n- unread-count\n- read\n- read-all",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "No email/Slack delivery claim: outbound notifier log-only default. Attendance rules suppress notifications for work watched live.\n\nPrimary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-notification-inbox-shape",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "bb9a3d775ad55c74c54882863ad469f05b5a77461364a6cb85705ff2f94a8cfa"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "83f1a367dfd5d7e53713706a229eee68612073fa5237e73c5715190ea0e8fb62",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza-extensions-tomo",
+                "path": "src/kaizen/member/routes/notifications.py",
+                "symbol": "build_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "260e50d016b05d6fb90de0171fc01575365a793b"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "Primary Kaizen source snapshot on the develop line; not an assertion that the deployed image contains this snapshot.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.platform-operator-tools",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T05:25:59Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "29c742f7232cd12eb73df091865423384f84699b",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Every platform call used a fake client. No real platform effects, chat turn or approval UI ran. The catalog dataset action was the only apply action exercised through the full local tool flow."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.prebuilt-agents",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.privacy-guard",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T05:26:45Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "82a7bb3c263909ca8daf2a7554033e0774148b3c",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Authentication and persistence were faked and UI tests used a simulated browser. The planned browser producer remains missing; only selected UI modes and fixed detection examples were tested, images were not scanned and direct API messages bypass the text filter."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.product-identity",
+          "title": "Tell the two Kaizen products apart under a shared catalog name",
+          "distribution": "public",
+          "summary": "- classify a release under a shared Kaizen name as the v3 or the v4 product line\n- identify Kaizen v4 from product-owned compose markers\n- decide whether a claimant on a reserved Kaizen name earns canonical presentation",
+          "conditions": [
+            "A catalog-sourced extension release carrying compose content."
+          ],
+          "limits": [
+            "**The product line is derived from compose content, never from version order.** The two products keep unrelated version lines, so a version comparison gets this wrong: Kaizen v3 ships as `kaizen-legacy` at a *v2* version carrying v3 compose. Any consumer that ranks rows by version to pick \"the newer Kaizen\" will select the wrong product — this is the shape behind the bundled-baseline incident where v3 was served under the v4 name.\n\nClassification returns nothing when the question does not apply: the name is not one the two products share, or there is no compose to classify. An absent answer is not a negative one.\n\nTrust requires all three of a reserved name, a `kamiwaza` catalog source, and no overlay shadow; a shadowed row fails closed, because the catalog-overlay endpoint is open to any authenticated user. **Nothing is blocked on an untrusted verdict** — what is withheld is canonical presentation, not the action. `kz-ext dev` shadows a reserved name in the ordinary course of development and keeps working.\n\n`kaizen-next` is retired as a product label and is retained only so stale catalog rows under it still resolve.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-product-line-classification",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:21:30Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "d274fdb9b157016d19e8abd13076096ca655f1ad0715e9b22f1306c419b194e5"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "c51f4ab2a75efc2de776f3e96ae743ff5bad17745a80fa9d2a926f393f406958",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/garden/apps/kaizen_identity.py",
+                "symbol": "kaizen_product_line",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "c6163f1d2c5925cbe07321c7b37c3b71e8cba86e"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/serving/garden/apps/kaizen_identity.py",
+                "symbol": "canonical_identity_trust",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "c6163f1d2c5925cbe07321c7b37c3b71e8cba86e"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "kaizen.projects",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-project-listing-and-lookup",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:14Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "01e992c348438e29c4959e1594e62428f0e679fc9138f1a13ac467399de99bb8"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.prompt-library-and-chains",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "kaizen-prompt-library-listing-and-lookup",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T17:04:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "7f6910194a035b2b4b162795a3ee750d0f1fd3eb9a92e447e8621ec90b4be576"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.recipes",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T05:25:59Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "82a7bb3c263909ca8daf2a7554033e0774148b3c",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Route functions bypassed HTTP and authentication, with a substitute database and fake tool transport. No save-button click, agent sandbox or chat turn ran; source curation remains separate."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.scheduled-tasks",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "kaizen.shared-chat-typing-indicators",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "models.discover-and-download",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "failed-or-mixed",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "J03/SC-01",
+              "build": "develop@1902515efc7f",
+              "outcome": "failed",
+              "runFinishedAt": "2026-08-11T22:35:45Z",
+              "ingestedAt": "2026-08-11T22:37:26Z",
+              "recordSha256": "455271c0386231216a11f788fc2a6a10ad7dd9d1f365090318dafd442727eb61"
+            },
+            {
+              "scenario": "cold-quantized-model-acquisition",
+              "build": "development-branch@fd262bc65e202e763c4f6679e7c7d72be92c5293",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-18T23:36:38Z",
+              "ingestedAt": "2026-09-22T23:13:37Z",
+              "recordSha256": "78f701d1da48b73bbeb614222466f03d901a827b8787ff0d7e2a3103e5973479"
+            },
+            {
+              "scenario": "model-discovery-metadata-and-hub-download",
+              "build": "develop@829e070c",
+              "outcome": "passed",
+              "runFinishedAt": "2026-08-24T19:54:28Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "cefd9613b7d63d9d03289b656c9c8e44dbcce5fd4ebde8b8ac7fe757bbb0d4fa"
+            },
+            {
+              "scenario": "model-file-read-and-download-management",
+              "build": "develop@829e070c",
+              "outcome": "passed_with_notes",
+              "runFinishedAt": "2026-08-24T19:54:28Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "8c7e3d6d9fa7add19350ba1cb985eb816ca9531078e4b17519746cda01a57e40"
+            },
+            {
+              "scenario": "model-registry-search-and-metadata-extended",
+              "build": "develop@829e070c",
+              "outcome": "passed",
+              "runFinishedAt": "2026-08-24T19:54:28Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "cc9f30ac6ddb509906f602225e8ed2bd3ec18bc59cb12e434d06486c8e02ba1f"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "models.external-endpoints",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "models.gpu-placement",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "models.local-deployment",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "failed-or-mixed",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "J03/SC-01",
+              "build": "develop@1902515efc7f",
+              "outcome": "failed",
+              "runFinishedAt": "2026-08-11T22:35:45Z",
+              "ingestedAt": "2026-08-11T22:37:26Z",
+              "recordSha256": "455271c0386231216a11f788fc2a6a10ad7dd9d1f365090318dafd442727eb61"
+            },
+            {
+              "scenario": "SC-01",
+              "build": "develop@1902515efc7f",
+              "outcome": "failed",
+              "runFinishedAt": "2026-08-11T22:35:22Z",
+              "ingestedAt": "2026-08-11T22:37:26Z",
+              "recordSha256": "6dab7957ed9ea4ee41199801d746c8c64c4b0069467de6a71f7ab5796e9a4cf4"
+            },
+            {
+              "scenario": "deploy-a-cross-platform-diffusion-model-through-the-sdk",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "4e3fe50d9d733cb8a1584c344eb9fad2deda52c1ac20b5339c39289372ed4ac5"
+            },
+            {
+              "scenario": "deploy-llama-cpp-model-locally-and-serve-chat",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "052d74d16d2134b30d84273bb28baee9a8934a84770e43703ed2cfa26f16173b"
+            },
+            {
+              "scenario": "engine-matrix-deploy-and-infer-with-fractional-co-location",
+              "build": "develop@829e070c",
+              "outcome": "passed_with_notes",
+              "runFinishedAt": "2026-08-25T20:02:33Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "9149a0a45628ddf488f2f7b4b07771dabd1dfad5d99000ca40aa5d3035d12447"
+            },
+            {
+              "scenario": "generate-images-through-the-openai-compatible-sdk-client",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "d1159b03abc3e9a60fec6df470343e8096a452a647db62c6daeb3c1ebdeb8829"
+            },
+            {
+              "scenario": "model-config-and-local-deployment-lifecycle-through-the-sdk",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "8c7d0c3306cd80aadbacc6984bbd6817cf509dee886306ea3f84e9fe92a459ae"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "failed-or-mixed",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "engine-matrix-deploy-and-infer-with-fractional-co-location",
+              "build": "develop@829e070c",
+              "outcome": "passed_with_notes",
+              "runFinishedAt": "2026-08-25T20:02:33Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "9149a0a45628ddf488f2f7b4b07771dabd1dfad5d99000ca40aa5d3035d12447"
+            },
+            {
+              "scenario": "openai-compatible-inference-operation-set",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "43e7f736eee49cab9bc13f9dee2a7b7ec86ce98d1997e9fc38e20f56f1ba2db2"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "models.tenant-mode-inference",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "models.tensor-parallel-serving",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "models.two-node-serving",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.access-requests",
+          "title": "Request resource access and record grantor approval/denial",
+          "distribution": "public",
+          "summary": "- request\n- resolve approved/denied\n- notify grantors/requester",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Authenticated tenant, current resource grantor only; requests rate-limited and deduplicated. IMPORTANT: inspected resolve implementation updates decision/operation/notifications but does not write access grants. Do not claim automatic permission provisioning. API support; shipped UI not established.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "access-request-submission-contract",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T14:55:00Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "13ef33161b952b2190e99c9afcb85b9f1bd8c26a9412807d80dfc4bc7e275c04"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "d600f4cbb5de8669739de98d142e786b67f86598975526338482210679fdfb7a",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/console/api.py",
+                "symbol": "console_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.admin-copilot",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T04:47:31Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "af6f4bf903ec7ec2e2a641c49702f2ab877a6337",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Model calls, action execution, audit sinks and persistence were faked. Full route joins, ownership denials and every budget were not exercised; the planned API evidence producer remains missing."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.airgapped-install",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.api-reference",
+          "title": "Serve machine-readable OpenAPI and offline interactive reference",
+          "distribution": "public",
+          "summary": "- OpenAPI schema\n- Swagger UI\n- ReDoc\n- auth annotations",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Same-origin vendored JS/CSS and no Google fonts. Schema auth annotations describe route policies, not runtime proof; route visibility/auth boundaries remain deployment-dependent. Does not imply SDK method coverage matches all API routes.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "api-reference-openapi-schema",
+              "build": "develop@030b2a297934f4b7ad1374cd419b08e01350ab8d",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-28T23:26:33Z",
+              "ingestedAt": "2026-09-28T23:37:06Z",
+              "recordSha256": "30ae6bf369c82fb3b3ff80ac0fa9d758b7a22de54280ecf9c4a1e0238ea6cfd8"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "f963523c1ef4b925482237ab38c481e89ef36dc14a21c254243d925e386cb59c",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/app.py",
+                "symbol": "create_app",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.app-generation-path",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.greymatter-mesh-integration",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.kubernetes-install",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.licensing-and-eula",
+          "title": "Validate signed license files and surface commercial-term status",
+          "distribution": "public",
+          "summary": "- startup signature/file validation\n- runtime health enforcement\n- license status headers/banner",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Signed-file validity/freshness enforcement is distinct from commercial-term expiry warnings. EULA acceptance chart guard corroborated. Offline signature validation does not establish a license-server dependency.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T09:20:51Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "af6f4bf903ec7ec2e2a641c49702f2ab877a6337",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Synthetic license material, chart rendering and a simulated browser were used. No disposable install, installed license, real signing authority or HTTP banner path was exercised; some startup receipts were checked without reviewer re-execution."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": {
+            "documentSha256": "b61c246d1dd39f30607d56e8c23f5837c1ea176619e4e76841221e619e69b2df",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/licenses/gate.py",
+                "symbol": "enforce_startup_license_gate",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              },
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/licenses/runtime_enforcement.py",
+                "symbol": "require_runtime_license_healthy",
+                "kind": "dispatch",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.news-feed",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "failed",
+          "evidence": [
+            {
+              "scenario": "news-feed-quadrants-and-latest",
+              "build": "develop@030b2a297934f4b7ad1374cd419b08e01350ab8d",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-28T23:26:34Z",
+              "ingestedAt": "2026-09-28T23:37:06Z",
+              "recordSha256": "4cdb59e89c86ccc98ef7c01ca1c2854a7b322bff9397a4507ae99ad8432065e2"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "platform.observability",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.operations-and-notifications",
+          "title": "Read persistent per-user operations and notification feeds",
+          "distribution": "public",
+          "summary": "- tray\n- list/get operations\n- list/get notifications\n- mark seen\n- dismiss",
+          "conditions": [
+            "The required configuration, services and permissions described below must be present."
+          ],
+          "limits": [
+            "Authenticated identity/recipient-scoped. API exists and mounted; ui-v2 source is not proof that UI is shipped. No outbound delivery claim. Existing platform.usage-and-audit is related but not same per-user operation lifecycle.\n\n1.3.0 development-line source snapshots; not a frozen release or deployed-image certification. All declaration sets are open: this document establishes the named positive operations, not an exhaustive unsupported-feature list."
+          ],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "operations-tray-and-notification-lookup",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T14:54:59Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "e84eef928abab06ec65b3c800d8e1d3fa9534229808f2a7c8254f8f6d3ce60b9"
+            }
+          ],
+          "declaration": {
+            "documentSha256": "468471b0ff55d03187660b73dcb843b7201903986e6a727b15e64c3e06d4ca95",
+            "citations": [
+              {
+                "repo": "kamiwaza-internal/kamiwaza",
+                "path": "kamiwaza/services/console/operation_api.py",
+                "symbol": "operation_router",
+                "kind": "route-table",
+                "closed": false,
+                "read_at": "679aa79d9ea5a8d59379daa172af6cf055bedf84"
+              }
+            ],
+            "basis": "curated-source-review",
+            "scope": "1.3.0 development-line source snapshots; not a frozen release or deployed-image certification.",
+            "mechanicalValidation": "Not whole-operation proof; route/dispatch members may remain unverified."
+          }
+        },
+        {
+          "id": "platform.tenant-namespace-install",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "platform.usage-and-audit",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "developer-assessment",
+          "assessment": {
+            "basis": "developer-assessment",
+            "assessedAt": "2026-10-06T08:22:56Z",
+            "ingestedAt": null,
+            "observedSourceRevision": "af6f4bf903ec7ec2e2a641c49702f2ab877a6337",
+            "sourceBinding": "observed-source-only",
+            "scope": "Accepted local-contract developer assessment; no live scenario execution.",
+            "assumptions": [
+              "Local tests and source review support the authored contract under synthetic fixtures, mocks or substitute dependencies.",
+              "Behavior in a deployed system and its production dependencies is assumed rather than observed.",
+              "Observed source revisions have no attested binding to a released image or deployed build."
+            ],
+            "limits": [
+              "No live runtime pass, cross-build equivalence, release verification or human release approval is claimed.",
+              "Environment, authentication, integration and concurrency behavior may differ from the local contract.",
+              "The accepted packet retains capability-specific assumptions and limits; those uncurated details are not published.",
+              "Authentication validation, database sessions and activity service were substituted. Real audit sinks, durable history, restart behavior, retention, multi-process export and SDK-to-server behavior were not observed."
+            ]
+          },
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "retrieval.async-retrieval-jobs",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "failed-or-mixed",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "arrow-flight-retrieval-of-an-ingested-s3-dataset",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "ab0b1975f1a6d4ab414104eb524de01e2fb2927adb435d6b3860c4167c2ab1bf"
+            },
+            {
+              "scenario": "catalog-ingest-to-retrieval-round-trip-inline-and-grpc",
+              "build": "develop@829e070c",
+              "outcome": "passed_with_notes",
+              "runFinishedAt": "2026-08-25T20:28:14Z",
+              "ingestedAt": "2026-08-25T22:09:51Z",
+              "recordSha256": "f3dad6ebf0a295005ee94d8bf1fd528ed8f7a6809649330a9c67196aeef8c8c5"
+            },
+            {
+              "scenario": "catalog-s3-dataset-registration-inline-retrieval-and-deletion",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "bd363b3724f80fe527be2146fad8520666ad531cc10375e77e5437b75589e716"
+            },
+            {
+              "scenario": "multi-source-inline-and-sse-retrieval",
+              "build": "develop@030b2a2979",
+              "outcome": "failed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "4159a16ef5754ce94cf594b5fb2c33e3ffb1fc843f174d677b8eeececa716af3"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "security.consent-and-banners",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "not-yet-verified",
+          "verificationBasis": "none",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [],
+          "declaration": null
+        },
+        {
+          "id": "skills.skills-library",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "skills-library-import-curation-export-and-soft-delete",
+              "build": "development-branch@fd262bc65e202e763c4f6679e7c7d72be92c5293",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-18T23:36:38Z",
+              "ingestedAt": "2026-09-22T23:13:37Z",
+              "recordSha256": "6558828756ad4ce322718e8e2bc9ff5e4d94a410f2309ffa531448c7c3806dbc"
+            }
+          ],
+          "declaration": null
+        },
+        {
+          "id": "tools.mcp-tool-shed",
+          "title": null,
+          "distribution": "public",
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "status": "prerelease-verified",
+          "verificationBasis": "historical-scenario",
+          "assessment": null,
+          "wholeClaim": false,
+          "releaseStatus": "not-stamped",
+          "evidence": [
+            {
+              "scenario": "tool-shed-deploy-mcp-protocol-handshake-discovery-and-stop",
+              "build": "develop@030b2a2979",
+              "outcome": "passed",
+              "runFinishedAt": "2026-09-30T16:27:15Z",
+              "ingestedAt": "2026-09-30T19:51:14Z",
+              "recordSha256": "ec4a7d99519af4cba6ffcfb5acad4e54bbcdd6726111e9d364acf1d7d937e89b"
+            }
+          ],
+          "declaration": null
+        }
+      ]
     }
   ]
 }
