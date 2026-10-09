@@ -1,3 +1,5 @@
+import {createHash} from 'node:crypto';
+
 // Consumer validation only. Verdict computation and publication approval stay upstream.
 const sha = /^[a-f0-9]{40}$/;
 const id = /^[a-z0-9][a-z0-9.-]{0,119}$/;
@@ -293,16 +295,110 @@ function scopedObservations(value, releases) {
   requireValue(Object.values(overlap).reduce((sum, value) => sum + value, 0) === c.sharedScenarioAssignments, 'Shared scenario assignment count mismatch');
   requireValue(c.wholeCapabilityPromotions === 0 && c.releaseVerified === 0, 'Scoped observations cannot promote whole capabilities or release credit');
 }
+// Canonical release stamps are scoped claims, not the legacy wholeClaim verdict.
+// This validates a curated projection; upstream replay and human identity stay under review.
+function hash(value) { requireValue(typeof value === 'string' && /^[a-f0-9]{64}$/.test(value), 'Invalid SHA256'); }
+function publicText(value) {
+  text(value);
+  const normalized = value.replaceAll('\\/', '/').replace(/\\u002f/gi, '/').replace(/&#(?:47|x2f);/gi, '/');
+  requireValue(!/https?:|\/(?:home|Users|tmp|etc|var|root)\/|[a-z]:\\+(?:Users|Temp)\\+|PRIVATE|CANARY|KAMIWAZA_|\.env\b|Bearer\s|password|(?:access[_-]?token|session[_-]?id|api[_-]?key|secret|token)['"]?\s*[:=]|localhost|\b\d{1,3}(?:\.\d{1,3}){3}\b/i.test(normalized), 'Private release content forbidden');
+}
+function publicStrings(values) { strings(values); values.forEach(publicText); }
+export function releaseSnapshotDigest(snapshot) {
+  const {approval: ignored, ...body} = snapshot;
+  return createHash('sha256').update(JSON.stringify(body)).digest('hex');
+}
+function releasedSnapshot(value) {
+  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval']);
+  identifier(value.id);
+  requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+$/.test(value.version), 'Invalid release version');
+  requireValue(value.basis === 'canonical-release-replay', 'Canonical replay required');
+  shape(value.source, ['ref', 'sourceRevision']);
+  requireValue([`v${value.version}`, `refs/tags/v${value.version}`, `release/${value.version}`].includes(value.source.ref) && sha.test(value.source.sourceRevision), 'Exact intended release source required');
+  hash(value.manifestId);
+  requireValue(Array.isArray(value.images) && value.images.length >= 2 && value.images.length <= 100, 'Qualified image identities required');
+  for (const image of value.images) {
+    shape(image, ['component', 'digest']); identifier(image.component);
+    requireValue(typeof image.digest === 'string' && /^sha256:[a-f0-9]{64}$/.test(image.digest), 'Invalid image digest');
+  }
+  unique(value.images.map(image => image.component));
+  requireValue(['core', 'frontend'].every(component => value.images.some(image => image.component === component)), 'Core and frontend image identities required');
+  shape(value.evidenceWindow, ['earliestStartedAt', 'latestFinishedAt']);
+  const window = value.evidenceWindow;
+  [window.earliestStartedAt, window.latestFinishedAt, value.generatedAt, value.publishedAt].forEach(observationInstant);
+  requireValue(orderedObservationTime(window.earliestStartedAt) <= orderedObservationTime(window.latestFinishedAt) &&
+    orderedObservationTime(window.latestFinishedAt) <= orderedObservationTime(value.generatedAt) &&
+    orderedObservationTime(value.generatedAt) <= orderedObservationTime(value.publishedAt), 'Release dates out of order');
+  requireValue(Number.isSafeInteger(value.publicationRevision) && value.publicationRevision > 0, 'Invalid publication revision');
+  requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
+  requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Full release inventory required');
+  for (const cap of value.capabilities) {
+    shape(cap, ['id', 'distribution', 'disposition', 'status', 'wholeClaim', 'scope', 'assumptions', 'limits', 'stamp', 'failures']);
+    identifier(cap.id);
+    requireValue(cap.distribution === 'public', 'Only approved public projections can be rendered');
+    requireValue(['included', 'excluded', 'deferred', 'other-owner'].includes(cap.disposition), 'Invalid release inventory disposition');
+    requireValue(['release-stamped', 'failed', 'not-stamped'].includes(cap.status), 'Invalid release stamp status');
+    requireValue(cap.wholeClaim === false, 'Scoped release stamps cannot promote whole capabilities');
+    publicText(cap.scope); publicStrings(cap.assumptions); publicStrings(cap.limits);
+    requireValue(Array.isArray(cap.failures) && cap.failures.length <= 100, 'Invalid release failures');
+    for (const failure of cap.failures) {
+      shape(failure, ['finishedAt', 'summary', 'resolvedByStampId']);
+      observationInstant(failure.finishedAt); publicText(failure.summary);
+      requireValue(orderedObservationTime(failure.finishedAt) <= orderedObservationTime(value.generatedAt), 'Release failure postdates snapshot');
+      if (failure.resolvedByStampId !== null) hash(failure.resolvedByStampId);
+    }
+    const unresolved = cap.failures.filter(failure => failure.resolvedByStampId === null);
+    if (cap.status === 'release-stamped') {
+      requireValue(cap.disposition === 'included' && cap.stamp !== null && unresolved.length === 0, 'Only clean included replay may be stamped');
+      const stamp = cap.stamp;
+      shape(stamp, ['id', 'basis', 'targetRelease', 'capability', 'manifestId', 'releaseSource', 'finishedAt']);
+      hash(stamp.id);
+      requireValue(stamp.basis === 'fresh-release-replay' && stamp.targetRelease === value.version && stamp.capability === cap.id && stamp.manifestId === value.manifestId, 'Release stamp binding mismatch');
+      shape(stamp.releaseSource, ['ref', 'sourceRevision']);
+      requireValue(stamp.releaseSource.ref === value.source.ref && stamp.releaseSource.sourceRevision === value.source.sourceRevision, 'Release stamp source mismatch');
+      observationInstant(stamp.finishedAt);
+      requireValue(orderedObservationTime(window.earliestStartedAt) <= orderedObservationTime(stamp.finishedAt) && orderedObservationTime(stamp.finishedAt) <= orderedObservationTime(window.latestFinishedAt), 'Stamp outside fresh replay window');
+      requireValue(cap.failures.every(failure => failure.resolvedByStampId === stamp.id && orderedObservationTime(failure.finishedAt) < orderedObservationTime(stamp.finishedAt)), 'Historical failure requires its corrective replay');
+    } else {
+      requireValue(cap.stamp === null && cap.failures.every(failure => failure.resolvedByStampId === null), 'Unstamped capability cannot supply a stamp or failure resolution');
+      if (cap.disposition === 'included') requireValue((cap.status === 'failed') === (unresolved.length > 0), 'Failed status must retain unresolved failure');
+      if (cap.disposition !== 'included') requireValue(cap.status === 'not-stamped', 'Excluded/deferred/other-owner is not a verification verdict');
+    }
+  }
+  unique(value.capabilities.map(cap => cap.id));
+  unique(value.capabilities.filter(cap => cap.stamp).map(cap => cap.stamp.id));
+  shape(value.counts, ['catalog', 'included', 'excluded', 'deferred', 'otherOwner', 'releaseStamped', 'failed', 'notStamped', 'wholeCapabilityPromotions']);
+  const rows = value.capabilities;
+  const dispositionCount = disposition => rows.filter(cap => cap.disposition === disposition).length;
+  const statusCount = status => rows.filter(cap => cap.disposition === 'included' && cap.status === status).length;
+  const derived = {catalog: rows.length, included: dispositionCount('included'), excluded: dispositionCount('excluded'), deferred: dispositionCount('deferred'), otherOwner: dispositionCount('other-owner'), releaseStamped: statusCount('release-stamped'), failed: statusCount('failed'), notStamped: statusCount('not-stamped'), wholeCapabilityPromotions: 0};
+  requireValue(Object.entries(derived).every(([key, number]) => value.counts[key] === number), 'Release counts must match full inventory');
+  shape(value.approval, ['status', 'scope', 'approvedBy', 'approvedAt', 'snapshotSha256']);
+  const decision = value.approval;
+  requireValue(decision.scope === 'full-inventory' && ['pending', 'approved'].includes(decision.status), 'Full inventory release decision required');
+  if (decision.status === 'approved') {
+    publicText(decision.approvedBy); observationInstant(decision.approvedAt); hash(decision.snapshotSha256);
+    requireValue(decision.snapshotSha256 === releaseSnapshotDigest(value), 'Release approval snapshot binding mismatch');
+    requireValue(orderedObservationTime(value.generatedAt) <= orderedObservationTime(decision.approvedAt), 'Release approval predates snapshot');
+    requireValue(derived.releaseStamped > 0, 'Release approval requires genuine scoped stamps');
+  } else requireValue(decision.approvedBy === null && decision.approvedAt === null && decision.snapshotSha256 === null, 'Pending decision cannot invent human approval');
+}
 export function validatePublication(input) {
-  shape(input, input?.schema === 5 ? ['schema', 'releases', 'observations'] : ['schema', 'releases']);
-  requireValue([1, 2, 3, 4, 5].includes(input.schema), 'Unsupported publication schema');
+  shape(input, input?.schema === 6 ? ['schema', 'releases', 'observations', 'releaseStamps'] : input?.schema === 5 ? ['schema', 'releases', 'observations'] : ['schema', 'releases']);
+  requireValue([1, 2, 3, 4, 5, 6].includes(input.schema), 'Unsupported publication schema');
   requireValue(Array.isArray(input.releases) && input.releases.length <= 500, 'Invalid releases list');
-  input.releases.forEach(value => release(value, input.schema === 5 ? 2 : input.schema));
+  input.releases.forEach(value => release(value, input.schema >= 5 ? 2 : input.schema));
   unique(input.releases.map(r => r.id));
-  if (input.schema === 5) {
+  if (input.schema >= 5) {
     requireValue(Array.isArray(input.observations) && input.observations.length > 0 && input.observations.length <= 500, 'Invalid observations list');
     input.observations.forEach(value => scopedObservations(value, input.releases));
     unique(input.observations.map(value => value.id));
+  }
+  if (input.schema === 6) {
+    requireValue(Array.isArray(input.releaseStamps) && input.releaseStamps.length > 0 && input.releaseStamps.length <= 500, 'Invalid release stamp snapshots');
+    input.releaseStamps.forEach(releasedSnapshot);
+    unique(input.releaseStamps.map(value => value.id));
+    unique([...input.releases, ...input.observations, ...input.releaseStamps].map(value => value.id));
   }
   return input;
 }

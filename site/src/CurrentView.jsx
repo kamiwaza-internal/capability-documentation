@@ -41,7 +41,7 @@ export default function CurrentView({publication}) {
       <tbody>{shown.map(row => {
         const builds = [...new Set(row.lineage.evidence.map(e => e.build))];
         return <tr key={row.id}>
-          <th scope="row"><a href={'#' + row.lineage.releaseId + '--' + row.id}><code>{row.id}</code></a><br/>{row.title ?? 'No curated title or description published in this revision'}</th>
+          <th scope="row"><a href={'#current--' + row.lineage.version + '--' + row.id}><code>{row.id}</code></a><br/>{row.title ?? 'No curated title or description published in this revision'}</th>
           <td>{statusLabels[row.status]}</td>
           <td>{basisLabels[row.lineage.verificationBasis] ?? 'none'}</td>
           <td>{row.acceptedAt === null ? 'No accepted verification' : <>
