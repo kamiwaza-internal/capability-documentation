@@ -133,11 +133,22 @@ this table, with exactly these columns:
 ```markdown
 | Capability | Documented | Pre-release status | Release status | Conditions and evidence |
 |---|---|---|---|---|
-| <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
+| <marker> <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
 ```
 
 - One row per question or requirement, in the order asked. A single question still
   gets a one-row table.
+- Start the Capability cell with exactly one marker, chosen by the highest state the
+  row reaches, then a space and the capability as asked:
+  - ✅ the Release status cell says `Release verified for <version>`.
+  - ⚠️ a record documents the capability, but it is not release verified. This covers
+    documented only, pre-release verified, pre-release failed, release failed and
+    source-contract verified. The state cells say which.
+  - ❌ no record establishes it: `Not established`, or `Not supported` where a record
+    states an explicit exclusion.
+  The marker summarises the row; it never replaces the words in the state cells, and
+  it is the only emoji in the answer. ✅ still carries every limit of the stamp (it is
+  not human release sign-off and covers the registered scenarios only).
 - Never drop, merge or reorder a column, and never leave a cell empty. A row with no
   matching record says `Not established` under Documented and names the unanswered
   requirement in the last column.
@@ -151,7 +162,8 @@ Cite, for every row that relies on a record: the publication `id`, the bundle SH
 the capability `id`, and the `documentSha256` or evidence `recordSha256` where the
 record gives one.
 
-After the table, give the count of rows in each state. Then stop. Do not add a
+After the table, give the count of rows under each marker (✅, ⚠️, ❌) and in each
+state. Then stop. Do not add a
 promotional summary, and do not turn mixed results into an overall yes.
 
 ## 5. Document mode
