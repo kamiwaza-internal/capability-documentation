@@ -1,0 +1,16 @@
+{
+  "name": "capability-grounding",
+  "version": "0.1.0",
+  "description": "Answer 'does Kamiwaza do X?' from the published capability records only, with citations, and say plainly when something is not established.",
+  "author": {
+    "name": "Kamiwaza"
+  },
+  "repository": "https://github.com/kamiwaza-internal/capability-documentation",
+  "keywords": [
+    "kamiwaza",
+    "capabilities",
+    "grounding",
+    "citations",
+    "evidence"
+  ]
+}

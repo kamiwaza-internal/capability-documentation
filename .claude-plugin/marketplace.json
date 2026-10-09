@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kamiwaza-capabilities",
+  "description": "Skills for answering questions about the Kamiwaza platform from its published capability records.",
+  "owner": {
+    "name": "Kamiwaza"
+  },
+  "plugins": [
+    {
+      "name": "capability-grounding",
+      "description": "Answer 'does Kamiwaza do X?' from the published capability records only, with citations, and say plainly when something is not established.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Kamiwaza"
+      },
+      "source": "./plugins/capability-grounding",
+      "category": "productivity",
+      "homepage": "https://github.com/kamiwaza-internal/capability-documentation"
+    }
+  ]
+}
