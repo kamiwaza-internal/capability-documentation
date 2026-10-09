@@ -62,10 +62,29 @@ put the user's question, a customer name or any other text of theirs into a requ
    leaves out. Their status is unknown, never negative. When the best match for a
    question is one of them, say so by ID and report Not established.
 
-Two more files add scoped detail. They change no capability's status:
+Two more files, both named in `/llms.txt`, complete the picture. Read them on every
+answer:
 
-- `/release-stamps-<version>.json` holds release stamps and source-contract stamps for
-  that version. Read its `limits` and carry them into any row that cites a stamp.
+- `/release-stamps-<version>.json` (`release-stamp-projection.v1`) is the source for the
+  release verified column. Use the highest version unless the user names one.
+  - A capability listed in `releaseStamps[]` is **Release verified for
+    `<targetRelease>`**, whatever `releaseStatus` its bundle record carries. Carry the
+    file's `limits` into that row in plain words, with `humanSignOff`,
+    `sourceCommitBasis` and `environment`: for example not human release sign-off, the
+    registered scenarios and not every operation, an operator-asserted source commit, a
+    local cluster.
+  - A capability listed in `sourceContractStamps[]` is not release verified. Its
+    release cell stays `Not release verified`, and the last column says it is
+    source-contract verified for that version, which is not runtime evidence.
+  - A capability in neither list is `Not release verified`.
+  - `targetRelease` can be newer than the publication you chose from the index (stamps
+    for 1.3.2 beside a 1.3.0 publication). The release column names `targetRelease`;
+    the pre-release column keeps the publication's version. Say both once above the
+    table.
+  - The index holds no hash for this file. Cite it by URL, its `source.kitCommit` and
+    the entry's `stampId`.
+  - If the file cannot be fetched or is not that JSON, say so as a limit on the release
+    column and do not infer a release state.
 - `/local-stamps.json` holds local scoped stamps. They are not release stamps and never
   make a capability release verified.
 
@@ -90,7 +109,10 @@ it.
 Rules that follow from this:
 
 - Read `status`, `verificationBasis` and `releaseStatus` from the record and report
-  what they say. Do not upgrade one state into another.
+  what they say. Do not upgrade one state into another. The one addition is a release
+  stamp in `/release-stamps-<version>.json` (section 2): it makes that capability
+  release verified for the stamp's version, and it changes nothing about the
+  pre-release state.
 - A `developer-assessment` is an assessment with explicit assumptions, not an executed
   test. Report its `scope` and `assumptions`.
 - `wholeClaim: false` means the evidence covers part of the capability. Say which part.
