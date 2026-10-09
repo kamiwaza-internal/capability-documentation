@@ -1,41 +1,64 @@
 # Kamiwaza Capability Documentation
 
-The publishing layer for [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/).
-The private capability-kit remains the source of truth. Published records distinguish
-Tier 1 source declarations from Tier 2 runtime verification; a declaration is not a
-passing test. See [the site contract](site/README.md) for release-binding limits and
-downloadable evidence bundles. Only reviewed main merges publish automatically.
+What the Kamiwaza platform can do, written down one capability at a time, with the
+evidence behind each claim. Published at
+[capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/).
 
-## How this works
+This repository is for developers building on Kamiwaza and for partners who need to
+answer "does the platform do X?" accurately. Every claim states its conditions and
+limits, and says whether it is only documented or also verified.
 
-Each file under [`capabilities/`](./capabilities) is one capability: what it guarantees, the conditions it requires, and its documented limits. A claim here is always one of three things:
+## Three ways to use it
 
-- **Established** — backed by a passing test for a named platform release
-- **Not established** — documented, but not yet backed by a passing test for that release
-- **Not present** — this repo doesn't cover it yet
-
-**Absence from this repo does not mean the platform can't do something.** It means it hasn't been documented and evidenced here yet. Treat an undocumented capability as "not established," never as "not supported" — those are different claims.
-
-## Structure
-
-| Path | Contents |
+| You want to | Do this |
 |---|---|
-| `capabilities/` | One Markdown file per capability — what it does, its conditions, its limits |
-| `tests/` | SDK-based automated tests exercising these capabilities |
-| `synthetic-data/` | Sample data used to run those tests |
-| `evidence/` | Records proving each tested claim — which test, which release, when |
+| Browse capabilities | Open [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/). |
+| Ask an AI assistant, or check an RFP or project plan | Install the `capability-grounding` skill (below). It answers from these records only and cites them. |
+| Read the data yourself | Fetch [`/releases/index.json`](https://capabilities.kamiwaza.dev/releases/index.json), then the versioned bundle it points to. [`/llms.txt`](https://capabilities.kamiwaza.dev/llms.txt) states the reading rules. |
 
-Some directories are still being populated as this repo comes online; not every capability has automated evidence here yet.
+## Ask an AI assistant
 
-## Using this repo
+The `capability-grounding` skill makes an assistant answer capability questions from
+the published records and nothing else. It cites the record for every claim, keeps
+"documented", "pre-release verified" and "release verified" apart, and reports **Not
+established** when the records are silent. It does not guess, and it does not test a
+running system.
 
-- **Looking for whether the platform does something specific?** Check `capabilities/` for a matching document. The file's own conditions and limits sections are the actual scope of the claim — read past the title.
-- **Building against the SDK?** `tests/` doubles as a set of working, evidenced examples, not just a test suite.
-- **Something look out of date or wrong?** Open an issue — this repo is actively maintained and grows every release.
+### Claude Code
 
-## Provenance
+```bash
+claude plugin marketplace add kamiwaza-internal/capability-documentation
+claude plugin install capability-grounding@kamiwaza-capabilities
+```
 
-This documentation is generated from Kamiwaza's internal capability-tracking process and reviewed before publishing. It reflects a specific point in time per release; check a capability's evidence record for the release it was last validated against.
+Then ask in plain words, for example:
+
+> Does Kamiwaza support serving more than one model on a single GPU?
+
+### Checking a document against the platform
+
+Paste or attach a document and the skill answers everything in it that depends on the
+platform, one row each, with the same citations:
+
+- **An RFP, RFI or requirements list.** Every requirement, in document order.
+- **A project plan, architecture map or a project's capability list.** It first lists
+  what the project relies on the platform to do, so you can correct its reading, then
+  answers each item.
+
+It ends with the rows the records do not establish. The result is a draft: have a
+person check each row against its cited record before it goes to a customer.
+
+### Other assistants
+
+The skill is one Markdown file:
+[`plugins/capability-grounding/skills/capability-grounding/SKILL.md`](plugins/capability-grounding/skills/capability-grounding/SKILL.md).
+Add it to your assistant as a skill or as instructions. It needs only the ability to
+fetch `https://capabilities.kamiwaza.dev`.
+
+### What the skill sends
+
+It fetches whole published files. It does not send your question, your documents or
+any customer text to the site.
 
 ## How to read a claim
 
@@ -64,3 +87,24 @@ A published release is either **approved** or **pending**.
 Note the two are separate questions. *Channel* (`development` / `released`) is about what the evidence is bound to — source snapshot or an attested build. *Approval* is about whether a human signed the release off. A release can be runtime-verified and still unapproved; a source baseline is unverified no matter who approved it. Merging a publication PR approves **publishing**; it does not by itself make a release approved.
 
 If a release does not say approved, treat it as pending.
+
+## What is in this repository
+
+| Path | Contents |
+|---|---|
+| `site/` | The published site and its data. `site/data/publication.json` is the reviewed catalog the site and the bundles are built from. See [the site contract](site/README.md). |
+| `plugins/capability-grounding/` | The assistant skill described above. |
+| `capabilities/` | One Markdown file per capability — what it does, its conditions, its limits |
+| `evidence/` | Records proving each tested claim — which test, which release, when |
+| `tests/` | SDK-based automated tests exercising these capabilities |
+| `synthetic-data/` | Sample data used to run those tests |
+
+Some directories are still being populated; not every capability has automated evidence here yet.
+
+## Provenance
+
+This documentation is generated from Kamiwaza's internal capability-tracking process and reviewed before publishing. Only reviewed merges to `main` publish. It reflects a specific point in time per release; check a capability's evidence record for the release it was last validated against.
+
+## Something wrong or missing?
+
+Open an issue. This repository grows every release, and a claim that reads wrong is worth reporting.
