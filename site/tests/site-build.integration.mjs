@@ -51,6 +51,9 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   }
   assert.ok(!html.includes('PRIVATE_CANARY_NOT_FOR_EXPORT'));
   assert.equal(existsSync(join(site, 'build/private-canary.md')), false);
+  // The copied stamp projections name other published records: nothing of them is shown or emitted here.
+  for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
+  for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
   release.capabilities[0].status = 'verified';
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify({schema: 1, releases: [release]}));
   const rejected = build();
@@ -108,6 +111,9 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   }
   assert.ok(!html.includes('PRIVATE_CANARY_NOT_FOR_EXPORT'));
   assert.equal(existsSync(join(site, 'build/private-canary.md')), false);
+  // The copied stamp projections name other published records: nothing of them is shown or emitted here.
+  for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
+  for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
   const bundle = readFileSync(join(site, 'build/releases/synthetic-prerelease-r3/bundle.json'), 'utf8');
   assert.equal(JSON.parse(bundle).schema, 4);
   assert.ok(!bundle.includes('PRIVATE_CANARY_NOT_FOR_EXPORT'));

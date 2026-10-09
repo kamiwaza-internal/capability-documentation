@@ -256,3 +256,124 @@ Precedence rule: an accepted pre-release verification stays current unless a
 
 Capabilities that appear only in older source snapshots have no acceptance
 record and no row here; they remain in the historical snapshots below.
+
+## Local 1.3.2 scoped stamp projection
+
+`data/local-stamps.json` is a sanitized public projection of the capability
+kit's local scoped verification stamp set
+(`reports/2026-10-09-1.3.2-local-verification-stamps/local-verification-stamps.json`,
+kit pull request 82). A capability has a local scoped stamp when every latest
+scoped scenario recorded for it in the October 8, 2026 local 1.3.2 run passed or
+passed with notes. These are not release stamps, not release verification and
+not sign-off. Each covers only its listed scenarios on the build that run
+recorded, whose core source is `release/1.3.0`, not a 1.3.2 release build.
+
+The projection keeps capability ids, scenario ids, lanes, statuses, run times,
+record and stamp hashes, the kit's limits and counts, and the core source ref
+and commit. It drops record file paths, full build strings, image digests,
+registry hosts, local patch names and capture error text. The stamp and record
+hashes are computed in the kit over content that is not published, so they
+identify kit records and cannot be recomputed from this file.
+
+Regenerate from a kit checkout; never edit the file by hand:
+
+```sh
+cd site
+node scripts/project-local-stamps.mjs ../../capability-kit/reports/2026-10-09-1.3.2-local-verification-stamps/local-verification-stamps.json
+npm test
+```
+
+The script pins the kit commit and pull request it was generated from, so the
+same kit bytes always give the same output bytes. `tests/local-stamps.test.mjs`
+checks that when the kit file is present (or `KIT_LOCAL_STAMPS` names it) and
+skips that one check otherwise.
+
+It is a separate file, not part of `data/publication.json`, because
+`publication.json` is a strictly validated, immutable record of published
+releases and observations, and its schema is reserved for real release stamps.
+A local scoped stamp is neither. `scripts/local-stamps.mjs` validates the file
+at build start (`docusaurus.config.js`) and again when it is copied to
+`/local-stamps.json`; a stamp with a failed scenario, a capability both stamped
+and not stamped, unreconciled counts, any release claim, or a stamp for a
+capability the published observation of the same run shows failing, fails the
+build.
+
+On the page, `joinLocalStamps(rows, localStamps)` in `src/catalog.mjs` adds a
+"Local 1.3.2 scoped stamp" badge to matching rows of the current status view.
+It never changes a row's status. Stamped capabilities outside the included rows
+are listed by id under the headline.
+
+Both stamp projections name the published records they were joined against:
+`baselineReleaseId` (`1.3.0-prerelease-r3`) in both files and, in
+`local-stamps.json`, `observationId` (`2026-10-08-local-scoped-runtime`). The
+validators always run each file's own checks. The cross-checks against
+`publication.json` run only when it holds the named records, and then every one
+still fails the build on a mismatch. Against any other publication (the
+synthetic ones of `tests/site-build.integration.mjs`, for example) a projection
+does not apply: the validator returns `null`, the page shows no badge, count or
+paragraph from it (`stampsApply` in `src/catalog.mjs`), and its downloadable
+copy and `llms.txt` line are not emitted.
+
+## v1.3.2 release stamp projection
+
+`data/release-stamps-1.3.2.json` is a sanitized public projection of the
+capability kit's release replay for git tag `v1.3.2`
+(`reports/2026-10-09-1.3.2-release-replay`, kit pull request 83). It holds two
+grades that are never mixed:
+
+- A release stamp is the kit seal's output for one capability: the kit derived
+  it from a fresh passing run of that capability's registered test on the
+  captured v1.3.2 build. It covers the registered kit's scenarios, not every
+  operation. The build's source commit is operator-asserted from a CI
+  image-digest match, the run was on a local cluster, and it is not human
+  release sign-off.
+- A source-contract stamp records that a capability's contract kits passed on
+  exported v1.3.2 source with mocks or fixtures. It is not runtime evidence and
+  is never a release stamp.
+
+The projection keeps, for each release stamp, the capability id, stamp id,
+lane (`api` or `sdk`), finish time, scenario ids, selection basis when the kit
+recorded one, and whether the stamp rests on a superseding kit. For each
+source-contract stamp it keeps the capability id, stamp id, and per kit the kit
+id and test counts; for a capability that earned none, the capability id and a
+reason without command names. At the top it keeps the target release and tag,
+core source ref and commit, manifest id, the `local` environment label, the
+`operator-asserted` source commit basis, `humanSignOff: false`, the kit commit,
+pull request and report path, limits and counts. It drops record paths and
+hashes, plan ids, image digests, registry hosts, test node ids, per-repository
+source refs, runner names and everything in the batch receipts and captures.
+Stamp ids are computed in the kit over content that is not published, so they
+identify kit stamps and cannot be recomputed from this file.
+
+Regenerate from a kit checkout; never edit the file by hand:
+
+```sh
+cd site
+node scripts/project-release-stamps.mjs ../../capability-kit/reports/2026-10-09-1.3.2-release-replay
+npm test
+```
+
+The script pins the kit commit and pull request it was generated from and
+writes the limits in plain words, so the same kit bytes always give the same
+output bytes. `tests/release-stamps-1.3.2.test.mjs` checks that when the kit
+report directory is present (or `KIT_RELEASE_REPLAY` names it) and skips that
+one check otherwise. (`tests/release-stamps.test.mjs` is a different suite: it
+covers release stamp snapshots inside `publication.json`.)
+
+It is a separate file, not part of `data/publication.json`, for the same reason
+as the local stamps: `publication.json` snapshots carry a full inventory
+decision and a human approval binding, and this replay has neither.
+`scripts/release-stamps.mjs` validates the file at build start
+(`docusaurus.config.js`) and again when it is copied to
+`/release-stamps-1.3.2.json`. `humanSignOff` other than `false`, a duplicate
+capability, a capability in both stamp lists, unreconciled counts, an unknown
+field, a private path, digest, registry host or stray URL, or a capability that
+is neither in the latest pre-release evidence release nor named in
+`outsideCatalog`, fails the build.
+
+On the page, `joinReleaseStamps(rows, releaseStamps)` in `src/catalog.mjs` adds
+"Release stamped · v1.3.2" and "Source-contract verified · v1.3.2" badges to
+matching rows of the current status view, with a filter for each. It never
+changes a row's status. Where a row also carries a scoped failure from the
+earlier 2026-10-08 local run, both are shown: the release stamp first, the
+older failure dated to its run.

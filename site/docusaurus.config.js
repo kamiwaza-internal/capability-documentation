@@ -1,6 +1,10 @@
 module.exports = async function config() {
   const {validatePublication} = await import('./scripts/publication.mjs');
   validatePublication(require('./data/publication.json'));
+  const {validateLocalStamps} = await import('./scripts/local-stamps.mjs');
+  validateLocalStamps(require('./data/local-stamps.json'), require('./data/publication.json'));
+  const {validateReleaseStamps} = await import('./scripts/release-stamps.mjs');
+  validateReleaseStamps(require('./data/release-stamps-1.3.2.json'), require('./data/publication.json'));
   if (process.env.GITHUB_SHA && !/^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA)) throw new Error('Invalid site build revision');
   return {
     title: 'Kamiwaza capabilities',
