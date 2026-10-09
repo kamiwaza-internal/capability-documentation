@@ -112,7 +112,9 @@ export function primaryCapabilities(publication) {
   for (const release of publication.releases.filter(row => row.baselineKind === 'prerelease-evidence')) {
     for (const id of release.omittedCapabilities) {
       const key = release.version + ':' + id;
-      if (!byId.has(key)) byId.set(key, [{release, cap: {id, status: 'untested', title: null, summary: null, conditions: [], limits: [], wholeClaim: false, evidence: [], declaration: null}, at: null, qualified: false, omitted: true}]);
+      const rows = byId.get(key) ?? [];
+      rows.push({release, cap: {id, status: 'untested', title: null, summary: null, conditions: [], limits: [], wholeClaim: false, evidence: [], declaration: null}, at: null, qualified: false, omitted: true});
+      byId.set(key, rows);
     }
   }
   for (const release of publication.releaseStamps ?? []) for (const cap of release.capabilities) {
@@ -152,17 +154,19 @@ export function primaryCapabilities(publication) {
         failures.push({snapshotId: row.release.id, at: failure.finishedAt, applicable: applies(row), supersedes: applies(row) && compareTime(failure.finishedAt, selected.at) > 0, ambiguous: applies(row) && compareTime(failure.finishedAt, selected.at) === 0, superseded: applies(row) && compareTime(failure.finishedAt, selected.at) < 0, axis: 'release', reason: applies(row) ? 'Same qualified environment and bounded claim scope.' : 'Release failure has no matching environment and claim binding to the retained verification.'});
       }
     }
-    const descriptionRow = selected.cap.declaration && selected.cap.summary ? selected : [...ordered].reverse().find(row => row.cap.declaration && row.cap.summary);
-    const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow !== selected} : null;
+    const hasDescription = row => typeof row.cap.title === 'string' && row.cap.title.trim() && typeof row.cap.summary === 'string' && row.cap.summary.trim() && (row.cap.declaration || !row.release.baselineKind);
+    const descriptionRow = hasDescription(selected) ? selected : [...ordered].reverse().find(hasDescription);
+    const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow !== selected, basis: descriptionRow.cap.declaration ? 'curated-source-declaration' : 'public-snapshot-prose'} : null;
     const baseline = publication.releases.filter(release => release.version === selected.release.version && release.baselineKind === 'prerelease-evidence').sort((a, b) => a.publicationRevision - b.publicationRevision).at(-1);
     const includedInBaseline = baseline ? baseline.capabilities.some(cap => cap.id === selected.cap.id) : null;
     const deferred = baseline?.deferredCapabilities.includes(selected.cap.id) ?? false;
     current.push({...selected.cap, title: description?.capability.title ?? selected.cap.id, summary: description?.capability.summary ?? null,
       conditions: description?.capability.conditions ?? [], limits: description?.capability.limits ?? [], status,
-      includedInBaseline, deferred, omitted: selected.omitted ?? false,
+      includedInBaseline, deferred, omitted: ordered.at(-1).omitted ?? false,
+      omissionSnapshotId: ordered.at(-1).omitted ? ordered.at(-1).release.id : null,
       version: selected.release.version, snapshotId: selected.release.id, verifiedAt: selected.at,
       retainedStatus: selected.cap.status, retainedCapability: selected.cap, description, failures,
-      history: ordered.map(row => ({snapshotId: row.release.id, status: row.cap.status, at: row.at, scope: row.omitted ? 'Explicit omitted ID; no capability evidence record published.' : row.cap.scope ?? row.cap.assessment?.scope ?? (row.cap.wholeClaim ? 'Whole-claim assessment' : row.cap.evidence.map(record => record.scenario ?? record.summary).join('; ') || 'Source declaration only')})),
+      history: ordered.map(row => ({snapshotId: row.release.id, status: row.cap.status, at: row.at, omitted: row.omitted ?? false, scope: row.omitted ? 'Explicit omitted ID; no capability evidence record published.' : row.cap.scope ?? row.cap.assessment?.scope ?? (row.cap.wholeClaim ? 'Whole-claim assessment' : row.cap.evidence.map(record => record.scenario ?? record.summary).join('; ') || 'Source declaration only')})),
     });
   }
   return current.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || Number(accepted.has(b.status)) - Number(accepted.has(a.status)) || a.id.localeCompare(b.id));

@@ -256,3 +256,17 @@ Precedence rule: an accepted pre-release verification stays current unless a
 
 Capabilities that appear only in older source snapshots have no acceptance
 record and no row here; they remain in the historical snapshots below.
+
+
+Omission is a separate published scope event even when the capability has older
+declaration or verification records. The primary view retains the omission in
+its history and current scope metadata without erasing earlier accepted status
+or evidence. A later included record can end the current omission while the
+historical event stays visible.
+
+Schema 1 public snapshots supply valid title and summary prose without a source
+declaration object. That text remains available with its original prerequisites,
+limits and snapshot provenance. It is labelled public snapshot prose rather than
+source curation; historical text never becomes a current curated claim. The
+pre-release contract still requires a real declaration before uncurated text is
+eligible as a description.
