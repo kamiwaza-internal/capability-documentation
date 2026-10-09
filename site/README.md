@@ -194,3 +194,32 @@ The site renders these snapshots separately and emits `/release-stamps/index.jso
 and immutable JSON/plain-text bundles. Adding a schema and passing synthetic
 tests grants no production verification, human sign-off, publication or deployment.
 Only a reviewed actual publication input update can expose a signed release.
+
+
+## Current capability precedence
+
+The first view derives one primary row per published version/capability without
+changing any snapshot or bundle. Accepted verification takes precedence over
+untested, skipped, absent or uncurated records. The `verified` filter includes
+whole-claim verified, project pre-release verified and scoped release-stamped
+records while retaining their distinct labels and original basis/date. The
+`failed` filter includes failed-or-mixed records. A missing description is a
+visible documentation gap; older declaration text is labelled historical source
+context, never a current curated claim or broader verified scope.
+
+Automatic supersession requires a later failed test bound to the same version,
+qualified manifest/environment, exact source and full bounded contract (scope,
+assumptions and limits). A later matching passing replay restores precedence.
+A narrower stamped claim cannot replace a broader whole-claim accepted contract.
+Development channel/build names alone do not prove environment applicability;
+those failures remain visible separately. Aggregate local observations lack
+scenario/claim bindings and do not revoke accepted historical contracts. A
+retained release failure such as News remains a separate visible hold without
+inventing its chronology or erasing its accepted pre-release evidence.
+
+Explicit omitted IDs already present in the published baseline remain visible
+as excluded documentation/evidence gaps. They do not become failed or unsupported
+features. Deferred IDs stay inside their historical included denominator. The
+primary view's row/filter counts are presentation counts across versioned public
+records, not new verification totals, a replacement release denominator or fresh
+1.3.2 credit. Original immutable snapshots and observations remain expandable.

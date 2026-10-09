@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
-import {filterCapabilities, countStatuses} from '../catalog.mjs';
+import {filterCapabilities, countStatuses, primaryCapabilities} from '../catalog.mjs';
 
 function TextList({title, items}) {
   return <><h4>{title}</h4>{items.length ? <ul>{items.map((item, i) => <li key={i}>{item}</li>)}</ul> : <p>None specified in this publication.</p>}</>;
@@ -93,10 +93,40 @@ function ReleaseStamps({snapshot}) {
   </section>;
 }
 
+function PrimaryCapabilities({capabilities, query, status}) {
+  const verified = filterCapabilities(capabilities, '', 'verified');
+  return <section className="release" id="current-capabilities">
+    <h2>Current capability view · accepted verification first</h2>
+    <p>{verified.length} retained accepted verifications across the versioned records below. This presentation count combines no evidence runs or denominators and grants no new release credit. {capabilities.length} versioned public capability rows are shown; this is not a new product verification denominator. Original snapshots and separate scoped observations remain available below.</p>
+    <p>Accepted verification remains primary unless a later test establishes failure of the same version, qualified environment and claim scope. Missing descriptions, untested sources and unrelated scoped observations do not remove verification.</p>
+    {filterCapabilities(capabilities, query, status).length === 0 && <p role="status">No matching capability records.</p>}
+    {filterCapabilities(capabilities, query, status).map(cap => <article className="capability" id={'current--' + cap.version + '--' + cap.id} key={cap.version + ':' + cap.id}>
+      <h3>{cap.title} <span className="status">{prereleaseLabels[cap.status] ?? cap.status}</span></h3>
+      <p><code>{cap.id}</code> · version {cap.version} · <a href={'#' + cap.snapshotId}>{['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'Retained verification snapshot' : cap.omitted ? 'Explicit omission scope' : 'Published record'}</a> · {cap.verifiedAt ? <>evidence date <time dateTime={cap.verifiedAt}>{cap.verifiedAt}</time></> : 'execution date not established'}</p>
+      {cap.includedInBaseline === false && <p>Outside the included historical verification scope. Exclusion is not an unsupported-feature or failure verdict.</p>}
+      {cap.deferred && <p>Deferred; retained inside the historical included denominator. No verification credit is inferred.</p>}
+      {cap.retainedCapability.scope && <><p>Original verified scope: {cap.retainedCapability.scope}</p><TextList title="Verification assumptions" items={cap.retainedCapability.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.limits}/></>}
+      {cap.retainedCapability.verificationBasis === 'developer-assessment' && <p>Accepted local-contract developer assessment; no live scenario execution. {cap.retainedCapability.assessment.scope}</p>}
+      {cap.retainedCapability.assessment && <><TextList title="Verification assumptions" items={cap.retainedCapability.assessment.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.assessment.limits}/></>}
+      {cap.retainedCapability.evidence.length > 0 && <p>Original scenario scope: {cap.retainedCapability.evidence.map(record => <React.Fragment key={record.scenario ?? record.summary}><code>{record.scenario ?? record.summary}</code> · {record.outcome} on <code>{record.build}</code>; </React.Fragment>)}. These original scoped records do not establish a fresh release replay.</p>}
+      {cap.failures.length > 0 && <aside className="evidenceNotice"><strong>Retained failure or release hold.</strong><ul>{cap.failures.map((failure, index) => <li key={index}><a href={'#' + failure.snapshotId}>{failure.snapshotId}</a> · {failure.at ?? 'failure date not established'} · {failure.superseded ? 'Earlier matching failure; a later matching pass is primary.' : failure.supersedes ? 'Applicable later failure supersedes the earlier verification.' : failure.ambiguous ? 'Same-bound failure; ordering relative to acceptance is not established. Hold remains explicit.' : failure.reason}</li>)}</ul></aside>}
+      {cap.description ? <>
+        {cap.description.historical && <p><strong>Current description gap.</strong> The text below is historical source context from <a href={'#' + cap.description.snapshotId}>{cap.description.snapshotId}</a>; it is not a current curated declaration or a larger verified claim.</p>}
+        <p>{cap.description.capability.summary}</p>
+        <TextList title={cap.description.historical ? 'Historical source prerequisites' : 'Source prerequisites'} items={cap.conditions}/>
+        <TextList title={cap.description.historical ? 'Historical source limits' : 'Source limits'} items={cap.limits}/>
+      </> : <p><strong>Description gap.</strong> No curated declaration text is published for this capability. Its retained verification status remains explicit.</p>}
+      {!cap.wholeClaim && <p>Whole-capability verification is not established.</p>}
+      <details><summary>Retained status and claim scope history</summary><ul>{cap.history.map(item => <li key={item.snapshotId}><a href={'#' + item.snapshotId}>{item.snapshotId}</a> · {item.status} · {item.at ?? 'execution date not established'} · {item.scope}</li>)}</ul></details>
+    </article>)}
+  </section>;
+}
+
 export default function Catalog() {
   const {siteConfig} = useDocusaurusContext();
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
+  const primary = primaryCapabilities(publication);
   return <Layout title="Release catalog" description="Reviewed Kamiwaza capabilities, conditions and exact-build verification status.">
     <header className="catalogHero"><div className="container">
       <p className="eyebrow">THE KAMIWAZA CAPABILITY CATALOG</p>
@@ -105,6 +135,15 @@ export default function Catalog() {
     </div></header>
     <main className="container catalogMain">
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
+        <div className="catalogFilters">
+          <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
+          <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
+            <option value="all">All statuses</option>
+            {['verified', 'release-stamped', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{value}</option>)}
+          </select></label>
+        </div>
+      <PrimaryCapabilities capabilities={primary} query={query} status={status}/>
+      <details className="gaps"><summary>Original immutable snapshots and separate scoped observations</summary>
       {(publication.releaseStamps ?? []).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}
       {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
       <h2>Accepted historical pre-release baseline and source snapshots</h2>
@@ -115,13 +154,7 @@ export default function Catalog() {
         <p>This catalog is being prepared. Release pages will appear after their content and evidence summaries pass publication review.</p>
         <p>No verification counts or release claims are implied by this empty catalog.</p>
       </section> : <>
-        <div className="catalogFilters">
-          <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
-          <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
-            <option value="all">All statuses</option>
-            {['verified', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{value}</option>)}
-          </select></label>
-        </div>
+
         <nav aria-label="Published releases"><ul>{publication.releases.map(release => <li key={release.id}><a href={'#' + release.id}>{release.version} · {release.channel} · {release.approval.status} · revision {release.publicationRevision}</a></li>)}</ul></nav>
         {publication.releases.map(release => <section className="release" id={release.id} key={release.id}>
           <h2>{release.version} <span className="status">{release.channel}</span> <span className="status">{release.approval.status}</span></h2>
@@ -161,6 +194,7 @@ export default function Catalog() {
           </article>)}
         </section>)}
       </>}
+      </details>
     </main>
   </Layout>;
 }
