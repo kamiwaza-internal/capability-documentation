@@ -257,6 +257,30 @@ Precedence rule: an accepted pre-release verification stays current unless a
 Capabilities that appear only in older source snapshots have no acceptance
 record and no row here; they remain in the historical snapshots below.
 
+
+Omission is a separate published scope event even when the capability has older
+declaration or verification records. The primary view retains the omission in
+its history and current scope metadata without erasing earlier accepted status
+or evidence. A later included record can end the current omission while the
+historical event stays visible.
+
+Schema 1 public snapshots supply valid title and summary prose without a source
+declaration object. That text remains available with its original prerequisites,
+limits and snapshot provenance. It is labelled public snapshot prose rather than
+source curation; historical text never becomes a current curated claim. The
+pre-release contract still requires a real declaration before uncurated text is
+eligible as a description.
+
+
+Current omission scope compares publication metadata times across release and
+stamp snapshots: `publishedAt`, or `generatedAt` for a draft. These are scope
+metadata dates, not test execution dates. Revision numbers resolve equal times
+only inside their own collection. Equal times across collections do not prove
+later inclusion, so omission remains conservative. This scope ordering does not
+change accepted evidence precedence, original test dates or historical baseline
+membership. Retained history lists provenance in deterministic revision order;
+it is not a chronological event list across collections.
+
 ## Local 1.3.2 scoped stamp projection
 
 `data/local-stamps.json` is a sanitized public projection of the capability
