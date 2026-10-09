@@ -140,3 +140,32 @@ bundles under /observations/, with an exact-byte SHA-256 index. This consumer
 validates structure and consistency; independent source reconciliation and privacy
 review remain necessary before publication. Public-site review and deployment
 gates are unchanged.
+
+## Current capability status view (derived, not stored)
+
+The first section of the catalog page shows one row per capability in the latest
+`prerelease-evidence` release. It is computed at render time by
+`currentCapabilityView(publication)` in `src/catalog.mjs`. Nothing is written
+back to `data/publication.json` or any bundle, and no published record changes.
+
+Precedence rule: an accepted pre-release verification stays current unless a
+**later, applicable failed** result supersedes it.
+
+- Applicable means the same version as the acceptance **and** the same contract:
+  an observation row marked `scope: 'whole-capability'`, or one naming a
+  `scenario` the acceptance rests on. A later applicable pass for that contract
+  restores the status; both events stay in the row's history.
+- Untested, skipped or absent later results, and missing descriptive text, never
+  remove a verification. Missing text is flagged as a documentation gap. Older
+  release text is never copied into the current row; the row only points at the
+  older release that has it.
+- Published observation rows carry per-capability counts for a different target
+  (local 1.3.2) and no scenario or scope, so they are not applicable. Their
+  failures are shown on the row as "applicability to the accepted contract not
+  established" and leave the status unchanged.
+- The row keeps its lineage (release id, basis, evidence records or assessment)
+  by reference. A 1.3.0 pre-release acceptance is never relabelled as 1.3.2 or
+  as release verified. `releaseStatus: failed` is a separate flag.
+
+Capabilities that appear only in older source snapshots have no acceptance
+record and no row here; they remain in the historical snapshots below.
