@@ -270,3 +270,13 @@ limits and snapshot provenance. It is labelled public snapshot prose rather than
 source curation; historical text never becomes a current curated claim. The
 pre-release contract still requires a real declaration before uncurated text is
 eligible as a description.
+
+
+Current omission scope compares publication metadata times across release and
+stamp snapshots: `publishedAt`, or `generatedAt` for a draft. These are scope
+metadata dates, not test execution dates. Revision numbers resolve equal times
+only inside their own collection. Equal times across collections do not prove
+later inclusion, so omission remains conservative. This scope ordering does not
+change accepted evidence precedence, original test dates or historical baseline
+membership. Retained history lists provenance in deterministic revision order;
+it is not a chronological event list across collections.

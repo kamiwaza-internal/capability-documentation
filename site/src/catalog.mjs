@@ -160,10 +160,17 @@ export function primaryCapabilities(publication) {
     const baseline = publication.releases.filter(release => release.version === selected.release.version && release.baselineKind === 'prerelease-evidence').sort((a, b) => a.publicationRevision - b.publicationRevision).at(-1);
     const includedInBaseline = baseline ? baseline.capabilities.some(cap => cap.id === selected.cap.id) : null;
     const deferred = baseline?.deferredCapabilities.includes(selected.cap.id) ?? false;
+    // Publication scope has independent revision sequences for releases and stamps.
+    // Compare real publication metadata (or draft generation), never execution dates.
+    const scopeTime = row => row.release.publishedAt ?? row.release.generatedAt;
+    const scopeByCollection = [false, true].map(qualified => rows.filter(row => row.qualified === qualified)
+      .sort((a, b) => compareTime(scopeTime(a), scopeTime(b)) || a.release.publicationRevision - b.release.publicationRevision || a.release.id.localeCompare(b.release.id)).at(-1)).filter(Boolean);
+    // At an equal cross-collection time, inclusion is not demonstrably later.
+    const latestScope = scopeByCollection.sort((a, b) => compareTime(scopeTime(a), scopeTime(b)) || Number(Boolean(a.omitted)) - Number(Boolean(b.omitted)) || a.release.id.localeCompare(b.release.id)).at(-1);
     current.push({...selected.cap, title: description?.capability.title ?? selected.cap.id, summary: description?.capability.summary ?? null,
       conditions: description?.capability.conditions ?? [], limits: description?.capability.limits ?? [], status,
-      includedInBaseline, deferred, omitted: ordered.at(-1).omitted ?? false,
-      omissionSnapshotId: ordered.at(-1).omitted ? ordered.at(-1).release.id : null,
+      includedInBaseline, deferred, omitted: latestScope.omitted ?? false,
+      omissionSnapshotId: latestScope.omitted ? latestScope.release.id : null,
       version: selected.release.version, snapshotId: selected.release.id, verifiedAt: selected.at,
       retainedStatus: selected.cap.status, retainedCapability: selected.cap, description, failures,
       history: ordered.map(row => ({snapshotId: row.release.id, status: row.cap.status, at: row.at, omitted: row.omitted ?? false, scope: row.omitted ? 'Explicit omitted ID; no capability evidence record published.' : row.cap.scope ?? row.cap.assessment?.scope ?? (row.cap.wholeClaim ? 'Whole-claim assessment' : row.cap.evidence.map(record => record.scenario ?? record.summary).join('; ') || 'Source declaration only')})),
