@@ -1,0 +1,1714 @@
+{
+  "report_type": "inventory-signoff-readiness-report",
+  "report_format_version": 1,
+  "requested_release": "1.3.2",
+  "prepared_at_utc": "2026-10-09T04:26:01.146139Z",
+  "signoff_disposition": "HOLD",
+  "full_runtime_procedure_completed": false,
+  "human_release_signoff": false,
+  "canonical_release_stamp": false,
+  "source_inventory_revision": "48aec5a5d5d14da4c429ad2fbfa99e2c4e02d05a",
+  "candidate_release_source": {
+    "tag": "v1.3.2",
+    "commit": "28da02405d4e3a39cfea405f4bb44fda67286b0c",
+    "exact_source_build_run": "https://github.com/kamiwaza-internal/kamiwaza/actions/runs/37585603685",
+    "exact_source_build_conclusion": "success",
+    "build_ref": "release/1.3.0",
+    "collected_core_manifest_digest": "sha256:6411d02445d0af2a6d48149b38239e3f5eb8fe38c0d31dbc4e4f0c045932774c",
+    "collected_frontend_manifest_digest": "sha256:64526c2e0b82619b5bd370b7022ff3eacecadc70ecdf85d883e6012cb2d27c1a",
+    "tag_triggered_build_conclusion": "cancelled",
+    "running_artifact_qualification": "not-established"
+  },
+  "inventory_coverage": {
+    "catalog_entries_reconciled": 107,
+    "retained_130_included": 88,
+    "retained_130_excluded": 19,
+    "proposed_kit_replay_scope_held": 83,
+    "deferred_federation": 4,
+    "two_node_serving_other_owner": 1,
+    "canonical_132_inventory_denominator": null,
+    "denominator_limit": "107 is the full retained product catalog, not a newly approved 1.3.2 cycle. The 88/19 split and five execution deferrals are retained explicitly; no exclusion is counted as a pass."
+  },
+  "retained_historical_130_baseline": {
+    "included": 88,
+    "prereleaseVerified": 50,
+    "scenarioVerified": 33,
+    "developerAssessed": 17,
+    "failedOrMixed": 5,
+    "notYetVerified": 33,
+    "releaseVerified": 0,
+    "releaseFailed": 1
+  },
+  "historical_canonical_cli": {
+    "target_release": "1.3.0",
+    "view_exit_code": 0,
+    "plan_exit_code": 0,
+    "scenario_prerelease_verified": 33,
+    "accepted_developer_assessments_in_public_baseline": 17,
+    "developer_assessments_in_current_main_cycle": 0,
+    "release_stamps": 0,
+    "limit": "The canonical main cycle retains 33 scenario-verified capabilities. The accepted published 50/88 baseline separately includes 17 developer assessments. Neither is retargeted to 1.3.2 or newly imported here."
+  },
+  "replay_mapping_readiness": {
+    "registry_target_release": "1.3.0",
+    "registered_kits": 89,
+    "mapped_unique_capabilities": 62,
+    "unmapped_unique_capabilities": 45,
+    "historical_plan_selected_capabilities": 32,
+    "historical_plan_held_capabilities": 56,
+    "static_api_source_bindings_matched": 25,
+    "portable_asset_bindings_matched": 30,
+    "limit": "Mappings and static content hashes were checked, not executed. Existing 1.3.0 mappings require reviewed 1.3.2 intake; missing mappings do not erase implemented capabilities or retained evidence. The unresolved historical News release failure remains held."
+  },
+  "reused_oct8_local_scoped_evidence": {
+    "observation_id": "2026-10-08-local-scoped-runtime",
+    "target": {
+      "version": "1.3.2",
+      "environment": "local",
+      "sourceRevision": "602b17433eca0a3ec4edda910d8ed85abc277681",
+      "sourceBinding": "observed-source-only",
+      "releaseBinding": "not-established"
+    },
+    "counts": {
+      "catalog": 107,
+      "observedCapabilities": 44,
+      "successfulCapabilities": 34,
+      "capabilitiesWithFailures": 10,
+      "inIncludedBaseline": 36,
+      "outsideIncludedBaseline": 8,
+      "passedScenarios": 51,
+      "passedWithNotesScenarios": 1,
+      "failedScenarios": 13,
+      "sharedScenarioAssignments": 1,
+      "wholeCapabilityPromotions": 0,
+      "releaseVerified": 0
+    },
+    "evidence_window": {
+      "earliestStartedAt": "2026-10-08T20:47:53.196714Z",
+      "latestFinishedAt": "2026-10-08T22:26:37.410352Z"
+    },
+    "sdk_phase_window": {
+      "earliestStartedAt": "2026-10-08T20:39:26.779031Z",
+      "latestFinishedAt": "2026-10-08T22:31:52.172334Z"
+    },
+    "reuse_scope": "Retained dated observations and planning context only; no fresh Azure replay, whole-capability promotion or release acceptance."
+  },
+  "newly_executed": {
+    "work": [
+      "Full catalog reconciliation",
+      "Existing-cycle canonical view, plan and HTML rendering",
+      "Static runner-source and portable-asset binding checks",
+      "Read-only Azure target/fixture/known-worker preflight",
+      "Release-source and CI artifact metadata reconciliation"
+    ],
+    "azure_metadata_checks": 6,
+    "azure_metadata_window_start": "2026-10-09T04:19:05.148224+00:00",
+    "azure_metadata_window_end": "2026-10-09T04:19:06.023527+00:00",
+    "product_runtime_tests": 0,
+    "new_capability_passes": 0,
+    "new_release_verified_capabilities": 0,
+    "limit": "Successful metadata and offline inventory checks are readiness evidence, not product capability passes."
+  },
+  "unexecuted_requirements": [
+    {
+      "id": "cycle-and-registry",
+      "status": "unavailable",
+      "owner_role": "Release and Kit owners",
+      "required_operation": "Review the actual 1.3.2 inventory designation, retained evidence membership and exclusions; register a compatible canonical cycle and real runner mappings without relabeling old records.",
+      "expected_output": "Validated capability-release-cycle.v1 and matching evidence-kit registry for 1.3.2, with all selected and held capability IDs."
+    },
+    {
+      "id": "release-identity",
+      "status": "unqualified",
+      "owner_role": "Release build owner",
+      "required_operation": "Qualify the selected source, immutable manifests/platform digests, current running image identities, configuration hashes and SDK/test/extension pins using existing provenance.",
+      "expected_output": "Validated build-manifest.v1 captures before and after replay; current runtime readiness alone is insufficient."
+    },
+    {
+      "id": "tag-contract-compatibility",
+      "status": "unresolved",
+      "owner_role": "Release and Kit owners",
+      "required_operation": "Resolve the canonical literal release/1.3.2 source-ref requirement against the actual v1.3.2 tag convention through review; do not invent the missing branch or rewrite raw identities.",
+      "expected_output": "Reviewed, validator-supported release identity that names the real selected artifact."
+    },
+    {
+      "id": "session-trust-window",
+      "status": "unavailable",
+      "owner_role": "Existing session and trust owners",
+      "required_operation": "Provide the existing approved provider entrypoint, nonsecret principal/scope references, strict TLS trust reference and validity window; invoke only that accepted provider.",
+      "expected_output": "Accepted current session/trust/window handoff. No credentials, new login, permission changes or trust bypass."
+    },
+    {
+      "id": "owned-fixtures-and-hardware",
+      "status": "unavailable",
+      "owner_role": "Scoped fixture and hardware owners",
+      "required_operation": "Provide current task-owned resource identities, positive/negative control fixtures and cleanup journals for the selected runners; supply real qualifying hardware where required.",
+      "expected_output": "Accepted per-lane setup receipts and serialized execution window that preserve unrelated demos and resources."
+    },
+    {
+      "id": "fresh-complete-replay",
+      "status": "not-executed",
+      "owner_role": "Kit runtime coordinator and operators",
+      "required_operation": "After prerequisites pass, execute the selected existing API/SDK/UI/manual kits; retain every assertion result, setup error, skip, canonical record and cleanup outcome.",
+      "expected_output": "Fresh complete runner receipt and original canonical records on the stable qualified 1.3.2 identity; failures remain failures."
+    },
+    {
+      "id": "seal-and-human-signoff",
+      "status": "not-executed",
+      "owner_role": "Kit reviewers and release manager",
+      "required_operation": "Validate original before/after captures and replay receipt with the canonical seal workflow; obtain required genuine human observations and the separate release decision.",
+      "expected_output": "Only derived, reproducible per-capability stamps for complete successful replay, plus a truthful human sign-off disposition."
+    }
+  ],
+  "inventory": [
+    {
+      "capability_id": "apps.app-garden",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "apps.deployment-baseline",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "apps.release-digest-pinning",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "apps.sandbox-workload-provider",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "auth.enterprise-sso",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "auth.local-user-administration",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "auth.personal-access-tokens",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 2,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "auth.session-revocation",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "authz.rebac-access-control",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "catalog.dataset-registry",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "failed-or-mixed",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 5,
+        "passed_with_notes_scenarios": 1,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "catalog.registered-sources",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "catalog.secrets-management",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "catalog.writable-datasets",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "connectors.ai-assisted-connector-setup",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "connectors.connector-builder",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "connectors.managed-data-sources",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "connectors.oauth-tool-policies",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "connectors.user-oauth-authorization",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "connectors.workroom-surface-access",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "context.dataset-indexing",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "context.workroom-document-search",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "context.workroom-ingestion-summary",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "context.workroom-raw-file-store",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "delegation.brokered-resource-access",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "delegation.capability-grants",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "delegation.consent-and-approval-gates",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "delegation.pending-approval-queue",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "delegation.run-claims-lifecycle",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "delegation.workload-identity-and-attestation",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "extensions.developer-path",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "federation.cluster-pairing",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "deferred-federation",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "federation.execution-gates",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "deferred-federation",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "federation.federated-retrieval",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "deferred-federation",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "federation.remote-jobs",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "deferred-federation",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.document-translation",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.multimedia-extraction",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.parse-from-url",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.scheduled-ingest",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.security-markings",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.structured-document-outputs",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ingestion.video-frame-analysis",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.admin-settings-console",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.agent-auto-routing",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.agent-packages",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.agent-publication-approval",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.answer-feedback",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.artifacts",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.context-compression",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.conversation-event-streaming",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.conversation-search",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.custom-agents",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.data-chat",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.document-canvas-export",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.document-collections",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.member-token-budget",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.metrics-dashboard",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.multi-agent-orchestration",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.notifications-inbox",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.platform-operator-tools",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.prebuilt-agents",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.privacy-guard",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.product-identity",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.projects",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.prompt-library-and-chains",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.recipes",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.scheduled-tasks",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.shared-chat-typing-indicators",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "kaizen.workroom-notes",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.discover-and-download",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "failed-or-mixed",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.external-endpoints",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.gpu-placement",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.local-deployment",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "failed-or-mixed",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 2,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 3,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.openai-compatible-inference",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "failed-or-mixed",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.tenant-mode-inference",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.tensor-parallel-serving",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "models.two-node-serving",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "excluded-from-kit-execution-two-node-owner",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "ontology.workroom-knowledge-graph",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.access-requests",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.admin-copilot",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.airgapped-install",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.api-reference",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.app-generation-path",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.greymatter-mesh-integration",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.kubernetes-install",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.licensing-and-eula",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.news-feed",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "failed",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.observability",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.operations-and-notifications",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.tenant-namespace-install",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "platform.usage-and-audit",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "developer-assessment",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "retrieval.async-retrieval-jobs",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "failed-or-mixed",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 3,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "security.consent-and-banners",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "not-yet-verified",
+      "retained_130_basis": "none",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "skills.skills-library",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "tools.mcp-tool-shed",
+      "retained_130_inventory_scope": "included",
+      "retained_130_prerelease_state": "prerelease-verified",
+      "retained_130_basis": "historical-scenario",
+      "retained_130_release_state": "not-stamped",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "held-for-qualified-release-replay",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.admin-oversight",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 4,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.app-launch",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.app-runtime-binding",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.archive-and-delete",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 3,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.create",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 3,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.export-bundle",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.membership-and-roles",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 2,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.org-decommission",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 1,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 0,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.presence",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.s3-object-storage",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.session-scoping",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": {
+        "passed_scenarios": 0,
+        "passed_with_notes_scenarios": 0,
+        "failed_scenarios": 1,
+        "whole_capability_pass": false,
+        "release_acceptance": false
+      },
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "available",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.shared-credentials",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    },
+    {
+      "capability_id": "workrooms.shared-threads",
+      "retained_130_inventory_scope": "excluded",
+      "retained_130_prerelease_state": "outside-included-baseline",
+      "retained_130_basis": null,
+      "retained_130_release_state": "outside-included-baseline",
+      "local_oct8_132_scoped_observation": null,
+      "proposed_execution_scope": "outside-retained-included-scope",
+      "existing_registry_runner_mapping": "missing",
+      "fresh_azure_132_outcome": "not-executed",
+      "release_verified": false
+    }
+  ],
+  "publication_limits": "Evidence-only review proposal. It changes no website input, release approval, canonical private evidence or running deployment. Merging documentation would not grant release acceptance."
+}
