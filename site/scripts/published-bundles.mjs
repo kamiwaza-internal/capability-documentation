@@ -3,6 +3,7 @@ import {appendFileSync, mkdirSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
+import {validateReleaseStamps} from './release-stamps.mjs';
 
 export function emitBundles(publication, out) {
   validatePublication(publication);
@@ -69,5 +70,10 @@ export default function bundlePlugin() {
     validateLocalStamps(JSON.parse(stamps), data);
     writeFileSync(join(outDir, 'local-stamps.json'), stamps);
     appendFileSync(join(outDir, 'llms.txt'), '/local-stamps.json holds local scoped stamps for listed scenarios on one recorded local build: not release stamps, not release verification, not sign-off, and they change no status.\n');
+    // v1.3.2 release stamps and source-contract stamps: likewise a separate file.
+    const release = readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url));
+    validateReleaseStamps(JSON.parse(release), data);
+    writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
+    appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). They change no status.\n');
   }};
 }

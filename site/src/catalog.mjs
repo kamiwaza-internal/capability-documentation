@@ -190,3 +190,30 @@ export function joinLocalStamps(rows, localStamps) {
     notStampedOutside: outside(failed),
   };
 }
+
+// Additive join of the release stamp projection onto the current rows, same contract as
+// joinLocalStamps: status, lineage and flags are untouched; outside ids are returned, never dropped.
+export function joinReleaseStamps(rows, data) {
+  const released = new Map(data.releaseStamps.map(stamp => [stamp.capability, stamp]));
+  const contracts = new Map(data.sourceContractStamps.map(stamp => [stamp.capability, stamp]));
+  const inView = new Set(rows.map(row => row.id));
+  const joined = rows.map(row => {
+    const stamp = released.get(row.id), contract = contracts.get(row.id);
+    return {...row,
+      releaseStamp: stamp ? {lane: stamp.lane, scenarios: stamp.scenarios.length, finishedAt: stamp.finishedAt} : null,
+      sourceContractStamp: contract ? {kits: contract.kits.length, passed: contract.kits.reduce((n, kit) => n + kit.tests.passed, 0)} : null};
+  });
+  const count = test => joined.filter(test).length;
+  const outside = ids => [...ids].filter(id => !inView.has(id)).sort();
+  return {
+    rows: joined,
+    releaseStamped: count(r => r.releaseStamp),
+    releaseStampedVerified: count(r => r.releaseStamp && r.status === 'verified'),
+    // Stamped with no accepted pre-release verification behind it.
+    releaseStampedNotPreviouslyVerified: joined.filter(r => r.releaseStamp && r.acceptedAt === null).map(r => r.id).sort(),
+    sourceContract: count(r => r.sourceContractStamp),
+    sourceContractVerified: count(r => r.sourceContractStamp && r.status === 'verified'),
+    releaseStampedOutside: outside(released.keys()),
+    sourceContractOutside: outside(contracts.keys()),
+  };
+}

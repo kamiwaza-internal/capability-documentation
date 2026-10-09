@@ -302,3 +302,67 @@ On the page, `joinLocalStamps(rows, localStamps)` in `src/catalog.mjs` adds a
 "Local 1.3.2 scoped stamp" badge to matching rows of the current status view.
 It never changes a row's status. Stamped capabilities outside the included rows
 are listed by id under the headline.
+
+## v1.3.2 release stamp projection
+
+`data/release-stamps-1.3.2.json` is a sanitized public projection of the
+capability kit's release replay for git tag `v1.3.2`
+(`reports/2026-10-09-1.3.2-release-replay`, kit pull request 83). It holds two
+grades that are never mixed:
+
+- A release stamp is the kit seal's output for one capability: the kit derived
+  it from a fresh passing run of that capability's registered test on the
+  captured v1.3.2 build. It covers the registered kit's scenarios, not every
+  operation. The build's source commit is operator-asserted from a CI
+  image-digest match, the run was on a local cluster, and it is not human
+  release sign-off.
+- A source-contract stamp records that a capability's contract kits passed on
+  exported v1.3.2 source with mocks or fixtures. It is not runtime evidence and
+  is never a release stamp.
+
+The projection keeps, for each release stamp, the capability id, stamp id,
+lane (`api` or `sdk`), finish time, scenario ids, selection basis when the kit
+recorded one, and whether the stamp rests on a superseding kit. For each
+source-contract stamp it keeps the capability id, stamp id, and per kit the kit
+id and test counts; for a capability that earned none, the capability id and a
+reason without command names. At the top it keeps the target release and tag,
+core source ref and commit, manifest id, the `local` environment label, the
+`operator-asserted` source commit basis, `humanSignOff: false`, the kit commit,
+pull request and report path, limits and counts. It drops record paths and
+hashes, plan ids, image digests, registry hosts, test node ids, per-repository
+source refs, runner names and everything in the batch receipts and captures.
+Stamp ids are computed in the kit over content that is not published, so they
+identify kit stamps and cannot be recomputed from this file.
+
+Regenerate from a kit checkout; never edit the file by hand:
+
+```sh
+cd site
+node scripts/project-release-stamps.mjs ../../capability-kit/reports/2026-10-09-1.3.2-release-replay
+npm test
+```
+
+The script pins the kit commit and pull request it was generated from and
+writes the limits in plain words, so the same kit bytes always give the same
+output bytes. `tests/release-stamps-1.3.2.test.mjs` checks that when the kit
+report directory is present (or `KIT_RELEASE_REPLAY` names it) and skips that
+one check otherwise. (`tests/release-stamps.test.mjs` is a different suite: it
+covers release stamp snapshots inside `publication.json`.)
+
+It is a separate file, not part of `data/publication.json`, for the same reason
+as the local stamps: `publication.json` snapshots carry a full inventory
+decision and a human approval binding, and this replay has neither.
+`scripts/release-stamps.mjs` validates the file at build start
+(`docusaurus.config.js`) and again when it is copied to
+`/release-stamps-1.3.2.json`. `humanSignOff` other than `false`, a duplicate
+capability, a capability in both stamp lists, unreconciled counts, an unknown
+field, a private path, digest, registry host or stray URL, or a capability that
+is neither in the latest pre-release evidence release nor named in
+`outsideCatalog`, fails the build.
+
+On the page, `joinReleaseStamps(rows, releaseStamps)` in `src/catalog.mjs` adds
+"Release stamped · v1.3.2" and "Source-contract verified · v1.3.2" badges to
+matching rows of the current status view, with a filter for each. It never
+changes a row's status. Where a row also carries a scoped failure from the
+earlier 2026-10-08 local run, both are shown: the release stamp first, the
+older failure dated to its run.

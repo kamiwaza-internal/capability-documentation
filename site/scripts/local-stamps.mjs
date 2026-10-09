@@ -1,19 +1,19 @@
 // Consumer validation for the local scoped stamp projection. Separate from publication.json:
 // these are not release stamps and never feed a release verdict.
 const hex64 = /^[a-f0-9]{64}$/;
-const id = /^[a-z0-9][a-z0-9.-]{0,119}$/;
+export const id = /^[a-z0-9][a-z0-9.-]{0,119}$/;
 const scenarioId = /^[A-Za-z0-9][A-Za-z0-9/+._-]{0,159}$/;
 const instantPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$/;
-function requireValue(ok, message) { if (!ok) throw new Error(message); }
-function shape(value, keys) {
+export function requireValue(ok, message) { if (!ok) throw new Error(message); }
+export function shape(value, keys) {
   requireValue(value && typeof value === 'object' && !Array.isArray(value), 'Expected object');
   requireValue(Object.keys(value).length === keys.length && keys.every(k => Object.hasOwn(value, k)), 'Unexpected or missing fields');
 }
-function text(value) { requireValue(typeof value === 'string' && value.trim().length > 0 && value.length <= 2000, 'Invalid text'); }
-function instant(value) { requireValue(typeof value === 'string' && instantPattern.test(value) && Number.isFinite(Date.parse(value)), 'Invalid timestamp'); return Date.parse(value); }
-function list(value, max) { requireValue(Array.isArray(value) && value.length <= max, 'Invalid list'); return value; }
-function unique(values) { requireValue(new Set(values).size === values.length, 'Duplicate identifiers'); }
-function count(value) { requireValue(Number.isInteger(value) && value >= 0, 'Invalid count'); }
+export function text(value) { requireValue(typeof value === 'string' && value.trim().length > 0 && value.length <= 2000, 'Invalid text'); }
+export function instant(value) { requireValue(typeof value === 'string' && instantPattern.test(value) && Number.isFinite(Date.parse(value)), 'Invalid timestamp'); return Date.parse(value); }
+export function list(value, max) { requireValue(Array.isArray(value) && value.length <= max, 'Invalid list'); return value; }
+export function unique(values) { requireValue(new Set(values).size === values.length, 'Duplicate identifiers'); }
+export function count(value) { requireValue(Number.isInteger(value) && value >= 0, 'Invalid count'); }
 
 export const kitPullRequestPattern = /^https:\/\/github\.com\/kamiwaza-internal\/capability-kit\/pull\/\d+$/;
 

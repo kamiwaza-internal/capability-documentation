@@ -1,0 +1,614 @@
+{
+  "schema": "release-stamp-projection.v1",
+  "targetRelease": "1.3.2",
+  "releaseTag": "v1.3.2",
+  "coreSource": {
+    "ref": "v1.3.2",
+    "commit": "28da02405d4e3a39cfea405f4bb44fda67286b0c"
+  },
+  "manifestId": "227040bd98d5a853084ee42ecef1a7bcacbac6f15f2173f8a2941e0c8df3d208",
+  "environment": "local",
+  "sourceCommitBasis": "operator-asserted",
+  "humanSignOff": false,
+  "source": {
+    "kitRepository": "kamiwaza-internal/capability-kit",
+    "kitCommit": "30384694ef1ef77376d9787f8377642d8d364da6",
+    "kitPullRequest": "https://github.com/kamiwaza-internal/capability-kit/pull/83",
+    "reportPath": "reports/2026-10-09-1.3.2-release-replay"
+  },
+  "limits": [
+    "A release stamp covers the scenarios of the capability's registered kit, not every operation of the capability.",
+    "The source commit of the tested build is operator-asserted from a CI image-digest match; the image carries no source-revision label.",
+    "The replay ran on a local cluster.",
+    "A release stamp is not human release sign-off.",
+    "A source-contract stamp records tests on exported source with mocks or fixtures. It is not runtime evidence and is never a release stamp."
+  ],
+  "counts": {
+    "releaseStamps": 29,
+    "releaseStampsApi": 20,
+    "releaseStampsSdk": 9,
+    "sourceContractStamps": 16,
+    "sourceContractNotStamped": 1
+  },
+  "releaseStamps": [
+    {
+      "capability": "auth.local-user-administration",
+      "stampId": "e6841ec331b1e8deb2055ee56eea62a58d6eb6bbf83e6fe0f65f824424addb91",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T07:03:37.083068Z",
+      "scenarios": [
+        "local-user-administration-with-non-admin-denial"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "auth.personal-access-tokens",
+      "stampId": "6314c54d26ecf3d796396171fb6af2dd7cfcecbb5ffa18332da0e1bc8d0c2ca3",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T07:03:37.083068Z",
+      "scenarios": [
+        "personal-access-token-authentication-and-revocation",
+        "personal-access-token-inventory-and-individual-revocation"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "auth.session-revocation",
+      "stampId": "30d3f930d1ef0852c6eee791c104db65e97d6ac6c31e98c71947c1c6ab753732",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T07:29:39.426538Z",
+      "scenarios": [
+        "logout-and-administrator-session-revocation-lifecycle"
+      ],
+      "selectionBasis": "live-kit",
+      "supersededKit": true
+    },
+    {
+      "capability": "authz.rebac-access-control",
+      "stampId": "f537219da62610d36d4b7949d57bc1bc26123fd2ed4c2d1f30ce746a07df7d16",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T06:51:57.703418Z",
+      "scenarios": [
+        "rebac-attributable-allow-decisions-and-policy-shaped-denies"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "catalog.registered-sources",
+      "stampId": "9cea9c1efe731fa06087b310b38826fc58069875692c55ef8d5a6ee6883725e2",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:21:34.100255Z",
+      "scenarios": [
+        "catalog-registered-sources-listing"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "catalog.secrets-management",
+      "stampId": "ed1a2ef0c2070072e54bb9f30994f6fa42b835e7d2f8f086baf4881ac118ba40",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T07:03:37.083068Z",
+      "scenarios": [
+        "catalog-governed-secret-lifecycle"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "catalog.writable-datasets",
+      "stampId": "3af8edcd0eaa31be0cb9b8a1f960c47c7798a8c43e50fc9c9120c01e106308b2",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:21:34.100255Z",
+      "scenarios": [
+        "catalog-dataset-listing"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "connectors.oauth-tool-policies",
+      "stampId": "e4df69c4a3f37704985b5841b988a73efe8d6dd7971a10379ccb15c0dd41ff2c",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:21:34.100255Z",
+      "scenarios": [
+        "oauth-tool-policy-listing-and-write-surface"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "context.dataset-indexing",
+      "stampId": "295cbcd31fbad6a784e9343285ca2b7451f7fe42f4984dd61f84ad6f993f32bc",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:21:34.100255Z",
+      "scenarios": [
+        "dataset-index-binding-lookup"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.admin-settings-console",
+      "stampId": "9c651f06a177d8161ea8d5c6692f1a571a449399f16d0e8343181be30e02bff2",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-admin-settings-catalogue"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.agent-publication-approval",
+      "stampId": "9119c8f673c0246de1a187cc064b9ef1f350e45754ff97cb546444f6805c2307",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-agent-publication-approval-queue"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.answer-feedback",
+      "stampId": "0862f931273ad16716787379d98278c399f17ab8519e27ecff5990514951fee1",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:45:44.594369Z",
+      "scenarios": [
+        "kaizen-answer-feedback-contract"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.artifacts",
+      "stampId": "27c15da6a25c638c2b55f2e6823ff704721bce62867555ee06e1864a31f4b34a",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-artifact-listing-and-lookup"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.context-compression",
+      "stampId": "e7dae70d059de606c09fcbfbf9a512ba16ea7c5fcbbd33f736a7d21489f51559",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-compression-configuration-and-stats"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.conversation-event-streaming",
+      "stampId": "6737a2220478ca351443517ff1a91a5e2ae4bb47be92b9a6d779f3aa29610f69",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T07:15:36.595809Z",
+      "scenarios": [
+        "canonical-conversation-streams-a-replayed-marked-reply"
+      ],
+      "selectionBasis": "live-kit",
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.conversation-search",
+      "stampId": "441d07174a31d6858c94283041987aef142d7057012bf009709d58a0e5c7f347",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:45:44.594369Z",
+      "scenarios": [
+        "kaizen-conversation-search-contract"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.document-canvas-export",
+      "stampId": "e4ab532d8310533f10ca309fbec2ca894a52bfdbea5d8303eed6fea1e391aca9",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:45:44.594369Z",
+      "scenarios": [
+        "kaizen-canvas-and-export-contract"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.document-collections",
+      "stampId": "ad8b9fca6627ea532ed5c870ef67666fd58ab9ffb6dbce782672d9c356434b2c",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-document-collection-listing-and-lookup"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.metrics-dashboard",
+      "stampId": "065eb95159493d53656b844ae02e34077e8536b1de18fe6d3c0abde9a37da03a",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-ops-metrics-window"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.multi-agent-orchestration",
+      "stampId": "e565c24fe9018203962a190247d0562c3c1710e668fdc7b433d1951c958fba6f",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-a2a-orchestration-posture"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.notifications-inbox",
+      "stampId": "6676441395799059f51e4a2999fcdea6235ff2113d30909c73fbf5aa2ff9bd48",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:35:36.891021Z",
+      "scenarios": [
+        "kaizen-notification-inbox-shape"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.prebuilt-agents",
+      "stampId": "0d1e7bbc9cb8d745001bbf360794ae45d64d1ceed7d432a08657785eb3bf4a20",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T07:15:36.595809Z",
+      "scenarios": [
+        "bundled-specialist-agents-are-listed-and-selectable-for-chat"
+      ],
+      "selectionBasis": "live-kit",
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.projects",
+      "stampId": "553fd42d4b16b00767b8b85e201246e7fb08ae609c788a3e4c6bbaa5f0c5fb83",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-project-listing-and-lookup"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "kaizen.prompt-library-and-chains",
+      "stampId": "4ff2611028ea37cdac0b8183879903d214e9da2de93ae4333e922b8760a924e5",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:30:39.957695Z",
+      "scenarios": [
+        "kaizen-prompt-library-listing-and-lookup"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "platform.access-requests",
+      "stampId": "b608794041c1f8c0ac1557245397c0562174ab61684ed44b809f7f8e02e11696",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:45:44.594369Z",
+      "scenarios": [
+        "access-request-submission-contract"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "platform.api-reference",
+      "stampId": "9ce8db110cdc32f59a3e1ca3e39561d96cfce894ae0badcf685d8828aaf8ee5f",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:21:34.100255Z",
+      "scenarios": [
+        "api-reference-openapi-schema"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "platform.operations-and-notifications",
+      "stampId": "ae2ff35ff5a88e7d396d2bdef965565eb416a77ba60ad141d59e194425b9094e",
+      "lane": "api",
+      "finishedAt": "2026-10-09T06:21:34.100255Z",
+      "scenarios": [
+        "operations-tray-and-notification-lookup"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "skills.skills-library",
+      "stampId": "f3a305a44893f47bb3bf50d101a38022879cba283e7d7355d88721ba4d35a867",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T06:51:57.703418Z",
+      "scenarios": [
+        "skills-library-import-curation-export-and-soft-delete"
+      ],
+      "supersededKit": false
+    },
+    {
+      "capability": "tools.mcp-tool-shed",
+      "stampId": "44e978208b6a130ce198dc14189ad24dd75e2f20c50c4936d0a02b592c01e51a",
+      "lane": "sdk",
+      "finishedAt": "2026-10-09T06:51:57.703418Z",
+      "scenarios": [
+        "tool-shed-deploy-mcp-protocol-handshake-discovery-and-stop"
+      ],
+      "supersededKit": false
+    }
+  ],
+  "sourceContractStamps": [
+    {
+      "capability": "apps.deployment-baseline",
+      "stampId": "e8f92dd830e717a36f9d740f5f6c3e76af080ebbe98ecb8ef5ee5dd1e5f27055",
+      "kits": [
+        {
+          "kitId": "unit:apps-deployment-baseline-local-contract",
+          "tests": {
+            "passed": 43,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "apps.release-digest-pinning",
+      "stampId": "cc416f2f570563acc2821c41209b15d34d3575ab0cf820b090cb23c61ad75dc2",
+      "kits": [
+        {
+          "kitId": "unit:apps-release-digest-pinning-local-contract",
+          "tests": {
+            "passed": 25,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "connectors.ai-assisted-connector-setup",
+      "stampId": "eb1a87d5583d3c90f7503b52452773435a55e87a2c2ff692fdbafb4abf78baec",
+      "kits": [
+        {
+          "kitId": "pytest:connector-builder-ai-assisted-setup-local",
+          "tests": {
+            "passed": 94,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "connectors.managed-data-sources",
+      "stampId": "ac3603a56176af2fe913769462ad921676dd5e49abd43ab08ae8a02e1e3c1cd4",
+      "kits": [
+        {
+          "kitId": "local:connectors-managed-data-sources-inprocess-contract",
+          "tests": {
+            "passed": 147,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        },
+        {
+          "kitId": "local:connectors-sdk-connector-service-unit",
+          "tests": {
+            "passed": 19,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "connectors.user-oauth-authorization",
+      "stampId": "5833647bd29322359591a8cc6a4880c9b9e12e6ac119417bc82c70dd3067d3d2",
+      "kits": [
+        {
+          "kitId": "local:connectors-user-oauth-authorization-inprocess-contract",
+          "tests": {
+            "passed": 112,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "delegation.run-claims-lifecycle",
+      "stampId": "15cc67a557aa8b5c6db550608908f7d84233766ef53908ea60446a3453628af8",
+      "kits": [
+        {
+          "kitId": "pytest:core-delegation-run-claims-lifecycle-local",
+          "tests": {
+            "passed": 198,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        },
+        {
+          "kitId": "pytest:sdk-delegation-run-claims-lifecycle-local",
+          "tests": {
+            "passed": 13,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "ingestion.document-translation",
+      "stampId": "d96ebf9890a61cbd646e9911b48808a347c58d717c81184dd4208fb5c842bd02",
+      "kits": [
+        {
+          "kitId": "pytest:omniparse-document-translation-local",
+          "tests": {
+            "passed": 11,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "ingestion.parse-from-url",
+      "stampId": "847b6fcb87c3404f83367d315bdf818f20c7698acacfb80ac8f931f0a564df9e",
+      "kits": [
+        {
+          "kitId": "local:ingestion-parse-from-url-local-contract",
+          "tests": {
+            "passed": 123,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "ingestion.structured-document-outputs",
+      "stampId": "98b6d2691571a53c3d680d6b196821502bdfd2721a7fc3b4cb88ad18cb215068",
+      "kits": [
+        {
+          "kitId": "local:ingestion-structured-document-outputs-local-contract",
+          "tests": {
+            "passed": 211,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.agent-auto-routing",
+      "stampId": "cdd93696ad6e016ae24c392bd1871a660c9a0d00149b38d198f81ea22a276e52",
+      "kits": [
+        {
+          "kitId": "pytest:kaizen-agent-auto-routing-local",
+          "tests": {
+            "passed": 93,
+            "failed": 0,
+            "skipped": 1,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.custom-agents",
+      "stampId": "9b81223fd246908c06f0708d91a88155c2f800ac61d9a2d66ea2aa3bdcc47bc0",
+      "kits": [
+        {
+          "kitId": "local:kaizen-custom-agents-local-contract",
+          "tests": {
+            "passed": 19,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        },
+        {
+          "kitId": "local:kaizen-custom-agents-sdk-to-legacy-contract",
+          "tests": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.platform-operator-tools",
+      "stampId": "5d7e2b6cb075cde499001fbd305c03f6f6d654fd6e60987660a1fff7ed74e4f0",
+      "kits": [
+        {
+          "kitId": "local:kaizen-platform-operator-tools-local-contract",
+          "tests": {
+            "passed": 65,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.privacy-guard",
+      "stampId": "15397f3e5a17fb256a28bd1da421d36b0de90aef30f46f369a635f8eb2103253",
+      "kits": [
+        {
+          "kitId": "local:kaizen-privacy-guard-local-contract",
+          "tests": {
+            "passed": 105,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "kaizen.recipes",
+      "stampId": "8d0f431caa442bfd26ed567e7569701a83d9590293ad72124e97b01d9a65386b",
+      "kits": [
+        {
+          "kitId": "local:kaizen-recipes-local-contract",
+          "tests": {
+            "passed": 165,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "platform.admin-copilot",
+      "stampId": "b4a585359e388b8cb6dd76b0796d03a00cd11514dab61ec29d0483b30cf59804",
+      "kits": [
+        {
+          "kitId": "pytest:core-platform-admin-copilot-local",
+          "tests": {
+            "passed": 46,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    },
+    {
+      "capability": "platform.usage-and-audit",
+      "stampId": "5a55d00cd3962abb1654a2ada2001f8be25949936a47d79374f7c551110e8d7e",
+      "kits": [
+        {
+          "kitId": "local:platform-usage-and-audit-local-contract",
+          "tests": {
+            "passed": 232,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        },
+        {
+          "kitId": "local:platform-usage-and-audit-sdk-contract",
+          "tests": {
+            "passed": 26,
+            "failed": 0,
+            "skipped": 0,
+            "errors": 0
+          }
+        }
+      ]
+    }
+  ],
+  "sourceContractNotStamped": [
+    {
+      "capability": "platform.licensing-and-eula",
+      "reason": "5 of 16 commands did not meet their expectation"
+    }
+  ],
+  "outsideCatalog": []
+}
