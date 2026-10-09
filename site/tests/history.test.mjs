@@ -10,3 +10,10 @@ test('allow first projection and additive revisions, reject rewriting or removin
   assert.throws(() => preserveHistory(old, {schema: 2, releases: [{id: 'r1', claim: 'verified'}]}));
   assert.throws(() => preserveHistory(old, {schema: 1, releases: old.releases}));
 });
+
+test('only additive schema2-to5 migration preserves unchanged releases', () => {
+  const old = {schema: 2, releases: [{id: 'r1', claim: 'declared'}]};
+  assert.doesNotThrow(() => preserveHistory(old, {schema: 5, releases: old.releases, observations: []}));
+  assert.throws(() => preserveHistory(old, {schema: 5, releases: [{id: 'r1', claim: 'verified'}], observations: []}));
+  assert.throws(() => preserveHistory(old, {schema: 4, releases: old.releases}));
+});

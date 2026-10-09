@@ -30,12 +30,40 @@ function PrereleaseSummary({release}) {
       <dt>Tested builds</dt><dd>{release.testedBuilds.map(build => <code key={build}>{build} </code>)}</dd>
     </dl>
     <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
-    <details className="gaps"><summary>Current gaps: {counts.failedOrMixed} failed or mixed, {counts.notYetVerified} not yet verified</summary>
+    <details className="gaps"><summary>Historical baseline gaps: {counts.failedOrMixed} failed or mixed, {counts.notYetVerified} not yet verified</summary>
       <p>A gap means no clean pre-release evidence is published here. It does not mean unsupported.</p>
       <p>Deferred capabilities (included in the unverified count): {release.deferredCapabilities.map(cid => <code key={cid}>{cid} </code>)}</p>
       <ul>{gaps.map(cap => <li key={cap.id}><a href={'#' + release.id + '--' + cap.id}><code>{cap.id}</code></a> · {prereleaseLabels[cap.status]}</li>)}</ul>
     </details>
   </>;
+}
+
+// New run counts are observations, never canonical capability promotions.
+function ScopedObservations({observation}) {
+  const {counts: c, evidenceWindow: window, target} = observation;
+  const reconciled = observation.capabilities.filter(row => row.baselineStatus === 'failed-or-mixed' && row.failedScenarios === 0);
+  return <section className="release" id={observation.id}>
+    <h2>Latest scoped observations · local {target.version}</h2>
+    <aside className="evidenceNotice"><strong>Separate from the historical baseline.</strong> This run grants no whole-capability promotion and no release verification. Do not add these counts to the 50/88 project baseline; the catalogs and evidence scopes differ.</aside>
+    <p>Local {target.version} test target. {target.sourceRevision ? <>Observed source <code>{target.sourceRevision}</code> (source metadata only; no running-byte or released-artifact attestation).</> : 'Target source binding is not established.'} Binding to a shipped release is not established.</p>
+    <dl className="dateAxes">
+      <dt>Original retained scenario-attempt window (UTC)</dt><dd><time dateTime={window.earliestStartedAt}>{window.earliestStartedAt}</time> to <time dateTime={window.latestFinishedAt}>{window.latestFinishedAt}</time></dd>
+      <dt>Evidence source</dt><dd>Kit commit <code>{observation.sourceKitRevision}</code>, committed <time dateTime={observation.sourceCommittedAt}>{observation.sourceCommittedAt}</time>.</dd>
+      <dt>Broader SDK execution phase (UTC)</dt><dd><time dateTime={observation.sdkExecutionWindow.earliestStartedAt}>{observation.sdkExecutionWindow.earliestStartedAt}</time> to <time dateTime={observation.sdkExecutionWindow.latestFinishedAt}>{observation.sdkExecutionWindow.latestFinishedAt}</time>. Phase boundaries are not individual scenario execution dates.</dd>
+      <dt>Source run summary prepared (UTC)</dt><dd><time dateTime={observation.packetGeneratedAt}>{observation.packetGeneratedAt}</time>. Original summary preparation, not a new execution.</dd>
+      <dt>Public summary prepared (UTC)</dt><dd><time dateTime={observation.generatedAt}>{observation.generatedAt}</time>. Preparation is not a new test or live acceptance.</dd>
+    </dl>
+    <p><strong>{c.observedCapabilities} of {c.catalog} capabilities have scoped runtime observations</strong>: {c.successfulCapabilities} with successful scoped scenarios and no failed scenario in this run; {c.capabilitiesWithFailures} with failed scenarios. {c.catalog - c.observedCapabilities} have no scoped runtime observations in this run. These are capability observations, not whole-capability passes.</p>
+    <p><strong>Distinct scenarios:</strong> {c.passedScenarios} passed · {c.passedWithNotesScenarios} passed with notes · {c.failedScenarios} failed. These are not new baseline credits. Global totals are deduplicated; {c.sharedScenarioAssignments} additional scenario-to-capability assignment(s) overlap across rows.</p>
+    <p>{c.inIncludedBaseline} observed capabilities are within the historical 88-capability included catalog; {c.outsideIncludedBaseline} are outside it. Neither denominator is substituted for the other.</p>
+    {reconciled.length > 0 && <p>New successful scoped observations for {reconciled.map((row, i) => <React.Fragment key={row.id}>{i ? ', ' : ''}<code>{row.id}</code></React.Fragment>)} coexist with their historical failed or mixed baseline records. Those historical records remain unchanged; scoped success does not establish a whole-capability pass.</p>}
+    <p><a href={'/observations/' + observation.id + '/bundle.json'}>Download sanitized observations (JSON)</a> · <a href="/observations/index.json">Observations index</a></p>
+    <details className="gaps"><summary>All {c.observedCapabilities} observed capabilities and scoped outcomes</summary>
+      <p>Rows count distinct scenarios attributed to each capability. A scenario can belong to multiple capabilities; row totals overlap and must not be added as distinct scenarios. Historical baseline labels describe the earlier snapshot.</p>
+      <table><thead><tr><th>Capability</th><th>Catalog scope</th><th>Scoped outcome</th><th>Passed</th><th>With notes</th><th>Failed</th><th>Historical baseline</th></tr></thead>
+      <tbody>{observation.capabilities.map(row => <tr key={row.id}><td><code>{row.id}</code></td><td>{row.inIncludedBaseline ? 'Included in 88' : 'Outside included 88'}</td><td>{row.failedScenarios ? 'Has failed scenarios' : 'Successful scoped observations'}</td><td>{row.passedScenarios}</td><td>{row.passedWithNotesScenarios}</td><td>{row.failedScenarios}</td><td>{row.baselineStatus ? prereleaseLabels[row.baselineStatus] : 'Outside historical included scope'}</td></tr>)}</tbody></table>
+    </details>
+  </section>;
 }
 
 export default function Catalog() {
@@ -50,7 +78,8 @@ export default function Catalog() {
     </div></header>
     <main className="container catalogMain">
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
-      <h2>Capability snapshots</h2>
+      {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
+      <h2>Accepted historical pre-release baseline and source snapshots</h2>
       <p><a href="/releases/index.json">Machine-readable release index</a></p>
       <p>Site build: {siteConfig.customFields.buildRevision ? <>commit <code>{siteConfig.customFields.buildRevision}</code></> : 'revision not recorded (local build)'}. Site built <time dateTime={siteConfig.customFields.builtAt}>{siteConfig.customFields.builtAt}</time>. A site build or deployment is not a test run or a publication.</p>
       {publication.releases.length === 0 ? <section className="emptyCatalog">

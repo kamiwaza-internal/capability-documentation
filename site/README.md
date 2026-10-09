@@ -111,3 +111,32 @@ protected PR and main build gates described above.
 Private accepted-packet identities and raw hashes are never public metadata. They are retained only in a separate private generation receipt, alongside the public-payload hash for audit. Public assessments expose no packet cross-reference or private-input digest.
 
 A new declaration is eligible only when the pinned lifecycle row has current source_curation.tier1 declared. A document projector or an accepted developer assessment does not resolve not-established or re-review-required source curation; those declarations are withheld in full.
+
+## Separate latest scoped observations
+
+Schema 5 adds a strict allowlisted observations array beside the unchanged
+historical releases. Releases retain schema-2 validation semantics and exact
+existing bundle bytes (source bundles schema 2, pre-release bundle schema 4).
+Only an additive 2-to-5 container migration is allowed; previously published
+release objects and observations cannot be rewritten or removed.
+
+The new surface exports only typed capability IDs, aggregate and per-capability
+scenario counts, original retained run start/finish dates with fractional UTC precision, full kit commit, and bounded local
+test-target metadata. It has no raw packet, scenario ID, internal notes, credential,
+private source path or raw Linear export fields. The full unobserved catalog is
+not published. The declared source catalog size is reviewed privately; included
+membership and baseline status are checked against the existing baseline snapshot.
+
+Counts distinguish successful scoped capabilities from capabilities with failing
+scenarios. Distinct scenario totals are independently deduplicated upstream and checked exactly against per-capability rows minus typed shared-scenario mappings and the explicit shared-assignment count. A scenario may map to multiple capabilities, so row totals cannot be summed as distinct. A newer
+scoped success can coexist with an earlier failed or mixed baseline record.
+Neither rewrites history nor grants whole-capability or release credit. New run
+counts must never be added to the historical 50/88 baseline or substituted for its
+denominator. Preparation, source-commit and site-build dates are separate from
+original execution dates.
+
+The website renders observations separately and emits sanitized JSON/plain-text
+bundles under /observations/, with an exact-byte SHA-256 index. This consumer
+validates structure and consistency; independent source reconciliation and privacy
+review remain necessary before publication. Public-site review and deployment
+gates are unchanged.

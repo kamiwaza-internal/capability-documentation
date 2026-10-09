@@ -1,5 +1,5 @@
 {
-  "schema": 2,
+  "schema": 5,
   "releases": [
     {
       "id": "1.3.0-declared-r1",
@@ -6194,6 +6194,409 @@
             }
           ],
           "declaration": null
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "2026-10-08-local-scoped-runtime",
+      "basis": "scoped-runtime-observations",
+      "sourceKitRevision": "48aec5a5d5d14da4c429ad2fbfa99e2c4e02d05a",
+      "sourceCommittedAt": "2026-10-08T22:42:10Z",
+      "packetGeneratedAt": "2026-10-08T22:33:38.749036Z",
+      "generatedAt": "2026-10-09T02:41:44Z",
+      "evidenceWindow": {
+        "earliestStartedAt": "2026-10-08T20:47:53.196714Z",
+        "latestFinishedAt": "2026-10-08T22:26:37.410352Z"
+      },
+      "sdkExecutionWindow": {
+        "earliestStartedAt": "2026-10-08T20:39:26.779031Z",
+        "latestFinishedAt": "2026-10-08T22:31:52.172334Z"
+      },
+      "target": {
+        "version": "1.3.2",
+        "environment": "local",
+        "sourceRevision": "602b17433eca0a3ec4edda910d8ed85abc277681",
+        "sourceBinding": "observed-source-only",
+        "releaseBinding": "not-established"
+      },
+      "baselineId": "1.3.0-prerelease-r3",
+      "counts": {
+        "catalog": 107,
+        "observedCapabilities": 44,
+        "successfulCapabilities": 34,
+        "capabilitiesWithFailures": 10,
+        "inIncludedBaseline": 36,
+        "outsideIncludedBaseline": 8,
+        "passedScenarios": 51,
+        "passedWithNotesScenarios": 1,
+        "failedScenarios": 13,
+        "sharedScenarioAssignments": 1,
+        "wholeCapabilityPromotions": 0,
+        "releaseVerified": 0
+      },
+      "sharedScenarioMappings": [
+        {
+          "outcome": "passed",
+          "capabilityIds": [
+            "catalog.dataset-registry",
+            "retrieval.async-retrieval-jobs"
+          ]
+        }
+      ],
+      "capabilities": [
+        {
+          "id": "apps.app-garden",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "auth.local-user-administration",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "auth.personal-access-tokens",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 2,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "auth.session-revocation",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "authz.rebac-access-control",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "catalog.dataset-registry",
+          "inIncludedBaseline": true,
+          "baselineStatus": "failed-or-mixed",
+          "passedScenarios": 5,
+          "passedWithNotesScenarios": 1,
+          "failedScenarios": 0
+        },
+        {
+          "id": "catalog.registered-sources",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "catalog.secrets-management",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "catalog.writable-datasets",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "connectors.connector-builder",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "connectors.oauth-tool-policies",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "context.dataset-indexing",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "context.workroom-document-search",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.admin-settings-console",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.agent-publication-approval",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.answer-feedback",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.artifacts",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.context-compression",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.conversation-search",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.document-canvas-export",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.document-collections",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.metrics-dashboard",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.multi-agent-orchestration",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.notifications-inbox",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "kaizen.product-identity",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "kaizen.projects",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "kaizen.prompt-library-and-chains",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "models.discover-and-download",
+          "inIncludedBaseline": true,
+          "baselineStatus": "failed-or-mixed",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "models.local-deployment",
+          "inIncludedBaseline": true,
+          "baselineStatus": "failed-or-mixed",
+          "passedScenarios": 2,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 3
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "inIncludedBaseline": true,
+          "baselineStatus": "failed-or-mixed",
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "platform.access-requests",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "platform.api-reference",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "platform.news-feed",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "platform.operations-and-notifications",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "retrieval.async-retrieval-jobs",
+          "inIncludedBaseline": true,
+          "baselineStatus": "failed-or-mixed",
+          "passedScenarios": 3,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "skills.skills-library",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "tools.mcp-tool-shed",
+          "inIncludedBaseline": true,
+          "baselineStatus": "prerelease-verified",
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "workrooms.admin-oversight",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 4,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "workrooms.archive-and-delete",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 3,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "workrooms.create",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 3,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "workrooms.export-bundle",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
+        },
+        {
+          "id": "workrooms.membership-and-roles",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 2
+        },
+        {
+          "id": "workrooms.org-decommission",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 1,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 0
+        },
+        {
+          "id": "workrooms.session-scoping",
+          "inIncludedBaseline": false,
+          "baselineStatus": null,
+          "passedScenarios": 0,
+          "passedWithNotesScenarios": 0,
+          "failedScenarios": 1
         }
       ]
     }

@@ -6,8 +6,13 @@ import {pathToFileURL} from 'node:url';
 export function preserveHistory(previous, current) {
   for (const prior of previous.releases) {
     const next = current.releases.find(r => r.id === prior.id);
-    if (!isDeepStrictEqual(prior, next) || previous.schema !== current.schema) {
+    if (!isDeepStrictEqual(prior, next) || previous.schema !== current.schema && !(previous.schema === 2 && current.schema === 5)) {
       throw new Error('Published revision cannot be changed or removed: ' + prior.id);
+    }
+  }
+  for (const prior of previous.observations ?? []) {
+    if (!isDeepStrictEqual(prior, (current.observations ?? []).find(value => value.id === prior.id))) {
+      throw new Error('Published observations cannot be changed or removed: ' + prior.id);
     }
   }
 }

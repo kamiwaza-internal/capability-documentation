@@ -202,11 +202,107 @@ function release(value, schema) {
   else value.capabilities.forEach(cap => capability(cap, value.build, sourceOnly));
   unique(value.capabilities.map(cap => cap.id));
 }
+// Strict allowlist: aggregate scoped observations never alter canonical lifecycle verdicts.
+// No private prose, scenario identities, raw packets, locations or execution receipts.
+function count(value) { requireValue(Number.isSafeInteger(value) && value >= 0 && value <= 100000, 'Invalid observation count'); }
+function identifier(value) { requireValue(typeof value === 'string' && id.test(value), 'Invalid observation identifier'); text(value); }
+function observationInstant(value) {
+  requireValue(typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z$/.test(value), 'Invalid observation timestamp');
+  const normalized = value.replace(/(?:\.\d+)?Z$/, 'Z');
+  requireValue(Number.isFinite(Date.parse(value)) && new Date(normalized).toISOString() === normalized.replace('Z', '.000Z'), 'Invalid observation timestamp');
+  requireValue(Date.parse(value) <= Date.now(), 'Future observation timestamp');
+}
+const orderedObservationTime = value => value.replace(/(?:\.(\d+))?Z$/, (_, fraction = '') => '.' + fraction.padEnd(6, '0') + 'Z');
+// Approved observed IDs outside the included historical baseline; no new free-form IDs.
+const outsideObservationIds = new Set([
+  'context.workroom-document-search', 'workrooms.admin-oversight',
+  'workrooms.archive-and-delete', 'workrooms.create', 'workrooms.export-bundle',
+  'workrooms.membership-and-roles', 'workrooms.org-decommission', 'workrooms.session-scoping',
+]);
+function scopedObservations(value, releases) {
+  shape(value, ['id', 'basis', 'sourceKitRevision', 'sourceCommittedAt', 'packetGeneratedAt', 'generatedAt', 'evidenceWindow', 'sdkExecutionWindow', 'target', 'baselineId', 'counts', 'sharedScenarioMappings', 'capabilities']);
+  identifier(value.id);
+  requireValue(value.basis === 'scoped-runtime-observations', 'Invalid observation basis');
+  requireValue(typeof value.sourceKitRevision === 'string' && sha.test(value.sourceKitRevision), 'Observation source must be a full commit');
+  [value.sourceCommittedAt, value.packetGeneratedAt, value.generatedAt].forEach(observationInstant);
+  shape(value.evidenceWindow, ['earliestStartedAt', 'latestFinishedAt']);
+  observationInstant(value.evidenceWindow.earliestStartedAt); observationInstant(value.evidenceWindow.latestFinishedAt);
+  shape(value.sdkExecutionWindow, ['earliestStartedAt', 'latestFinishedAt']);
+  observationInstant(value.sdkExecutionWindow.earliestStartedAt); observationInstant(value.sdkExecutionWindow.latestFinishedAt);
+  const timeline = [value.evidenceWindow.earliestStartedAt, value.evidenceWindow.latestFinishedAt, value.packetGeneratedAt, value.sourceCommittedAt, value.generatedAt].map(orderedObservationTime);
+  requireValue(timeline.every((time, index) => index === 0 || timeline[index - 1] <= time), 'Observation dates out of order');
+  requireValue(orderedObservationTime(value.sdkExecutionWindow.earliestStartedAt) <= orderedObservationTime(value.evidenceWindow.earliestStartedAt) &&
+    orderedObservationTime(value.evidenceWindow.latestFinishedAt) <= orderedObservationTime(value.sdkExecutionWindow.latestFinishedAt) &&
+    orderedObservationTime(value.sdkExecutionWindow.latestFinishedAt) <= orderedObservationTime(value.packetGeneratedAt), 'SDK phase dates out of order');
+  shape(value.target, ['version', 'environment', 'sourceRevision', 'sourceBinding', 'releaseBinding']);
+  requireValue(typeof value.target.version === 'string' && /^\d+\.\d+\.\d+$/.test(value.target.version) &&
+    value.target.environment === 'local' && value.target.releaseBinding === 'not-established', 'Invalid scoped target or release claim');
+  requireValue((value.target.sourceBinding === 'not-established' && value.target.sourceRevision === null) ||
+    (value.target.sourceBinding === 'observed-source-only' && typeof value.target.sourceRevision === 'string' && sha.test(value.target.sourceRevision)), 'Invalid observed target source binding');
+  const baseline = releases.find(r => r.id === value.baselineId && r.baselineKind === 'prerelease-evidence');
+  requireValue(Boolean(baseline), 'Observation baseline missing');
+  requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Invalid observed capabilities');
+  const byId = new Map(baseline.capabilities.map(cap => [cap.id, cap]));
+  for (const cap of value.capabilities) {
+    shape(cap, ['id', 'inIncludedBaseline', 'baselineStatus', 'passedScenarios', 'passedWithNotesScenarios', 'failedScenarios']);
+    identifier(cap.id);
+    requireValue(byId.has(cap.id) || outsideObservationIds.has(cap.id), 'Unapproved public observation identifier');
+    requireValue(typeof cap.inIncludedBaseline === 'boolean' && cap.inIncludedBaseline === byId.has(cap.id), 'Observation baseline membership mismatch');
+    requireValue(cap.baselineStatus === (byId.get(cap.id)?.status ?? null), 'Observation cannot relabel canonical baseline');
+    [cap.passedScenarios, cap.passedWithNotesScenarios, cap.failedScenarios].forEach(count);
+    requireValue(cap.passedScenarios + cap.passedWithNotesScenarios + cap.failedScenarios > 0, 'Observed capability requires a scenario');
+  }
+  unique(value.capabilities.map(cap => cap.id));
+  shape(value.counts, ['catalog', 'observedCapabilities', 'successfulCapabilities', 'capabilitiesWithFailures', 'inIncludedBaseline', 'outsideIncludedBaseline', 'passedScenarios', 'passedWithNotesScenarios', 'failedScenarios', 'sharedScenarioAssignments', 'wholeCapabilityPromotions', 'releaseVerified']);
+  Object.values(value.counts).forEach(count);
+  const c = value.counts;
+  const rows = value.capabilities;
+  requireValue(c.catalog >= rows.length && c.catalog <= 2000 && c.observedCapabilities === rows.length &&
+    c.successfulCapabilities === rows.filter(row => row.failedScenarios === 0).length &&
+    c.capabilitiesWithFailures === rows.filter(row => row.failedScenarios > 0).length &&
+    c.inIncludedBaseline === rows.filter(row => row.inIncludedBaseline).length &&
+    c.outsideIncludedBaseline === rows.filter(row => !row.inIncludedBaseline).length, 'Observation scope counts mismatch');
+  // Scenario-to-capability mapping is many-to-many. Only already-public capability
+  // IDs and typed outcomes describe overlap; private scenario IDs are never exported.
+  requireValue(Array.isArray(value.sharedScenarioMappings) && value.sharedScenarioMappings.length <= 1000, 'Invalid shared scenario mappings');
+  const outcomeKey = {passed: 'passedScenarios', passed_with_notes: 'passedWithNotesScenarios', failed: 'failedScenarios'};
+  const overlap = {passedScenarios: 0, passedWithNotesScenarios: 0, failedScenarios: 0};
+  const usage = new Map();
+  const identities = [];
+  const observed = new Map(rows.map(row => [row.id, row]));
+  for (const mapping of value.sharedScenarioMappings) {
+    shape(mapping, ['outcome', 'capabilityIds']);
+    requireValue(Object.hasOwn(outcomeKey, mapping.outcome), 'Invalid shared scenario outcome');
+    requireValue(Array.isArray(mapping.capabilityIds) && mapping.capabilityIds.length >= 2 && mapping.capabilityIds.length <= rows.length, 'Invalid shared scenario capabilities');
+    unique(mapping.capabilityIds);
+    const key = outcomeKey[mapping.outcome];
+    for (const capabilityId of mapping.capabilityIds) {
+      requireValue(typeof capabilityId === 'string' && observed.has(capabilityId), 'Shared scenario references unobserved capability');
+      const usageId = key + ':' + capabilityId;
+      const used = (usage.get(usageId) ?? 0) + 1;
+      usage.set(usageId, used);
+      requireValue(used <= observed.get(capabilityId)[key], 'Shared scenario exceeds capability outcome count');
+    }
+    identities.push(mapping.outcome + ':' + [...mapping.capabilityIds].sort().join(','));
+    overlap[key] += mapping.capabilityIds.length - 1;
+  }
+  unique(identities);
+  for (const key of Object.values(outcomeKey)) {
+    requireValue(c[key] === rows.reduce((total, row) => total + row[key], 0) - overlap[key], 'Distinct scenario counts mismatch');
+  }
+  requireValue(Object.values(overlap).reduce((sum, value) => sum + value, 0) === c.sharedScenarioAssignments, 'Shared scenario assignment count mismatch');
+  requireValue(c.wholeCapabilityPromotions === 0 && c.releaseVerified === 0, 'Scoped observations cannot promote whole capabilities or release credit');
+}
 export function validatePublication(input) {
-  shape(input, ['schema', 'releases']);
-  requireValue([1, 2, 3, 4].includes(input.schema), 'Unsupported publication schema');
+  shape(input, input?.schema === 5 ? ['schema', 'releases', 'observations'] : ['schema', 'releases']);
+  requireValue([1, 2, 3, 4, 5].includes(input.schema), 'Unsupported publication schema');
   requireValue(Array.isArray(input.releases) && input.releases.length <= 500, 'Invalid releases list');
-  input.releases.forEach(value => release(value, input.schema));
+  input.releases.forEach(value => release(value, input.schema === 5 ? 2 : input.schema));
   unique(input.releases.map(r => r.id));
+  if (input.schema === 5) {
+    requireValue(Array.isArray(input.observations) && input.observations.length > 0 && input.observations.length <= 500, 'Invalid observations list');
+    input.observations.forEach(value => scopedObservations(value, input.releases));
+    unique(input.observations.map(value => value.id));
+  }
   return input;
 }

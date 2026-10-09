@@ -62,6 +62,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
 
 test('BUILD-2 pre-release evidence renders separate date axes, gaps and no release credit', async () => {
   const {prereleaseFixture} = await import('./fixtures/prerelease.mjs');
+  const {observationsFixture} = await import('./fixtures/observations.mjs');
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-prerelease-'));
   const site = join(root, 'site');
@@ -72,7 +73,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
   assert.equal(install.status, 0, install.stdout + install.stderr);
   writeFileSync(join(root, 'private-canary.md'), 'PRIVATE_CANARY_NOT_FOR_EXPORT');
-  const input = prereleaseFixture();
+  const input = observationsFixture();
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify(input));
   const build = revision => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024, env: {...process.env, GITHUB_SHA: revision}});
@@ -82,6 +83,13 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   checkBuiltFiles(join(site, 'build'));
   const html = readFileSync(join(site, 'build/index.html'), 'utf8').replaceAll('<!-- -->', '');
   for (const expected of [
+    'Latest scoped observations · local 1.3.2', '3 of 5 capabilities have scoped runtime observations',
+    '2 with successful scoped scenarios', '1 with failed scenarios', '3 passed', '1 passed with notes', '1 failed',
+    'Original retained scenario-attempt window (UTC)', '2026-10-08T20:47:53.196714Z',
+    '2026-10-08T22:26:37.410352Z', '2026-10-08T22:33:38.749036Z',
+    'Broader SDK execution phase (UTC)', 'Phase boundaries are not individual scenario execution dates.',
+    'New successful scoped observations for', 'coexist with their historical failed or mixed baseline records.',
+    'row totals overlap and must not be added as distinct scenarios',
     // The four dates are labelled apart, and the test date is the record's own.
     'Test runs finished', '2026-09-30T16:27:15Z', 'ingested <time datetime="2026-09-30T19:51:14Z">',
     'Kit revision committed <time datetime="2026-10-08T00:40:22Z">', 'Draft preparation, not publication or a test date.',
@@ -91,7 +99,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
     'Project pre-release verified · not release verified', 'Release check failed', 'Whole-claim verification is not established.',
     'Binding to a shipped 1.3.0 release is not established.',
     // Failures and gaps stay visible, including capabilities with no published text.
-    'Current gaps: 1 failed or mixed, 1 not yet verified', 'href="#synthetic-prerelease-r3--synthetic.gap"',
+    'Historical baseline gaps: 1 failed or mixed, 1 not yet verified', 'href="#synthetic-prerelease-r3--synthetic.gap"',
     'Failed or mixed', 'Not yet verified', '<strong>failed</strong>', '<strong>passed with notes</strong>',
     'No curated declaration text is published for this capability in this revision.',
     'Local-contract developer-assessed · no live runtime pass', 'Developer assessments', 'Kit ingestion timestamp not established.', 'Publication review pending', 'Pending; no publication timestamp recorded.',
