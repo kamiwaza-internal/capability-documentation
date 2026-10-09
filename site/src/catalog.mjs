@@ -93,3 +93,26 @@ export function summarizeCurrentView(rows) {
     releaseCheckFailed: count(r => r.releaseCheckFailed),
   };
 }
+
+// Additive join of the local scoped stamp projection onto the current rows. It never
+// changes a row's status, lineage or flags; it only attaches the stamp summary.
+// Stamps and failures for capabilities outside the rows are returned, never dropped.
+export function joinLocalStamps(rows, localStamps) {
+  const stamps = new Map(localStamps.stamps.map(stamp => [stamp.capability, stamp]));
+  const failed = new Set(localStamps.notStampedFailed.map(entry => entry.capability));
+  const inView = new Set(rows.map(row => row.id));
+  const joined = rows.map(row => {
+    const stamp = stamps.get(row.id);
+    return {...row,
+      localStamp: stamp ? {scenarios: stamp.scenarios.length, runDate: stamp.scenarios.map(s => s.finishedAt).sort().at(-1).slice(0, 10)} : null,
+      localNotStamped: failed.has(row.id)};
+  });
+  const outside = ids => [...ids].filter(id => !inView.has(id)).sort();
+  return {
+    rows: joined,
+    stamped: joined.filter(row => row.localStamp).length,
+    stampedVerified: joined.filter(row => row.localStamp && row.status === 'verified').length,
+    stampedOutside: outside(stamps.keys()),
+    notStampedOutside: outside(failed),
+  };
+}

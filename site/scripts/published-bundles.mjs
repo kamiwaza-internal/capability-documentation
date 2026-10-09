@@ -1,7 +1,8 @@
 import {createHash} from 'node:crypto';
-import {mkdirSync, writeFileSync} from 'node:fs';
+import {appendFileSync, mkdirSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {validatePublication} from './publication.mjs';
+import {validateLocalStamps} from './local-stamps.mjs';
 
 export function emitBundles(publication, out) {
   validatePublication(publication);
@@ -48,5 +49,10 @@ export default function bundlePlugin() {
     const {readFileSync} = await import('node:fs');
     const data = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
     emitBundles(data, outDir);
+    // Local scoped stamps: a separate file, never merged into a release bundle or the release index.
+    const stamps = readFileSync(new URL('../data/local-stamps.json', import.meta.url));
+    validateLocalStamps(JSON.parse(stamps), data);
+    writeFileSync(join(outDir, 'local-stamps.json'), stamps);
+    appendFileSync(join(outDir, 'llms.txt'), '/local-stamps.json holds local scoped stamps for listed scenarios on one recorded local build: not release stamps, not release verification, not sign-off, and they change no status.\n');
   }};
 }

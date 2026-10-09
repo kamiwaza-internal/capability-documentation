@@ -169,3 +169,49 @@ Precedence rule: an accepted pre-release verification stays current unless a
 
 Capabilities that appear only in older source snapshots have no acceptance
 record and no row here; they remain in the historical snapshots below.
+
+## Local 1.3.2 scoped stamp projection
+
+`data/local-stamps.json` is a sanitized public projection of the capability
+kit's local scoped verification stamp set
+(`reports/2026-10-09-1.3.2-local-verification-stamps/local-verification-stamps.json`,
+kit pull request 82). A capability has a local scoped stamp when every latest
+scoped scenario recorded for it in the October 8, 2026 local 1.3.2 run passed or
+passed with notes. These are not release stamps, not release verification and
+not sign-off. Each covers only its listed scenarios on the build that run
+recorded, whose core source is `release/1.3.0`, not a 1.3.2 release build.
+
+The projection keeps capability ids, scenario ids, lanes, statuses, run times,
+record and stamp hashes, the kit's limits and counts, and the core source ref
+and commit. It drops record file paths, full build strings, image digests,
+registry hosts, local patch names and capture error text. The stamp and record
+hashes are computed in the kit over content that is not published, so they
+identify kit records and cannot be recomputed from this file.
+
+Regenerate from a kit checkout; never edit the file by hand:
+
+```sh
+cd site
+node scripts/project-local-stamps.mjs ../../capability-kit/reports/2026-10-09-1.3.2-local-verification-stamps/local-verification-stamps.json
+npm test
+```
+
+The script pins the kit commit and pull request it was generated from, so the
+same kit bytes always give the same output bytes. `tests/local-stamps.test.mjs`
+checks that when the kit file is present (or `KIT_LOCAL_STAMPS` names it) and
+skips that one check otherwise.
+
+It is a separate file, not part of `data/publication.json`, because
+`publication.json` is a strictly validated, immutable record of published
+releases and observations, and its schema is reserved for real release stamps.
+A local scoped stamp is neither. `scripts/local-stamps.mjs` validates the file
+at build start (`docusaurus.config.js`) and again when it is copied to
+`/local-stamps.json`; a stamp with a failed scenario, a capability both stamped
+and not stamped, unreconciled counts, any release claim, or a stamp for a
+capability the published observation of the same run shows failing, fails the
+build.
+
+On the page, `joinLocalStamps(rows, localStamps)` in `src/catalog.mjs` adds a
+"Local 1.3.2 scoped stamp" badge to matching rows of the current status view.
+It never changes a row's status. Stamped capabilities outside the included rows
+are listed by id under the headline.

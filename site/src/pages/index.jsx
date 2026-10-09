@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
+import localStamps from '../../data/local-stamps.json';
 import {filterCapabilities, countStatuses} from '../catalog.mjs';
 import CurrentView from '../CurrentView';
 
@@ -80,7 +81,7 @@ export default function Catalog() {
     </div></header>
     <main className="container catalogMain">
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
-      <CurrentView publication={publication}/>
+      <CurrentView publication={publication} localStamps={localStamps}/>
       {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
       <h2>Historical snapshots, newest first: accepted pre-release baseline and source snapshots</h2>
       <p><a href="/releases/index.json">Machine-readable release index</a></p>
