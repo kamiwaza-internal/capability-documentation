@@ -3,6 +3,7 @@ import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import {filterCapabilities, countStatuses, primaryCapabilities} from '../catalog.mjs';
+import CurrentView from '../CurrentView';
 
 function TextList({title, items}) {
   return <><h4>{title}</h4>{items.length ? <ul>{items.map((item, i) => <li key={i}>{item}</li>)}</ul> : <p>None specified in this publication.</p>}</>;
@@ -126,6 +127,7 @@ export default function Catalog() {
   const {siteConfig} = useDocusaurusContext();
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
+  const releases = [...publication.releases].sort((a, b) => b.publicationRevision - a.publicationRevision); // newest first
   const primary = primaryCapabilities(publication);
   return <Layout title="Release catalog" description="Reviewed Kamiwaza capabilities, conditions and exact-build verification status.">
     <header className="catalogHero"><div className="container">
@@ -135,6 +137,7 @@ export default function Catalog() {
     </div></header>
     <main className="container catalogMain">
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
+      <CurrentView publication={publication}/>
         <div className="catalogFilters">
           <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
@@ -146,7 +149,7 @@ export default function Catalog() {
       <details className="gaps"><summary>Original immutable snapshots and separate scoped observations</summary>
       {(publication.releaseStamps ?? []).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}
       {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
-      <h2>Accepted historical pre-release baseline and source snapshots</h2>
+      <h2>Historical snapshots, newest first: accepted pre-release baseline and source snapshots</h2>
       <p><a href="/releases/index.json">Machine-readable release index</a></p>
       <p>Site build: {siteConfig.customFields.buildRevision ? <>commit <code>{siteConfig.customFields.buildRevision}</code></> : 'revision not recorded (local build)'}. Site built <time dateTime={siteConfig.customFields.builtAt}>{siteConfig.customFields.builtAt}</time>. A site build or deployment is not a test run or a publication.</p>
       {publication.releases.length === 0 ? <section className="emptyCatalog">
@@ -155,8 +158,8 @@ export default function Catalog() {
         <p>No verification counts or release claims are implied by this empty catalog.</p>
       </section> : <>
 
-        <nav aria-label="Published releases"><ul>{publication.releases.map(release => <li key={release.id}><a href={'#' + release.id}>{release.version} · {release.channel} · {release.approval.status} · revision {release.publicationRevision}</a></li>)}</ul></nav>
-        {publication.releases.map(release => <section className="release" id={release.id} key={release.id}>
+        <nav aria-label="Published releases"><ul>{releases.map(release => <li key={release.id}><a href={'#' + release.id}>{release.version} · {release.channel} · {release.approval.status} · revision {release.publicationRevision}</a></li>)}</ul></nav>
+        {releases.map(release => <section className="release" id={release.id} key={release.id}>
           <h2>{release.version} <span className="status">{release.channel}</span> <span className="status">{release.approval.status}</span></h2>
           {release.approval.status === 'pending' ? <aside className="evidenceNotice"><strong>Pending release-manager sign-off.</strong> Human release approval is pending. This snapshot is not a release commitment.</aside> : null}
           <p>Publication revision {release.publicationRevision} · {release.publishedAt ? <><time dateTime={release.publishedAt}>{release.publishedAt}</time> (publication metadata, not a test date)</> : 'Draft candidate; publication pending'}</p>
