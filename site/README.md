@@ -254,6 +254,13 @@ Precedence rule: an accepted pre-release verification stays current unless a
   by reference. A 1.3.0 pre-release acceptance is never relabelled as 1.3.2 or
   as release verified. `releaseStatus: failed` is a separate flag.
 
+When the v1.3.2 stamp projection applies to the publication, the section leads
+with the computed stamp totals, groups the rows (release stamped, source-contract
+verified, not stamped) and shows the stamp as the row's primary status, with the
+1.3.0 status on a labelled second line. This is presentation only: the join is
+additive, `row.status` and the data are unchanged, and without an applicable
+projection the section renders as it did before the stamps existed.
+
 Capabilities that appear only in older source snapshots have no acceptance
 record and no row here; they remain in the historical snapshots below.
 

@@ -175,20 +175,41 @@ test('CUR-G rendered page: stamp badges, counts and paragraphs appear only for t
   const localStamps = JSON.parse(readFileSync(new URL('../data/local-stamps.json', import.meta.url), 'utf8'));
   const releaseStamps = JSON.parse(readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url), 'utf8'));
   const badge = text => '<span class="status">' + text + '</span>';
-  const counts = html => [badge('Release stamped · v1.3.2'), badge('Source-contract verified · v1.3.2'), badge('Local 1.3.2 scoped stamp')].map(text => occurrences(html, text));
+  const counts = html => [badge('Release stamped · v1.3.2'), badge('Source-contract verified · v1.3.2 · not runtime evidence'), badge('Local 1.3.2 scoped stamp')].map(text => occurrences(html, text));
 
   const real = await renderCurrentView({publication: published, localStamps, releaseStamps});
   assert.deepEqual(counts(real), [29, 16, 30]);
   assert.ok(real.includes('/local-stamps.json') && real.includes('/release-stamps-1.3.2.json'));
+
+  // v1.3.2 leads: computed headline and its limits first, the 1.3.0 counts only under the "Earlier" sub-heading.
+  const text = real.replace(/<[^>]+>/g, '').replaceAll('&#x27;', "'");
+  const at = needle => { const index = text.indexOf(needle); assert.notEqual(index, -1, needle); return index; };
+  const lead = text.slice(at('Current capability status'), at('Earlier: 1.3.0 pre-release baseline'));
+  assert.ok(lead.startsWith('Current capability status45 of 88 capabilities stamped for v1.3.2: 29 release stamped (live run on the v1.3.2 build) · 16 source-contract verified (tests on v1.3.2 source, not runtime evidence) · 43 not stampedNot human release sign-off.'), lead.slice(0, 300));
+  for (const limit of ["registered test scenarios, not every operation", 'operator-asserted from a CI image-digest match', 'local cluster', 'the capability kit pull request']) assert.ok(lead.includes(limit), limit);
+  assert.ok(!lead.includes('release verified') && !/certified/i.test(real));
+  assert.ok(at('0 of 88 release verified') > at('Earlier: 1.3.0 pre-release baseline'));
+  // Rows: release stamped, then source-contract, then the rest, each in the unstamped order; history stays on a second line.
+  const ids = html => [...html.matchAll(/href="#current--1\.3\.0--([^"]+)"/g)].map(match => match[1]);
+  const stamped = list => new Set(list.map(stamp => stamp.capability));
+  const released = stamped(releaseStamps.releaseStamps), contracts = stamped(releaseStamps.sourceContractStamps);
+  const baseOrder = currentCapabilityView(published).map(row => row.id);
+  assert.deepEqual(ids(real), [...baseOrder.filter(id => released.has(id)), ...baseOrder.filter(id => contracts.has(id)), ...baseOrder.filter(id => !released.has(id) && !contracts.has(id))]);
+  assert.ok(released.has(ids(real)[0]));
+  for (const heading of ['Release stamped for v1.3.2 (29)', 'Source-contract verified for v1.3.2 (16)', 'Not stamped for v1.3.2 (43)']) assert.equal(occurrences(real, '<th colSpan="5" scope="colgroup">' + heading + '</th>'), 1, heading);
+  assert.deepEqual([occurrences(real, '<br/>1.3.0 pre-release: '), occurrences(real, '<br/>No v1.3.2 stamp</td>')], [45, 43]);
 
   // Same rows under another baseline id: every stamped capability is still on the page, and none is badged.
   const other = structuredClone(published);
   other.releases.find(r => r.id === localStamps.baselineReleaseId).id = 'other-prerelease-r3';
   const none = await renderCurrentView({publication: other, localStamps, releaseStamps});
   assert.ok(none.includes('Current capability status') && none.includes('auth.session-revocation'));
-  for (const absent of ['Release stamped', 'release stamped', 'Source-contract verified', 'source-contract verified', 'scoped stamp', 'stamps.json', 'v1.3.2', 'capability-kit/pull']) {
+  for (const absent of ['Release stamped', 'release stamped', 'Source-contract verified', 'source-contract verified', 'scoped stamp', 'stamps.json', 'v1.3.2', 'capability-kit/pull', 'Earlier:', 'colgroup', 'Not stamped', 'pre-release: ']) {
     assert.ok(!none.includes(absent), absent);
   }
+  assert.deepEqual(ids(none), baseOrder); // order and statuses as before the stamps existed
+  assert.ok(none.includes('<caption>Current status per capability, verified first</caption>'));
+  assert.equal(occurrences(none, '<td>Pre-release verified · not release verified</td>'), 50);
 
   // Baseline present, named observation absent: the local stamps do not apply, the release stamps still do.
   const noObservation = {...published, observations: []};

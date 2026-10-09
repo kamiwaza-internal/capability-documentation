@@ -4,7 +4,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
-import {filterCapabilities, countStatuses, primaryCapabilities} from '../catalog.mjs';
+import {filterCapabilities, countStatuses, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
 import CurrentView from '../CurrentView';
 
 function TextList({title, items}) {
@@ -96,7 +96,7 @@ function ReleaseStamps({snapshot}) {
   </section>;
 }
 
-function PrimaryCapabilities({capabilities, query, status}) {
+function PrimaryCapabilities({capabilities, query, status, tag}) {
   const verified = filterCapabilities(capabilities, '', 'verified');
   return <section className="release" id="current-capabilities">
     <h2>Current capability view · accepted verification first</h2>
@@ -104,7 +104,7 @@ function PrimaryCapabilities({capabilities, query, status}) {
     <p>Accepted verification remains primary unless a later test establishes failure of the same version, qualified environment and claim scope. Missing descriptions, untested sources and unrelated scoped observations do not remove verification.</p>
     {filterCapabilities(capabilities, query, status).length === 0 && <p role="status">No matching capability records.</p>}
     {filterCapabilities(capabilities, query, status).map(cap => <article className="capability" id={'current--' + cap.version + '--' + cap.id} key={cap.version + ':' + cap.id}>
-      <h3>{cap.title} <span className="status">{prereleaseLabels[cap.status] ?? cap.status}</span></h3>
+      <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? cap.status}</span>}</h3>
       <p><code>{cap.id}</code> · version {cap.version} · <a href={'#' + cap.snapshotId}>{['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'Retained verification snapshot' : 'Published record'}</a> · {cap.verifiedAt ? <>evidence date <time dateTime={cap.verifiedAt}>{cap.verifiedAt}</time></> : 'execution date not established'}</p>
       {cap.omissionSnapshotId && <p>Latest scope omission: <a href={'#' + cap.omissionSnapshotId}>{cap.omissionSnapshotId}</a>. Earlier status and evidence remain retained separately.</p>}
       {cap.includedInBaseline === false && <p>Outside the included historical verification scope. Exclusion is not an unsupported-feature or failure verdict.</p>}
@@ -132,7 +132,9 @@ export default function Catalog() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
   const releases = [...publication.releases].sort((a, b) => b.publicationRevision - a.publicationRevision); // newest first
-  const primary = primaryCapabilities(publication);
+  // Same additive join as the status table, by capability id; statuses and order are untouched.
+  const unstamped = primaryCapabilities(publication);
+  const primary = stampsApply(releaseStamps, publication) ? joinReleaseStamps(unstamped, releaseStamps).rows : unstamped;
   return <Layout title="Release catalog" description="Reviewed Kamiwaza capabilities, conditions and exact-build verification status.">
     <header className="catalogHero"><div className="container">
       <p className="eyebrow">THE KAMIWAZA CAPABILITY CATALOG</p>
@@ -149,7 +151,7 @@ export default function Catalog() {
             {['verified', 'release-stamped', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{value}</option>)}
           </select></label>
         </div>
-      <PrimaryCapabilities capabilities={primary} query={query} status={status}/>
+      <PrimaryCapabilities capabilities={primary} query={query} status={status} tag={releaseStamps.releaseTag}/>
       <details className="gaps"><summary>Original immutable snapshots and separate scoped observations</summary>
       {(publication.releaseStamps ?? []).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}
       {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
