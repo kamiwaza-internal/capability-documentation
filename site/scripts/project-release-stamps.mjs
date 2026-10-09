@@ -67,6 +67,7 @@ export function projectReleaseStamps(dir, publication) {
     environment: 'local', // same label as the published observations; the cluster flavour is not published
     sourceCommitBasis: sourceBasis,
     humanSignOff: false,
+    baselineReleaseId: baseline.id,
     source: {kitRepository: 'kamiwaza-internal/capability-kit', kitCommit: KIT_COMMIT, kitPullRequest: KIT_PULL_REQUEST, reportPath: REPORT_PATH},
     limits: LIMITS,
     counts: {

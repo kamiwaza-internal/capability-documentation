@@ -67,13 +67,18 @@ export default function bundlePlugin() {
     emitBundles(data, outDir);
     // Local scoped stamps: a separate file, never merged into a release bundle or the release index.
     const stamps = readFileSync(new URL('../data/local-stamps.json', import.meta.url));
-    validateLocalStamps(JSON.parse(stamps), data);
-    writeFileSync(join(outDir, 'local-stamps.json'), stamps);
-    appendFileSync(join(outDir, 'llms.txt'), '/local-stamps.json holds local scoped stamps for listed scenarios on one recorded local build: not release stamps, not release verification, not sign-off, and they change no status.\n');
+    // Projected against other published records: validated, then neither shown nor emitted.
+    if (validateLocalStamps(JSON.parse(stamps), data) === null) console.warn('local-stamps.json is not applicable to this publication: not shown, not emitted');
+    else {
+      writeFileSync(join(outDir, 'local-stamps.json'), stamps);
+      appendFileSync(join(outDir, 'llms.txt'), '/local-stamps.json holds local scoped stamps for listed scenarios on one recorded local build: not release stamps, not release verification, not sign-off, and they change no status.\n');
+    }
     // v1.3.2 release stamps and source-contract stamps: likewise a separate file.
     const release = readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url));
-    validateReleaseStamps(JSON.parse(release), data);
-    writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
-    appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). They change no status.\n');
+    if (validateReleaseStamps(JSON.parse(release), data) === null) console.warn('release-stamps-1.3.2.json is not applicable to this publication: not shown, not emitted');
+    else {
+      writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
+      appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). They change no status.\n');
+    }
   }};
 }

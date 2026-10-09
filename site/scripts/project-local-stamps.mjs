@@ -10,6 +10,9 @@ import {validateLocalStamps} from './local-stamps.mjs';
 // the kit checkout, so regeneration stays byte-identical. Move to arguments when a second set exists.
 const KIT_COMMIT = '2084f77bf00fb8f7924aa08fc50fbf43ecb1163a';
 const KIT_PULL_REQUEST = 'https://github.com/kamiwaza-internal/capability-kit/pull/82';
+// The published records this stamp set is joined against on the page.
+const BASELINE_RELEASE_ID = '1.3.0-prerelease-r3';
+const OBSERVATION_ID = '2026-10-08-local-scoped-runtime';
 const STAMP_SET_PATH = 'reports/2026-10-09-1.3.2-local-verification-stamps/local-verification-stamps.json';
 
 const utc = value => value.replace(/\+00:00$/, 'Z');
@@ -31,6 +34,7 @@ export function projectLocalStamps(bytes) {
     releaseVerified: kit.release_verified,
     notAReleaseStamp: kit.not_a_release_stamp,
     targetVersion: kit.target_version,
+    baselineReleaseId: BASELINE_RELEASE_ID, observationId: OBSERVATION_ID,
     environment: 'local', // same label as the published observations; the cluster flavour is not published
     runWindow: {earliestStartedAt: utc(kit.run_window.earliest_started_at), latestFinishedAt: utc(kit.run_window.latest_finished_at)},
     source: {

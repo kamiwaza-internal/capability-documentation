@@ -1,5 +1,7 @@
 // Consumer validation for the local scoped stamp projection. Separate from publication.json:
 // these are not release stamps and never feed a release verdict.
+import {stampsApply} from '../src/catalog.mjs';
+
 const hex64 = /^[a-f0-9]{64}$/;
 export const id = /^[a-z0-9][a-z0-9.-]{0,119}$/;
 const scenarioId = /^[A-Za-z0-9][A-Za-z0-9/+._-]{0,159}$/;
@@ -17,10 +19,13 @@ export function count(value) { requireValue(Number.isInteger(value) && value >= 
 
 export const kitPullRequestPattern = /^https:\/\/github\.com\/kamiwaza-internal\/capability-kit\/pull\/\d+$/;
 
-// `publication` is optional. When given, a published observation of the same run must agree:
-// no capability with a failed scenario there may carry a stamp here.
+// The file's own checks always run. `publication` is optional. When given and it holds the
+// baseline release and observation this projection names, a published observation of the same
+// run must agree: no capability with a failed scenario there may carry a stamp here.
+// Returns the data, or null when the projection does not apply to the given publication.
 export function validateLocalStamps(data, publication) {
-  shape(data, ['schema', 'kind', 'releaseVerified', 'notAReleaseStamp', 'targetVersion', 'environment', 'runWindow', 'source', 'coreSource', 'limits', 'counts', 'stamps', 'notStampedFailed']);
+  shape(data, ['schema', 'kind', 'releaseVerified', 'notAReleaseStamp', 'targetVersion', 'environment', 'baselineReleaseId', 'observationId', 'runWindow', 'source', 'coreSource', 'limits', 'counts', 'stamps', 'notStampedFailed']);
+  requireValue([data.baselineReleaseId, data.observationId].every(value => typeof value === 'string' && id.test(value)), 'Local stamps must name the baseline release and observation they were projected against');
   requireValue(data.schema === 'local-stamp-projection.v1' && data.kind === 'local-scoped-verification', 'Unsupported local stamp projection');
   requireValue(data.releaseVerified === false && data.notAReleaseStamp === true, 'Local stamps are never release stamps or release verification');
   requireValue(typeof data.targetVersion === 'string' && /^\d+\.\d+\.\d+$/.test(data.targetVersion), 'Missing target version');
@@ -78,7 +83,9 @@ export function validateLocalStamps(data, publication) {
   const body = JSON.stringify({...data, source: {...data.source, kitPullRequest: ''}});
   requireValue(!/work\/|sha256:|@sha256|ghcr\.io|https?:|\.patch\b|\/(?:home|Users|tmp|etc|var)\//i.test(body), 'Private content forbidden in local stamp projection');
 
-  for (const observation of publication?.observations ?? []) {
+  if (!publication) return data;
+  if (!stampsApply(data, publication)) return null;
+  for (const observation of publication.observations) {
     if (observation.target?.version !== data.targetVersion || observation.evidenceWindow?.latestFinishedAt !== data.runWindow.latestFinishedAt) continue;
     for (const row of observation.capabilities) {
       if (row.failedScenarios > 0) requireValue(failed.includes(row.id), 'Published failure missing from notStampedFailed: ' + row.id);

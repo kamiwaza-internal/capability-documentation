@@ -10,6 +10,7 @@
   "environment": "local",
   "sourceCommitBasis": "operator-asserted",
   "humanSignOff": false,
+  "baselineReleaseId": "1.3.0-prerelease-r3",
   "source": {
     "kitRepository": "kamiwaza-internal/capability-kit",
     "kitCommit": "a7bf42ab4e432af673555b33107c99c2a83f9c37",

@@ -303,6 +303,17 @@ On the page, `joinLocalStamps(rows, localStamps)` in `src/catalog.mjs` adds a
 It never changes a row's status. Stamped capabilities outside the included rows
 are listed by id under the headline.
 
+Both stamp projections name the published records they were joined against:
+`baselineReleaseId` (`1.3.0-prerelease-r3`) in both files and, in
+`local-stamps.json`, `observationId` (`2026-10-08-local-scoped-runtime`). The
+validators always run each file's own checks. The cross-checks against
+`publication.json` run only when it holds the named records, and then every one
+still fails the build on a mismatch. Against any other publication (the
+synthetic ones of `tests/site-build.integration.mjs`, for example) a projection
+does not apply: the validator returns `null`, the page shows no badge, count or
+paragraph from it (`stampsApply` in `src/catalog.mjs`), and its downloadable
+copy and `llms.txt` line are not emitted.
+
 ## v1.3.2 release stamp projection
 
 `data/release-stamps-1.3.2.json` is a sanitized public projection of the

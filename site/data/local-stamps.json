@@ -4,6 +4,8 @@
   "releaseVerified": false,
   "notAReleaseStamp": true,
   "targetVersion": "1.3.2",
+  "baselineReleaseId": "1.3.0-prerelease-r3",
+  "observationId": "2026-10-08-local-scoped-runtime",
   "environment": "local",
   "runWindow": {
     "earliestStartedAt": "2026-10-08T20:47:53.196714Z",

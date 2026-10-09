@@ -168,6 +168,13 @@ export function primaryCapabilities(publication) {
   return current.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || Number(accepted.has(b.status)) - Number(accepted.has(a.status)) || a.id.localeCompare(b.id));
 }
 
+// A stamp projection names the published records it was joined against (`baselineReleaseId`
+// and, for local stamps, `observationId`). Against a publication without them it does not
+// apply: no badge, count or paragraph on the page, and no cross-check or download in the build.
+export const stampsApply = (data, publication) => Boolean(data) &&
+  (publication.releases ?? []).some(release => release.id === data.baselineReleaseId) &&
+  (!Object.hasOwn(data, 'observationId') || (publication.observations ?? []).some(o => o.id === data.observationId));
+
 // Additive join of the local scoped stamp projection onto the current rows. It never
 // changes a row's status, lineage or flags; it only attaches the stamp summary.
 // Stamps and failures for capabilities outside the rows are returned, never dropped.

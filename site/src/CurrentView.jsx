@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {currentCapabilityView, filterCapabilities, joinLocalStamps, joinReleaseStamps, summarizeCurrentView} from './catalog.mjs';
+import {currentCapabilityView, filterCapabilities, joinLocalStamps, joinReleaseStamps, stampsApply, summarizeCurrentView} from './catalog.mjs';
 
 const statusLabels = {
   verified: 'Pre-release verified · not release verified',
@@ -23,8 +23,9 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
   const base = currentCapabilityView(publication);
   if (base.length === 0) return null;
   // Additive: the join attaches a badge and never changes a row's status.
-  const local = localStamps ? joinLocalStamps(base, localStamps) : null;
-  const release = releaseStamps ? joinReleaseStamps(local ? local.rows : base, releaseStamps) : null;
+  // Stamps projected against other published records do not apply to this publication.
+  const local = stampsApply(localStamps, publication) ? joinLocalStamps(base, localStamps) : null;
+  const release = stampsApply(releaseStamps, publication) ? joinReleaseStamps(local ? local.rows : base, releaseStamps) : null;
   const rows = release ? release.rows : local ? local.rows : base;
   const tag = releaseStamps?.releaseTag;
   const releaseLabel = `Release stamped · ${tag}`, contractLabel = `Source-contract verified · ${tag}`;

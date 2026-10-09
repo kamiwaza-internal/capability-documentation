@@ -2,20 +2,24 @@
 // A release stamp is the kit seal's output for one capability's registered test; it is not human
 // release sign-off. A source-contract stamp is a test on source with mocks and is never a release stamp.
 import {count, id, instant, kitPullRequestPattern, list, requireValue, shape, text, unique} from './local-stamps.mjs';
+import {stampsApply} from '../src/catalog.mjs';
 
 const hex64 = /^[a-f0-9]{64}$/;
 const slug = /^[a-z0-9][a-z0-9-]{0,159}$/;
 const kitId = /^[a-z]{2,16}:[a-z0-9][a-z0-9-]{0,159}$/;
 const capability = value => requireValue(typeof value === 'string' && id.test(value), 'Invalid capability identifier');
 
-// `publication` is optional. When given, every stamped capability must be a row of the latest
+// The file's own checks always run. `publication` is optional. When given and it holds the
+// baseline release this projection names, every stamped capability must be a row of the latest
 // pre-release evidence release or be named in `outsideCatalog`.
+// Returns the data, or null when the projection does not apply to the given publication.
 export function validateReleaseStamps(data, publication) {
-  shape(data, ['schema', 'targetRelease', 'releaseTag', 'coreSource', 'manifestId', 'environment', 'sourceCommitBasis', 'humanSignOff',
+  shape(data, ['schema', 'targetRelease', 'releaseTag', 'coreSource', 'manifestId', 'environment', 'sourceCommitBasis', 'humanSignOff', 'baselineReleaseId',
     'source', 'limits', 'counts', 'releaseStamps', 'sourceContractStamps', 'sourceContractNotStamped', 'outsideCatalog']);
   requireValue(data.schema === 'release-stamp-projection.v1', 'Unsupported release stamp projection');
   requireValue(data.humanSignOff === false, 'Release stamps are never human release sign-off');
   requireValue(typeof data.targetRelease === 'string' && /^\d+\.\d+\.\d+$/.test(data.targetRelease) && data.releaseTag === 'v' + data.targetRelease, 'Invalid target release');
+  requireValue(typeof data.baselineReleaseId === 'string' && id.test(data.baselineReleaseId), 'Release stamps must name the baseline release they were projected against');
   shape(data.coreSource, ['ref', 'commit']);
   requireValue(data.coreSource.ref === data.releaseTag && /^[a-f0-9]{40}$/.test(data.coreSource.commit), 'Core source must be the release tag at a pinned commit');
   requireValue(hex64.test(data.manifestId), 'Invalid manifest identifier');
@@ -80,6 +84,7 @@ export function validateReleaseStamps(data, publication) {
   unique(data.outsideCatalog);
   requireValue(data.outsideCatalog.every(c => all.includes(c)), 'outsideCatalog names a capability with no entry here');
   if (publication) {
+    if (!stampsApply(data, publication)) return null;
     const baseline = (publication.releases ?? []).filter(r => r.baselineKind === 'prerelease-evidence').sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
     const known = new Set((baseline?.capabilities ?? []).map(c => c.id));
     for (const c of all) requireValue(known.has(c) !== data.outsideCatalog.includes(c), 'Capability must be in the latest pre-release evidence release or, only otherwise, in outsideCatalog: ' + c);

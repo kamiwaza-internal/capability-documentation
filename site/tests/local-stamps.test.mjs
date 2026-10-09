@@ -11,7 +11,7 @@ const scenario = (scenarioId, extra = {}) => ({scenarioId, lane: 'sdk', status: 
   startedAt: '2026-02-01T00:00:00Z', finishedAt: '2026-02-01T00:30:00.123456Z', recordSha256: 'c'.repeat(64), ...extra});
 const fixture = () => ({
   schema: 'local-stamp-projection.v1', kind: 'local-scoped-verification', releaseVerified: false, notAReleaseStamp: true,
-  targetVersion: '9.9.2', environment: 'local',
+  targetVersion: '9.9.2', baselineReleaseId: 'synthetic-r1', observationId: 'synthetic-obs', environment: 'local',
   runWindow: {earliestStartedAt: '2026-02-01T00:00:00Z', latestFinishedAt: '2026-02-01T01:00:00Z'},
   source: {kitRepository: 'kamiwaza-internal/capability-kit', kitCommit: 'a'.repeat(40),
     kitPullRequest: 'https://github.com/kamiwaza-internal/capability-kit/pull/1',
@@ -25,7 +25,7 @@ const fixture = () => ({
   ],
   notStampedFailed: [{capability: 'synthetic.failed', failedScenarios: ['S-4']}],
 });
-const observed = (failedId, version = '9.9.2') => ({observations: [{target: {version},
+const observed = (failedId, version = '9.9.2') => ({releases: [{id: 'synthetic-r1'}], observations: [{id: 'synthetic-obs', target: {version},
   evidenceWindow: {latestFinishedAt: '2026-02-01T01:00:00Z'}, capabilities: [{id: failedId, failedScenarios: 1}]}]});
 
 test('LS-1 synthetic projection is valid, alone and against an agreeing observation', () => {
@@ -67,6 +67,22 @@ test('LS-3 rejects a stamp that hides a published failure of the same run', () =
   assert.throws(() => validateLocalStamps(fixture(), observed('synthetic.one')), /Published failure missing from notStampedFailed/);
 });
 
+test('LS-3b cross-checks apply only to the publication the stamps were projected against', () => {
+  const disagreeing = observed('synthetic.one');
+  assert.equal(validateLocalStamps(fixture(), observed('synthetic.failed')).targetVersion, '9.9.2'); // applies: data returned
+  // Baseline release or observation absent: not applicable, not an error, even though the observation disagrees.
+  assert.equal(validateLocalStamps(fixture(), {...disagreeing, releases: [{id: 'other-r1'}]}), null);
+  assert.equal(validateLocalStamps(fixture(), {...disagreeing, observations: [{...disagreeing.observations[0], id: 'other-obs'}]}), null);
+  assert.equal(validateLocalStamps(fixture(), {schema: 1, releases: []}), null);
+  // The file's own checks still run there.
+  assert.throws(() => validateLocalStamps({...fixture(), releaseVerified: true}, {schema: 1, releases: []}), /never release stamps/);
+  for (const field of ['baselineReleaseId', 'observationId']) {
+    const input = fixture(); delete input[field];
+    assert.throws(() => validateLocalStamps(input), /Unexpected or missing fields/);
+    assert.throws(() => validateLocalStamps({...fixture(), [field]: 'Not An Id'}), /must name the baseline release and observation/);
+  }
+});
+
 test('LS-4 join is additive: statuses, order and inputs unchanged; outside stamps are listed', () => {
   const rows = Object.freeze([{id: 'synthetic.one', status: 'verified'}, {id: 'synthetic.failed', status: 'failed-or-mixed'}, {id: 'synthetic.none', status: 'not-yet-verified'}].map(Object.freeze));
   const joined = joinLocalStamps(rows, fixture());
@@ -84,7 +100,8 @@ const stamps = JSON.parse(raw);
 const flagged = ['catalog.writable-datasets', 'connectors.connector-builder', 'kaizen.notifications-inbox', 'kaizen.product-identity'];
 
 test('LS-5 published local stamps: 34 stamped, 10 not stamped, never a release stamp', () => {
-  validateLocalStamps(stamps, published);
+  assert.equal(validateLocalStamps(stamps, published), stamps); // applies to the real publication
+  assert.deepEqual([stamps.baselineReleaseId, stamps.observationId], ['1.3.0-prerelease-r3', '2026-10-08-local-scoped-runtime']);
   assert.deepEqual([stamps.stamps.length, stamps.notStampedFailed.length, stamps.targetVersion, stamps.releaseVerified, stamps.notAReleaseStamp], [34, 10, '1.3.2', false, true]);
   assert.equal(stamps.stamps.reduce((n, s) => n + s.scenarios.length, 0), 47);
   // Same run as the published scoped observation, and the same two sets of capabilities.

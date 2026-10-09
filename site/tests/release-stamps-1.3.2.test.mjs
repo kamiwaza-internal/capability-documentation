@@ -11,7 +11,7 @@ const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const fixture = () => ({
   schema: 'release-stamp-projection.v1', targetRelease: '9.9.2', releaseTag: 'v9.9.2',
   coreSource: {ref: 'v9.9.2', commit: 'd'.repeat(40)}, manifestId: 'f'.repeat(64),
-  environment: 'local', sourceCommitBasis: 'operator-asserted', humanSignOff: false,
+  environment: 'local', sourceCommitBasis: 'operator-asserted', humanSignOff: false, baselineReleaseId: 'synthetic-r2',
   source: {kitRepository: 'kamiwaza-internal/capability-kit', kitCommit: 'a'.repeat(40),
     kitPullRequest: 'https://github.com/kamiwaza-internal/capability-kit/pull/1', reportPath: 'reports/synthetic-replay'},
   limits: ['A release stamp is not human release sign-off.'],
@@ -25,7 +25,7 @@ const fixture = () => ({
   outsideCatalog: [],
 });
 const catalog = (...ids) => ({releases: [
-  {baselineKind: 'prerelease-evidence', publicationRevision: 2, capabilities: ids.map(id => ({id}))},
+  {id: 'synthetic-r2', baselineKind: 'prerelease-evidence', publicationRevision: 2, capabilities: ids.map(id => ({id}))},
   {baselineKind: 'prerelease-evidence', publicationRevision: 1, capabilities: [{id: 'synthetic.retired'}]},
 ]});
 const all = ['synthetic.one', 'synthetic.new', 'synthetic.contract', 'synthetic.unlicensed'];
@@ -78,6 +78,18 @@ test('RS-3 a capability outside the latest pre-release evidence release must be 
   assert.throws(() => validateReleaseStamps({...fixture(), sourceContractNotStamped: [{capability: 'synthetic.retired', reason: 'x'}]}, catalog(...all)), /outsideCatalog: synthetic.retired/);
 });
 
+test('RS-3b cross-checks apply only to the publication the stamps were projected against', () => {
+  const missing = catalog(...all.filter(id => id !== 'synthetic.new'));
+  assert.equal(validateReleaseStamps(fixture(), catalog(...all)).targetRelease, '9.9.2'); // applies: data returned
+  // Baseline release absent: not applicable, not an error, even though the catalog disagrees.
+  missing.releases[0].id = 'other-r2';
+  assert.equal(validateReleaseStamps(fixture(), missing), null);
+  assert.equal(validateReleaseStamps(fixture(), {schema: 1, releases: []}), null);
+  // The file's own checks still run there.
+  assert.throws(() => validateReleaseStamps({...fixture(), humanSignOff: true}, missing), /never human release sign-off/);
+  assert.throws(() => validateReleaseStamps({...fixture(), baselineReleaseId: 'Not An Id'}), /must name the baseline release/);
+});
+
 test('RS-4 join is additive: statuses, order and inputs unchanged; outside stamps are listed', () => {
   const rows = Object.freeze([{id: 'synthetic.one', status: 'verified', acceptedAt: '2026-01-01T00:00:00Z'}, {id: 'synthetic.contract', status: 'verified', acceptedAt: '2026-01-01T00:00:00Z'},
     {id: 'synthetic.none', status: 'not-yet-verified', acceptedAt: null}].map(Object.freeze));
@@ -98,7 +110,8 @@ const stamps = JSON.parse(raw);
 const neverVerified = ['kaizen.conversation-event-streaming', 'kaizen.prebuilt-agents'];
 
 test('RS-5 published v1.3.2 stamps: 29 release stamps, 16 source-contract, 1 not stamped, none outside the catalog', () => {
-  validateReleaseStamps(stamps, published);
+  assert.equal(validateReleaseStamps(stamps, published), stamps); // applies to the real publication
+  assert.equal(stamps.baselineReleaseId, '1.3.0-prerelease-r3');
   assert.deepEqual([stamps.releaseStamps.length, stamps.sourceContractStamps.length, stamps.targetRelease, stamps.releaseTag, stamps.humanSignOff, stamps.sourceCommitBasis, stamps.environment],
     [29, 16, '1.3.2', 'v1.3.2', false, 'operator-asserted', 'local']);
   assert.deepEqual(stamps.counts, {releaseStamps: 29, releaseStampsApi: 20, releaseStampsSdk: 9, sourceContractStamps: 16, sourceContractNotStamped: 1});
