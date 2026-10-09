@@ -78,7 +78,7 @@ export default function bundlePlugin() {
     if (validateReleaseStamps(JSON.parse(release), data) === null) console.warn('release-stamps-1.3.2.json is not applicable to this publication: not shown, not emitted');
     else {
       writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
-      appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). They change no status.\n');
+      appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). A release stamp is the v1.3.2 release status of its capability; it does not rewrite any 1.3.0 record.\n');
     }
   }};
 }

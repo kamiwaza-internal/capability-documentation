@@ -28,9 +28,12 @@ answering.
 - **Version.** The latest, unless the user names one. The latest is the highest
   `version` among index publications whose `channel` is not `development`, at its
   highest `publicationRevision`. Use a `development` publication only when the index
-  has no other. Compare versions as semantic versions, not as strings. Name the chosen
+  has no other, chosen the same way: highest `version`, then highest
+  `publicationRevision`. Compare versions as semantic versions, not as strings. Name the chosen
   publication and its channel above the answer. If the latest cannot be determined,
-  stop and say why; never guess a release.
+  stop and say why; never guess a release. Release stamps can exist for a newer
+  version than any publication (section 2): they are read on every answer, and the
+  Release status column names the stamped version.
 - **Coverage.** Every question or requirement the user gave gets its own row, in the
   order given. A requirement with no matching record is still answered, as Not
   established. Never drop a requirement because it looks out of scope.
@@ -62,12 +65,28 @@ put the user's question, a customer name or any other text of theirs into a requ
    leaves out. Their status is unknown, never negative. When the best match for a
    question is one of them, say so by ID and report Not established.
 
-Two more files add scoped detail. They change no capability's status:
+Release stamps are published beside the publications, not inside them. Read them on
+every answer:
 
-- `/release-stamps-<version>.json` holds release stamps and source-contract stamps for
-  that version. Read its `limits` and carry them into any row that cites a stamp.
+- `/llms.txt` names each `/release-stamps-<version>.json` file. That version is the
+  stamped release and is often newer than the publication you chose, so take the file
+  names from `/llms.txt`; never build one from the publication's version.
+- Use a stamp file only when its `baselineReleaseId` is the `id` of the publication
+  you chose. Otherwise it describes other records: say so and leave it out.
+- A capability listed in the file's `releaseStamps` is **Release verified for
+  `<targetRelease>`**. This is the only source of that state. The record's own
+  `releaseStatus` speaks for the publication's version alone, so `not-stamped` there
+  does not contradict a stamp for a later release, and the stamp does not rewrite it.
+- Carry the file's `limits`, `environment`, `sourceCommitBasis` and `humanSignOff`
+  into every row that cites a stamp, with the stamp's `stampId`, `scenarios` and
+  `finishedAt`. Name the stamp file and its `releaseTag` above the table.
+- `sourceContractStamps` in the same file are tests on source with mocks. They are
+  never release stamps.
 - `/local-stamps.json` holds local scoped stamps. They are not release stamps and never
   make a capability release verified.
+- `/release-stamps/index.json` exists only once a signed full-inventory release
+  snapshot is published. A 404 there means none is published yet; it is not a
+  retrieval failure.
 
 If the site cannot be reached, or a file is not the JSON the index describes, stop and
 say so. Do not search the web or another host for a substitute, and do not fall back
@@ -89,8 +108,12 @@ it.
 
 Rules that follow from this:
 
-- Read `status`, `verificationBasis` and `releaseStatus` from the record and report
-  what they say. Do not upgrade one state into another.
+- Read `status` and `verificationBasis` from the record for the first two states, and
+  the release stamp file for the third (section 2). Report what they say. Do not
+  upgrade one state into another: pre-release evidence never becomes release
+  verified, and a release stamp never becomes sign-off or whole-capability proof.
+- A capability with no release stamp is `Not release verified`, or `Release failed`
+  when the record's `releaseStatus` is `failed`.
 - A `developer-assessment` is an assessment with explicit assumptions, not an executed
   test. Report its `scope` and `assumptions`.
 - `wholeClaim: false` means the evidence covers part of the capability. Say which part.
@@ -126,8 +149,8 @@ this table, with exactly these columns:
   product name is not a match.
 
 Cite, for every row that relies on a record: the publication `id`, the bundle SHA-256,
-the capability `id`, and the `documentSha256` or evidence `recordSha256` where the
-record gives one.
+the capability `id`, and the `declaration.documentSha256` or evidence `recordSha256`
+where the record gives one. A row that cites a release stamp also cites its `stampId`.
 
 After the table, give the count of rows in each state. Then stop. Do not add a
 promotional summary, and do not turn mixed results into an overall yes.
