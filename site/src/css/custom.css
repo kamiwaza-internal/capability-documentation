@@ -21,6 +21,9 @@ code { overflow-wrap: anywhere; }
 .kitMain { padding-top: 2.5rem; padding-bottom: 4rem; max-width: 860px; }
 .kitMain section { margin-bottom: 3rem; }
 .kitMain h2 { font-size: 1.6rem; }
+.faq { border-bottom: 1px solid var(--ifm-color-emphasis-300); padding: .75rem 0; }
+.faq summary { cursor: pointer; font-weight: 600; }
+.faq > :not(summary) { margin-top: .75rem; }
 .statusKey { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1.25rem; }
 .statusKey dt { font-weight: 600; }
 .statusKey dd { margin: 0; }

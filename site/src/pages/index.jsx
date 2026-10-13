@@ -18,8 +18,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about">
         <h2 id="about">About</h2>
-        <p>The Capability Kit records what each Kamiwaza release can do and whether it was tested. Download a release below to read it, or paste it into any AI assistant; each file explains how to read itself. A missing record means <strong>not established</strong>, never &ldquo;not supported&rdquo;.</p>
-        <p><a href="#statuses">What the statuses mean</a> · <Link to="/catalog/">Full catalog</Link></p>
+        <p>The Capability Kit records what each Kamiwaza release can do and whether it was tested. Download a release below to read it, or paste it into any AI assistant. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
 
       <section aria-labelledby="verifications">
@@ -38,9 +37,20 @@ export default function Home() {
         <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. Each zip also holds the JSON records its digest was derived from.</p>
       </section>
 
-      <section aria-labelledby="statuses">
-        <h2 id="statuses">What the statuses mean</h2>
-        <dl className="statusKey">{kinds.flatMap(kind => STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
+      <section aria-labelledby="faqs">
+        <h2 id="faqs">FAQs</h2>
+        <details className="faq">
+          <summary>What do the statuses mean?</summary>
+          <dl className="statusKey">{kinds.flatMap(kind => STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
+        </details>
+        <details className="faq">
+          <summary>Does a missing capability mean Kamiwaza can&rsquo;t do it?</summary>
+          <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only an explicit exclusion means &ldquo;not supported&rdquo;.</p>
+        </details>
+        <details className="faq">
+          <summary>Can I give a bundle to an AI assistant?</summary>
+          <p>Yes. Paste or attach the MD, PDF or zip into a new chat. Each file starts with its own reading rules, so no skill or plugin is needed.</p>
+        </details>
       </section>
     </main>
   </Layout>;
