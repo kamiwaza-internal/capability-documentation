@@ -65,23 +65,29 @@ put the user's question, a customer name or any other text of theirs into a requ
    leaves out. Their status is unknown, never negative. When the best match for a
    question is one of them, say so by ID and report Not established.
 
-Release stamps are published beside the publications, not inside them. Read them on
-every answer:
+Two more files, both named in `/llms.txt`, complete the picture. Read them on every
+answer:
 
-- `/llms.txt` names each `/release-stamps-<version>.json` file. That version is the
-  stamped release and is often newer than the publication you chose, so take the file
-  names from `/llms.txt`; never build one from the publication's version.
-- Use a stamp file only when its `baselineReleaseId` is the `id` of the publication
-  you chose. Otherwise it describes other records: say so and leave it out.
-- A capability listed in the file's `releaseStamps` is **Release verified for
-  `<targetRelease>`**. This is the only source of that state. The record's own
-  `releaseStatus` speaks for the publication's version alone, so `not-stamped` there
-  does not contradict a stamp for a later release, and the stamp does not rewrite it.
-- Carry the file's `limits`, `environment`, `sourceCommitBasis` and `humanSignOff`
-  into every row that cites a stamp, with the stamp's `stampId`, `scenarios` and
-  `finishedAt`. Name the stamp file and its `releaseTag` above the table.
-- `sourceContractStamps` in the same file are tests on source with mocks. They are
-  never release stamps.
+- `/release-stamps-<version>.json` (`release-stamp-projection.v1`) is the source for the
+  release verified column. Use the highest version unless the user names one.
+  - A capability listed in `releaseStamps[]` is **Release verified for
+    `<targetRelease>`**, whatever `releaseStatus` its bundle record carries. Carry the
+    file's `limits` into that row in plain words, with `humanSignOff`,
+    `sourceCommitBasis` and `environment`: for example not human release sign-off, the
+    registered scenarios and not every operation, an operator-asserted source commit, a
+    local cluster.
+  - A capability listed in `sourceContractStamps[]` is not release verified. Its
+    release cell stays `Not release verified`, and the last column says it is
+    source-contract verified for that version, which is not runtime evidence.
+  - A capability in neither list is `Not release verified`.
+  - `targetRelease` can be newer than the publication you chose from the index (stamps
+    for 1.3.2 beside a 1.3.0 publication). The release column names `targetRelease`;
+    the pre-release column keeps the publication's version. Say both once above the
+    table.
+  - The index holds no hash for this file. Cite it by URL, its `source.kitCommit` and
+    the entry's `stampId`.
+  - If the file cannot be fetched or is not that JSON, say so as a limit on the release
+    column and do not infer a release state.
 - `/local-stamps.json` holds local scoped stamps. They are not release stamps and never
   make a capability release verified.
 - `/release-stamps/index.json` exists only once a signed full-inventory release
@@ -108,12 +114,11 @@ it.
 
 Rules that follow from this:
 
-- Read `status` and `verificationBasis` from the record for the first two states, and
-  the release stamp file for the third (section 2). Report what they say. Do not
-  upgrade one state into another: pre-release evidence never becomes release
-  verified, and a release stamp never becomes sign-off or whole-capability proof.
-- A capability with no release stamp is `Not release verified`, or `Release failed`
-  when the record's `releaseStatus` is `failed`.
+- Read `status`, `verificationBasis` and `releaseStatus` from the record and report
+  what they say. Do not upgrade one state into another. The one addition is a release
+  stamp in `/release-stamps-<version>.json` (section 2): it makes that capability
+  release verified for the stamp's version, and it changes nothing about the
+  pre-release state.
 - A `developer-assessment` is an assessment with explicit assumptions, not an executed
   test. Report its `scope` and `assumptions`.
 - `wholeClaim: false` means the evidence covers part of the capability. Say which part.
@@ -134,11 +139,22 @@ this table, with exactly these columns:
 ```markdown
 | Capability | Documented | Pre-release status | Release status | Conditions and evidence |
 |---|---|---|---|---|
-| <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
+| <marker> <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
 ```
 
 - One row per question or requirement, in the order asked. A single question still
   gets a one-row table.
+- Start the Capability cell with exactly one marker, chosen by the highest state the
+  row reaches, then a space and the capability as asked:
+  - ✅ the Release status cell says `Release verified for <version>`.
+  - ⚠️ a record documents the capability, but it is not release verified. This covers
+    documented only, pre-release verified, pre-release failed, release failed and
+    source-contract verified. The state cells say which.
+  - ❌ no record establishes it: `Not established`, or `Not supported` where a record
+    states an explicit exclusion.
+  The marker summarises the row; it never replaces the words in the state cells, and
+  it is the only emoji in the answer. ✅ still carries every limit of the stamp (it is
+  not human release sign-off and covers the registered scenarios only).
 - Never drop, merge or reorder a column, and never leave a cell empty. A row with no
   matching record says `Not established` under Documented and names the unanswered
   requirement in the last column.
@@ -152,7 +168,8 @@ Cite, for every row that relies on a record: the publication `id`, the bundle SH
 the capability `id`, and the `declaration.documentSha256` or evidence `recordSha256`
 where the record gives one. A row that cites a release stamp also cites its `stampId`.
 
-After the table, give the count of rows in each state. Then stop. Do not add a
+After the table, give the count of rows under each marker (✅, ⚠️, ❌) and in each
+state. Then stop. Do not add a
 promotional summary, and do not turn mixed results into an overall yes.
 
 ## 5. Document mode
