@@ -18,15 +18,8 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about">
         <h2 id="about">About</h2>
-        <p>The Capability Kit writes down what the Kamiwaza platform does, one capability at a time, and tests it against each release. Every claim says whether it is only documented or also verified, on which build, and under what conditions.</p>
-        <p>Documented is not the same as verified, and a missing record is not a &ldquo;no&rdquo;: <strong>not established</strong> means the evidence cannot back the claim for that release, never that the platform cannot do it. <a href="#statuses">What the statuses mean</a>.</p>
-        <h3>Using the evidence</h3>
-        <ul>
-          <li><strong>Read or share it.</strong> Download a release&rsquo;s bundle below. The PDF and Markdown are the same readable digest.</li>
-          <li><strong>Ask any AI assistant.</strong> Paste or attach the Markdown, PDF or zip into a new chat. Each bundle starts with its own reading rules, so no skill or plugin is needed.</li>
-          <li><strong>Get cited answers and RFP checks.</strong> In Claude Code, install the <code>capability-grounding</code> skill: <code>claude plugin marketplace add kamiwaza-internal/capability-documentation</code>, then <code>claude plugin install capability-grounding@kamiwaza-capabilities</code>.</li>
-          <li><strong>Read every record.</strong> The <Link to="/catalog/">full catalog</Link> shows each capability&rsquo;s complete evidence.</li>
-        </ul>
+        <p>The Capability Kit records what each Kamiwaza release can do and whether it was tested. Download a release below to read it, or paste it into any AI assistant; each file explains how to read itself. A missing record means <strong>not established</strong>, never &ldquo;not supported&rdquo;.</p>
+        <p><a href="#statuses">What the statuses mean</a> · <Link to="/catalog/">Full catalog</Link></p>
       </section>
 
       <section aria-labelledby="verifications">
