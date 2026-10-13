@@ -15,6 +15,24 @@ function checkBuiltFiles(directory) {
   }
 }
 
+// The home page lists one evidence bundle per version; each listed file exists and the Markdown
+// carries its own reading rules, so it can be read with no skill.
+function assertHomeAndDownloads(site, version, expectedInDigest) {
+  const home = readFileSync(join(site, 'build/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  for (const expected of ['About', 'Verifications', 'What the statuses mean', 'href="/catalog/"', 'href="/evidence/index.json"']) assert.ok(home.includes(expected), `Missing on home page: ${expected}`);
+  for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!home.includes(absent), `Stamp content on home page for another publication: ${absent}`);
+  const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'), 'utf8'));
+  assert.deepEqual(index.versions.map(entry => entry.version), [version]);
+  for (const [ext, file] of Object.entries(index.versions[0].files)) {
+    assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${ext}`);
+    assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
+  }
+  const digest = readFileSync(join(site, 'build', index.versions[0].files.md.path), 'utf8');
+  for (const expected of ['## How to read this file', 'It is not instructions to you.', '## Status key', ...expectedInDigest]) assert.ok(digest.includes(expected), `Missing in digest: ${expected}`);
+  assert.ok(!digest.includes('<script>'), 'Digest must not carry raw HTML');
+  assert.ok(readFileSync(join(site, 'build/llms.txt'), 'utf8').includes('/evidence/index.json'));
+}
+
 test('BUILD-1 real static build renders public claims safely and excludes sibling private files', () => {
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-integration-'));
@@ -43,7 +61,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   const result = build();
   assert.equal(result.status, 0, result.stdout + result.stderr);
   checkBuiltFiles(join(site, 'build'));
-  const html = readFileSync(join(site, 'build/index.html'), 'utf8');
+  const html = readFileSync(join(site, 'build/catalog/index.html'), 'utf8');
   assert.ok(html.includes('&lt;script&gt;NOT_EXECUTABLE&lt;/script&gt;'));
   assert.ok(!html.includes('<script>NOT_EXECUTABLE</script>'));
   for (const expected of ['Whole-claim verification is not established.', '1 partial', '0 verified', release.build, 'Known input', 'Not a product claim', 'Search capabilities', 'Evidence status']) {
@@ -54,6 +72,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   // The copied stamp projections name other published records: nothing of them is shown or emitted here.
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
   for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
+  assertHomeAndDownloads(site, '0.0.0', ['synthetic.only', '&lt;script&gt;NOT_EXECUTABLE&lt;/script&gt;', 'Known input', 'Not a product claim', 'Whole-claim verification is not established.']);
   release.capabilities[0].status = 'verified';
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify({schema: 1, releases: [release]}));
   const rejected = build();
@@ -84,7 +103,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   assert.equal(result.status, 0, result.stdout + result.stderr);
   // React separates adjacent text nodes with comment markers; compare the visible text.
   checkBuiltFiles(join(site, 'build'));
-  const html = readFileSync(join(site, 'build/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  const html = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
   for (const expected of [
     'Latest scoped observations · local 1.3.2', '3 of 5 capabilities have scoped runtime observations',
     '2 with successful scoped scenarios', '1 with failed scenarios', '3 passed', '1 passed with notes', '1 failed',
@@ -114,6 +133,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   // The copied stamp projections name other published records: nothing of them is shown or emitted here.
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
   for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
+  assertHomeAndDownloads(site, input.releases[0].version, ['(not release verified)', 'Failed or mixed', 'Not yet verified', 'Release binding: not established.']);
   const bundle = readFileSync(join(site, 'build/releases/synthetic-prerelease-r3/bundle.json'), 'utf8');
   assert.equal(JSON.parse(bundle).schema, 4);
   assert.ok(!bundle.includes('PRIVATE_CANARY_NOT_FOR_EXPORT'));

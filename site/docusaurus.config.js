@@ -22,7 +22,7 @@ module.exports = async function config() {
     plugins: ['./scripts/published-bundles.mjs'],
     presets: [['classic', {docs: false, blog: false, theme: {customCss: './src/css/custom.css'}}]],
     themeConfig: {
-      navbar: {title: 'Kamiwaza · Capabilities', items: [{to: '/', label: 'Release catalog', position: 'left'}]},
+      navbar: {title: 'Kamiwaza · Capability Kit', items: [{to: '/', label: 'About and evidence', position: 'left'}, {to: '/catalog/', label: 'Full catalog', position: 'left'}]},
       footer: {style: 'dark', copyright: 'Documented does not mean verified. Evidence applies only to its named build.'},
     },
   };

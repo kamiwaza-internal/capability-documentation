@@ -1,9 +1,39 @@
 import {createHash} from 'node:crypto';
-import {appendFileSync, mkdirSync, writeFileSync} from 'node:fs';
+import {appendFileSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
+import {evidenceDocument, evidenceVersions, toMarkdown} from '../src/evidence.mjs';
+import {toPdf, toZip} from './evidence-files.mjs';
+
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+
+// Per-version downloads for people and for assistants with no skill: a self-contained Markdown
+// digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
+export function emitEvidence(publication, releaseStamps, out) {
+  const index = [];
+  for (const entry of evidenceVersions(publication, releaseStamps)) {
+    const blocks = evidenceDocument(entry, publication, releaseStamps);
+    const name = 'kamiwaza-capabilities-' + entry.version;
+    const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
+    const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
+    const records = entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
+    if (entry.kind === 'release-stamps') records.push({name: `records/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
+    const contents = [{name: 'README.md', data: markdown}, {name: name + '.pdf', data: pdf}, ...records];
+    contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
+    const zip = toZip(contents);
+    const dir = join(out, 'evidence', entry.version);
+    mkdirSync(dir, {recursive: true});
+    const files = {md: markdown, pdf, zip};
+    for (const [ext, bytes] of Object.entries(files)) writeFileSync(join(dir, name + '.' + ext), bytes);
+    index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
+      files: Object.fromEntries(Object.entries(files).map(([ext, bytes]) => [ext, {path: entry.path + '.' + ext, sha256: sha256(bytes), bytes: bytes.length}]))});
+  }
+  writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
+    note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists one self-contained evidence bundle per version (Markdown, PDF, zip with the JSON records). Each starts with its own reading rules and needs no skill. They are derived digests of the records above, not new evidence.\n');
+}
 
 export function emitBundles(publication, out) {
   validatePublication(publication);
@@ -62,7 +92,6 @@ export function emitBundles(publication, out) {
 
 export default function bundlePlugin() {
   return {name: 'published-evidence-bundles', async postBuild({outDir}) {
-    const {readFileSync} = await import('node:fs');
     const data = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
     emitBundles(data, outDir);
     // Local scoped stamps: a separate file, never merged into a release bundle or the release index.
@@ -75,10 +104,12 @@ export default function bundlePlugin() {
     }
     // v1.3.2 release stamps and source-contract stamps: likewise a separate file.
     const release = readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url));
-    if (validateReleaseStamps(JSON.parse(release), data) === null) console.warn('release-stamps-1.3.2.json is not applicable to this publication: not shown, not emitted');
+    const releaseStamps = validateReleaseStamps(JSON.parse(release), data) === null ? null : JSON.parse(release);
+    if (releaseStamps === null) console.warn('release-stamps-1.3.2.json is not applicable to this publication: not shown, not emitted');
     else {
       writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
       appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). A release stamp is the v1.3.2 release status of its capability; it does not rewrite any 1.3.0 record.\n');
     }
+    emitEvidence(data, releaseStamps, outDir);
   }};
 }
