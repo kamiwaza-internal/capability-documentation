@@ -10,15 +10,15 @@ const formats = [['zip', 'Zip', 'Readable digest, PDF and the JSON records'], ['
 export default function Home() {
   const versions = evidenceVersions(publication, releaseStamps);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
-  return <Layout title="Capability Kit" description="What each Kamiwaza release can do, with the evidence behind it, as one download per release.">
+  return <Layout description="What each Kamiwaza release can do, with the evidence behind it, as one download per release.">
     <header className="kitHero"><div className="container">
-      <p className="eyebrow">KAMIWAZA CAPABILITY KIT</p>
+      <p className="eyebrow">KAMIWAZA SALES DEV KIT</p>
       <h1>What each Kamiwaza release can do, and the evidence behind it</h1>
     </div></header>
     <main className="container kitMain">
       <section aria-labelledby="about">
         <h2 id="about">About</h2>
-        <p>The Capability Kit records what each Kamiwaza release can do and whether it was tested. Download a release below to read it, or paste it into any AI assistant. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
+        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Download a release below to read it, or paste it into any AI assistant. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
 
       <section aria-labelledby="verifications">
