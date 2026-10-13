@@ -5,8 +5,6 @@ import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {evidenceVersions, STATUS_KEY} from '../evidence.mjs';
 
-const formats = [['zip', 'Zip', 'Readable digest, PDF and the JSON records'], ['md', 'MD', 'Readable digest, plain text'], ['pdf', 'PDF', 'Readable digest, for print']];
-
 export default function Home() {
   const versions = evidenceVersions(publication, releaseStamps);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
@@ -18,7 +16,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about">
         <h2 id="about">About</h2>
-        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Download a release below to read it, or paste it into any AI assistant. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
+        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each release below has a short summary for people and a zip for AI assistants. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
 
       <section aria-labelledby="verifications">
@@ -30,11 +28,19 @@ export default function Home() {
               <span className="releaseHeadline">{entry.headline}</span>
               <span className="releaseBasis">{entry.basis}</span>
             </div>
-            <nav className="releaseFiles" aria-label={'Evidence bundle for ' + entry.version}>
-              {formats.map(([ext, label, title]) => <a key={ext} href={entry.path + '.' + ext} title={title} download>{label}</a>)}
-            </nav>
+            <div className="releaseFiles">
+              <nav className="fileGroup" aria-label={'For AI, ' + entry.version}>
+                <span className="fileGroupLabel">For AI</span>
+                <a href={entry.path + '.zip'} title="Detailed records an AI assistant can read and cite" download>Zip</a>
+              </nav>
+              <nav className="fileGroup" aria-label={'For people, ' + entry.version}>
+                <span className="fileGroupLabel">For people</span>
+                <a href={entry.summaryPath + '.pdf'} title="Features at a glance" download>PDF</a>
+                <a href={entry.summaryPath + '.md'} title="Features at a glance" download>MD</a>
+              </nav>
+            </div>
           </li>)}</ul>}
-        <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. Each zip also holds the JSON records its digest was derived from.</p>
+        <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. The zip holds the detailed digest and the JSON records it was derived from.</p>
       </section>
 
       <section aria-labelledby="faqs">
@@ -48,8 +54,8 @@ export default function Home() {
           <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only an explicit exclusion means &ldquo;not supported&rdquo;.</p>
         </details>
         <details className="faq">
-          <summary>Can I give a bundle to an AI assistant?</summary>
-          <p>Yes. Paste or attach the MD, PDF or zip into a new chat. Each file starts with its own reading rules, so no skill or plugin is needed.</p>
+          <summary>How do I ask an AI assistant about a release?</summary>
+          <p>Attach that release&rsquo;s zip to a new chat and ask. It starts with its own reading rules, so no skill or plugin is needed.</p>
         </details>
       </section>
     </main>

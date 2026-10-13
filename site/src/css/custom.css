@@ -32,7 +32,9 @@ code { overflow-wrap: anywhere; }
 .releaseText { display: flex; flex-direction: column; gap: .2rem; min-width: 0; }
 .releaseVersion { font-size: 1.35rem; font-weight: 700; }
 .releaseBasis { font-size: .85rem; color: var(--ifm-color-emphasis-700); }
-.releaseFiles { display: flex; gap: .5rem; flex-shrink: 0; }
+.releaseFiles { display: flex; gap: 1.25rem; flex-shrink: 0; }
+.fileGroup { display: flex; align-items: center; gap: .4rem; }
+.fileGroupLabel { font-size: .75rem; color: var(--ifm-color-emphasis-700); margin-right: .1rem; }
 .releaseFiles a { border: 1px solid var(--ifm-color-primary); border-radius: 8px; padding: .3rem .75rem; font-weight: 600; }
 .releaseFiles a:hover { background: var(--ifm-color-primary); color: var(--ifm-background-color); text-decoration: none; }
 .machineLinks { font-size: .85rem; color: var(--ifm-color-emphasis-700); }
@@ -40,6 +42,7 @@ code { overflow-wrap: anywhere; }
   .statusKey { grid-template-columns: 1fr; }
   .statusKey dd { margin-bottom: .5rem; }
   .releaseRow { flex-direction: column; align-items: flex-start; }
+  .releaseFiles { flex-wrap: wrap; gap: .75rem; }
 }
 /* Docusaurus leaves the light background transparent; embedded viewers can paint it dark. */
 [data-theme='light'] body { background-color: #ffffff; }

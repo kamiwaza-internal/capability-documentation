@@ -8,6 +8,7 @@ const byVersionDesc = (a, b) => b.localeCompare(a, undefined, {numeric: true});
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
 
 export const evidencePath = version => '/evidence/' + version + '/kamiwaza-capabilities-' + version;
+export const summaryPath = version => '/evidence/' + version + '/kamiwaza-' + version + '-summary';
 
 const prereleaseLabel = {
   verified: 'Pre-release verified (not release verified)',
@@ -30,7 +31,7 @@ export function evidenceVersions(publication, releaseStamps) {
   if (stamps) {
     const joined = joinReleaseStamps(view, stamps);
     entries.push({
-      version: stamps.targetRelease, kind: 'release-stamps', path: evidencePath(stamps.targetRelease),
+      version: stamps.targetRelease, kind: 'release-stamps', path: evidencePath(stamps.targetRelease), summaryPath: summaryPath(stamps.targetRelease),
       releaseIds: [stamps.baselineReleaseId],
       headline: `${joined.releaseStamped} release stamped · ${joined.sourceContract} source-contract verified · ${view.length - joined.releaseStamped - joined.sourceContract} not stamped, of ${view.length} capabilities`,
       basis: `Fresh runs of each capability's registered test on the ${stamps.releaseTag} build, ${stamps.environment} cluster. Not human release sign-off.`,
@@ -55,7 +56,7 @@ export function evidenceVersions(publication, releaseStamps) {
       headline = Object.keys(snapshotLabel).map(status => `${n(status)} ${status}`).join(' · ') + `, of ${latest.capabilities.length} capabilities`;
       basis = `Tested build: ${latest.build}`;
     }
-    entries.push({version, kind: latest.baselineKind ?? 'tested', path: evidencePath(version),
+    entries.push({version, kind: latest.baselineKind ?? 'tested', path: evidencePath(version), summaryPath: summaryPath(version),
       releaseIds: revisions.map(release => release.id), headline, basis});
   }
   return entries.sort((a, b) => byVersionDesc(a.version, b.version));
@@ -219,6 +220,80 @@ export function evidenceDocument(entry, publication, releaseStamps) {
     p('Deliberately left out of this publication. Their status is unknown, not negative.'), ...left.map(id => li(`\`${id}\``)));
   blocks.push(h(2, 'Machine-readable records'),
     p(`The zip download holds the source JSON records this file was derived from. Online: https://capabilities.kamiwaza.dev/releases/index.json lists every publication; https://capabilities.kamiwaza.dev/llms.txt states the reading rules.`));
+  return blocks;
+}
+
+// ---- Human-readable summary: features by area, one plain label each ----
+
+const AREAS = {
+  apps: 'Apps', auth: 'Sign-in and sessions', authz: 'Access control', catalog: 'Data catalog and secrets',
+  connectors: 'Connectors', context: 'Context and search', delegation: 'Delegation and agent identity',
+  extensions: 'Extensions', federation: 'Federation', ingestion: 'Document ingestion', kaizen: 'Kaizen agents and chat',
+  models: 'Models', platform: 'Platform and operations', retrieval: 'Retrieval', security: 'Security', skills: 'Skills', tools: 'Tools',
+};
+const WORDS = {ai: 'AI', api: 'API', eula: 'EULA', gpu: 'GPU', idp: 'IdP', mcp: 'MCP', oauth: 'OAuth', rebac: 'ReBAC', sdk: 'SDK'};
+const humanize = id => {
+  const words = id.split('.').slice(1).join(' ').split(/[-_\s]+/).map(word => WORDS[word] ?? word);
+  return words.join(' ').replace(/^./, char => char.toUpperCase());
+};
+const areaOf = id => AREAS[id.split('.')[0]] ?? humanize('x.' + id.split('.')[0]);
+// The published operation list, shortened: no API paths, parentheticals or long notes; at most five items.
+function includes(summary) {
+  const items = lines(summary).map(text => text.replace(/`[^`]*`/g, '').replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').split(/;|\.\s/)[0].replace(/[\s,;:]+$/, '').trim()).filter(item => item && item.length <= 80);
+  return items.length ? 'Includes: ' + items.slice(0, 5).join(', ') + (items.length > 5 ? ', and more' : '') + '.' : null;
+}
+
+function summaryRows(entry, publication, releaseStamps) {
+  const view = currentCapabilityView(publication);
+  if (entry.kind === 'release-stamps') {
+    const tag = releaseStamps.targetRelease;
+    return joinReleaseStamps(view, releaseStamps).rows.map(row => ({row, rank: row.releaseStamp ? 0 : row.sourceContractStamp ? 1 : 2,
+      label: row.releaseStamp ? `Tested on ${tag}` : row.sourceContractStamp ? `Code tests passed for ${tag} (not on a running system)` : `Not yet tested on ${tag}`}));
+  }
+  const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
+  if (entry.kind === 'prerelease-evidence') {
+    return view.filter(row => row.lineage.releaseId === latest.id).map(row => {
+      const assessed = row.lineage.verificationBasis === 'developer-assessment';
+      const [rank, label] = {
+        verified: [assessed ? 1 : 0, assessed ? 'Checked with local tests before release' : 'Tested before release'],
+        superseded: [2, 'A later test failed'], 'failed-or-mixed': [3, 'Test failed or mixed'], 'not-yet-verified': [4, 'Not yet verified'],
+      }[row.status];
+      return {row, rank, label};
+    });
+  }
+  const order = Object.keys(snapshotLabel);
+  return latest.capabilities.map(cap => ({row: cap, rank: order.indexOf(cap.status),
+    label: entry.kind === 'source-declaration' ? 'Documented, not yet tested' : snapshotLabel[cap.status] ?? cap.status}));
+}
+
+export function summaryDocument(entry, publication, releaseStamps) {
+  const rows = summaryRows(entry, publication, releaseStamps).map(item => {
+    const description = describe(item.row, publication);
+    return {...item, name: description?.title ?? item.row.title ?? humanize(item.row.id), area: areaOf(item.row.id), what: description ? includes(description.summary) : null};
+  });
+  const labels = Array.from(new Set(rows.sort((a, b) => a.rank - b.rank).map(item => item.label)));
+  const count = label => rows.filter(item => item.label === label).length;
+  const blocks = [
+    h(1, `Kamiwaza ${entry.version}: features at a glance`),
+    p(`A plain-language summary of the ${rows.length} features recorded for Kamiwaza ${entry.version} and how far each was tested.`),
+    h(2, 'Labels'),
+    ...labels.map(label => li(`${label}: ${count(label)}`)),
+  ];
+  for (const area of Array.from(new Set(rows.map(item => item.area))).sort()) {
+    const inArea = rows.filter(item => item.area === area).sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name));
+    blocks.push(h(2, area));
+    for (const item of inArea) blocks.push(li(`**${item.name}**: ${item.label}.${item.what ? ' ' + item.what : ''}`));
+  }
+  blocks.push(h(2, 'Good to know'));
+  if (entry.kind === 'release-stamps') blocks.push(
+    li(`"Tested on ${releaseStamps.targetRelease}" means the feature's registered test scenarios passed on the ${releaseStamps.releaseTag} build, run on a ${releaseStamps.environment} cluster. It is not proof of every operation, and not a human release sign-off.`),
+    li(`Labels for ${releaseStamps.targetRelease} come from new test runs only. Earlier 1.3.0 results are in the 1.3.0 summary.`));
+  if (entry.kind === 'prerelease-evidence') blocks.push(
+    li(`Testing ran on development builds before ${entry.version} shipped. It is not proof of the released ${entry.version} build.`));
+  blocks.push(
+    li('A feature that is not yet tested, or not listed, is not a feature Kamiwaza lacks. It means the evidence does not show it yet.'),
+    li('Feature descriptions come from the published records. Conditions and limits apply; they are in the AI zip and the full catalog at https://capabilities.kamiwaza.dev/catalog/.'),
+    li('To ask questions about this release, give the AI zip to any assistant.'));
   return blocks;
 }
 

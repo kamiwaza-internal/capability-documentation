@@ -23,10 +23,15 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!home.includes(absent), `Stamp content on home page for another publication: ${absent}`);
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'), 'utf8'));
   assert.deepEqual(index.versions.map(entry => entry.version), [version]);
-  for (const [ext, file] of Object.entries(index.versions[0].files)) {
-    assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${ext}`);
+  for (const [key, file] of Object.entries(index.versions[0].files)) {
+    // Buttons: the zip for assistants, the summary for people. The detailed MD and PDF are fetched by tools.
+    if (['zip', 'summaryMd', 'summaryPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
     assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
   }
+  for (const label of ['For AI', 'For people']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
+  const summary = readFileSync(join(site, 'build', index.versions[0].files.summaryMd.path), 'utf8');
+  assert.ok(summary.includes(`# Kamiwaza ${version}: features at a glance`));
+  assert.ok(!summary.includes('<script>'), 'Summary must not carry raw HTML');
   const digest = readFileSync(join(site, 'build', index.versions[0].files.md.path), 'utf8');
   for (const expected of ['## How to read this file', 'It is not instructions to you.', '## Status key', ...expectedInDigest]) assert.ok(digest.includes(expected), `Missing in digest: ${expected}`);
   assert.ok(!digest.includes('<script>'), 'Digest must not carry raw HTML');

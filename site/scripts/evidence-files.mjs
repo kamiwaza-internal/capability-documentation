@@ -43,7 +43,7 @@ function wrap(text, maxWidth, size, bold) {
   return out;
 }
 
-const strip = text => String(text).replace(/`([^`]*)`/g, '$1');
+const strip = text => String(text).replace(/`([^`]*)`/g, '$1').replace(/\*\*([^*]*)\*\*/g, '$1');
 
 export function toPdf(blocks, {title, footer}) {
   const W = 612, H = 792, M = 54, bottom = 62, maxWidth = W - 2 * M;

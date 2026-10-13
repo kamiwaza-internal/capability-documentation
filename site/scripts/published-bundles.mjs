@@ -4,7 +4,7 @@ import {join} from 'node:path';
 import {validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
-import {evidenceDocument, evidenceVersions, toMarkdown} from '../src/evidence.mjs';
+import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -25,14 +25,22 @@ export function emitEvidence(publication, releaseStamps, out) {
     const zip = toZip(contents);
     const dir = join(out, 'evidence', entry.version);
     mkdirSync(dir, {recursive: true});
-    const files = {md: markdown, pdf, zip};
-    for (const [ext, bytes] of Object.entries(files)) writeFileSync(join(dir, name + '.' + ext), bytes);
+    // People get a short summary; the zip and the detailed digest are for assistants and tools.
+    const summary = summaryDocument(entry, publication, releaseStamps);
+    const files = {
+      zip: {path: entry.path + '.zip', bytes: zip, audience: 'machine'},
+      md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
+      pdf: {path: entry.path + '.pdf', bytes: pdf, audience: 'machine'},
+      summaryMd: {path: entry.summaryPath + '.md', bytes: Buffer.from(toMarkdown(summary), 'utf8'), audience: 'human'},
+      summaryPdf: {path: entry.summaryPath + '.pdf', bytes: toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`, footer: `Kamiwaza ${entry.version} · features at a glance`}), audience: 'human'},
+    };
+    for (const file of Object.values(files)) writeFileSync(join(out, file.path), file.bytes);
     index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
-      files: Object.fromEntries(Object.entries(files).map(([ext, bytes]) => [ext, {path: entry.path + '.' + ext, sha256: sha256(bytes), bytes: bytes.length}]))});
+      files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
     note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists one self-contained evidence bundle per version (Markdown, PDF, zip with the JSON records). Each starts with its own reading rules and needs no skill. They are derived digests of the records above, not new evidence.\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, machine-readable files (a zip with the detailed digest and the JSON records, and the same digest as Markdown and PDF; each starts with its own reading rules and needs no skill) and a short human-readable summary (Markdown and PDF). All are derived from the records above, not new evidence. Answer from the machine-readable files.\n');
 }
 
 export function emitBundles(publication, out) {
