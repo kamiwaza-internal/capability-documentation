@@ -12,7 +12,8 @@ limits, and says whether it is only documented or also verified.
 
 | You want to | Do this |
 |---|---|
-| Browse capabilities | Open [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/). |
+| Read or share a release's evidence | Open [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/) and download that release's Zip, MD or PDF. Each starts with its own reading rules, so you can paste it into any AI assistant with no skill installed. |
+| Browse every record | Open the [full catalog](https://capabilities.kamiwaza.dev/catalog/). |
 | Ask an AI assistant, or check an RFP or project plan | Install the `capability-grounding` skill (below). It answers from these records only and cites them. |
 | Read the data yourself | Fetch [`/releases/index.json`](https://capabilities.kamiwaza.dev/releases/index.json), then the versioned bundle it points to. [`/llms.txt`](https://capabilities.kamiwaza.dev/llms.txt) states the reading rules. |
 

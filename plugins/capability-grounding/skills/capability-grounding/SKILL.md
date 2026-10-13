@@ -28,9 +28,12 @@ answering.
 - **Version.** The latest, unless the user names one. The latest is the highest
   `version` among index publications whose `channel` is not `development`, at its
   highest `publicationRevision`. Use a `development` publication only when the index
-  has no other. Compare versions as semantic versions, not as strings. Name the chosen
+  has no other, chosen the same way: highest `version`, then highest
+  `publicationRevision`. Compare versions as semantic versions, not as strings. Name the chosen
   publication and its channel above the answer. If the latest cannot be determined,
-  stop and say why; never guess a release.
+  stop and say why; never guess a release. Release stamps can exist for a newer
+  version than any publication (section 2): they are read on every answer, and the
+  Release status column names the stamped version.
 - **Coverage.** Every question or requirement the user gave gets its own row, in the
   order given. A requirement with no matching record is still answered, as Not
   established. Never drop a requirement because it looks out of scope.
@@ -87,6 +90,9 @@ answer:
     column and do not infer a release state.
 - `/local-stamps.json` holds local scoped stamps. They are not release stamps and never
   make a capability release verified.
+- `/release-stamps/index.json` exists only once a signed full-inventory release
+  snapshot is published. A 404 there means none is published yet; it is not a
+  retrieval failure.
 
 If the site cannot be reached, or a file is not the JSON the index describes, stop and
 say so. Do not search the web or another host for a substitute, and do not fall back
@@ -159,8 +165,8 @@ this table, with exactly these columns:
   product name is not a match.
 
 Cite, for every row that relies on a record: the publication `id`, the bundle SHA-256,
-the capability `id`, and the `documentSha256` or evidence `recordSha256` where the
-record gives one.
+the capability `id`, and the `declaration.documentSha256` or evidence `recordSha256`
+where the record gives one. A row that cites a release stamp also cites its `stampId`.
 
 After the table, give the count of rows under each marker (✅, ⚠️, ❌) and in each
 state. Then stop. Do not add a

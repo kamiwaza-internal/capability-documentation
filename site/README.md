@@ -230,7 +230,7 @@ This compact table sits above the per-capability view described under
 "Current capability precedence"; the two are derived independently from the
 same published data.
 
-The first section of the catalog page shows one row per capability in the latest
+The first section of the catalog page (`/catalog/`) shows one row per capability in the latest
 `prerelease-evidence` release. It is computed at render time by
 `currentCapabilityView(publication)` in `src/catalog.mjs`. Nothing is written
 back to `data/publication.json` or any bundle, and no published record changes.
@@ -408,3 +408,20 @@ matching rows of the current status view, with a filter for each. It never
 changes a row's status. Where a row also carries a scoped failure from the
 earlier 2026-10-08 local run, both are shown: the release stamp first, the
 older failure dated to its run.
+
+## Home page and per-version evidence downloads
+
+The home page (`src/pages/index.jsx`) is the plain entry point: what the kit is, one row per
+version with Zip, MD and PDF downloads, and what each status means. The detailed record view
+is `/catalog/` (`src/pages/catalog.jsx`).
+
+`src/evidence.mjs` derives one self-contained digest per version at build time:
+the newest publication revision of each version, plus a version for each applicable release-stamp
+file. Each digest opens with its own reading rules and status key, then lists every capability in
+scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
+renders it to PDF and packs a zip (digest, PDF, the JSON records it was derived from and
+`SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
+`/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their
+SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
+nothing is written back to `data/`.
+
