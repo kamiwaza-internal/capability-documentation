@@ -95,7 +95,7 @@ test('EVD-6 zip entries round-trip with matching CRC and sizes', () => {
   }
 });
 
-test('EVD-7 human summary lists every feature once by area, with label counts that add up', () => {
+test('EVD-7 human summary lists every feature once in an area table, with label counts that add up', () => {
   const expected = {
     '1.3.2': {'Tested on 1.3.2': 29, 'Code tests passed for 1.3.2 (not on a running system)': 16, 'Not yet tested on 1.3.2': 43},
     '1.3.0': {'Tested before release': 33, 'Checked with local tests before release': 17, 'Test failed or mixed': 5, 'Not yet verified': 33},
@@ -103,12 +103,25 @@ test('EVD-7 human summary lists every feature once by area, with label counts th
   for (const entry of evidenceVersions(publication, releaseStamps)) {
     const markdown = toMarkdown(summaryDocument(entry, publication, releaseStamps));
     assert.ok(markdown.startsWith(`# Kamiwaza ${entry.version}: features at a glance`));
-    for (const [label, n] of Object.entries(expected[entry.version])) assert.ok(markdown.includes(`- ${label}: ${n}
-`), `${entry.version} ${label}`);
-    const features = [...markdown.matchAll(/^- \*\*.+?\*\*: (.+?)\.(?: |$)/gm)].map(match => match[1]);
+    for (const [label, n] of Object.entries(expected[entry.version])) assert.ok(markdown.includes(`| ${label} | ${n} | `), `${entry.version} ${label}`);
+    const features = [...markdown.matchAll(/^\| \*\*.+?\*\* \| (.+?) \| /gm)].map(match => match[1]);
     assert.equal(features.length, 88, entry.version);
     for (const [label, n] of Object.entries(expected[entry.version])) assert.equal(features.filter(text => text === label).length, n, label);
     assert.ok(!/`|\/[a-z-]+\/\{/.test(markdown), 'no code or API paths in the human summary');
     assert.ok(markdown.includes('## Good to know'));
   }
+});
+
+test('EVD-8 detailed digest opens with a capability index of every capability', () => {
+  for (const entry of evidenceVersions(publication, releaseStamps)) {
+    const markdown = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
+    const index = markdown.slice(markdown.indexOf('## Capability index'), markdown.indexOf('\n## ', markdown.indexOf('## Capability index') + 3));
+    assert.equal([...index.matchAll(/^\| `[^`]+` \| /gm)].length, 88, entry.version);
+    assert.ok(markdown.indexOf('## Capability index') < markdown.indexOf('\n### '), 'index precedes the detail');
+  }
+});
+
+test('EVD-9 table cells cannot break the Markdown table', () => {
+  const markdown = toMarkdown([{type: 'table', head: ['A', 'B'], rows: [['x | y', 'line\nbreak <b>']], widths: [0.5, 0.5]}]);
+  assert.equal(markdown, '| A | B |\n|---|---|\n| x \\| y | line break &lt;b&gt; |\n');
 });
