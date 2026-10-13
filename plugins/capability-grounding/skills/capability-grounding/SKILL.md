@@ -106,12 +106,30 @@ repository instead, in this order:
    `plugins/marketplaces/kamiwaza-capabilities/` under the Claude configuration
    directory (`$CLAUDE_CONFIG_DIR`, or `~/.claude` when that is unset).
 
-In that copy, `site/data/publication.json` holds every publication (its `releases`
-list is the index and the bundles together) and `site/data/release-stamps-<version>.json`
-and `site/data/local-stamps.json` are the stamp files. Apply sections 1 to 4 to them
-unchanged, except that there is no published bundle hash to check. Say above the
-answer that you read the local copy, give its path and its `git rev-parse HEAD` commit,
-and say it may be older than the site.
+A local copy holds the site's source data, not its published files, so read it this way:
+
+- **No `/llms.txt`.** It is generated when the site is built. This skill's rules apply on
+  their own.
+- **`site/data/publication.json` replaces the index and the bundles.** Its top level has
+  `schema` and `releases`, plus `observations` from schema 5 and `releaseStamps` from
+  schema 6. Choose the publication from `releases` by the version rule in section 1,
+  using each entry's `version`, `channel` and `publicationRevision`. That entry is
+  what the bundle would hold: apply steps 5 to 7 of section 2 to it. Skip steps 2 to 4,
+  because there is no index, no bundle hash and no bundle wrapper to check.
+- **`observations` are scoped runtime observations.** They never change a capability's
+  status, never add release credit, and are never added to the publication's counts.
+  Mention one only when it concerns the capability in a row, as a condition.
+- **`releaseStamps` (schema 6)** are full-inventory release snapshots, the local
+  counterpart of `/release-stamps/index.json`. When the key is absent, none is published.
+- **Stamp files.** `site/data/release-stamps-<version>.json` and
+  `site/data/local-stamps.json` have the same content as the site's
+  `/release-stamps-<version>.json` and `/local-stamps.json`. List the directory for the
+  stamp file names, since there is no `/llms.txt` to name them. Use a stamp file only
+  when its `baselineReleaseId` is the `id` of the publication you chose; otherwise say
+  so and leave it out.
+
+Say above the answer that you read the local copy. Give its path and its
+`git rev-parse HEAD` commit, and say it may be older than the site.
 
 If neither the site nor a local copy can be read, or a file is not the JSON described
 here, stop and say so. Do not search the web or another host for a substitute, and do
