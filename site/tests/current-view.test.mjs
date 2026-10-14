@@ -143,13 +143,15 @@ test('CUR-F published data: 50 verifications retained, 4 later non-applicable fa
   const current = new Map(r3.capabilities.map(c => [c.id, c]));
   for (const row of rows) {
     assert.equal(row.summary, current.get(row.id).summary);
-    assert.equal(row.documentationGap, row.summary === null);
+    assert.equal(row.documentationGap, row.summary === null && row.describedIn === null);
     for (const old of [r1, r2]) {
       const text = old.capabilities.find(c => c.id === row.id)?.summary;
       if (row.documentationGap && text) assert.ok(!JSON.stringify(row).includes(JSON.stringify(text)), row.id);
     }
   }
-  assert.equal(rows.filter(row => row.status === 'verified' && row.olderDescriptionIn === '1.3.0-declared-r2').length, 22);
+  // r5 describes 45 verified rows; the 3 still pointing at r2 are ones the kit no longer declares.
+  assert.equal(rows.filter(row => row.status === 'verified' && row.olderDescriptionIn === '1.3.0-declared-r2').length, 3);
+  assert.equal(rows.filter(row => row.status === 'verified' && row.describedIn === '1.3.0-declared-r5').length, 45);
 });
 
 test('CAT-5 statuses outside the original four are counted, never NaN', () => {
