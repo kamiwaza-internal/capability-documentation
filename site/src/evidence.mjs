@@ -109,14 +109,16 @@ export const STATUS_KEY = {
 
 const lines = text => String(text).split('\n').map(line => line.replace(/^\s*[-*]\s+/, '').trim()).filter(Boolean);
 
-// A curated source declaration: the declaration object with its title and summary.
-const isCurated = cap => [cap.declaration, cap.title, cap.summary].every(Boolean);
+// Curated text: a title and summary with a source declaration, or in a schema-1 snapshot, which is
+// itself a reviewed public projection and carries no declaration field.
+const isSnapshot = release => !release.baselineKind && !release.publicationState;
+const isCurated = (cap, release) => Boolean(cap.title && cap.summary) && Boolean(cap.declaration || isSnapshot(release));
 const ofVersion = version => release => version === undefined || release.version === version;
 // Ids with a curated declaration in a non-draft publication, of one version when given. Only these
 // may carry description text or an operation list, and only on rows of that version.
 export function curatedIds(publication, version) {
   return new Set(publication.releases.filter(ofVersion(version)).filter(release => release.publicationState !== 'draft')
-    .flatMap(release => release.capabilities).filter(isCurated).map(cap => cap.id));
+    .flatMap(release => release.capabilities.filter(cap => isCurated(cap, release))).map(cap => cap.id));
 }
 // The version whose publications describe an entry's rows: a stamp file's is its baseline's.
 const recordVersion = (entry, publication) => publication.releases.find(release => entry.releaseIds.includes(release.id)).version;
@@ -132,7 +134,7 @@ export const revisionLabel = release => release.baselineKind || release.publicat
 function describe(row, {publication, version}) {
   if (row.summary && curatedIds(publication, version).has(row.id)) return {summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
   const older = publication.releases.filter(ofVersion(version)).sort(byRevisionDesc)
-    .map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && isCurated(cap))})).find(found => found.cap);
+    .map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && isCurated(cap, release))})).find(found => found.cap);
   return older ? {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from: older.release.id} : null;
 }
 
