@@ -4,7 +4,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
-import {filterCapabilities, countStatuses, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
+import {filterCapabilities, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
 import CurrentView from '../CurrentView';
 
 function TextList({title, items}) {
@@ -132,9 +132,8 @@ export default function Catalog() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
   const releases = [...publication.releases].sort((a, b) => b.publicationRevision - a.publicationRevision); // newest first
-  // Same additive join as the status table, by capability id; statuses and order are untouched.
-  const unstamped = primaryCapabilities(publication);
-  const primary = stampsApply(releaseStamps, publication) ? joinReleaseStamps(unstamped, releaseStamps).rows : unstamped;
+  // Same additive join as the status table, by capability id within the stamped version; statuses and order are untouched.
+  const primary = joinPrimaryStamps(primaryCapabilities(publication), releaseStamps, publication);
   return <Layout title="Full catalog" description="Every published Kamiwaza capability record, with conditions, evidence and exact-build verification status.">
     <header className="catalogHero"><div className="container">
       <p className="eyebrow">THE KAMIWAZA CAPABILITY CATALOG</p>

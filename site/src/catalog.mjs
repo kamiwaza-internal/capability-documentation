@@ -238,5 +238,14 @@ export function joinReleaseStamps(rows, data) {
 
 // Presentation only: the stamp wording for a row joined by joinReleaseStamps, or null. A release
 // stamp is never worded as an unqualified "release verified"; the row's status is not read or changed.
+// The per-version catalog rows: a stamp joins only onto rows of the version it was projected
+// against, never onto another version's record of the same capability.
+export function joinPrimaryStamps(rows, data, publication) {
+  if (!stampsApply(data, publication)) return rows;
+  const version = publication.releases.find(release => release.id === data.baselineReleaseId).version;
+  const stamped = new Map(joinReleaseStamps(rows.filter(row => row.version === version), data).rows.map(row => [row.id, row]));
+  return rows.map(row => row.version === version ? stamped.get(row.id) : row);
+}
+
 export const stampStatus = (row, tag) => row.releaseStamp ? `Release stamped · ${tag}`
   : row.sourceContractStamp ? `Source-contract verified · ${tag} · not runtime evidence` : null;

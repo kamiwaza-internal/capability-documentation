@@ -3,7 +3,17 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
-import {evidenceVersions, STATUS_KEY} from '../evidence.mjs';
+import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY} from '../evidence.mjs';
+
+function Changes({entry}) {
+  const changes = changesSince(entry, publication, releaseStamps);
+  if (!changes) return null;
+  return <details className="releaseChanges">
+    <summary>What changed since {changes.since}</summary>
+    <p>{CHANGE_NOTE}</p>
+    <dl>{changes.lists.map(([label, names]) => <React.Fragment key={label}><dt>{label}: {names.length}</dt>{names.length > 0 && <dd>{shortList(names)}</dd>}</React.Fragment>)}</dl>
+  </details>;
+}
 
 export default function Home() {
   const versions = evidenceVersions(publication, releaseStamps);
@@ -27,6 +37,7 @@ export default function Home() {
               <span className="releaseVersion">{entry.version}</span>
               <span className="releaseHeadline">{entry.headline}</span>
               <span className="releaseBasis">{entry.basis}</span>
+              <Changes entry={entry} />
             </div>
             <div className="releaseFiles">
               <nav className="fileGroup" aria-label={'For AI, ' + entry.version}>
@@ -48,6 +59,10 @@ export default function Home() {
         <details className="faq">
           <summary>What do the statuses mean?</summary>
           <dl className="statusKey">{kinds.flatMap(kind => STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
+        </details>
+        <details className="faq">
+          <summary>What counts as a capability?</summary>
+          <p>A capability is one thing the platform does that a customer could ask about and that could be claimed or denied on its own, such as &ldquo;can we download models?&rdquo; as distinct from &ldquo;can we control where they run?&rdquo;. Two things are separate capabilities when one could be true while the other is false. Steps of a single flow, internal mechanisms and particular configurations are recorded inside a capability, not as capabilities of their own.</p>
         </details>
         <details className="faq">
           <summary>Does a missing capability mean Kamiwaza can&rsquo;t do it?</summary>

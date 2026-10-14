@@ -164,13 +164,38 @@ function approval(value) {
     requireValue(value.approvedBy === null && value.approvedAt === null, 'A pending release cannot name an approver');
   }
 }
-function release(value, schema) {
+// Publication time and review PR come together. Only a kind with an explicit publication state
+// may be a draft, and a draft names neither.
+function publicationIdentity(value, stateful) {
+  if (stateful) requireValue(['draft', 'published'].includes(value.publicationState), 'Invalid publication state');
+  if (stateful && value.publicationState === 'draft') {
+    requireValue(value.publishedAt === null && value.reviewReference === null, 'Draft cannot invent publication or review identity');
+    return;
+  }
+  instant(value.publishedAt);
+  // Only the pre-release kind carries a generation time (its shape was checked first).
+  if (Object.hasOwn(value, 'generatedAt')) requireValue(value.generatedAt <= value.publishedAt, 'Publication predates generation');
+  requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
+}
+// Tested build: scenario evidence on one release-identified build, in the schema-1 capability
+// shape and under its rules. Text is published only when curated; without it all four text
+// fields are empty together, as for pre-release evidence.
+const emptyList = value => Array.isArray(value) && value.length === 0;
+function testedCapability(cap, build) {
+  if (cap?.title !== null) return capability(cap, build, false);
+  requireValue(cap.summary === null && [cap.conditions, cap.limits].every(emptyList), 'Text requires a curated description');
+  capability({...cap, title: cap.id, summary: cap.id}, build, false);
+}
+// `container` is true from container schema 5, the first level that admits a tested-build release
+// beside the schema-2 kinds. It has no `baselineKind` and carries an explicit `publicationState`.
+function release(value, schema, container = false) {
   const keys = ['id', 'version', 'channel', 'approval', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities'];
   const prerelease = schema >= 2 && value?.baselineKind === 'prerelease-evidence';
   requireValue(prerelease || schema < 3, 'Schema 3 carries pre-release evidence only');
-  const sourceOnly = schema === 2 && !prerelease;
+  const tested = container && value?.baselineKind === undefined;
+  const sourceOnly = schema === 2 && !prerelease && !tested;
   const baseline = [...keys, 'baselineKind', 'releaseBinding', 'omittedCapabilities'];
-  shape(value, prerelease ? [...baseline, 'sourceCommittedAt', 'testedBuilds', 'evidenceWindow', 'counts', 'publicationState', 'generatedAt', 'assessmentWindow', 'deferredCapabilities'] : sourceOnly ? baseline : keys);
+  shape(value, prerelease ? [...baseline, 'sourceCommittedAt', 'testedBuilds', 'evidenceWindow', 'counts', 'publicationState', 'generatedAt', 'assessmentWindow', 'deferredCapabilities'] : sourceOnly ? baseline : tested ? [...keys, 'publicationState'] : keys);
   if (sourceOnly) {
     requireValue(value.baselineKind === 'source-declaration' && value.channel === 'development' && value.releaseBinding === 'not-established', 'Source baseline cannot claim released-build binding');
     strings(value.omittedCapabilities); unique(value.omittedCapabilities);
@@ -185,23 +210,11 @@ function release(value, schema) {
   requireValue(value.build === value.version || value.build.startsWith(value.version + '; '), 'Build must identify the selected version');
   requireValue(typeof value.sourceRevision === 'string' && sha.test(value.sourceRevision), 'Source must be a full commit');
   requireValue(Number.isSafeInteger(value.publicationRevision) && value.publicationRevision > 0, 'Invalid publication revision');
-  if (prerelease) {
-    instant(value.generatedAt);
-    requireValue(['draft', 'published'].includes(value.publicationState), 'Invalid publication state');
-    if (value.publicationState === 'draft') {
-      requireValue(value.publishedAt === null && value.reviewReference === null, 'Draft cannot invent publication or review identity');
-    } else {
-      instant(value.publishedAt);
-      requireValue(value.generatedAt <= value.publishedAt, 'Publication predates generation');
-      requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
-    }
-  } else {
-    instant(value.publishedAt);
-    requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
-  }
+  if (prerelease) instant(value.generatedAt);
+  publicationIdentity(value, prerelease || tested);
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Release must contain approved capabilities');
   if (prerelease) prereleaseRelease(value);
-  else value.capabilities.forEach(cap => capability(cap, value.build, sourceOnly));
+  else value.capabilities.forEach(cap => tested ? testedCapability(cap, value.build) : capability(cap, value.build, sourceOnly));
   unique(value.capabilities.map(cap => cap.id));
 }
 // Strict allowlist: aggregate scoped observations never alter canonical lifecycle verdicts.
@@ -387,7 +400,7 @@ export function validatePublication(input) {
   shape(input, input?.schema === 6 ? ['schema', 'releases', 'observations', 'releaseStamps'] : input?.schema === 5 ? ['schema', 'releases', 'observations'] : ['schema', 'releases']);
   requireValue([1, 2, 3, 4, 5, 6].includes(input.schema), 'Unsupported publication schema');
   requireValue(Array.isArray(input.releases) && input.releases.length <= 500, 'Invalid releases list');
-  input.releases.forEach(value => release(value, input.schema >= 5 ? 2 : input.schema));
+  input.releases.forEach(value => release(value, input.schema >= 5 ? 2 : input.schema, input.schema >= 5));
   unique(input.releases.map(r => r.id));
   if (input.schema >= 5) {
     requireValue(Array.isArray(input.observations) && input.observations.length > 0 && input.observations.length <= 500, 'Invalid observations list');

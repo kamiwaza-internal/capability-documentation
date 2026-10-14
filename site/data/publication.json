@@ -6196,6 +6196,200 @@
           "declaration": null
         }
       ]
+    },
+    {
+      "id": "1.2.1-tested-r4",
+      "version": "1.2.1",
+      "channel": "development",
+      "approval": {
+        "status": "pending",
+        "approvedBy": null,
+        "approvedAt": null
+      },
+      "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+      "sourceRevision": "5964dca385d869d3df276f1c55fac516c887b971",
+      "publicationRevision": 4,
+      "publishedAt": null,
+      "reviewReference": null,
+      "publicationState": "draft",
+      "capabilities": [
+        {
+          "id": "auth.personal-access-tokens",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "partial",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed",
+              "summary": "Scenario personal-access-token-authentication-and-revocation: passed, run finished 2026-09-17T16:00:22Z"
+            }
+          ]
+        },
+        {
+          "id": "catalog.dataset-registry",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "partial",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed_with_notes",
+              "summary": "Scenario catalog-dataset-and-container-endpoint-surface: passed with notes, run finished 2026-09-17T16:00:22Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed",
+              "summary": "Scenario catalog-dataset-registration-and-readback: passed, run finished 2026-09-17T16:00:22Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario catalog-ingest-to-retrieval-round-trip-inline-and-grpc: failed, run finished 2026-09-16T03:38:13Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario multi-source-catalog-ingestion: failed, run finished 2026-09-16T03:38:13Z"
+            }
+          ]
+        },
+        {
+          "id": "catalog.secrets-management",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "partial",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed",
+              "summary": "Scenario catalog-governed-secret-lifecycle: passed, run finished 2026-09-17T16:00:22Z"
+            }
+          ]
+        },
+        {
+          "id": "models.local-deployment",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "partial",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario deploy-a-cross-platform-diffusion-model-through-the-sdk: failed, run finished 2026-09-16T03:44:14Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed",
+              "summary": "Scenario deploy-llama-cpp-model-locally-and-serve-chat: passed, run finished 2026-09-17T16:00:22Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario generate-images-through-the-openai-compatible-sdk-client: failed, run finished 2026-09-16T03:44:14Z"
+            }
+          ]
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "failed",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario generate-images-through-the-openai-compatible-sdk-client: failed, run finished 2026-09-16T03:44:14Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario openai-compatible-inference-operation-set: failed, run finished 2026-09-17T16:00:22Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario validate-diffusion-source-images-through-the-sdk-client: failed, run finished 2026-09-16T03:44:14Z"
+            }
+          ]
+        },
+        {
+          "id": "retrieval.async-retrieval-jobs",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "failed",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario catalog-ingest-to-retrieval-round-trip-inline-and-grpc: failed, run finished 2026-09-16T03:38:13Z"
+            },
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "failed",
+              "summary": "Scenario multi-source-inline-and-sse-retrieval: failed, run finished 2026-09-16T03:38:13Z"
+            }
+          ]
+        },
+        {
+          "id": "skills.skills-library",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "partial",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed",
+              "summary": "Scenario skills-library-import-curation-export-and-soft-delete: passed, run finished 2026-09-17T16:00:22Z"
+            }
+          ]
+        },
+        {
+          "id": "workrooms.create",
+          "title": null,
+          "summary": null,
+          "conditions": [],
+          "limits": [],
+          "distribution": "public",
+          "status": "partial",
+          "wholeClaim": false,
+          "evidence": [
+            {
+              "build": "1.2.1; release-identified build; registry, image digest and environment not published",
+              "outcome": "passed",
+              "summary": "Scenario workroom-creation-and-crud-lifecycle: passed, run finished 2026-09-17T16:00:22Z"
+            }
+          ]
+        }
+      ]
     }
   ],
   "observations": [

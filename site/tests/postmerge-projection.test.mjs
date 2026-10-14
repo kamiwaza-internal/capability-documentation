@@ -33,7 +33,7 @@ test('every actual excluded ID retains its explicit later omission event, includ
     assert.equal(row.omitted,true,id);
     assert.ok(row.history.some(event=>event.snapshotId===baseline.id&&event.omitted),id);
   }
-  assert.equal(rows.filter(row=>row.omitted).length,19);assert.equal(rows.length,107);
+  assert.equal(rows.filter(row=>row.omitted).length,19);assert.equal(rows.length,115);
   assert.equal(rows.filter(row=>row.status==='prerelease-verified').length,50);
   assert.equal(rows.filter(row=>row.status==='failed-or-mixed').length,5);
   assert.equal(JSON.stringify(publication),before);

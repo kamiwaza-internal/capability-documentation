@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {validatePublication} from '../scripts/publication.mjs';
 
 const snapshot = () => ({schema: 1, releases: [{
@@ -68,3 +69,50 @@ for (const [name, mutate] of [
     assert.throws(() => validatePublication(input));
   });
 }
+
+// Tested-build drafts: the published 1.2.1 object, exactly as the kit exporter wrote it.
+const actual = () => JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
+const tested = x => x.releases.find(release => release.id === '1.2.1-tested-r4');
+const cap = (x, id) => tested(x).capabilities.find(found => found.id === id);
+const PR = 'https://github.com/kamiwaza-internal/capability-documentation/pull/1';
+
+test('the published 1.2.1 tested-build draft validates beside the unchanged 1.3.0 releases', () => {
+  const release = tested(validatePublication(actual()));
+  assert.deepEqual([release.publicationState, release.publishedAt, release.reviewReference, release.approval.status], ['draft', null, null, 'pending']);
+  assert.deepEqual(release.capabilities.map(found => found.status).sort(), ['failed', 'failed', 'partial', 'partial', 'partial', 'partial', 'partial', 'partial']);
+  assert.ok(release.capabilities.every(found => found.wholeClaim === false && found.title === null && found.summary === null));
+});
+for (const [name, mutate, reason] of [
+  ['verified without a whole claim', x => cap(x, 'skills.skills-library').status = 'verified', /Verified requires whole-claim clean evidence/],
+  ['verified over a failed scenario', x => Object.assign(cap(x, 'models.local-deployment'), {status: 'verified', wholeClaim: true}), /Verified requires whole-claim clean evidence/],
+  ['verified without evidence', x => Object.assign(cap(x, 'skills.skills-library'), {status: 'verified', wholeClaim: true, evidence: []}), /Verified requires whole-claim clean evidence/],
+  ['a draft naming a review', x => tested(x).reviewReference = PR, /Draft cannot invent/],
+  ['a draft naming a publication time', x => tested(x).publishedAt = '2026-10-01T00:00:00Z', /Draft cannot invent/],
+  ['published without a publication time', x => Object.assign(tested(x), {publicationState: 'published', reviewReference: PR}), /Invalid evidence timestamp/],
+  ['published without a review', x => Object.assign(tested(x), {publicationState: 'published', publishedAt: '2026-10-01T00:00:00Z'}), /Public review PR reference required/],
+  ['no publication state', x => delete tested(x).publicationState, /Unexpected or missing fields/],
+  ['an unknown publication state', x => tested(x).publicationState = 'final', /Invalid publication state/],
+  ['an unknown field', x => tested(x).rawLogs = 'not allowed', /Unexpected or missing fields/],
+  ['a title without a curated summary', x => cap(x, 'workrooms.create').title = 'Create a workroom', /Invalid text/],
+  ['limits without curated text', x => cap(x, 'workrooms.create').limits = ['Some limit'], /Text requires a curated description/],
+  ['cross-build evidence', x => cap(x, 'workrooms.create').evidence[0].build = '1.3.0', /Evidence build mismatch/],
+  ['a runtime verdict relabelled as a source declaration', x => tested(x).baselineKind = 'source-declaration', /Unexpected or missing fields/],
+]) test('rejects a tested-build draft with ' + name, () => {
+  const input = actual(); mutate(input);
+  assert.throws(() => validatePublication(input), reason);
+});
+test('a published tested build names its review and time together, and may carry curated text', () => {
+  const input = actual();
+  Object.assign(tested(input), {publicationState: 'published', publishedAt: '2026-10-01T00:00:00Z', reviewReference: PR});
+  Object.assign(cap(input, 'workrooms.create'), {title: 'Synthetic title', summary: 'Synthetic summary', limits: ['Synthetic limit']});
+  assert.doesNotThrow(() => validatePublication(input));
+});
+test('a tested-build draft is not admitted below container schema 5, and the older kinds gain no draft', () => {
+  const input = actual();
+  assert.throws(() => validatePublication({schema: 2, releases: [tested(input)]}), /Unexpected or missing fields/);
+  assert.throws(() => validatePublication({schema: 1, releases: [tested(input)]}), /Unexpected or missing fields/);
+  const source = actual(); Object.assign(source.releases[0], {publishedAt: null, reviewReference: null});
+  assert.throws(() => validatePublication(source), /Invalid evidence timestamp/);
+  const legacy = snapshot(); legacy.releases[0].capabilities[0].title = null;
+  assert.throws(() => validatePublication(legacy), /Invalid text/);
+});

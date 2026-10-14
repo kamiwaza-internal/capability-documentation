@@ -53,8 +53,9 @@ person check each row against its cited record before it goes to a customer.
 
 The skill is one Markdown file:
 [`plugins/capability-grounding/skills/capability-grounding/SKILL.md`](plugins/capability-grounding/skills/capability-grounding/SKILL.md).
-Add it to your assistant as a skill or as instructions. It needs only the ability to
-fetch `https://capabilities.kamiwaza.dev`.
+Add it to your assistant as a skill or as instructions. It reads
+`https://capabilities.kamiwaza.dev`; where that site needs a sign-in the assistant
+cannot complete, it reads the same records from a checkout of this repository instead.
 
 ### What the skill sends
 

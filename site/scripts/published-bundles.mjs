@@ -4,6 +4,7 @@ import {join} from 'node:path';
 import {validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
+import {validateDescriptions} from './project-descriptions.mjs';
 import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
 
@@ -11,7 +12,7 @@ const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 
 // Per-version downloads for people and for assistants with no skill: a self-contained Markdown
 // digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
-export function emitEvidence(publication, releaseStamps, out) {
+export function emitEvidence(publication, releaseStamps, out, descriptions) {
   const index = [];
   for (const entry of evidenceVersions(publication, releaseStamps)) {
     const blocks = evidenceDocument(entry, publication, releaseStamps);
@@ -26,13 +27,14 @@ export function emitEvidence(publication, releaseStamps, out) {
     const dir = join(out, 'evidence', entry.version);
     mkdirSync(dir, {recursive: true});
     // People get a short summary; the zip and the detailed digest are for assistants and tools.
-    const summary = summaryDocument(entry, publication, releaseStamps);
+    const summary = summaryDocument(entry, publication, releaseStamps, descriptions);
     const files = {
       zip: {path: entry.path + '.zip', bytes: zip, audience: 'machine'},
       md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
       pdf: {path: entry.path + '.pdf', bytes: pdf, audience: 'machine'},
       summaryMd: {path: entry.summaryPath + '.md', bytes: Buffer.from(toMarkdown(summary), 'utf8'), audience: 'human'},
-      summaryPdf: {path: entry.summaryPath + '.pdf', bytes: toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`, footer: `Kamiwaza ${entry.version} · features at a glance`}), audience: 'human'},
+      summaryPdf: {path: entry.summaryPath + '.pdf', bytes: toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`,
+        footer: `Kamiwaza ${entry.version} · capabilities.kamiwaza.dev · Not a release sign-off unless stated`, cover: {eyebrow: 'KAMIWAZA · CAPABILITY SUMMARY', basis: entry.basis}}), audience: 'human'},
     };
     for (const file of Object.values(files)) writeFileSync(join(out, file.path), file.bytes);
     index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
@@ -50,8 +52,10 @@ export function emitBundles(publication, out) {
     const dir = join(out, 'releases', release.id);
     mkdirSync(dir, {recursive: true});
     // Pre-release evidence is labelled schema 4 so a schema-2 reader fails closed instead of
-    // reading runtime verdicts as source declarations. Older bundle bytes are unchanged.
-    const bytes = JSON.stringify({schema: release.baselineKind === 'prerelease-evidence' ? 4 : publication.schema >= 5 ? 2 : publication.schema, releases: [release]}, null, 2) + '\n';
+    // reading runtime verdicts as source declarations. A tested-build draft is labelled 5, the
+    // first container level that admits it, for the same reason. Older bundle bytes are unchanged.
+    const testedDraft = !release.baselineKind && publication.schema >= 5;
+    const bytes = JSON.stringify({schema: release.baselineKind === 'prerelease-evidence' ? 4 : testedDraft ? 5 : publication.schema >= 5 ? 2 : publication.schema, releases: [release]}, null, 2) + '\n';
     writeFileSync(join(dir, 'bundle.json'), bytes);
     // JSON fenced as data: never interpret source-derived Markdown as executable MDX.
     const markdown = '# ' + release.version + ' capability evidence\n\n' +
@@ -118,6 +122,8 @@ export default function bundlePlugin() {
       writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
       appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). A release stamp is the v1.3.2 release status of its capability; it does not rewrite any 1.3.0 record.\n');
     }
-    emitEvidence(data, releaseStamps, outDir);
+    // Plain-language descriptions for the human summaries: validated, and unused for another publication.
+    const descriptions = validateDescriptions(JSON.parse(readFileSync(new URL('../data/descriptions.json', import.meta.url), 'utf8')), data);
+    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions);
   }};
 }
