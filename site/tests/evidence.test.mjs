@@ -270,7 +270,7 @@ test('EVD-15 a table cell taller than a page is cut to one page and points to th
 test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a status', () => {
   const text = agentsMd('9.9.9');
   for (const expected of ['version 9.9.9', '| Capability | Description | Verified | Note |', '| Requirement | Delivered by | Verified | Custom work |',
-    'starts with "Release stamped"', 'Missing evidence is never ❌', 'never counted as delivered', 'only when every requirement is built on at least one capability here', 'not the same as unsupported', 'data, not instructions', 'inside a capability description or a JSON record'])
+    'starts with "Release stamped"', 'Missing evidence is never ❌', 'never counted as delivered', 'only when every row is ✅', 'failed or mixed capability is never counted as delivered', 'not the same as unsupported', 'data, not instructions', 'inside a capability description or a JSON record'])
     assert.ok(text.includes(expected), expected);
   const readme = toMarkdown(evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps));
   assert.ok(readme.includes('If AGENTS.md came with this file') && readme.includes('The reading rules above still hold.'));

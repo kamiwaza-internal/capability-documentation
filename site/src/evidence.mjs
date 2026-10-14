@@ -130,7 +130,7 @@ You are answering questions about what the Kamiwaza platform can do, version ${v
 
 When a document describes an application or solution to build on Kamiwaza, rather than a list of platform features to check, the question is how each requirement is built and on what evidence. Delivery is claimed only for requirements built on capabilities in this file.
 
-1. **First line:** "Yes: Kamiwaza can deliver all N requirements." only when every requirement is built on at least one capability here and none is ruled out. Otherwise: "Kamiwaza can deliver X of N requirements on documented platform capabilities; Y need custom application logic that this file does not establish; Z are ruled out." (omit any zero part).
+1. **First line:** "Yes: Kamiwaza can deliver all N requirements on release-verified platform features." only when every row is ✅. Otherwise: "Kamiwaza can deliver X of N requirements on documented platform capabilities (R release-verified); F rest on capabilities whose tests failed or are mixed; Y need custom application logic that this file does not establish; Z are ruled out." (omit any zero part). A requirement built on a failed or mixed capability is never counted as delivered.
 2. **Table**, one row per requirement in document order:
 
    | Requirement | Delivered by | Verified | Custom work |
