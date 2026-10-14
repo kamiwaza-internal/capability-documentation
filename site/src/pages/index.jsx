@@ -24,7 +24,7 @@ export default function Home() {
       <h1>What each Kamiwaza release can do, and the evidence behind it</h1>
     </div></header>
     <main className="container kitMain">
-      <section aria-labelledby="about">
+      <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
         <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each release below has a short summary for people and a zip for AI assistants. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
@@ -54,9 +54,9 @@ export default function Home() {
         <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. The zip holds the detailed digest and the JSON records it was derived from.</p>
       </section>
 
-      <section aria-labelledby="instructions">
+      <section aria-labelledby="instructions" className="panel panelTint">
         <h2 id="instructions">Instructions</h2>
-        <p><strong>Beta:</strong> this is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
+        <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
         <ol className="instructions">
           <li><strong>Slack.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>.</li>
           <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</li>
@@ -68,7 +68,7 @@ export default function Home() {
         </ol>
       </section>
 
-      <section aria-labelledby="faqs">
+      <section aria-labelledby="faqs" className="panel">
         <h2 id="faqs">FAQs</h2>
         <details className="faq">
           <summary>What do the statuses mean?</summary>

@@ -51,4 +51,25 @@ code { overflow-wrap: anywhere; }
 /* Docusaurus leaves the light background transparent; embedded viewers can paint it dark. */
 [data-theme='light'] body { background-color: #ffffff; }
 [data-theme='dark'] body { background-color: #1b1b1d; }
-.instructions > li { margin-bottom: .75rem; }
+/* Home page: muted tints from the brand teal, separate tokens for dark mode. */
+:root { --kit-tint: #eef6f3; --kit-tint-border: #cfe5dd; --kit-card: #ffffff; --kit-border: #dbe5e1; --kit-code: #102f32; --kit-beta-bg: #fbf1df; --kit-beta-fg: #8a5a12; --kit-on-primary: #ffffff; }
+[data-theme='dark'] { --kit-tint: #15302d; --kit-tint-border: #25504a; --kit-card: #232527; --kit-border: #3a4643; --kit-code: #0c2426; --kit-beta-bg: #3a2e17; --kit-beta-fg: #f0c27a; --kit-on-primary: #102f32; }
+.kitMain h2::after { content: ''; display: block; width: 2.5rem; height: 3px; margin-top: .4rem; border-radius: 2px; background: var(--ifm-color-primary); }
+.panel { border: 1px solid var(--kit-border); border-radius: 14px; padding: 1.5rem 1.75rem; background: var(--kit-card); }
+.panelTint { background: var(--kit-tint); border-color: var(--kit-tint-border); }
+.panel > :last-child { margin-bottom: 0; }
+.releaseRow { background: var(--kit-card); border-color: var(--kit-border); border-left: 4px solid var(--ifm-color-primary); box-shadow: 0 1px 2px rgba(16, 47, 50, .06); }
+.releaseVersion { color: var(--ifm-color-primary); }
+.betaBadge { display: inline-block; margin-right: .4rem; padding: .1rem .55rem; border-radius: 6px; background: var(--kit-beta-bg); color: var(--kit-beta-fg); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: .1em; }
+.instructions { list-style: none; counter-reset: step; padding: 0; margin: 1rem 0 0; display: grid; gap: .75rem; }
+.instructions > li { counter-increment: step; position: relative; padding: 1rem 1.25rem 1rem 3.5rem; border: 1px solid var(--kit-border); border-radius: 12px; background: var(--kit-card); min-width: 0; }
+.instructions > li::before { content: counter(step); position: absolute; left: 1rem; top: .95rem; width: 1.75rem; height: 1.75rem; border-radius: 50%; display: grid; place-items: center; background: var(--ifm-color-primary); color: var(--kit-on-primary); font-weight: 700; font-size: .9rem; }
+.instructions pre { margin: .6rem 0; background: var(--kit-code); color: #e6f4ef; white-space: pre-wrap; overflow-wrap: anywhere; }
+.instructions pre code { color: inherit; }
+.panel .faq:last-child { border-bottom: 0; padding-bottom: 0; }
+.faq summary:hover { color: var(--ifm-color-primary); }
+@media (max-width: 640px) {
+  .panel { padding: 1.25rem 1rem; }
+  .instructions > li { padding-left: 3rem; }
+  .instructions > li::before { left: .75rem; }
+}
