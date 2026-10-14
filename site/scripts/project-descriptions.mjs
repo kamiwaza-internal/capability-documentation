@@ -14,7 +14,7 @@ import {curatedIds} from '../src/evidence.mjs';
 
 // ponytail: pinned like the stamp projections, not derived from the checkout, so regeneration
 // stays byte-identical. Change it in the same commit that regenerates from a newer kit commit.
-const KIT_COMMIT = '5964dca385d869d3df276f1c55fac516c887b971';
+const KIT_COMMIT = 'a53cea518490d887f1d27993a910075dc13b9e21';
 const KIT_REPOSITORY = 'kamiwaza-internal/capability-kit';
 
 const publishedIds = publication => new Set((publication.releases ?? []).flatMap(release => release.capabilities.map(cap => cap.id)));

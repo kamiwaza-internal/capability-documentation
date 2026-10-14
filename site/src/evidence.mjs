@@ -1,4 +1,4 @@
-import {currentCapabilityView, joinReleaseStamps, stampsApply} from './catalog.mjs';
+import {currentCapabilityView, descriptionOnly, joinReleaseStamps, stampsApply} from './catalog.mjs';
 
 // Per-version evidence downloads: one self-contained document per version, derived at build
 // time from the published records and never stored. The page and the build share this module
@@ -6,6 +6,11 @@ import {currentCapabilityView, joinReleaseStamps, stampsApply} from './catalog.m
 
 const byVersionDesc = (a, b) => b.localeCompare(a, undefined, {numeric: true});
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
+// The newest revision that carries evidence; a later description-only declaration never drives an entry.
+const driverOf = (releases, publication) => {
+  const describing = descriptionOnly(publication), newest = [...releases].sort(byRevisionDesc);
+  return newest.find(release => !describing.has(release.id)) ?? newest[0];
+};
 
 export const evidencePath = version => '/evidence/' + version + '/kamiwaza-capabilities-' + version;
 export const summaryPath = version => '/evidence/' + version + '/kamiwaza-' + version + '-summary';
@@ -41,7 +46,7 @@ export function evidenceVersions(publication, releaseStamps) {
   for (const version of versions) {
     if (entries.some(entry => entry.version === version)) continue;
     const revisions = publication.releases.filter(release => release.version === version).sort(byRevisionDesc);
-    const latest = revisions[0];
+    const latest = driverOf(revisions, publication);
     let headline, basis;
     if (latest.baselineKind === 'prerelease-evidence') {
       const rows = view.filter(row => row.lineage.releaseId === latest.id);
@@ -296,7 +301,7 @@ function snapshotParts({latest, scope}) {
 export function evidenceDocument(entry, publication, releaseStamps) {
   const view = currentCapabilityView(publication);
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
-  const latest = [...releases].sort(byRevisionDesc)[0];
+  const latest = driverOf(releases, publication);
   const scope = {publication, version: recordVersion(entry, publication)};
   const blocks = [
     h(1, `Kamiwaza platform capabilities, version ${entry.version}`),
@@ -371,7 +376,7 @@ const graded = (row, [rank, label, level]) => ({row, rank, label, level, tone: r
 function summaryRows(entry, publication, releaseStamps) {
   const view = currentCapabilityView(publication);
   if (entry.kind === 'release-stamps') return joinReleaseStamps(view, releaseStamps).rows.map(row => graded(row, stampGrade(row, releaseStamps.targetRelease)));
-  const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
+  const latest = driverOf(publication.releases.filter(release => entry.releaseIds.includes(release.id)), publication);
   if (entry.kind === 'prerelease-evidence') return view.filter(row => row.lineage.releaseId === latest.id).map(row => graded(row, prereleaseGrade(row)));
   if (entry.kind === 'source-declaration') return latest.capabilities.map(cap => graded(cap, [snapshotGrade(cap)[0], 'Documented, not yet tested', 'untested']));
   return latest.capabilities.map(cap => graded(cap, snapshotGrade(cap)));
@@ -466,7 +471,7 @@ const about = (item, descriptions) => (item.curated ? descriptions[item.row.id] 
 
 // A tested build states its publication state, channel, missing release binding and approval.
 function testedNotes(entry, publication) {
-  const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
+  const latest = driverOf(publication.releases.filter(release => entry.releaseIds.includes(release.id)), publication);
   if (!latest.publicationState || latest.baselineKind) return [];
   return [li(`This is a ${latest.publicationState} publication on the ${latest.channel} channel. Binding to the shipped ${entry.version} release is not established, and human release approval is ${latest.approval.status}.`),
     li(`Its kit revision (${latest.sourceRevision}) is the kit commit the records were exported from, not a product source revision.`)];

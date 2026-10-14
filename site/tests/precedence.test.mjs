@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {readFileSync as read} from 'node:fs';
-import {primaryCapabilities, filterCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
+import {descriptionOnly, primaryCapabilities, filterCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
 import {releaseStampsFixture} from './fixtures/release-stamps.mjs';
 import {releaseSnapshotDigest, validatePublication} from '../scripts/publication.mjs';
 const actual = () => JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));
@@ -22,8 +22,8 @@ test('actual primary view retains 50 accepted proofs, explicit gaps, exclusions 
   assert.equal(rows.length,115); assert.equal(verified.length,50);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='historical-scenario').length,33);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='developer-assessment').length,17);
-  assert.equal(verified.filter(cap=>cap.description?.historical).length,22);
-  assert.equal(verified.filter(cap=>cap.description===null).length,15);
+  assert.equal(verified.filter(cap=>cap.description?.historical).length,36);
+  assert.equal(verified.filter(cap=>cap.description===null).length,1);
   assert.equal(rows.filter(cap=>cap.includedInBaseline===false).length,19);
   assert.equal(rows.filter(cap=>cap.deferred).length,4);
   assert.equal(filterCapabilities(rows,'','failed').length,7);
@@ -112,4 +112,13 @@ test('a v1.3.2 stamp joins the 1.3.0 record of a capability and never its 1.2.1 
   const older=joined.filter(row=>row.version==='1.2.1');
   assert.equal(older.length,8);assert.ok(older.every(row=>!row.releaseStamp&&!row.sourceContractStamp));
   assert.equal(joinPrimaryStamps(rows,{...stamps,baselineReleaseId:'not-published'},p),rows);
+});
+
+test('a source declaration published after pre-release evidence adds descriptions only', () => {
+  const p = actual(), without = {...p, releases: p.releases.filter(release => release.id !== '1.3.0-declared-r5')};
+  assert.ok(descriptionOnly(p).has('1.3.0-declared-r5'));
+  assert.ok(!descriptionOnly(p).has('1.3.0-declared-r2'));
+  const evidence = rows => rows.map(r => JSON.stringify([r.id, r.version, r.status, r.snapshotId, r.omitted, r.omissionSnapshotId, r.includedInBaseline, r.deferred, r.failures])).sort();
+  assert.deepEqual(evidence(primaryCapabilities(p)), evidence(primaryCapabilities(without)));
+  assert.ok(primaryCapabilities(p).filter(r => r.description?.snapshotId === '1.3.0-declared-r5').length > 0);
 });

@@ -12,6 +12,14 @@ export function countStatuses(capabilities) {
 }
 
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
+
+// A source declaration published after its version's pre-release evidence only adds descriptions:
+// it never selects a status, lineage or omission for that version.
+export function descriptionOnly(publication) {
+  const releases = publication.releases ?? [];
+  const evidenceAfter = release => releases.some(other => other.version === release.version && other.baselineKind === 'prerelease-evidence' && other.publicationRevision < release.publicationRevision);
+  return new Set(releases.filter(release => release.baselineKind === 'source-declaration' && evidenceAfter(release)).map(release => release.id));
+}
 const statusRank = {verified: 0, superseded: 1, 'failed-or-mixed': 2, 'not-yet-verified': 3};
 
 // One row per capability in the latest pre-release evidence release, derived at
@@ -103,6 +111,7 @@ const evidenceTime = cap => latest([cap.assessment?.assessedAt, ...cap.evidence.
 
 // A presentation projection: immutable upstream verdicts and original receipts stay intact.
 export function primaryCapabilities(publication) {
+  const describing = descriptionOnly(publication);
   const byId = new Map();
   for (const release of publication.releases) for (const cap of release.capabilities) {
     const key = release.version + ':' + cap.id;
@@ -124,7 +133,9 @@ export function primaryCapabilities(publication) {
     rows.push({release, cap: {...cap, evidence: []}, at: cap.stamp?.finishedAt ?? latest(cap.failures.map(failure => failure.finishedAt)), qualified: true}); byId.set(key, rows);
   }
   const current = [];
-  for (const rows of byId.values()) {
+  for (const all of byId.values()) {
+    const evidenceRows = all.filter(row => !describing.has(row.release.id));
+    const rows = evidenceRows.length ? evidenceRows : all;
     // Release-bound stamps outrank pre-release records; newer missing evidence never erases acceptance.
     const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
     const ordered = [...rows].sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
@@ -155,7 +166,8 @@ export function primaryCapabilities(publication) {
       }
     }
     const hasDescription = row => typeof row.cap.title === 'string' && row.cap.title.trim() && typeof row.cap.summary === 'string' && row.cap.summary.trim() && (row.cap.declaration || !row.release.baselineKind);
-    const descriptionRow = hasDescription(selected) ? selected : [...ordered].reverse().find(hasDescription);
+    const newestFirst = [...all].sort((a, b) => (b.release.publicationRevision - a.release.publicationRevision) || b.release.id.localeCompare(a.release.id));
+    const descriptionRow = hasDescription(selected) ? selected : newestFirst.find(hasDescription);
     const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow !== selected, basis: descriptionRow.cap.declaration ? 'curated-source-declaration' : 'public-snapshot-prose'} : null;
     const baseline = publication.releases.filter(release => release.version === selected.release.version && release.baselineKind === 'prerelease-evidence').sort((a, b) => a.publicationRevision - b.publicationRevision).at(-1);
     const includedInBaseline = baseline ? baseline.capabilities.some(cap => cap.id === selected.cap.id) : null;
