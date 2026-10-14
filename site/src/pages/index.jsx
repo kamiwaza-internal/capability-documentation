@@ -54,6 +54,15 @@ export default function Home() {
         <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. The zip holds the detailed digest and the JSON records it was derived from.</p>
       </section>
 
+      <section aria-labelledby="ask">
+        <h2 id="ask">Ask about capabilities</h2>
+        <p>In Claude Code, add the plugin:</p>
+        <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
+        <p>Then ask a question, or paste in an RFP:</p>
+        <pre><code>/capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
+        <p>Or ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a> in Slack.</p>
+      </section>
+
       <section aria-labelledby="faqs">
         <h2 id="faqs">FAQs</h2>
         <details className="faq">
