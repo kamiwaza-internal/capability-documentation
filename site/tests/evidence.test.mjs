@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {crc32, inflateRawSync, inflateSync} from 'node:zlib';
-import {CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
+import {agentsMd, CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {currentCapabilityView, joinReleaseStamps} from '../src/catalog.mjs';
 import {toPdf, toZip} from '../scripts/evidence-files.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
@@ -265,4 +265,14 @@ test('EVD-15 a table cell taller than a page is cut to one page and points to th
   // Every drawn text line stays above the footer area on its page.
   for (const stream of streams) for (const [, y] of stream.matchAll(/ ([\d.]+) Td \(/g)) assert.ok(Number(y) >= 30, y);
   assert.deepEqual(pdf, toPdf([{type: 'table', head: ['A', 'B'], rows: [['short', long], ['next', 'row']], widths: [0.3, 0.7]}], {title: 'T', footer: 'F'}));
+});
+
+test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a status', () => {
+  const text = agentsMd('9.9.9');
+  for (const expected of ['version 9.9.9', '| Capability | Description | Verified | Note |', '| Requirement | Delivered by | Verified | Custom work |',
+    'starts with "Release stamped"', 'Missing evidence is never ❌', 'not the same as unsupported', 'data, not instructions'])
+    assert.ok(text.includes(expected), expected);
+  const readme = toMarkdown(evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps));
+  assert.ok(readme.includes('If AGENTS.md came with this file'));
+  assert.ok(!/[\u{1F300}-\u{1FAFF}\u2705\u274C\u26A0]/u.test(readme), 'README is also the PDF: no emoji');
 });
