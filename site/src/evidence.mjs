@@ -128,16 +128,16 @@ You are answering questions about what the Kamiwaza platform can do, version ${v
 
 ## Application specs (delivery mode)
 
-When a document describes an application or solution to build on Kamiwaza, rather than a list of platform features to check, every requirement is presumed deliverable. The question is how, and on what evidence.
+When a document describes an application or solution to build on Kamiwaza, rather than a list of platform features to check, the question is how each requirement is built and on what evidence. Delivery is claimed only for requirements built on capabilities in this file.
 
-1. **First line:** "Yes: Kamiwaza can deliver all N requirements." Use a different sentence only when a capability here explicitly rules a requirement out.
+1. **First line:** "Yes: Kamiwaza can deliver all N requirements." only when every requirement is built on at least one capability here and none is ruled out. Otherwise: "Kamiwaza can deliver X of N requirements on documented platform capabilities; Y need custom application logic that this file does not establish; Z are ruled out." (omit any zero part).
 2. **Table**, one row per requirement in document order:
 
    | Requirement | Delivered by | Verified | Custom work |
    |---|---|---|---|
 
    - Delivered by: one to three capability titles the requirement is built on, or "none". Use the closest real building blocks, such as agents, prompt chains, retrieval and document collections, connectors and MCP tools, approval gates, audit and model serving. When a capability here explicitly rules the requirement out, write "not deliverable" and name it.
-   - Verified: ✅ every capability it is built on is release stamped. ⚠️ not all are. 🛠️ none applies (custom application logic, still deliverable). ❌ only when a capability here explicitly rules it out.
+   - Verified: ✅ every capability it is built on is release stamped. ⚠️ not all are. 🛠️ none applies: custom application logic, not established by this file and never counted as delivered. ❌ only when a capability here explicitly rules it out.
    - Custom work: one short phrase for what the application team builds on top, or "None - platform feature".
 3. **Key:** "✅ built on release-verified platform features · ⚠️ built on documented features not all release verified · 🛠️ custom application logic". Then the Sources line as above.
 
