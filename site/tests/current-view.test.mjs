@@ -119,14 +119,15 @@ test('CUR-E evidence lineage passes through unmodified, in order, without mutati
   assert.deepEqual(currentCapabilityView({releases: input.releases.slice(0, 1)}), []); // no acceptance record, no rows
 });
 
-test('CUR-F published data: 50 verifications retained, 4 later non-applicable failures, 37 documentation gaps', () => {
+test('CUR-F published data: 50 verifications retained, 4 later non-applicable failures, 4 documentation gaps (r5 describes the rest)', () => {
   const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
   const rows = currentCapabilityView(deepFreeze(published));
   assert.deepEqual(summarizeCurrentView(rows), {
     capabilities: 88, verified: 50, scenarioBacked: 33, developerAssessed: 17, superseded: 0, laterNonApplicableFailure: 4,
-    documentationGap: 37, failedOrMixed: 5, notYetVerified: 33, releaseVerified: 0, releaseCheckFailed: 1,
+    documentationGap: 4, failedOrMixed: 5, notYetVerified: 33, releaseVerified: 0, releaseCheckFailed: 1,
   });
   assert.equal(new Set(rows.map(row => row.id)).size, 88);
+  assert.equal(rows.filter(row => row.describedIn === '1.3.0-declared-r5').length, 71);
   assert.ok(rows.slice(0, 50).every(row => row.status === 'verified'), 'verified rows come first');
   assert.deepEqual(rows.filter(row => row.laterNonApplicableFailure).map(row => row.id).sort(),
     ['catalog.writable-datasets', 'connectors.connector-builder', 'kaizen.notifications-inbox', 'kaizen.product-identity']);
@@ -142,13 +143,15 @@ test('CUR-F published data: 50 verifications retained, 4 later non-applicable fa
   const current = new Map(r3.capabilities.map(c => [c.id, c]));
   for (const row of rows) {
     assert.equal(row.summary, current.get(row.id).summary);
-    assert.equal(row.documentationGap, row.summary === null);
+    assert.equal(row.documentationGap, row.summary === null && row.describedIn === null);
     for (const old of [r1, r2]) {
       const text = old.capabilities.find(c => c.id === row.id)?.summary;
       if (row.documentationGap && text) assert.ok(!JSON.stringify(row).includes(JSON.stringify(text)), row.id);
     }
   }
-  assert.equal(rows.filter(row => row.status === 'verified' && row.olderDescriptionIn === '1.3.0-declared-r2').length, 22);
+  // r5 describes 45 verified rows; the 3 still pointing at r2 are ones the kit no longer declares.
+  assert.equal(rows.filter(row => row.status === 'verified' && row.olderDescriptionIn === '1.3.0-declared-r2').length, 3);
+  assert.equal(rows.filter(row => row.status === 'verified' && row.describedIn === '1.3.0-declared-r5').length, 45);
 });
 
 test('CAT-5 statuses outside the original four are counted, never NaN', () => {

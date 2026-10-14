@@ -12,6 +12,14 @@ export function countStatuses(capabilities) {
 }
 
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
+
+// A source declaration published after its version's pre-release evidence only adds descriptions:
+// it never selects a status, lineage or omission for that version.
+export function descriptionOnly(publication) {
+  const releases = publication.releases ?? [];
+  const evidenceAfter = release => releases.some(other => other.version === release.version && other.baselineKind === 'prerelease-evidence' && other.publicationRevision < release.publicationRevision);
+  return new Set(releases.filter(release => release.baselineKind === 'source-declaration' && evidenceAfter(release)).map(release => release.id));
+}
 const statusRank = {verified: 0, superseded: 1, 'failed-or-mixed': 2, 'not-yet-verified': 3};
 
 // One row per capability in the latest pre-release evidence release, derived at
@@ -26,6 +34,8 @@ export function currentCapabilityView(publication) {
   const baseline = releases.filter(r => r.baselineKind === 'prerelease-evidence').sort(byRevisionDesc)[0];
   if (!baseline) return [];
   const older = releases.filter(r => r.publicationRevision < baseline.publicationRevision).sort(byRevisionDesc);
+  const describingIds = descriptionOnly(publication);
+  const describing = releases.filter(r => describingIds.has(r.id)).sort(byRevisionDesc);
   const finished = o => Date.parse(o.evidenceWindow.latestFinishedAt);
   const observations = [...(publication.observations ?? [])].sort((a, b) => finished(a) - finished(b));
 
@@ -57,7 +67,9 @@ export function currentCapabilityView(publication) {
       if (contract === 'whole-capability') failing.clear(); else failing.delete(contract);
       history.push({event: 'passed', ...event});
     }
-    const documentationGap = !cap.summary;
+    // A later description-only declaration describes the row; it is not a documentation gap.
+    const describedIn = describing.find(r => r.capabilities.some(c => c.id === cap.id && c.summary))?.id ?? null;
+    const documentationGap = !cap.summary && !describedIn;
     return {
       id: cap.id, title: cap.title, summary: cap.summary, conditions: cap.conditions, limits: cap.limits,
       status: !isAccepted ? cap.status : failing.size ? 'superseded' : 'verified',
@@ -67,7 +79,7 @@ export function currentCapabilityView(publication) {
         evidence: cap.evidence, assessment: cap.assessment, wholeClaim: cap.wholeClaim},
       releaseStatus: cap.releaseStatus,
       releaseCheckFailed: cap.releaseStatus === 'failed',
-      documentationGap,
+      documentationGap, describedIn,
       // Pointer only: older text is historical and is never copied into the current row.
       olderDescriptionIn: documentationGap ? older.find(r => r.capabilities.some(c => c.id === cap.id && c.summary))?.id ?? null : null,
       laterNonApplicableFailure: later.some(l => !l.applicable && l.failedScenarios > 0),
@@ -103,6 +115,7 @@ const evidenceTime = cap => latest([cap.assessment?.assessedAt, ...cap.evidence.
 
 // A presentation projection: immutable upstream verdicts and original receipts stay intact.
 export function primaryCapabilities(publication) {
+  const describing = descriptionOnly(publication);
   const byId = new Map();
   for (const release of publication.releases) for (const cap of release.capabilities) {
     const key = release.version + ':' + cap.id;
@@ -124,7 +137,11 @@ export function primaryCapabilities(publication) {
     rows.push({release, cap: {...cap, evidence: []}, at: cap.stamp?.finishedAt ?? latest(cap.failures.map(failure => failure.finishedAt)), qualified: true}); byId.set(key, rows);
   }
   const current = [];
-  for (const rows of byId.values()) {
+  for (const all of byId.values()) {
+    const evidenceRows = all.filter(row => !describing.has(row.release.id));
+    // Only evidence selects status: an id that appears only in a description-only release has no row.
+    if (!evidenceRows.length) continue;
+    const rows = evidenceRows;
     // Release-bound stamps outrank pre-release records; newer missing evidence never erases acceptance.
     const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
     const ordered = [...rows].sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
@@ -155,8 +172,9 @@ export function primaryCapabilities(publication) {
       }
     }
     const hasDescription = row => typeof row.cap.title === 'string' && row.cap.title.trim() && typeof row.cap.summary === 'string' && row.cap.summary.trim() && (row.cap.declaration || !row.release.baselineKind);
-    const descriptionRow = hasDescription(selected) ? selected : [...ordered].reverse().find(hasDescription);
-    const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow !== selected, basis: descriptionRow.cap.declaration ? 'curated-source-declaration' : 'public-snapshot-prose'} : null;
+    const newestFirst = [...all].sort((a, b) => (b.release.publicationRevision - a.release.publicationRevision) || b.release.id.localeCompare(a.release.id));
+    const descriptionRow = hasDescription(selected) ? selected : newestFirst.find(hasDescription);
+    const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow !== selected && !describing.has(descriptionRow.release.id), basis: descriptionRow.cap.declaration ? 'curated-source-declaration' : 'public-snapshot-prose'} : null;
     const baseline = publication.releases.filter(release => release.version === selected.release.version && release.baselineKind === 'prerelease-evidence').sort((a, b) => a.publicationRevision - b.publicationRevision).at(-1);
     const includedInBaseline = baseline ? baseline.capabilities.some(cap => cap.id === selected.cap.id) : null;
     const deferred = baseline?.deferredCapabilities.includes(selected.cap.id) ?? false;

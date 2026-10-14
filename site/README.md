@@ -205,7 +205,11 @@ whole-claim verified, project pre-release verified and scoped release-stamped
 records while retaining their distinct labels and original basis/date. The
 `failed` filter includes failed-or-mixed records. A missing description is a
 visible documentation gap; older declaration text is labelled historical source
-context, never a current curated claim or broader verified scope.
+context, never a current curated claim or broader verified scope. A source
+declaration published after its version's pre-release evidence
+(`descriptionOnly()`) only supplies descriptions: its text is current, cited as
+"Description source: curated declaration <id>, kit revision <sha>", and it never
+selects status, lineage or omissions.
 
 Automatic supersession requires a later failed test bound to the same version,
 qualified manifest/environment, exact source and full bounded contract (scope,
@@ -419,8 +423,8 @@ is `/catalog/` (`src/pages/catalog.jsx`).
 the newest publication revision of each version, plus a version for each applicable release-stamp
 file. Each digest opens with its own reading rules and status key, then lists every capability in
 scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
-renders it to PDF and packs a zip (digest, PDF, the JSON records it was derived from and
-`SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
+renders it to PDF and packs a zip (digest, `AGENTS.md` with the answer format, a `CLAUDE.md`
+that imports it, PDF, the JSON records it was derived from and `SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
 `/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their
 SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
 nothing is written back to `data/`.
