@@ -185,8 +185,10 @@ this table, with exactly these columns:
   - ⚠️ a record documents the capability, but it is not release verified. This covers
     documented only, pre-release verified, pre-release failed, release failed and
     source-contract verified. The state cells say which.
-  - ❌ no record establishes it: `Not established`, or `Not supported` where a record
-    states an explicit exclusion.
+  - ❔ no record establishes it: `Not established`. This is a gap in the evidence, not
+    a statement that the platform cannot do it.
+  - ❌ a record states an explicit exclusion: `Not supported`. Never use ❌ for a
+    missing record, an omitted capability or missing evidence.
   The marker summarises the row; it never replaces the words in the state cells, and
   it is the only emoji in the answer. ✅ still carries every limit of the stamp (it is
   not human release sign-off and covers the registered scenarios only).
@@ -203,7 +205,7 @@ Cite, for every row that relies on a record: the publication `id`, the bundle SH
 (or, when read from a local copy, that copy's commit), the capability `id`, and the `declaration.documentSha256` or evidence `recordSha256`
 where the record gives one. A row that cites a release stamp also cites its `stampId`.
 
-After the table, give the count of rows under each marker (✅, ⚠️, ❌) and in each
+After the table, give the count of rows under each marker (✅, ⚠️, ❔, ❌) and in each
 state. Then stop. Do not add a
 promotional summary, and do not turn mixed results into an overall yes.
 

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {primaryCapabilities, filterCapabilities} from '../src/catalog.mjs';
+import {readFileSync as read} from 'node:fs';
+import {primaryCapabilities, filterCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
 import {releaseStampsFixture} from './fixtures/release-stamps.mjs';
 import {releaseSnapshotDigest, validatePublication} from '../scripts/publication.mjs';
 const actual = () => JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));
@@ -18,14 +19,14 @@ function timeline(finish = '2026-10-01T11:00:00.000003Z') {
 test('actual primary view retains 50 accepted proofs, explicit gaps, exclusions and News release hold', () => {
   const p = actual(), before = JSON.stringify(p), rows = primaryCapabilities(p);
   const verified = filterCapabilities(rows, '', 'verified');
-  assert.equal(rows.length,107); assert.equal(verified.length,50);
+  assert.equal(rows.length,115); assert.equal(verified.length,50);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='historical-scenario').length,33);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='developer-assessment').length,17);
   assert.equal(verified.filter(cap=>cap.description?.historical).length,22);
   assert.equal(verified.filter(cap=>cap.description===null).length,15);
   assert.equal(rows.filter(cap=>cap.includedInBaseline===false).length,19);
   assert.equal(rows.filter(cap=>cap.deferred).length,4);
-  assert.equal(filterCapabilities(rows,'','failed').length,5);
+  assert.equal(filterCapabilities(rows,'','failed').length,7);
   assert.ok(verified.every(cap=>cap.version==='1.3.0' && cap.wholeClaim===false));
   assert.equal(JSON.stringify(p),before);
   assert.ok(rows.slice(0,50).every(row=>row.status==='prerelease-verified'));
@@ -37,7 +38,7 @@ test('verified filter includes each accepted scope and never an untested row', (
   assert.equal(filterCapabilities(caps,'','verified').length,3);
 });
 test('newer untested/skipped, absent or uncurated sources never erase accepted verification', () => {
-  const p=actual(), baseline=p.releases.at(-1), pass=baseline.capabilities.find(cap=>cap.status==='prerelease-verified');
+  const p=actual(), baseline=p.releases.find(r=>r.baselineKind==='prerelease-evidence'), pass=baseline.capabilities.find(cap=>cap.status==='prerelease-verified');
   const source=structuredClone(p.releases[0]); source.id='synthetic-new-source';source.publicationRevision=99;
   source.capabilities=[{...source.capabilities[0],id:pass.id,status:'untested',evidence:[{build:source.build,outcome:'skipped',summary:'Synthetic skipped test.'}]}];
   p.releases.push(source,{...source,id:'synthetic-absent',publicationRevision:100,capabilities:[]});
@@ -74,7 +75,7 @@ for(const [name,mutate] of [
   if(name!=='different version')assert.ok(find(p).failures.some(failure=>failure.applicable===false));
 });
 test('development labels do not prove environment applicability for a later scenario failure',()=>{
-  const p=actual(), baseline=p.releases.at(-1), cap=baseline.capabilities.find(c=>c.verificationBasis==='historical-scenario'&&c.status==='prerelease-verified');
+  const p=actual(), baseline=p.releases.find(r=>r.baselineKind==='prerelease-evidence'), cap=baseline.capabilities.find(c=>c.verificationBasis==='historical-scenario'&&c.status==='prerelease-verified');
   const next=structuredClone(baseline);next.id='synthetic-later-scenario';next.publicationRevision=99;next.capabilities=[structuredClone(cap)];
   next.capabilities[0].status='failed-or-mixed';next.capabilities[0].evidence=[{...cap.evidence[0],outcome:'failed',runFinishedAt:'2026-10-08T23:00:00Z'}];p.releases.push(next);
   const row=primaryCapabilities(p).find(c=>c.id===cap.id);
@@ -102,4 +103,13 @@ test('equal-time matched failure retains acceptance and an explicit chronology-a
   const row=find(p);assert.equal(row.status,'release-stamped');
   const failure=row.failures.find(f=>f.snapshotId==='synthetic-132-release-r2');
   assert.equal(failure.ambiguous,true);assert.equal(failure.supersedes,false);
+});
+test('a v1.3.2 stamp joins the 1.3.0 record of a capability and never its 1.2.1 record',()=>{
+  const p=actual(), stamps=JSON.parse(read(new URL('../data/release-stamps-1.3.2.json', import.meta.url)));
+  const rows=primaryCapabilities(p), joined=joinPrimaryStamps(rows,stamps,p), id='auth.personal-access-tokens';
+  assert.deepEqual(joined.map(row=>row.version+':'+row.id),rows.map(row=>row.version+':'+row.id));
+  assert.ok(joined.find(row=>row.id===id&&row.version==='1.3.0').releaseStamp);
+  const older=joined.filter(row=>row.version==='1.2.1');
+  assert.equal(older.length,8);assert.ok(older.every(row=>!row.releaseStamp&&!row.sourceContractStamp));
+  assert.equal(joinPrimaryStamps(rows,{...stamps,baselineReleaseId:'not-published'},p),rows);
 });

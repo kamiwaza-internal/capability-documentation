@@ -64,17 +64,51 @@ function wrap(text, maxWidth, size, base) {
   return lines.length ? lines : [[]];
 }
 
+
+// Brand palette (site/src/css/custom.css): teal #18645d, deep teal #102f32, mint #91d5c3, hero text #f3faf7.
 const COLOR = {
-  text: '0.11 0.12 0.13', muted: '0.40 0.42 0.45', brand: '0.094 0.392 0.365', rule: '0.82 0.84 0.86',
-  head: '0.90 0.95 0.94', zebra: '0.97 0.98 0.98',
-  green: '0.13 0.55 0.33', amber: '0.85 0.55 0.10', red: '0.78 0.20 0.20', grey: '0.62 0.64 0.67',
+  text: '0.11 0.12 0.13', muted: '0.40 0.42 0.45', brand: '0.094 0.392 0.365', deep: '0.063 0.184 0.196',
+  mint: '0.569 0.835 0.765', hero: '0.953 0.980 0.969', white: '1 1 1', rule: '0.86 0.89 0.89',
+  zebra: '0.957 0.976 0.971', callout: '0.918 0.965 0.953',
 };
+// Status tones: a tinted fill, a dark ink for text on it, and the solid dot. The label text always carries the meaning.
+const TONES = {
+  green: {fill: '0.87 0.95 0.90', ink: '0.05 0.35 0.19', solid: '0.13 0.55 0.33'},
+  amber: {fill: '0.99 0.94 0.83', ink: '0.52 0.31 0.02', solid: '0.85 0.55 0.10'},
+  red: {fill: '0.98 0.89 0.89', ink: '0.58 0.11 0.11', solid: '0.78 0.20 0.20'},
+  grey: {fill: '0.92 0.93 0.94', ink: '0.30 0.32 0.35', solid: '0.58 0.60 0.63'},
+};
+
+const W = 612, H = 792, M = 54, TOP = H - 58, BOTTOM = 64, MAX = W - 2 * M;
+const STYLE = {
+  h1: {size: 20, font: 'F2', color: COLOR.brand, before: 0, after: 8, lead: 25},
+  h2: {size: 13, font: 'F2', color: COLOR.deep, before: 18, after: 9, lead: 17, bar: true},
+  h3: {size: 10.5, font: 'F2', color: COLOR.text, before: 14, after: 4, lead: 14},
+  p: {size: 9.5, font: 'F1', color: COLOR.text, before: 0, after: 7, lead: 13.5},
+  li: {size: 9, font: 'F1', color: COLOR.text, before: 0, after: 2.5, lead: 12.5},
+};
+const CELL = {size: 8.5, lead: 11.5, padX: 6, padY: 5, pill: 5, dot: 8};
+
+const f = n => n.toFixed(2);
+const text1 = (string, font) => [{codes: codes(string), font, space: false}];
+const lineWidth = (line, size) => line.reduce((sum, word) => sum + width(word.codes, size, word.font) + (word.space ? width([32], size, word.font) : 0), 0);
+const circle = (cx, cy, r) => { const k = 0.5523 * r; return `${cx + r} ${cy} m ${cx + r} ${cy + k} ${cx + k} ${cy + r} ${cx} ${cy + r} c ${cx - k} ${cy + r} ${cx - r} ${cy + k} ${cx - r} ${cy} c ${cx - r} ${cy - k} ${cx - k} ${cy - r} ${cx} ${cy - r} c ${cx + k} ${cy - r} ${cx + r} ${cy - k} ${cx + r} ${cy} c f`; };
+// A filled rounded rectangle; k places the Bezier control points for a quarter circle.
+function roundRect(x, y, w, h, r) {
+  const k = 0.4477 * r, R = x + w, T = y + h;
+  return [`${f(x + r)} ${f(y)} m ${f(R - r)} ${f(y)} l ${f(R - k)} ${f(y)} ${f(R)} ${f(y + k)} ${f(R)} ${f(y + r)} c`,
+    `${f(R)} ${f(T - r)} l ${f(R)} ${f(T - k)} ${f(R - k)} ${f(T)} ${f(R - r)} ${f(T)} c`,
+    `${f(x + r)} ${f(T)} l ${f(x + k)} ${f(T)} ${f(x)} ${f(T - k)} ${f(x)} ${f(T - r)} c`,
+    `${f(x)} ${f(y + r)} l ${f(x)} ${f(y + k)} ${f(x + k)} ${f(y)} ${f(x + r)} ${f(y)} c f`].join(' ');
+}
+const cellText = cell => typeof cell === 'object' && cell !== null ? cell.text : cell;
+const toneOf = cell => TONES[cell?.dot];
 
 // One line of mixed-font words at (x, y): consecutive words in the same font share a text object.
 function drawLine(ops, line, x, y, size, color) {
   ops.push(`${color} rg`);
   let cursor = x, run = null;
-  const flush = () => { if (run) ops.push(`BT /${run.font} ${size} Tf ${run.x.toFixed(2)} ${y.toFixed(2)} Td ${pdfString(run.codes)} Tj ET`); run = null; };
+  const flush = () => { if (run) ops.push(`BT /${run.font} ${size} Tf ${f(run.x)} ${f(y)} Td ${pdfString(run.codes)} Tj ET`); run = null; };
   for (const word of line) {
     if (!run || run.font !== word.font) { flush(); run = {font: word.font, x: cursor, codes: []}; }
     run.codes.push(...word.codes);
@@ -83,83 +117,186 @@ function drawLine(ops, line, x, y, size, color) {
   }
   flush();
 }
-const circle = (cx, cy, r) => { const k = 0.5523 * r; return `${cx + r} ${cy} m ${cx + r} ${cy + k} ${cx + k} ${cy + r} ${cx} ${cy + r} c ${cx - k} ${cy + r} ${cx - r} ${cy + k} ${cx - r} ${cy} c ${cx - r} ${cy - k} ${cx - k} ${cy - r} ${cx} ${cy - r} c ${cx + k} ${cy - r} ${cx + r} ${cy - k} ${cx + r} ${cy} c f`; };
-const cellText = cell => typeof cell === 'object' && cell !== null ? cell.text : cell;
 
-export function toPdf(blocks, {title, footer}) {
-  const W = 612, H = 792, M = 54, top = H - 58, bottom = 64, maxWidth = W - 2 * M;
-  const style = {
-    h1: {size: 20, font: 'F2', color: COLOR.brand, before: 0, after: 8, lead: 25},
-    h2: {size: 13, font: 'F2', color: COLOR.brand, before: 16, after: 8, lead: 17, rule: true},
-    h3: {size: 10.5, font: 'F2', color: COLOR.text, before: 14, after: 4, lead: 14},
-    p: {size: 9.5, font: 'F1', color: COLOR.text, before: 0, after: 7, lead: 13.5},
-    li: {size: 9, font: 'F1', color: COLOR.text, before: 0, after: 2.5, lead: 12.5},
-  };
-  const pages = [];
-  let ops = [], y = top;
-  const newPage = () => { pages.push(ops); ops = []; y = top; };
-  const room = needed => { if (y - needed < bottom && y < top) newPage(); };
+// ---- Page flow: a cursor `y` on the current page's ops; pages are closed by newPage ----
 
-  for (const block of blocks) {
-    if (block.type === 'table') { y = drawTable(block); continue; }
-    const s = block.type === 'h' ? style['h' + Math.min(block.level, 3)] : style[block.type];
-    const indent = block.type === 'li' ? 14 + block.level * 14 : 0;
-    const lines = wrap(block.text, maxWidth - indent, s.size, s.font);
-    // Keep a heading, or a list label ending in a colon, with at least two lines of what follows.
-    const keep = block.type === 'h' || (block.type === 'li' && /:$/.test(block.text)) ? 30 : 0;
-    room(s.before + s.lead * Math.min(lines.length, 2) + keep);
-    if (y < top) y -= s.before;
-    lines.forEach((line, index) => {
-      room(s.lead);
-      y -= s.lead;
-      if (block.type === 'li' && index === 0) {
-        if (block.level) ops.push(`${COLOR.muted} rg`, `${M + indent - 9} ${(y + s.size * 0.32).toFixed(2)} 3 0.8 re f`);
-        else ops.push(`${COLOR.brand} rg`, circle(M + indent - 8, y + s.size * 0.33, 1.7));
-      }
-      drawLine(ops, line, M + indent, y, s.size, block.muted ? COLOR.muted : s.color);
-    });
-    if (s.rule) ops.push(`${COLOR.rule} RG 0.6 w ${M} ${(y - 4).toFixed(2)} m ${W - M} ${(y - 4).toFixed(2)} l S`);
-    y -= s.after;
-  }
-  pages.push(ops);
+const newPage = ctx => { ctx.pages.push(ctx.ops); ctx.ops = []; ctx.y = TOP; };
+const room = (ctx, needed) => { if (ctx.y - needed < BOTTOM && ctx.y < TOP) newPage(ctx); };
+const isLabel = block => block.type === 'li' && /:$/.test(block.text);
+// Keep a heading, or a list label ending in a colon, with what follows: a table's header and first
+// row, or at least two lines of text.
+const keepsNext = block => block.type === 'h' || isLabel(block);
+const keepFor = next => next?.type === 'table' ? tableStart(next) : 30;
+const styleOf = block => block.type === 'h' ? STYLE['h' + Math.min(block.level, 3)] : STYLE[block.type];
 
-  // Tables: shaded header repeated on each page, zebra rows, wrapped cells, optional status dot.
-  function drawTable({head, rows, widths}) {
-    const size = 8.5, lead = 11, padX = 5, padY = 4, dotSpace = 9;
-    const cols = widths.map(f => f * maxWidth);
-    const layout = cells => cells.map((cell, i) => wrap(cellText(cell), cols[i] - 2 * padX - (cell?.dot ? dotSpace : 0), size, 'F1'));
-    const heights = lines => Math.max(...lines.map(l => l.length)) * lead + 2 * padY;
-    const headLines = head.map((cell, i) => wrap(cell, cols[i] - 2 * padX, size, 'F2'));
-    const headHeight = heights(headLines);
-    const drawHead = () => {
-      ops.push(`${COLOR.head} rg ${M} ${(y - headHeight).toFixed(2)} ${maxWidth} ${headHeight.toFixed(2)} re f`);
-      let x = M;
-      headLines.forEach((lines, i) => {
-        lines.forEach((line, j) => drawLine(ops, line, x + padX, y - padY - (j + 1) * lead + 2.5, size, COLOR.brand));
-        x += cols[i];
-      });
-      y -= headHeight;
-    };
-    y -= 4;
-    if (y - headHeight - heights(layout(rows[0] ?? head)) < bottom) newPage();
-    drawHead();
-    rows.forEach((cells, r) => {
-      const lines = layout(cells), h = heights(lines);
-      if (y - h < bottom) { newPage(); drawHead(); }
-      if (r % 2) ops.push(`${COLOR.zebra} rg ${M} ${(y - h).toFixed(2)} ${maxWidth} ${h.toFixed(2)} re f`);
-      let x = M;
-      lines.forEach((cellLines, i) => {
-        const dot = cells[i]?.dot;
-        if (dot) ops.push(`${COLOR[dot]} rg`, circle(x + padX + 3, y - padY - lead + 5.5, 3));
-        cellLines.forEach((line, j) => drawLine(ops, line, x + padX + (dot ? dotSpace : 0), y - padY - (j + 1) * lead + 2.5, size, COLOR.text));
-        x += cols[i];
-      });
-      ops.push(`${COLOR.rule} RG 0.5 w ${M} ${(y - h).toFixed(2)} m ${W - M} ${(y - h).toFixed(2)} l S`);
-      y -= h;
-    });
-    return y - 10;
-  }
+function marker(ctx, block, s, index) {
+  const {ops, y} = ctx;
+  if (s.bar) ops.push(`${COLOR.brand} rg ${M} ${f(y - 3)} 3.5 ${f(s.lead - 1)} re f`);
+  if (block.type !== 'li' || index) return;
+  const x = M + 14 + block.level * 14;
+  if (block.level) ops.push(`${COLOR.muted} rg`, `${x - 9} ${f(y + s.size * 0.32)} 3 0.8 re f`);
+  else ops.push(`${COLOR.brand} rg`, circle(x - 8, y + s.size * 0.33, 1.7));
+}
 
+function drawText(ctx, block, next) {
+  const s = styleOf(block);
+  const indent = block.type === 'li' ? 14 + block.level * 14 : s.bar ? 11 : 0;
+  const lines = wrap(block.text, MAX - indent, s.size, s.font);
+  room(ctx, s.before + s.lead * Math.min(lines.length, 2) + (keepsNext(block) ? keepFor(next) : 0));
+  if (ctx.y < TOP) ctx.y -= s.before;
+  lines.forEach((line, index) => {
+    room(ctx, s.lead);
+    ctx.y -= s.lead;
+    marker(ctx, block, s, index);
+    drawLine(ctx.ops, line, M + indent, ctx.y, s.size, block.muted ? COLOR.muted : s.color);
+  });
+  ctx.y -= s.after;
+}
+
+// A highlighted paragraph: mint panel with a teal edge.
+function drawCallout(ctx, block) {
+  const s = STYLE.p, pad = 10, lines = wrap(block.text, MAX - 2 * pad - 4, s.size, s.font);
+  const h = lines.length * s.lead + 2 * pad - 2;
+  room(ctx, h + 6);
+  ctx.ops.push(`${COLOR.callout} rg ${roundRect(M, ctx.y - h, MAX, h, 4)}`, `${COLOR.brand} rg ${M} ${f(ctx.y - h)} 3 ${f(h)} re f`);
+  lines.forEach((line, j) => drawLine(ctx.ops, line, M + pad + 4, ctx.y - pad - (j + 1) * s.lead + 3.5, s.size, COLOR.deep));
+  ctx.y -= h + 8;
+}
+
+// ---- Stat tiles: one per status, count large and label small, tinted by status ----
+
+function drawTile(ops, box, cells, label) {
+  const tone = toneOf(cells[0]) ?? TONES.grey, pad = 10;
+  ops.push(`${tone.fill} rg ${roundRect(box.x, box.top - box.h, box.w, box.h, 6)}`);
+  ops.push(`${tone.solid} rg`, circle(box.x + box.w - pad - 3, box.top - pad - 3, 3));
+  drawLine(ops, text1(cellText(cells[1]), 'F2'), box.x + pad, box.top - pad - 21, 24, tone.ink);
+  label.forEach((line, j) => drawLine(ops, line, box.x + pad, box.top - pad - 38 - j * 10.5, 8, tone.ink));
+}
+
+function drawTiles(ctx, rows) {
+  const gap = 8, w = (MAX - gap * (rows.length - 1)) / rows.length;
+  const labels = rows.map(cells => wrap(cellText(cells[0]), w - 20, 8, 'F2'));
+  const h = 48 + Math.max(...labels.map(lines => lines.length)) * 10.5;
+  room(ctx, h + 10);
+  ctx.y -= 2;
+  rows.forEach((cells, i) => drawTile(ctx.ops, {x: M + i * (w + gap), top: ctx.y, w, h}, cells, labels[i]));
+  ctx.y -= h + 8;
+}
+
+// ---- Tables: teal header repeated on each page, zebra rows, wrapped cells, status pills ----
+
+const baseline = (top, j) => top - CELL.padY - (j + 1) * CELL.lead + 2.8;
+const pillExtra = cell => toneOf(cell) ? CELL.dot + 2 * CELL.pill : 0;
+
+function tableLayout({head, widths}) {
+  const cols = widths.map(share => share * MAX);
+  const headLines = head.map((cell, i) => wrap(cell, cols[i] - 2 * CELL.padX, CELL.size, 'F2'));
+  const lines = cells => cells.map((cell, i) => wrap(cellText(cell), cols[i] - 2 * CELL.padX - pillExtra(cell), CELL.size, 'F1'));
+  const height = cellLines => Math.max(...cellLines.map(l => l.length)) * CELL.lead + 2 * CELL.padY;
+  return {cols, headLines, lines, height, headHeight: height(headLines)};
+}
+
+const tableStart = block => { const t = tableLayout(block); return 4 + t.headHeight + t.height(t.lines(block.rows[0] ?? block.head)); };
+
+function drawTableHead(ctx, t) {
+  ctx.ops.push(`${COLOR.brand} rg ${M} ${f(ctx.y - t.headHeight)} ${MAX} ${f(t.headHeight)} re f`);
+  let x = M;
+  t.headLines.forEach((lines, i) => {
+    lines.forEach((line, j) => drawLine(ctx.ops, line, x + CELL.padX, baseline(ctx.y, j), CELL.size, COLOR.white));
+    x += t.cols[i];
+  });
+  ctx.y -= t.headHeight;
+}
+
+// The status label in a rounded, tinted chip with its dot; the text stays real and selectable.
+function drawPill(ops, x, top, lines, tone) {
+  const w = Math.max(...lines.map(line => lineWidth(line, CELL.size))) + CELL.dot + 2 * CELL.pill;
+  const h = lines.length * CELL.lead + 3.5, y = top - CELL.padY - lines.length * CELL.lead - 0.5;
+  ops.push(`${tone.fill} rg ${roundRect(x, y, w, h, Math.min(h / 2, 7))}`, `${tone.solid} rg`, circle(x + CELL.pill + 2.5, baseline(top, 0) + 3, 2.5));
+  lines.forEach((line, j) => drawLine(ops, line, x + CELL.pill + CELL.dot, baseline(top, j), CELL.size, tone.ink));
+}
+
+function drawCell(ops, x, top, cell, lines) {
+  const tone = toneOf(cell);
+  if (tone) return drawPill(ops, x + CELL.padX - 2, top, lines, tone);
+  lines.forEach((line, j) => drawLine(ops, line, x + CELL.padX, baseline(top, j), CELL.size, COLOR.text));
+}
+
+function drawRow(ctx, t, cells, r) {
+  const lines = t.lines(cells), h = t.height(lines);
+  if (ctx.y - h < BOTTOM) { newPage(ctx); drawTableHead(ctx, t); }
+  if (r % 2) ctx.ops.push(`${COLOR.zebra} rg ${M} ${f(ctx.y - h)} ${MAX} ${f(h)} re f`);
+  let x = M;
+  lines.forEach((cellLines, i) => { drawCell(ctx.ops, x, ctx.y, cells[i], cellLines); x += t.cols[i]; });
+  ctx.ops.push(`${COLOR.rule} RG 0.4 w ${M} ${f(ctx.y - h)} m ${W - M} ${f(ctx.y - h)} l S`);
+  ctx.y -= h;
+}
+
+function drawTable(ctx, block) {
+  if (block.glance) drawTiles(ctx, block.rows);
+  const t = tableLayout(block);
+  ctx.y -= 4;
+  if (ctx.y - t.headHeight - t.height(t.lines(block.rows[0] ?? block.head)) < BOTTOM) newPage(ctx);
+  drawTableHead(ctx, t);
+  block.rows.forEach((cells, r) => drawRow(ctx, t, cells, r));
+  ctx.y -= 12;
+}
+
+// ---- Cover band: the leading title and its muted subtitle move into a deep-teal band ----
+
+function drawCover(ctx, blocks, cover) {
+  const [head, sub] = blocks;
+  const subtitle = sub?.muted ? sub.text : '';
+  const title = wrap(head.text, MAX, 24, 'F2'), subLines = subtitle ? wrap(subtitle, MAX, 10.5, 'F1') : [];
+  const basis = cover.basis ? wrap(cover.basis, MAX, 8.5, 'F1') : [];
+  const h = 70 + title.length * 29 + subLines.length * 14.5 + basis.length * 12 + 22;
+  ctx.ops.push(`${COLOR.deep} rg 0 ${f(H - h)} ${W} ${f(h)} re f`, `${COLOR.mint} rg 0 ${f(H - h)} ${W} 3 re f`);
+  let y = H - 44;
+  drawLine(ctx.ops, text1(cover.eyebrow, 'F2'), M, y, 8.5, COLOR.mint);
+  y -= 12;
+  for (const line of title) drawLine(ctx.ops, line, M, y -= 29, 24, COLOR.white);
+  y -= 6;
+  for (const line of subLines) drawLine(ctx.ops, line, M, y -= 14.5, 10.5, COLOR.hero);
+  y -= 4;
+  for (const line of basis) drawLine(ctx.ops, line, M, y -= 12, 8.5, COLOR.mint);
+  ctx.y = H - h - 4;
+  return blocks.slice(subtitle ? 2 : 1);
+}
+
+// Footer, drawn after the page's content so text extracts top to bottom.
+function footerOps(index, count, footer) {
+  const ops = [`${COLOR.rule} RG 0.5 w ${M} 46 m ${W - M} 46 l S`];
+  drawLine(ops, text1(footer, 'F1'), M, 34, 7.5, COLOR.muted);
+  const number = codes(`Page ${index + 1} of ${count}`);
+  drawLine(ops, [{codes: number, font: 'F1', space: false}], W - M - width(number, 7.5, 'F1'), 34, 7.5, COLOR.muted);
+  return ops;
+}
+
+// Running header strip on pages 2+, drawn before the page's content.
+function headerOps(index, title) {
+  if (!index) return [];
+  const ops = [`${COLOR.deep} rg 0 ${H - 28} ${W} 28 re f`, `${COLOR.mint} rg 0 ${H - 28} ${W} 1.5 re f`];
+  const brand = codes('KAMIWAZA ');
+  drawLine(ops, [{codes: brand, font: 'F2', space: false}], M, H - 17.5, 7.5, COLOR.mint);
+  drawLine(ops, text1(title, 'F1'), M + width(brand, 7.5, 'F2') + 4, H - 17.5, 7.5, COLOR.hero);
+  return ops;
+}
+
+// `cover` ({eyebrow, basis}) puts the leading title block in a band on page 1; without it the
+// title is an ordinary heading.
+export function toPdf(blocks, {title, footer, cover}) {
+  const ctx = {pages: [], ops: [], y: TOP};
+  const flow = cover ? drawCover(ctx, blocks, cover) : blocks;
+  flow.forEach((block, i) => {
+    if (block.type === 'table') drawTable(ctx, block);
+    else if (block.callout) drawCallout(ctx, block);
+    else drawText(ctx, block, flow[i + 1]);
+  });
+  ctx.pages.push(ctx.ops);
+  return writePdf(ctx.pages.map((ops, index) => [...headerOps(index, title), ...ops, ...footerOps(index, ctx.pages.length, footer)]), title);
+}
+
+function writePdf(pages, title) {
   const objects = [];
   const add = body => { objects.push(body); return objects.length; };
   const catalog = add(null), pagesId = add(null);
@@ -169,13 +306,8 @@ export function toPdf(blocks, {title, footer}) {
     F3: add('<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>'),
   };
   const fonts = Object.entries(fontIds).map(([name, id]) => `/${name} ${id} 0 R`).join(' ');
-  const kids = pages.map((pageOps, index) => {
-    const frame = [`${COLOR.rule} RG 0.6 w ${M} 46 m ${W - M} 46 l S`];
-    drawLine(frame, [{codes: codes(footer), font: 'F1', space: false}], M, 34, 7.5, COLOR.muted);
-    const number = codes(`Page ${index + 1} of ${pages.length}`);
-    drawLine(frame, [{codes: number, font: 'F1', space: false}], W - M - width(number, 7.5, 'F1'), 34, 7.5, COLOR.muted);
-    if (index) drawLine(frame, [{codes: codes(title), font: 'F1', space: false}], M, H - 36, 7.5, COLOR.muted);
-    const data = deflateSync(Buffer.from([...frame, ...pageOps].join('\n'), 'latin1'));
+  const kids = pages.map(ops => {
+    const data = deflateSync(Buffer.from(ops.join('\n'), 'latin1'));
     const stream = add({dict: `<< /Length ${data.length} /Filter /FlateDecode >>`, data});
     return add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << ${fonts} >> >> /Contents ${stream} 0 R >>`);
   });

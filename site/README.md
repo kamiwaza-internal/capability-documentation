@@ -425,3 +425,91 @@ renders it to PDF and packs a zip (digest, PDF, the JSON records it was derived 
 SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
 nothing is written back to `data/`.
 
+The summary for people (`/evidence/<version>/kamiwaza-<version>-summary.{md,pdf}`) lists each
+feature once with one plain label: an "At a glance" table of the labels, then one table per area
+(Feature, Status, What it does). Every version but the oldest also carries a "What
+changed since <previous version>" section, and the home page shows the same lists collapsed under
+each release: newly recorded, now tested, tested earlier but not yet re-tested, and now failing.
+`changesSince` in `src/evidence.mjs` derives them by comparing one coarse level per feature
+(`tested`, `code-checked`, `failed`, `untested`) between adjacent versions. They are
+differences in recorded evidence, not in the product: "not yet re-tested" is never a regression
+or a removal, and a feature absent from an older release's records was not recorded, not missing.
+A feature whose first record fails is listed as newly recorded, not as "now failing". A list
+longer than twelve names shows the first twelve and "and N more"; the count beside it is exact.
+A tested-build `partial` capability is graded by the outcomes on its row: with a failed scenario
+its summary status reads "Partly tested; some tests failed" and its level is `failed`; otherwise its
+level is `tested`. An operation list is never borrowed from another version's publication.
+
+## Plain-language capability descriptions
+
+`data/descriptions.json` is a sanitized public projection of the capability kit's records
+(`capabilities/<id>.md`): for each capability, the first prose paragraph after the title, as plain
+text with Markdown links, emphasis and code marks removed. It says what the feature is for, and
+the summary for people prints it in the "What it does" column; a capability without one falls back
+to its shortened operation list ("Includes: ..."), and to "No description published yet" without either.
+
+The projection keeps the capability id, that one paragraph, the kit commit and the baseline
+release id. It drops the front matter, every later paragraph and section, and every record whose
+id is not a capability of some release in `data/publication.json`; an id that is only omitted or
+deferred is never read. A record that opens with a list, table or heading has no description; none
+is invented.
+
+Regenerate from a kit checkout; never edit the file by hand:
+
+```sh
+cd site
+node scripts/project-descriptions.mjs ../../capability-kit
+npm test
+```
+
+The script pins the kit commit it was generated from; change `KIT_COMMIT` in the same commit that
+regenerates from a newer one. `tests/descriptions.test.mjs` checks byte-for-byte regeneration when
+the kit checkout is present (or `KIT_CHECKOUT` names it) and skips that one check otherwise.
+
+It is a separate file for the same reason as the stamp projections: `publication.json` is an
+immutable record and its capability text is not rewritten. `validateDescriptions` in
+`scripts/project-descriptions.mjs` validates the file at build start (`docusaurus.config.js`) and
+again before the summaries are written. An unknown field, an unpinned kit commit, a value that is
+not non-empty text, an id outside the publication, or anything `scripts/public-output-privacy.mjs`
+rejects, fails the build. Against a publication without the named baseline release the projection
+does not apply and no description is printed. The paragraphs are kit prose written for internal
+readers: review every regenerated file before it reaches this public repository, because the
+validator cannot tell a customer name or an internal reference from ordinary words.
+
+## Tested-build drafts
+
+From container schema 5, `releases` also admits a tested build: scenario evidence recorded on one
+release-identified build, such as `1.2.1-tested-r4`. It has no `baselineKind`, uses the schema-1
+release and capability fields, and adds `publicationState`. Schema-1 rules still apply to it:
+statuses are `verified`, `partial`, `failed` or `untested`, evidence must name the release's
+build, and `verified` needs a whole claim with clean passing evidence. Source-declaration and
+pre-release objects validate exactly as before, and a tested build is rejected in a schema 1 to 4
+publication. The history gate is unchanged.
+
+- `publicationState: draft` requires `publishedAt: null` and `reviewReference: null`. `published`
+  requires a real publication time and review PR together. Neither is guessed; the transition is
+  a new reviewed revision.
+- Capability text is published only when curated. Without it `title` and `summary` are null and
+  `conditions` and `limits` are empty, all together.
+- Its bundle is labelled schema 5 so a schema-2 reader fails closed instead of reading runtime
+  verdicts as source declarations.
+
+The 1.2.1 object is the kit exporter's output and is never edited by hand. The exporter runs the
+pinned kit revision's own `kit_query.py` for the build and maps its coverage boundary: a
+capability with a passing record is `partial`, one with only failed records is `failed`, and one
+with no record on the build is left out. It is never `verified` or whole-claim. Per record it
+keeps the scenario id, outcome and run finish time; registry hosts, image digests, environments,
+SDK refs, steps and record paths are not read out. `channel` is `development` because the kit
+records no binding to the shipped artifact, and approval is whatever `kit.yaml` holds (pending).
+
+```sh
+cd ../capability-kit
+python3 scripts/export_release_publication.py --kit . --revision <full kit commit> \
+  --version 1.2.1 --publication-revision 4 \
+  --previous ../capability-documentation/site/data/publication.json \
+  --output ../capability-documentation/site/data/publication.json
+```
+
+`--previous` splices the object in after the last release and keeps every existing byte. Run it
+against the publication without that revision; a revision already present is refused. Then
+regenerate `data/descriptions.json`, since newly published ids gain a description.
