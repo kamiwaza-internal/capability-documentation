@@ -59,7 +59,7 @@ export default function Home() {
         <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
         <ol className="instructions">
           <li><strong>Slack.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>.</li>
-          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</li>
+          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. No skill or plugin is needed. Its <code>AGENTS.md</code> tells the assistant to answer like the Slack bot. If your assistant can&rsquo;t open a zip, unzip it and attach <code>AGENTS.md</code> and <code>README.md</code>.</li>
           <li><strong>Claude Code plugin.</strong> Add the plugin:
             <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
             Then ask a question, or paste in an RFP:
@@ -84,7 +84,7 @@ export default function Home() {
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>
-          <p>Attach that release&rsquo;s zip to a new chat and ask. It starts with its own reading rules, so no skill or plugin is needed.</p>
+          <p>Attach that release&rsquo;s zip to a new chat and ask. Its <code>AGENTS.md</code> sets the answer format and <code>README.md</code> holds the records, so no skill or plugin is needed.</p>
         </details>
       </section>
     </main>
