@@ -5,6 +5,7 @@ import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {filterCapabilities, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
+import {revisionLabel} from '../evidence.mjs';
 import CurrentView from '../CurrentView';
 
 function TextList({title, items}) {
@@ -131,7 +132,7 @@ export default function Catalog() {
   const {siteConfig} = useDocusaurusContext();
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
-  const releases = [...publication.releases].sort((a, b) => b.publicationRevision - a.publicationRevision); // newest first
+  const releases = [...publication.releases].sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || b.publicationRevision - a.publicationRevision); // newest version, then revision, first
   // Same additive join as the status table, by capability id within the stamped version; statuses and order are untouched.
   const primary = joinPrimaryStamps(primaryCapabilities(publication), releaseStamps, publication);
   return <Layout title="Full catalog" description="Every published Kamiwaza capability record, with conditions, evidence and exact-build verification status.">
@@ -171,7 +172,7 @@ export default function Catalog() {
           <p>{release.baselineKind === 'prerelease-evidence' ? 'Project pre-release baseline (historical scenarios and local contracts)' : release.baselineKind ? 'Source baseline (not a tested build)' : 'Tested build'}: <code>{release.build}</code></p>
           <p><a href={'/releases/' + release.id + '/bundle.json'}>Download evidence bundle (JSON)</a> · <a href={'/releases/' + release.id + '/bundle.md'}>Plain-text bundle</a></p>
           {release.baselineKind === 'source-declaration' && <p>Tier 1: declared in the cited development sources. Binding to a shipped 1.3.0 release is not established. Tier 2: runtime verification pending. {release.omittedCapabilities.length} other kit capabilities are not included; their status is not inferred.</p>}
-          <p>{release.baselineKind ? 'Kit revision' : 'Source revision'}: <code>{release.sourceRevision}</code> · {release.reviewReference ? <a href={release.reviewReference}>Publication review</a> : 'Publication review pending'}</p>
+          <p>{revisionLabel(release)}: <code>{release.sourceRevision}</code> · {release.reviewReference ? <a href={release.reviewReference}>Publication review</a> : 'Publication review pending'}</p>
           <p>{release.capabilities.length} capabilities in this public snapshot. This is not a complete platform inventory.</p>
           {release.baselineKind === 'prerelease-evidence' ? <PrereleaseSummary release={release}/> :
             <p>{Object.entries(countStatuses(release.capabilities)).map(([label, count]) => `${count} ${label}`).join(' · ')}. Counts cover the full snapshot, not search results.</p>}

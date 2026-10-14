@@ -109,15 +109,37 @@ export const STATUS_KEY = {
 
 const lines = text => String(text).split('\n').map(line => line.replace(/^\s*[-*]\s+/, '').trim()).filter(Boolean);
 
-function describe(row, publication) {
-  if (row.summary) return {title: row.title, summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
-  const older = [...publication.releases].sort(byRevisionDesc).map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && cap.summary)})).find(found => found.cap);
-  return older ? {title: older.cap.title, summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from: older.release.id, fromVersion: older.release.version} : null;
+// A curated source declaration: the declaration object with its title and summary.
+const isCurated = cap => [cap.declaration, cap.title, cap.summary].every(Boolean);
+const ofVersion = version => release => version === undefined || release.version === version;
+// Ids with a curated declaration in a non-draft publication, of one version when given. Only these
+// may carry description text or an operation list, and only on rows of that version.
+export function curatedIds(publication, version) {
+  return new Set(publication.releases.filter(ofVersion(version)).filter(release => release.publicationState !== 'draft')
+    .flatMap(release => release.capabilities).filter(isCurated).map(cap => cap.id));
+}
+// The version whose publications describe an entry's rows: a stamp file's is its baseline's.
+const recordVersion = (entry, publication) => publication.releases.find(release => entry.releaseIds.includes(release.id)).version;
+// A name identifies the feature and claims nothing, so it may come from any version's record.
+const titleOf = (row, publication) => row.title ?? [...publication.releases].sort(byRevisionDesc)
+  .map(release => release.capabilities.find(cap => cap.id === row.id)?.title).find(Boolean) ?? null;
+// Every container-schema kind names the kit commit it was exported from; only a schema-1 snapshot
+// names a product source revision.
+export const revisionLabel = release => release.baselineKind || release.publicationState ? 'Kit revision' : 'Source revision';
+
+// The row's own text, else the newest curated declaration of the same version (`scope.version`).
+// Text from another version would read as a claim about this one.
+function describe(row, {publication, version}) {
+  if (row.summary) return {summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
+  const older = publication.releases.filter(ofVersion(version)).sort(byRevisionDesc)
+    .map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && isCurated(cap))})).find(found => found.cap);
+  return older ? {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from: older.release.id} : null;
 }
 
-function capabilityBlocks(row, publication, status, extra = []) {
-  const description = describe(row, publication);
-  const out = [h(3, (description?.title ?? row.title) ? `${description?.title ?? row.title} (\`${row.id}\`)` : `\`${row.id}\``), li('Status: ' + status), ...extra.map(text => li(text))];
+function capabilityBlocks(row, scope, status, extra = []) {
+  const description = describe(row, scope);
+  const title = titleOf(row, scope.publication);
+  const out = [h(3, title ? `${title} (\`${row.id}\`)` : `\`${row.id}\``), li('Status: ' + status), ...extra.map(text => li(text))];
   if (!description) out.push(li('Description: none published. This does not mean unsupported.'));
   else {
     if (description.from) out.push(li(`Description is historical, from publication ${description.from}; it is not a current curated declaration.`));
@@ -144,10 +166,76 @@ function evidenceLines(row) {
 
 const countTable = pairs => table(['Status', 'Capabilities'], pairs.map(([label, n]) => [label, String(n)]), [0.75, 0.25]);
 
+// "About this evidence" lines and the status sections, per digest kind.
+function stampParts({view, releaseStamps, scope}) {
+  const about = [], sections = [];
+  const joined = joinReleaseStamps(view, releaseStamps);
+  about.push(
+    li(`Release: ${releaseStamps.releaseTag}, core source commit ${releaseStamps.coreSource.commit} (${releaseStamps.sourceCommitBasis})`),
+    li(`Environment: ${releaseStamps.environment} cluster`),
+    li(`Human release sign-off: ${releaseStamps.humanSignOff ? 'yes' : 'no'}`),
+    li(`Capability records: publication ${releaseStamps.baselineReleaseId}; stamps derived in ${releaseStamps.source.kitPullRequest}`),
+    li('Limits of these stamps:'), ...releaseStamps.limits.map(text => li(text, 1)),
+    h(2, 'Summary'),
+    countTable([['Release stamped', joined.releaseStamped], ['Source-contract verified', joined.sourceContract],
+      ['Not stamped', view.length - joined.releaseStamped - joined.sourceContract], ['Capabilities in scope', view.length]]));
+  const prior = row => `Earlier ${row.lineage.version} pre-release status, for context only: ${prereleaseLabel[row.status]}`;
+  const rows = joined.rows.sort((a, b) => a.id.localeCompare(b.id));
+  const stampedOf = id => releaseStamps.releaseStamps.find(stamp => stamp.capability === id);
+  sections.push(
+    [`Release stamped for ${releaseStamps.releaseTag}`, rows.filter(row => row.releaseStamp), row => {
+      const stamp = stampedOf(row.id);
+      return capabilityBlocks(row, scope, `Release stamped · ${releaseStamps.releaseTag}`, [
+        `Stamp ${stamp.stampId}: ${stamp.lane.toUpperCase()} lane, run finished ${stamp.finishedAt}`,
+        'Scenarios covered: ' + stamp.scenarios.join(', '), prior(row)]);
+    }],
+    [`Source-contract verified for ${releaseStamps.releaseTag} (not runtime evidence)`, rows.filter(row => !row.releaseStamp && row.sourceContractStamp), row =>
+      capabilityBlocks(row, scope, `Source-contract verified · ${releaseStamps.releaseTag} · not runtime evidence`, [
+        `${row.sourceContractStamp.passed} contract tests passed across ${row.sourceContractStamp.kits} kit(s)`, prior(row)])],
+    [`Not stamped for ${releaseStamps.releaseTag}`, rows.filter(row => !row.releaseStamp && !row.sourceContractStamp), row => {
+      const failed = releaseStamps.sourceContractNotStamped.find(item => item.capability === row.id);
+      return capabilityBlocks(row, scope, `Not stamped for ${releaseStamps.releaseTag}`, [prior(row), ...(failed ? ['Source-contract tests did not pass: ' + failed.reason] : [])]);
+    }]);
+  return {about, sections};
+}
+
+function prereleaseParts({view, latest, scope}) {
+  const about = [], sections = [];
+  const rows = view.filter(row => row.lineage.releaseId === latest.id).sort((a, b) => a.id.localeCompare(b.id));
+  const n = status => rows.filter(row => row.status === status).length;
+  about.push(
+    li(`Publication ${latest.id}, revision ${latest.publicationRevision}, published ${latest.publishedAt}`),
+    li(`Kit source revision ${latest.sourceRevision}; review ${latest.reviewReference}`),
+    li(`Build basis: ${latest.build}`),
+    li(`Tested builds: ${latest.testedBuilds.join(', ')}`),
+    li(`Scenario runs between ${latest.evidenceWindow.earliestRunFinishedAt} and ${latest.evidenceWindow.latestRunFinishedAt}`),
+    li(`Release binding: not established. Human release approval: ${latest.approval.status}.`),
+    h(2, 'Summary'),
+    countTable([['Pre-release verified', n('verified')], ['Superseded', n('superseded')], ['Failed or mixed', n('failed-or-mixed')], ['Not yet verified', n('not-yet-verified')], ['Capabilities in scope', rows.length]]));
+  for (const status of ['verified', 'superseded', 'failed-or-mixed', 'not-yet-verified']) {
+    sections.push([prereleaseLabel[status], rows.filter(row => row.status === status), row => capabilityBlocks(row, scope, prereleaseLabel[status], evidenceLines(row))]);
+  }
+  return {about, sections};
+}
+
+function snapshotParts({latest, scope}) {
+  const about = [], sections = [];
+  about.push(
+    li(`Publication ${latest.id}, revision ${latest.publicationRevision}${latest.publishedAt ? ', published ' + latest.publishedAt : ''}`),
+    li(`${revisionLabel(latest)} ${latest.sourceRevision}`), li(`Build: ${latest.build}`),
+    li(`Human release approval: ${latest.approval.status}`));
+  const rows = [...latest.capabilities].sort((a, b) => a.id.localeCompare(b.id));
+  const label = cap => latest.baselineKind === 'source-declaration' ? 'Declared (Tier 1), runtime untested' : snapshotLabel[cap.status] ?? cap.status;
+  sections.push(['Capabilities', rows, cap => capabilityBlocks({...cap, lineage: {evidence: cap.evidence, wholeClaim: cap.wholeClaim}}, scope, label(cap),
+    [...cap.evidence.map(record => record.scenario ? `Scenario ${record.scenario}: ${record.outcome} on ${record.build}` : record.summary), ...(cap.wholeClaim ? [] : ['Whole-claim verification is not established.'])]), label]);
+  return {about, sections};
+}
+
 export function evidenceDocument(entry, publication, releaseStamps) {
   const view = currentCapabilityView(publication);
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
   const latest = [...releases].sort(byRevisionDesc)[0];
+  const scope = {publication, version: recordVersion(entry, publication)};
   const blocks = [
     h(1, `Kamiwaza platform capabilities, version ${entry.version}`),
     p(`Evidence bundle from capabilities.kamiwaza.dev. ${entry.headline}.`),
@@ -159,63 +247,12 @@ export function evidenceDocument(entry, publication, releaseStamps) {
     table(['Status', 'Meaning'], STATUS_KEY[entry.kind], [0.28, 0.72]),
     h(2, 'About this evidence'),
   ];
-  const sections = [];
-  if (entry.kind === 'release-stamps') {
-    const joined = joinReleaseStamps(view, releaseStamps);
-    blocks.push(
-      li(`Release: ${releaseStamps.releaseTag}, core source commit ${releaseStamps.coreSource.commit} (${releaseStamps.sourceCommitBasis})`),
-      li(`Environment: ${releaseStamps.environment} cluster`),
-      li(`Human release sign-off: ${releaseStamps.humanSignOff ? 'yes' : 'no'}`),
-      li(`Capability records: publication ${releaseStamps.baselineReleaseId}; stamps derived in ${releaseStamps.source.kitPullRequest}`),
-      li('Limits of these stamps:'), ...releaseStamps.limits.map(text => li(text, 1)),
-      h(2, 'Summary'),
-      countTable([['Release stamped', joined.releaseStamped], ['Source-contract verified', joined.sourceContract],
-        ['Not stamped', view.length - joined.releaseStamped - joined.sourceContract], ['Capabilities in scope', view.length]]));
-    const prior = row => `Earlier ${row.lineage.version} pre-release status, for context only: ${prereleaseLabel[row.status]}`;
-    const rows = joined.rows.sort((a, b) => a.id.localeCompare(b.id));
-    const stampedOf = id => releaseStamps.releaseStamps.find(stamp => stamp.capability === id);
-    sections.push(
-      [`Release stamped for ${releaseStamps.releaseTag}`, rows.filter(row => row.releaseStamp), row => {
-        const stamp = stampedOf(row.id);
-        return capabilityBlocks(row, publication, `Release stamped · ${releaseStamps.releaseTag}`, [
-          `Stamp ${stamp.stampId}: ${stamp.lane.toUpperCase()} lane, run finished ${stamp.finishedAt}`,
-          'Scenarios covered: ' + stamp.scenarios.join(', '), prior(row)]);
-      }],
-      [`Source-contract verified for ${releaseStamps.releaseTag} (not runtime evidence)`, rows.filter(row => !row.releaseStamp && row.sourceContractStamp), row =>
-        capabilityBlocks(row, publication, `Source-contract verified · ${releaseStamps.releaseTag} · not runtime evidence`, [
-          `${row.sourceContractStamp.passed} contract tests passed across ${row.sourceContractStamp.kits} kit(s)`, prior(row)])],
-      [`Not stamped for ${releaseStamps.releaseTag}`, rows.filter(row => !row.releaseStamp && !row.sourceContractStamp), row => {
-        const failed = releaseStamps.sourceContractNotStamped.find(item => item.capability === row.id);
-        return capabilityBlocks(row, publication, `Not stamped for ${releaseStamps.releaseTag}`, [prior(row), ...(failed ? ['Source-contract tests did not pass: ' + failed.reason] : [])]);
-      }]);
-  } else if (entry.kind === 'prerelease-evidence') {
-    const rows = view.filter(row => row.lineage.releaseId === latest.id).sort((a, b) => a.id.localeCompare(b.id));
-    const n = status => rows.filter(row => row.status === status).length;
-    blocks.push(
-      li(`Publication ${latest.id}, revision ${latest.publicationRevision}, published ${latest.publishedAt}`),
-      li(`Kit source revision ${latest.sourceRevision}; review ${latest.reviewReference}`),
-      li(`Build basis: ${latest.build}`),
-      li(`Tested builds: ${latest.testedBuilds.join(', ')}`),
-      li(`Scenario runs between ${latest.evidenceWindow.earliestRunFinishedAt} and ${latest.evidenceWindow.latestRunFinishedAt}`),
-      li(`Release binding: not established. Human release approval: ${latest.approval.status}.`),
-      h(2, 'Summary'),
-      countTable([['Pre-release verified', n('verified')], ['Superseded', n('superseded')], ['Failed or mixed', n('failed-or-mixed')], ['Not yet verified', n('not-yet-verified')], ['Capabilities in scope', rows.length]]));
-    for (const status of ['verified', 'superseded', 'failed-or-mixed', 'not-yet-verified']) {
-      sections.push([prereleaseLabel[status], rows.filter(row => row.status === status), row => capabilityBlocks(row, publication, prereleaseLabel[status], evidenceLines(row))]);
-    }
-  } else {
-    blocks.push(
-      li(`Publication ${latest.id}, revision ${latest.publicationRevision}${latest.publishedAt ? ', published ' + latest.publishedAt : ''}`),
-      li(`Source revision ${latest.sourceRevision}`), li(`Build: ${latest.build}`),
-      li(`Human release approval: ${latest.approval.status}`));
-    const rows = [...latest.capabilities].sort((a, b) => a.id.localeCompare(b.id));
-    const label = cap => latest.baselineKind === 'source-declaration' ? 'Declared (Tier 1), runtime untested' : snapshotLabel[cap.status] ?? cap.status;
-    sections.push(['Capabilities', rows, cap => capabilityBlocks({...cap, lineage: {evidence: cap.evidence, wholeClaim: cap.wholeClaim}}, publication, label(cap),
-      [...cap.evidence.map(record => record.scenario ? `Scenario ${record.scenario}: ${record.outcome} on ${record.build}` : record.summary), ...(cap.wholeClaim ? [] : ['Whole-claim verification is not established.'])]), label]);
-  }
+  const parts = {'release-stamps': stampParts, 'prerelease-evidence': prereleaseParts}[entry.kind] ?? snapshotParts;
+  const {about, sections} = parts({view, latest, releaseStamps, scope});
+  blocks.push(...about);
   // One-line index first, so a reader or an assistant can find a capability before reading its detail.
   blocks.push(h(2, 'Capability index'), table(['Capability', 'Title', 'Status'],
-    sections.flatMap(([title, rows, , statusOf = () => title]) => rows.map(row => ['`' + row.id + '`', describe(row, publication)?.title ?? row.title ?? 'No description published', statusOf(row)]))
+    sections.flatMap(([title, rows, , statusOf = () => title]) => rows.map(row => ['`' + row.id + '`', titleOf(row, publication) ?? 'No description published', statusOf(row)]))
       .sort((a, b) => a[0].localeCompare(b[0])), [0.45, 0.33, 0.22]));
   for (const [title, rows, render] of sections) {
     blocks.push(h(2, `${title} (${rows.length})`));
@@ -296,35 +333,46 @@ const MEANINGS = [
 ];
 const labelMeaning = label => MEANINGS.find(([pattern]) => pattern.test(label))?.[1] ?? '';
 
+// `curated` marks a row whose version publishes a curated declaration for it: only then may it
+// print a description; its operation list comes from that same version.
 const namedRows = (entry, publication, releaseStamps) => {
-  const recordVersions = new Set(publication.releases.filter(release => entry.releaseIds.includes(release.id)).map(release => release.version));
-  // An operation list borrowed from another version's publication would read as a claim about this one.
-  const foreign = description => Boolean(description.from) && !recordVersions.has(description.fromVersion);
+  const scope = {publication, version: recordVersion(entry, publication)};
+  const curated = curatedIds(publication, scope.version);
   return summaryRows(entry, publication, releaseStamps).map(item => {
-    const description = describe(item.row, publication);
-    return {...item, name: description?.title ?? item.row.title ?? humanize(item.row.id), area: areaOf(item.row.id),
-      what: description && !foreign(description) ? includes(description.summary) : null};
+    const description = describe(item.row, scope);
+    return {...item, name: titleOf(item.row, publication) ?? humanize(item.row.id), area: areaOf(item.row.id),
+      curated: curated.has(item.row.id), what: description ? includes(description.summary) : null};
   });
 };
 
 // ---- What changed: differences in recorded evidence between two versions, never in the product ----
 
-export const CHANGE_NOTE = 'These lists compare the evidence recorded for each release, not the product itself. "Not yet re-tested" means the test has not been run again on this release; it does not mean the feature stopped working or was removed. A feature newly recorded here may have existed earlier without a record.';
+export const CHANGE_NOTE = 'These lists compare the evidence recorded for each release, not the product itself. "Not yet re-tested" means no release-build test result is recorded for this release; it does not mean the feature stopped working or was removed. A feature with failing scenarios in a published local run of this release is listed separately and says so. A feature newly recorded here may have existed earlier without a record.';
 
-// Feature names of `rows` (one version's summary rows) against the previous version's rows.
-export function compareRows(rows, previousRows) {
+// Feature names of `rows` (one version's summary rows) against the previous version's rows. The lists
+// are disjoint. `failedLocally` holds ids with failing scenarios in a published observation of this
+// version: a recorded failure is never reported as "not re-tested".
+export function compareRows(rows, previousRows, failedLocally = new Set()) {
   const before = new Map(previousRows.map(item => [item.row.id, item.level]));
   const was = item => before.get(item.row.id);
   const names = keep => rows.filter(keep).map(item => item.name).sort((a, b) => a.localeCompare(b));
+  const isNew = item => !before.has(item.row.id);
+  const nowTested = item => item.level === 'tested' && was(item) !== 'tested';
+  const lapsed = item => was(item) === 'tested' && ['untested', 'code-checked'].includes(item.level);
+  const failedHere = item => failedLocally.has(item.row.id);
   const nowFailing = item => item.level === 'failed' && before.has(item.row.id);
   return {
-    recorded: names(item => !before.has(item.row.id)),
-    tested: names(item => item.level === 'tested' && was(item) !== 'tested'),
-    notRetested: names(item => was(item) === 'tested' && ['untested', 'code-checked'].includes(item.level)),
+    recorded: names(isNew),
+    tested: names(item => nowTested(item) && !isNew(item)),
+    notRetested: names(item => lapsed(item) && !failedHere(item)),
+    failedLocally: names(item => lapsed(item) && failedHere(item)),
     // Only a feature recorded before can be failing "now"; a first record that fails is under `recorded`.
     failing: names(item => nowFailing(item) && was(item) !== 'failed'),
   };
 }
+
+const locallyFailed = (publication, version) => new Set((publication.observations ?? []).filter(observation => observation.target.version === version)
+  .flatMap(observation => observation.capabilities).filter(cap => cap.failedScenarios > 0).map(cap => cap.id));
 
 // The change lists for one version against the previous published version, with their plain
 // labels; null for the oldest version.
@@ -332,11 +380,12 @@ export function changesSince(entry, publication, releaseStamps) {
   const versions = evidenceVersions(publication, releaseStamps);
   const previous = versions[versions.findIndex(other => other.version === entry.version) + 1];
   if (!previous) return null;
-  const changes = compareRows(namedRows(entry, publication, releaseStamps), namedRows(previous, publication, releaseStamps));
+  const changes = compareRows(namedRows(entry, publication, releaseStamps), namedRows(previous, publication, releaseStamps), locallyFailed(publication, entry.version));
   return {since: previous.version, lists: [
     [`Newly recorded in ${entry.version}`, changes.recorded],
-    [`Now tested (not tested, or not recorded, for ${previous.version})`, changes.tested],
+    [`Now tested (recorded but not tested for ${previous.version})`, changes.tested],
     [`Tested for ${previous.version}, not yet re-tested on ${entry.version}`, changes.notRetested],
+    [`Tested for ${previous.version}; a local ${entry.version} run recorded failing scenarios`, changes.failedLocally],
     ['Now failing a test', changes.failing],
   ]};
 }
@@ -350,8 +399,16 @@ function changeBlocks(changes) {
     changes.lists.map(([label, names]) => [label, String(names.length), names.length ? shortList(names) : 'None']), [0.36, 0.12, 0.52])];
 }
 
-// The third column: the kit's plain description; the shortened operation list is the fallback.
-const about = (item, descriptions) => descriptions[item.row.id] ?? (item.what ? 'Includes: ' + item.what : 'No description published yet');
+// The third column: the kit's plain description, for a curated row only; the shortened operation list is the fallback.
+const about = (item, descriptions) => (item.curated ? descriptions[item.row.id] : undefined) ?? (item.what ? 'Includes: ' + item.what : 'No description published yet');
+
+// A tested build states its publication state, channel, missing release binding and approval.
+function testedNotes(entry, publication) {
+  const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
+  if (!latest.publicationState || latest.baselineKind) return [];
+  return [li(`This is a ${latest.publicationState} publication on the ${latest.channel} channel. Binding to the shipped ${entry.version} release is not established, and human release approval is ${latest.approval.status}.`),
+    li(`Its kit revision (${latest.sourceRevision}) is the kit commit the records were exported from, not a product source revision.`)];
+}
 
 // `descriptions` is the id-to-text map of data/descriptions.json, or empty when it does not apply.
 export function summaryDocument(entry, publication, releaseStamps, descriptions = {}) {
@@ -361,6 +418,8 @@ export function summaryDocument(entry, publication, releaseStamps, descriptions 
   const blocks = [
     h(1, `Kamiwaza ${entry.version}: features at a glance`),
     note(`What the ${rows.length} features recorded for Kamiwaza ${entry.version} do, and how far each was tested.`),
+    // The PDF puts this line in its cover band; the Markdown prints it here.
+    {...note(entry.basis), basis: true},
     h(2, 'At a glance'),
     // `glance` and `callout` are PDF presentation hints (stat tiles, a highlighted panel); Markdown ignores them.
     {...table(['Label', 'Features', 'What it means'], labels.map(label => [{text: label, dot: first(label).tone}, String(rows.filter(item => item.label === label).length), labelMeaning(label)]), [0.4, 0.12, 0.48]), glance: true},
@@ -377,9 +436,10 @@ export function summaryDocument(entry, publication, releaseStamps, descriptions 
     li(`Labels for ${releaseStamps.targetRelease} come from new test runs only. Earlier 1.3.0 results are in the 1.3.0 summary.`));
   if (entry.kind === 'prerelease-evidence') blocks.push(
     li(`Testing ran on development builds before ${entry.version} shipped. It is not proof of the released ${entry.version} build.`));
+  blocks.push(...testedNotes(entry, publication));
   blocks.push(
     li('A feature that is not yet tested, or not listed, is not a feature Kamiwaza lacks. It means the evidence does not show it yet.'),
-    li('Feature descriptions come from the published records. Conditions and limits apply; they are in the AI zip and the full catalog at https://capabilities.kamiwaza.dev/catalog/.'),
+    li(`A feature description is shown only where a curated source declaration for it is published for ${recordVersion(entry, publication)}; the others read "No description published yet". Conditions and limits apply; they are in the AI zip and the full catalog at https://capabilities.kamiwaza.dev/catalog/.`),
     li('To ask questions about this release, give the AI zip to any assistant.'));
   return blocks;
 }

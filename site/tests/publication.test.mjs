@@ -75,6 +75,11 @@ const actual = () => JSON.parse(readFileSync(new URL('../data/publication.json',
 const tested = x => x.releases.find(release => release.id === '1.2.1-tested-r4');
 const cap = (x, id) => tested(x).capabilities.find(found => found.id === id);
 const PR = 'https://github.com/kamiwaza-internal/capability-documentation/pull/1';
+const curated = {title: 'Synthetic title', summary: 'Synthetic summary'};
+const approved = {status: 'approved', approvedBy: 'release-manager', approvedAt: '2026-10-01T00:00:00Z'};
+// A capability whose records all passed cleanly, and one whose records all failed.
+const cleanId = x => tested(x).capabilities.find(found => found.evidence.length && found.evidence.every(record => record.outcome === 'passed')).id;
+const failedId = x => tested(x).capabilities.find(found => found.status === 'failed').id;
 
 test('the published 1.2.1 tested-build draft validates beside the unchanged 1.3.0 releases', () => {
   const release = tested(validatePublication(actual()));
@@ -83,9 +88,22 @@ test('the published 1.2.1 tested-build draft validates beside the unchanged 1.3.
   assert.ok(release.capabilities.every(found => found.wholeClaim === false && found.title === null && found.summary === null));
 });
 for (const [name, mutate, reason] of [
-  ['verified without a whole claim', x => cap(x, 'skills.skills-library').status = 'verified', /Verified requires whole-claim clean evidence/],
-  ['verified over a failed scenario', x => Object.assign(cap(x, 'models.local-deployment'), {status: 'verified', wholeClaim: true}), /Verified requires whole-claim clean evidence/],
-  ['verified without evidence', x => Object.assign(cap(x, 'skills.skills-library'), {status: 'verified', wholeClaim: true, evidence: []}), /Verified requires whole-claim clean evidence/],
+  ['verified without a whole claim', x => Object.assign(cap(x, 'skills.skills-library'), {...curated, status: 'verified'}), /Verified requires whole-claim clean evidence/],
+  ['verified over a failed scenario', x => Object.assign(cap(x, 'models.local-deployment'), {...curated, status: 'verified', wholeClaim: true}), /Verified requires whole-claim clean evidence/],
+  ['verified without evidence', x => Object.assign(cap(x, 'skills.skills-library'), {...curated, status: 'verified', wholeClaim: true, evidence: []}), /Verified requires whole-claim clean evidence/],
+  ['verified on the id alone, without a curated title', x => Object.assign(cap(x, cleanId(x)), {status: 'verified', wholeClaim: true}), /Verified requires a curated title and summary/],
+  ['a released channel', x => tested(x).channel = 'released', /channel must be development/],
+  ['an approved draft', x => tested(x).approval = approved, /A draft tested build cannot be approved/],
+  ['partial without a passing record', x => cap(x, failedId(x)).status = 'partial', /status contradicts its evidence/],
+  ['partial without any record', x => Object.assign(cap(x, cleanId(x)), {evidence: []}), /status contradicts its evidence/],
+  ['failed beside a passing record', x => cap(x, cleanId(x)).status = 'failed', /status contradicts its evidence/],
+  ['failed without a failed record', x => Object.assign(cap(x, failedId(x)), {evidence: []}), /status contradicts its evidence/],
+  ['untested with evidence', x => cap(x, cleanId(x)).status = 'untested', /status contradicts its evidence/],
+  // The reviewer's object: released channel, approved, and a verified whole claim with no title.
+  ['the reviewer\'s combined object', x => {
+    Object.assign(tested(x), {channel: 'released', approval: approved});
+    Object.assign(cap(x, cleanId(x)), {status: 'verified', wholeClaim: true});
+  }, /Verified requires a curated title and summary/],
   ['a draft naming a review', x => tested(x).reviewReference = PR, /Draft cannot invent/],
   ['a draft naming a publication time', x => tested(x).publishedAt = '2026-10-01T00:00:00Z', /Draft cannot invent/],
   ['published without a publication time', x => Object.assign(tested(x), {publicationState: 'published', reviewReference: PR}), /Invalid evidence timestamp/],
@@ -115,4 +133,21 @@ test('a tested-build draft is not admitted below container schema 5, and the old
   assert.throws(() => validatePublication(source), /Invalid evidence timestamp/);
   const legacy = snapshot(); legacy.releases[0].capabilities[0].title = null;
   assert.throws(() => validatePublication(legacy), /Invalid text/);
+});
+
+test('the reviewer\'s combined tested-build object fails on each rule alone', () => {
+  const channel = actual(); tested(channel).channel = 'released';
+  const approval = actual(); tested(approval).approval = approved;
+  const untitled = actual(); Object.assign(cap(untitled, cleanId(untitled)), {status: 'verified', wholeClaim: true});
+  assert.throws(() => validatePublication(channel), /channel must be development/);
+  assert.throws(() => validatePublication(approval), /A draft tested build cannot be approved/);
+  assert.throws(() => validatePublication(untitled), /Verified requires a curated title and summary/);
+});
+test('a tested-build bundle validates on its own, and only as one tested build', () => {
+  const release = tested(actual());
+  assert.doesNotThrow(() => validatePublication({schema: 7, releases: [release]}));
+  assert.throws(() => validatePublication({schema: 7, releases: [release, release]}), /exactly one release/);
+  assert.throws(() => validatePublication({schema: 7, releases: [actual().releases[0]]}), /tested build only/);
+  assert.throws(() => validatePublication({schema: 7, releases: [release], observations: []}), /Unexpected or missing fields/);
+  assert.throws(() => validatePublication({schema: 7, releases: [{...release, channel: 'released'}]}), /channel must be development/);
 });

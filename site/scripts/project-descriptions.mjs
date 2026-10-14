@@ -1,13 +1,16 @@
 // Sanitized public projection of the kit's plain-language capability introductions: the first
-// paragraph of each capabilities/<id>.md, as plain text. Nothing else of a record is read out.
+// paragraph of each capabilities/<id>.md at the pinned kit commit, as plain text, for curated ids
+// only. Nothing else of a record is read out.
 // Usage: node scripts/project-descriptions.mjs <path-to-kit-checkout>
-// Writes data/descriptions.json. Deterministic: same kit bytes and publication, same output bytes.
-import {existsSync, readFileSync, writeFileSync} from 'node:fs';
-import {join} from 'node:path';
+// Writes data/descriptions.json and prints the ids it dropped. Deterministic: same kit commit and
+// publication, same output bytes.
+import {execFileSync} from 'node:child_process';
+import {readFileSync, writeFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
 import {id, requireValue, shape, text} from './local-stamps.mjs';
-import {assertPublicOutputSafe} from './public-output-privacy.mjs';
+import {assertPublicOutputSafe, unsafePublicText} from './public-output-privacy.mjs';
 import {stampsApply} from '../src/catalog.mjs';
+import {curatedIds} from '../src/evidence.mjs';
 
 // ponytail: pinned like the stamp projections, not derived from the checkout, so regeneration
 // stays byte-identical. Change it in the same commit that regenerates from a newer kit commit.
@@ -29,12 +32,18 @@ export function validateDescriptions(data, publication) {
   for (const [capability, description] of Object.entries(data.descriptions)) {
     requireValue(id.test(capability), 'Invalid capability identifier');
     text(description);
+    const unsafe = unsafePublicText(description);
+    requireValue(!unsafe, `Unsafe public text (${unsafe}) in the description of ${capability}`);
   }
   assertPublicOutputSafe(JSON.stringify(data));
   if (!publication) return data;
   if (!stampsApply(data, publication)) return null;
   const known = publishedIds(publication);
-  for (const capability of Object.keys(data.descriptions)) requireValue(known.has(capability), 'Description for a capability outside the publication: ' + capability);
+  const curated = curatedIds(publication);
+  for (const capability of Object.keys(data.descriptions)) {
+    requireValue(known.has(capability), 'Description for a capability outside the publication: ' + capability);
+    requireValue(curated.has(capability), 'Description without a curated source declaration: ' + capability);
+  }
   return data;
 }
 
@@ -51,19 +60,33 @@ function intro(markdown) {
 export const plain = markdown => markdown.replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\*\*|`/g, '')
   .replace(/(^|[^\w*])[*_](\S(?:.*?\S)?)[*_](?![\w*])/g, '$1$2').replace(/\s+/g, ' ').trim();
 
-export function projectDescriptions(kit, publication) {
+// The record bytes at `commit`, so the stamped commit matches what was read; null when absent there.
+function recordsAt(kit, commit) {
+  const git = (...args) => execFileSync('git', ['-C', kit, ...args], {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024});
+  git('cat-file', '-e', commit + '^{commit}');
+  const present = new Set(git('ls-tree', '--name-only', commit, 'capabilities/').split('\n'));
+  return capability => present.has(`capabilities/${capability}.md`) ? git('show', `${commit}:capabilities/${capability}.md`) : null;
+}
+
+// Returns {data, dropped}: `dropped` lists each id left out and why. Only ids with a curated source
+// declaration in a published release are read; one unsafe record is dropped, not the projection.
+export function projectDescriptions(kit, publication, commit = KIT_COMMIT) {
   const baseline = publication.releases.filter(r => r.baselineKind === 'prerelease-evidence').sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
   requireValue(baseline, 'No pre-release evidence release to project against');
-  const descriptions = {};
-  // Published ids only: a record that is omitted, deferred or absent from the publication is never read.
+  const read = recordsAt(kit, commit);
+  const curated = curatedIds(publication);
+  const descriptions = {}, dropped = [];
   for (const capability of Array.from(publishedIds(publication)).sort()) {
     requireValue(id.test(capability), 'Invalid capability identifier');
-    const path = join(kit, 'capabilities', capability + '.md');
-    const found = existsSync(path) ? intro(readFileSync(path, 'utf8')) : null;
-    if (found) descriptions[capability] = plain(found);
+    if (!curated.has(capability)) { dropped.push({id: capability, reason: 'no curated source declaration in a published release; not read'}); continue; }
+    const found = intro(read(capability) ?? '');
+    const unsafe = found && unsafePublicText(plain(found));
+    if (unsafe) dropped.push({id: capability, reason: 'unsafe public text: ' + unsafe});
+    else if (found) descriptions[capability] = plain(found);
   }
-  return validateDescriptions({schema: 'capability-description-projection.v1', baselineReleaseId: baseline.id,
-    source: {kitRepository: KIT_REPOSITORY, kitCommit: KIT_COMMIT}, descriptions}, publication);
+  const data = validateDescriptions({schema: 'capability-description-projection.v1', baselineReleaseId: baseline.id,
+    source: {kitRepository: KIT_REPOSITORY, kitCommit: commit}, descriptions}, publication);
+  return {data, dropped};
 }
 
 export const serialize = data => JSON.stringify(data, null, 2) + '\n';
@@ -71,5 +94,8 @@ export const serialize = data => JSON.stringify(data, null, 2) + '\n';
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (!process.argv[2]) throw new Error('Usage: node scripts/project-descriptions.mjs <path-to-kit-checkout>');
   const publication = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
-  writeFileSync(new URL('../data/descriptions.json', import.meta.url), serialize(projectDescriptions(process.argv[2], publication)));
+  const {data, dropped} = projectDescriptions(process.argv[2], publication);
+  writeFileSync(new URL('../data/descriptions.json', import.meta.url), serialize(data));
+  for (const {id: capability, reason} of dropped) console.warn(`dropped ${capability}: ${reason}`);
+  console.warn(`${Object.keys(data.descriptions).length} descriptions written, ${dropped.length} ids dropped`);
 }
