@@ -276,3 +276,9 @@ test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a stat
   assert.ok(readme.includes('If AGENTS.md came with this file') && readme.includes('The reading rules above still hold.'));
   assert.ok(!/[\u{1F300}-\u{1FAFF}\u2705\u274C\u26A0]/u.test(readme), 'README is also the PDF: no emoji');
 });
+
+test('EVD-17 a later description-only declaration is never labelled historical in the digest', () => {
+  for (const entry of evidenceVersions(publication, releaseStamps)) {
+    assert.ok(!toMarkdown(evidenceDocument(entry, publication, releaseStamps)).includes('historical, from publication 1.3.0-declared-r5'), entry.version);
+  }
+});

@@ -22,7 +22,7 @@ test('actual primary view retains 50 accepted proofs, explicit gaps, exclusions 
   assert.equal(rows.length,115); assert.equal(verified.length,50);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='historical-scenario').length,33);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='developer-assessment').length,17);
-  assert.equal(verified.filter(cap=>cap.description?.historical).length,36);
+  assert.equal(verified.filter(cap=>cap.description?.historical).length,3);
   assert.equal(verified.filter(cap=>cap.description===null).length,1);
   assert.equal(rows.filter(cap=>cap.includedInBaseline===false).length,19);
   assert.equal(rows.filter(cap=>cap.deferred).length,4);
@@ -120,5 +120,6 @@ test('a source declaration published after pre-release evidence adds description
   assert.ok(!descriptionOnly(p).has('1.3.0-declared-r2'));
   const evidence = rows => rows.map(r => JSON.stringify([r.id, r.version, r.status, r.snapshotId, r.omitted, r.omissionSnapshotId, r.includedInBaseline, r.deferred, r.failures])).sort();
   assert.deepEqual(evidence(primaryCapabilities(p)), evidence(primaryCapabilities(without)));
-  assert.ok(primaryCapabilities(p).filter(r => r.description?.snapshotId === '1.3.0-declared-r5').length > 0);
+  const fromR5 = primaryCapabilities(p).filter(r => r.description?.snapshotId === '1.3.0-declared-r5');
+  assert.ok(fromR5.length > 0 && fromR5.every(r => !r.description.historical), 'r5 text is current, not historical');
 });

@@ -200,7 +200,9 @@ function describe(row, {publication, version}) {
   if (row.summary && curatedIds(publication, version).has(row.id)) return {summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
   const older = publication.releases.filter(ofVersion(version)).sort(byRevisionDesc)
     .map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && isCurated(cap, release))})).find(found => found.cap);
-  return older ? {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from: older.release.id} : null;
+  // A declaration published after the evidence to describe it is current, not historical.
+  const from = older && !descriptionOnly(publication).has(older.release.id) ? older.release.id : null;
+  return older ? {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from} : null;
 }
 
 function capabilityBlocks(row, scope, status, extra = []) {
