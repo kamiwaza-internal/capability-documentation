@@ -181,11 +181,31 @@ function publicationIdentity(value, stateful) {
 // shape and under its rules. Text is published only when curated; without it all four text
 // fields are empty together, as for pre-release evidence.
 const emptyList = value => Array.isArray(value) && value.length === 0;
+const passing = record => ['passed', 'passed_with_notes'].includes(record.outcome);
+// The status must follow from the records on the row (`verified` is checked by `capability`).
+const TESTED_EVIDENCE = {
+  verified: () => true,
+  partial: records => records.some(passing),
+  failed: records => !records.some(passing) && records.some(record => record.outcome === 'failed'),
+  untested: records => records.length === 0,
+};
 function testedCapability(cap, build) {
-  if (cap?.title !== null) return capability(cap, build, false);
-  requireValue(cap.summary === null && [cap.conditions, cap.limits].every(emptyList), 'Text requires a curated description');
-  capability({...cap, title: cap.id, summary: cap.id}, build, false);
+  if (cap?.title === null) {
+    // Never verified on the id alone: a verified claim needs its curated title and summary.
+    requireValue(cap.status !== 'verified', 'Verified requires a curated title and summary');
+    requireValue(cap.summary === null && [cap.conditions, cap.limits].every(emptyList), 'Text requires a curated description');
+    capability({...cap, title: cap.id, summary: cap.id}, build, false);
+  } else capability(cap, build, false);
+  requireValue(TESTED_EVIDENCE[cap.status](cap.evidence), 'Tested-build status contradicts its evidence: ' + cap.id);
 }
+// Run after `release` has checked the shape. No release binding exists for this kind, so its
+// channel is development; a draft is not approved.
+function testedRelease(value) {
+  requireValue(value.channel === 'development', 'A tested build has no release binding: channel must be development');
+  if (value.publicationState === 'draft') requireValue(value.approval.status === 'pending', 'A draft tested build cannot be approved');
+}
+// From container schema 5, a release without `baselineKind` is a tested build.
+const testedReleases = releases => releases.filter(value => value.baselineKind === undefined).forEach(testedRelease);
 // `container` is true from container schema 5, the first level that admits a tested-build release
 // beside the schema-2 kinds. It has no `baselineKind` and carries an explicit `publicationState`.
 function release(value, schema, container = false) {
@@ -396,22 +416,40 @@ function releasedSnapshot(value) {
     requireValue(derived.releaseStamped > 0, 'Release approval requires genuine scoped stamps');
   } else requireValue(decision.approvedBy === null && decision.approvedAt === null && decision.snapshotSha256 === null, 'Pending decision cannot invent human approval');
 }
+// A bundle-only level: exactly one tested build, validated as it is inside a container schema 5
+// or 6 publication. It is never a publication container, so it carries no observations.
+export const TESTED_BUNDLE_SCHEMA = 7;
+function testedBundle(input) {
+  shape(input, ['schema', 'releases']);
+  requireValue(Array.isArray(input.releases) && input.releases.length === 1, 'A tested-build bundle holds exactly one release');
+  requireValue(input.releases[0]?.baselineKind === undefined, 'A tested-build bundle holds a tested build only');
+  release(input.releases[0], 2, true);
+  testedReleases(input.releases);
+  return input;
+}
+// Container schema 5 and 6: tested-build release checks, then the observations.
+function containerParts(input) {
+  testedReleases(input.releases);
+  requireValue(Array.isArray(input.observations) && input.observations.length > 0 && input.observations.length <= 500, 'Invalid observations list');
+  input.observations.forEach(value => scopedObservations(value, input.releases));
+  unique(input.observations.map(value => value.id));
+}
+function releaseStampsOf(input) {
+  requireValue(Array.isArray(input.releaseStamps) && input.releaseStamps.length > 0 && input.releaseStamps.length <= 500, 'Invalid release stamp snapshots');
+  input.releaseStamps.forEach(releasedSnapshot);
+  unique(input.releaseStamps.map(value => value.id));
+  unique([...input.releases, ...input.observations, ...input.releaseStamps].map(value => value.id));
+}
+const CONTAINER_KEYS = {5: ['schema', 'releases', 'observations'], 6: ['schema', 'releases', 'observations', 'releaseStamps']};
 export function validatePublication(input) {
-  shape(input, input?.schema === 6 ? ['schema', 'releases', 'observations', 'releaseStamps'] : input?.schema === 5 ? ['schema', 'releases', 'observations'] : ['schema', 'releases']);
+  if (input?.schema === TESTED_BUNDLE_SCHEMA) return testedBundle(input);
+  shape(input, CONTAINER_KEYS[input?.schema] ?? ['schema', 'releases']);
   requireValue([1, 2, 3, 4, 5, 6].includes(input.schema), 'Unsupported publication schema');
   requireValue(Array.isArray(input.releases) && input.releases.length <= 500, 'Invalid releases list');
-  input.releases.forEach(value => release(value, input.schema >= 5 ? 2 : input.schema, input.schema >= 5));
+  const container = input.schema >= 5;
+  input.releases.forEach(value => release(value, container ? 2 : input.schema, container));
   unique(input.releases.map(r => r.id));
-  if (input.schema >= 5) {
-    requireValue(Array.isArray(input.observations) && input.observations.length > 0 && input.observations.length <= 500, 'Invalid observations list');
-    input.observations.forEach(value => scopedObservations(value, input.releases));
-    unique(input.observations.map(value => value.id));
-  }
-  if (input.schema === 6) {
-    requireValue(Array.isArray(input.releaseStamps) && input.releaseStamps.length > 0 && input.releaseStamps.length <= 500, 'Invalid release stamp snapshots');
-    input.releaseStamps.forEach(releasedSnapshot);
-    unique(input.releaseStamps.map(value => value.id));
-    unique([...input.releases, ...input.observations, ...input.releaseStamps].map(value => value.id));
-  }
+  if (container) containerParts(input);
+  if (input.schema === 6) releaseStampsOf(input);
   return input;
 }

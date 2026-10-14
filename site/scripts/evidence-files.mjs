@@ -93,8 +93,8 @@ const f = n => n.toFixed(2);
 const text1 = (string, font) => [{codes: codes(string), font, space: false}];
 const lineWidth = (line, size) => line.reduce((sum, word) => sum + width(word.codes, size, word.font) + (word.space ? width([32], size, word.font) : 0), 0);
 const circle = (cx, cy, r) => { const k = 0.5523 * r; return `${cx + r} ${cy} m ${cx + r} ${cy + k} ${cx + k} ${cy + r} ${cx} ${cy + r} c ${cx - k} ${cy + r} ${cx - r} ${cy + k} ${cx - r} ${cy} c ${cx - r} ${cy - k} ${cx - k} ${cy - r} ${cx} ${cy - r} c ${cx + k} ${cy - r} ${cx + r} ${cy - k} ${cx + r} ${cy} c f`; };
-// A filled rounded rectangle; k places the Bezier control points for a quarter circle.
-function roundRect(x, y, w, h, r) {
+// A filled rounded rectangle over box {x, y, w, h}; k places the Bezier control points for a quarter circle.
+function roundRect({x, y, w, h}, r) {
   const k = 0.4477 * r, R = x + w, T = y + h;
   return [`${f(x + r)} ${f(y)} m ${f(R - r)} ${f(y)} l ${f(R - k)} ${f(y)} ${f(R)} ${f(y + k)} ${f(R)} ${f(y + r)} c`,
     `${f(R)} ${f(T - r)} l ${f(R)} ${f(T - k)} ${f(R - k)} ${f(T)} ${f(R - r)} ${f(T)} c`,
@@ -158,7 +158,7 @@ function drawCallout(ctx, block) {
   const s = STYLE.p, pad = 10, lines = wrap(block.text, MAX - 2 * pad - 4, s.size, s.font);
   const h = lines.length * s.lead + 2 * pad - 2;
   room(ctx, h + 6);
-  ctx.ops.push(`${COLOR.callout} rg ${roundRect(M, ctx.y - h, MAX, h, 4)}`, `${COLOR.brand} rg ${M} ${f(ctx.y - h)} 3 ${f(h)} re f`);
+  ctx.ops.push(`${COLOR.callout} rg ${roundRect({x: M, y: ctx.y - h, w: MAX, h}, 4)}`, `${COLOR.brand} rg ${M} ${f(ctx.y - h)} 3 ${f(h)} re f`);
   lines.forEach((line, j) => drawLine(ctx.ops, line, M + pad + 4, ctx.y - pad - (j + 1) * s.lead + 3.5, s.size, COLOR.deep));
   ctx.y -= h + 8;
 }
@@ -167,7 +167,7 @@ function drawCallout(ctx, block) {
 
 function drawTile(ops, box, cells, label) {
   const tone = toneOf(cells[0]) ?? TONES.grey, pad = 10;
-  ops.push(`${tone.fill} rg ${roundRect(box.x, box.top - box.h, box.w, box.h, 6)}`);
+  ops.push(`${tone.fill} rg ${roundRect({x: box.x, y: box.top - box.h, w: box.w, h: box.h}, 6)}`);
   ops.push(`${tone.solid} rg`, circle(box.x + box.w - pad - 3, box.top - pad - 3, 3));
   drawLine(ops, text1(cellText(cells[1]), 'F2'), box.x + pad, box.top - pad - 21, 24, tone.ink);
   label.forEach((line, j) => drawLine(ops, line, box.x + pad, box.top - pad - 38 - j * 10.5, 8, tone.ink));
@@ -188,12 +188,26 @@ function drawTiles(ctx, rows) {
 const baseline = (top, j) => top - CELL.padY - (j + 1) * CELL.lead + 2.8;
 const pillExtra = cell => toneOf(cell) ? CELL.dot + 2 * CELL.pill : 0;
 
+// ponytail: a cell taller than a page is cut to what fits under the repeated header, not split
+// across pages; split rows if the PDF itself must carry such text in full.
+const TRUNCATED = '… (full text in the AI zip)';
+function fitPage(cellLines, maxLines, cellWidth) {
+  if (cellLines.length <= maxLines) return cellLines;
+  const tail = wrap(TRUNCATED, cellWidth, CELL.size, 'F1');
+  return [...cellLines.slice(0, maxLines - tail.length), ...tail];
+}
+
 function tableLayout({head, widths}) {
   const cols = widths.map(share => share * MAX);
   const headLines = head.map((cell, i) => wrap(cell, cols[i] - 2 * CELL.padX, CELL.size, 'F2'));
-  const lines = cells => cells.map((cell, i) => wrap(cellText(cell), cols[i] - 2 * CELL.padX - pillExtra(cell), CELL.size, 'F1'));
   const height = cellLines => Math.max(...cellLines.map(l => l.length)) * CELL.lead + 2 * CELL.padY;
-  return {cols, headLines, lines, height, headHeight: height(headLines)};
+  const headHeight = height(headLines);
+  const maxLines = Math.floor((TOP - BOTTOM - headHeight - 2 * CELL.padY) / CELL.lead);
+  const lines = cells => cells.map((cell, i) => {
+    const cellWidth = cols[i] - 2 * CELL.padX - pillExtra(cell);
+    return fitPage(wrap(cellText(cell), cellWidth, CELL.size, 'F1'), maxLines, cellWidth);
+  });
+  return {cols, headLines, lines, height, headHeight};
 }
 
 const tableStart = block => { const t = tableLayout(block); return 4 + t.headHeight + t.height(t.lines(block.rows[0] ?? block.head)); };
@@ -209,16 +223,17 @@ function drawTableHead(ctx, t) {
 }
 
 // The status label in a rounded, tinted chip with its dot; the text stays real and selectable.
-function drawPill(ops, x, top, lines, tone) {
+function drawPill(ops, {x, top}, lines, tone) {
   const w = Math.max(...lines.map(line => lineWidth(line, CELL.size))) + CELL.dot + 2 * CELL.pill;
   const h = lines.length * CELL.lead + 3.5, y = top - CELL.padY - lines.length * CELL.lead - 0.5;
-  ops.push(`${tone.fill} rg ${roundRect(x, y, w, h, Math.min(h / 2, 7))}`, `${tone.solid} rg`, circle(x + CELL.pill + 2.5, baseline(top, 0) + 3, 2.5));
+  ops.push(`${tone.fill} rg ${roundRect({x, y, w, h}, Math.min(h / 2, 7))}`, `${tone.solid} rg`, circle(x + CELL.pill + 2.5, baseline(top, 0) + 3, 2.5));
   lines.forEach((line, j) => drawLine(ops, line, x + CELL.pill + CELL.dot, baseline(top, j), CELL.size, tone.ink));
 }
 
-function drawCell(ops, x, top, cell, lines) {
+// `at` is the cell's {x, top}.
+function drawCell(ops, {x, top}, cell, lines) {
   const tone = toneOf(cell);
-  if (tone) return drawPill(ops, x + CELL.padX - 2, top, lines, tone);
+  if (tone) return drawPill(ops, {x: x + CELL.padX - 2, top}, lines, tone);
   lines.forEach((line, j) => drawLine(ops, line, x + CELL.padX, baseline(top, j), CELL.size, COLOR.text));
 }
 
@@ -227,7 +242,7 @@ function drawRow(ctx, t, cells, r) {
   if (ctx.y - h < BOTTOM) { newPage(ctx); drawTableHead(ctx, t); }
   if (r % 2) ctx.ops.push(`${COLOR.zebra} rg ${M} ${f(ctx.y - h)} ${MAX} ${f(h)} re f`);
   let x = M;
-  lines.forEach((cellLines, i) => { drawCell(ctx.ops, x, ctx.y, cells[i], cellLines); x += t.cols[i]; });
+  lines.forEach((cellLines, i) => { drawCell(ctx.ops, {x, top: ctx.y}, cells[i], cellLines); x += t.cols[i]; });
   ctx.ops.push(`${COLOR.rule} RG 0.4 w ${M} ${f(ctx.y - h)} m ${W - M} ${f(ctx.y - h)} l S`);
   ctx.y -= h;
 }
@@ -242,13 +257,15 @@ function drawTable(ctx, block) {
   ctx.y -= 12;
 }
 
-// ---- Cover band: the leading title and its muted subtitle move into a deep-teal band ----
+// ---- Cover band: the leading title, its muted subtitle and the basis line move into a deep-teal band ----
 
+// The basis is the block after the subtitle marked `basis`, so the Markdown carries the same line.
 function drawCover(ctx, blocks, cover) {
-  const [head, sub] = blocks;
+  const [head, sub, next] = blocks;
   const subtitle = sub?.muted ? sub.text : '';
+  const basisText = next?.basis ? next.text : '';
   const title = wrap(head.text, MAX, 24, 'F2'), subLines = subtitle ? wrap(subtitle, MAX, 10.5, 'F1') : [];
-  const basis = cover.basis ? wrap(cover.basis, MAX, 8.5, 'F1') : [];
+  const basis = basisText ? wrap(basisText, MAX, 8.5, 'F1') : [];
   const h = 70 + title.length * 29 + subLines.length * 14.5 + basis.length * 12 + 22;
   ctx.ops.push(`${COLOR.deep} rg 0 ${f(H - h)} ${W} ${f(h)} re f`, `${COLOR.mint} rg 0 ${f(H - h)} ${W} 3 re f`);
   let y = H - 44;
@@ -260,7 +277,7 @@ function drawCover(ctx, blocks, cover) {
   y -= 4;
   for (const line of basis) drawLine(ctx.ops, line, M, y -= 12, 8.5, COLOR.mint);
   ctx.y = H - h - 4;
-  return blocks.slice(subtitle ? 2 : 1);
+  return blocks.slice(1 + Boolean(subtitle) + Boolean(basisText));
 }
 
 // Footer, drawn after the page's content so text extracts top to bottom.
@@ -282,7 +299,7 @@ function headerOps(index, title) {
   return ops;
 }
 
-// `cover` ({eyebrow, basis}) puts the leading title block in a band on page 1; without it the
+// `cover` ({eyebrow}) puts the leading title, subtitle and basis blocks in a band on page 1; without it the
 // title is an ordinary heading.
 export function toPdf(blocks, {title, footer, cover}) {
   const ctx = {pages: [], ops: [], y: TOP};

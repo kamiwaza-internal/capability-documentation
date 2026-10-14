@@ -24,13 +24,13 @@ export default function Home() {
       <h1>What each Kamiwaza release can do, and the evidence behind it</h1>
     </div></header>
     <main className="container kitMain">
-      <section aria-labelledby="about">
+      <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
         <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each release below has a short summary for people and a zip for AI assistants. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
 
-      <section aria-labelledby="verifications">
-        <h2 id="verifications">Verifications</h2>
+      <section aria-labelledby="releases">
+        <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
           <ul className="releaseList">{versions.map(entry => <li key={entry.version} className="releaseRow">
             <div className="releaseText">
@@ -54,17 +54,21 @@ export default function Home() {
         <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. The zip holds the detailed digest and the JSON records it was derived from.</p>
       </section>
 
-      <section aria-labelledby="ask">
-        <h2 id="ask">Ask about capabilities</h2>
-        <p><strong>Beta:</strong> this is a beta test of how to work with the kit.</p>
-        <p>Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a> in Slack.</p>
-        <p>Or, in Claude Code, add the plugin:</p>
-        <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
-        <p>Then ask a question, or paste in an RFP:</p>
-        <pre><code>/capability-grounding:capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
+      <section aria-labelledby="instructions" className="panel panelTint">
+        <h2 id="instructions">Instructions</h2>
+        <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
+        <ol className="instructions">
+          <li><strong>Slack.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>.</li>
+          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</li>
+          <li><strong>Claude Code plugin.</strong> Add the plugin:
+            <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
+            Then ask a question, or paste in an RFP:
+            <pre><code>/capability-grounding:capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
+          </li>
+        </ol>
       </section>
 
-      <section aria-labelledby="faqs">
+      <section aria-labelledby="faqs" className="panel">
         <h2 id="faqs">FAQs</h2>
         <details className="faq">
           <summary>What do the statuses mean?</summary>

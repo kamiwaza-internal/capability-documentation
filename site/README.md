@@ -427,9 +427,14 @@ nothing is written back to `data/`.
 
 The summary for people (`/evidence/<version>/kamiwaza-<version>-summary.{md,pdf}`) lists each
 feature once with one plain label: an "At a glance" table of the labels, then one table per area
-(Feature, Status, What it does). Every version but the oldest also carries a "What
+(Feature, Status, What it does). Its basis line (the version's `basis`) is printed under the title
+in the Markdown and in the cover band of the PDF. Every version but the oldest also carries a "What
 changed since <previous version>" section, and the home page shows the same lists collapsed under
-each release: newly recorded, now tested, tested earlier but not yet re-tested, and now failing.
+each release: newly recorded, now tested (recorded before but not tested), tested earlier but not
+yet re-tested, tested earlier with failing scenarios in a published local run of this version, and
+now failing. The lists are disjoint, so their counts never exceed the total. A feature whose
+published observation of the newer version recorded failing scenarios is never listed as "not yet
+re-tested".
 `changesSince` in `src/evidence.mjs` derives them by comparing one coarse level per feature
 (`tested`, `code-checked`, `failed`, `untested`) between adjacent versions. They are
 differences in recorded evidence, not in the product: "not yet re-tested" is never a regression
@@ -438,7 +443,15 @@ A feature whose first record fails is listed as newly recorded, not as "now fail
 longer than twelve names shows the first twelve and "and N more"; the count beside it is exact.
 A tested-build `partial` capability is graded by the outcomes on its row: with a failed scenario
 its summary status reads "Partly tested; some tests failed" and its level is `failed`; otherwise its
-level is `tested`. An operation list is never borrowed from another version's publication.
+level is `tested`. A description or an operation list appears on a row only when a publication of
+the same version carries a curated source declaration for that id (`curatedIds` in
+`src/evidence.mjs`); for v1.3.2 stamp rows that version is their baseline's, 1.3.0. This holds in the
+summary and in the detailed digest. Only the feature's name may come from another version's record:
+a name identifies the feature and claims nothing.
+
+A tested build's summary adds, under "Good to know", that it is a draft (or published) publication
+on the development channel, that binding to the shipped release is not established, the state of
+human approval, and that its kit revision is a kit commit.
 
 ## Plain-language capability descriptions
 
@@ -449,10 +462,17 @@ the summary for people prints it in the "What it does" column; a capability with
 to its shortened operation list ("Includes: ..."), and to "No description published yet" without either.
 
 The projection keeps the capability id, that one paragraph, the kit commit and the baseline
-release id. It drops the front matter, every later paragraph and section, and every record whose
-id is not a capability of some release in `data/publication.json`; an id that is only omitted or
-deferred is never read. A record that opens with a list, table or heading has no description; none
-is invented.
+release id. It drops the front matter and every later paragraph and section. It reads a record only
+for an id with a curated source declaration (a `declaration` with non-null title and summary) in a
+non-draft release of `data/publication.json`, so the curation gate above is not bypassed: an id
+that is uncurated, or only omitted or deferred, is never read. Records are read with
+`git show <KIT_COMMIT>:capabilities/<id>.md`, never from the working tree, so the stamped commit
+matches the bytes read. A paragraph that `unsafePublicText` in `scripts/public-output-privacy.mjs`
+rejects (the kit exporter's `unsafe_public_text` patterns, plus Linear and `kamiwaza-internal`
+GitHub links, secret variable names, IP addresses, registry references and `@sha256:` digests) is
+left out; the script prints every dropped id and the reason, and one bad record never fails the
+whole projection. A record that opens with a list, table or heading has no description; none is
+invented.
 
 Regenerate from a kit checkout; never edit the file by hand:
 
@@ -470,8 +490,8 @@ It is a separate file for the same reason as the stamp projections: `publication
 immutable record and its capability text is not rewritten. `validateDescriptions` in
 `scripts/project-descriptions.mjs` validates the file at build start (`docusaurus.config.js`) and
 again before the summaries are written. An unknown field, an unpinned kit commit, a value that is
-not non-empty text, an id outside the publication, or anything `scripts/public-output-privacy.mjs`
-rejects, fails the build. Against a publication without the named baseline release the projection
+not non-empty text, an id outside the publication or without a curated declaration, or anything
+`scripts/public-output-privacy.mjs` rejects (including `unsafePublicText`), fails the build. Against a publication without the named baseline release the projection
 does not apply and no description is printed. The paragraphs are kit prose written for internal
 readers: review every regenerated file before it reaches this public repository, because the
 validator cannot tell a customer name or an internal reference from ordinary words.
@@ -490,9 +510,16 @@ publication. The history gate is unchanged.
   requires a real publication time and review PR together. Neither is guessed; the transition is
   a new reviewed revision.
 - Capability text is published only when curated. Without it `title` and `summary` are null and
-  `conditions` and `limits` are empty, all together.
-- Its bundle is labelled schema 5 so a schema-2 reader fails closed instead of reading runtime
-  verdicts as source declarations.
+  `conditions` and `limits` are empty, all together, and the status cannot be `verified`.
+- The channel is `development`: no release binding exists for this kind. A draft's approval is
+  `pending`.
+- Status follows the records: `partial` needs a passed or passed-with-notes record, `failed` needs a
+  failed record and no passing one, and `untested` has no records.
+- `sourceRevision` is the kit commit the exporter ran from. The site labels it "Kit revision".
+- Its bundle is labelled schema 7, a bundle-only level holding exactly one tested build, which
+  `validatePublication` accepts in that form only. A schema-2 reader fails closed instead of reading
+  runtime verdicts as source declarations. Every emitted bundle validates
+  (`tests/bundles.test.mjs`).
 
 The 1.2.1 object is the kit exporter's output and is never edited by hand. The exporter runs the
 pinned kit revision's own `kit_query.py` for the build and maps its coverage boundary: a

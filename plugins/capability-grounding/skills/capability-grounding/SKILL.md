@@ -162,6 +162,18 @@ Rules that follow from this:
 - A source-contract stamp records tests on source with mocks or fixtures. It is not
   runtime evidence and is never a release stamp. Mention it under conditions and
   evidence only.
+- A tested build is a publication with no `baselineKind` and a `publicationState`
+  (its bundle is labelled schema 7), such as `1.2.1-tested-r4`. Its records are
+  scenario runs on one release-identified build, its channel is development, its
+  binding to the shipped release is not established and, as a draft, its approval is
+  pending. Its `sourceRevision` is a kit commit. Its statuses are historical test
+  results and never pre-release verified or release verified. Word them exactly:
+  - `partial`: **Partly tested on `<version>` (historical, not release verified)**.
+    Say whether any of its scenarios failed.
+  - `failed`: **Tested and failed on `<version>` (historical, not release verified)**.
+  - `verified`: **Tested on `<version>` (historical, not release verified)**.
+  - `untested`: **None published for `<version>`**.
+  Never map `partial` to Pre-release verified.
 - "No" is allowed only when a record states an explicit exclusion. A missing record, an
   omitted capability or missing evidence is **Not established**, which is not the same
   as not supported.
@@ -174,7 +186,7 @@ this table, with exactly these columns:
 ```markdown
 | Capability | Documented | Pre-release status | Release status | Conditions and evidence |
 |---|---|---|---|---|
-| <marker> <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
+| <marker> <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, a tested-build phrase from section 3, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
 ```
 
 - One row per question or requirement, in the order asked. A single question still
@@ -183,8 +195,9 @@ this table, with exactly these columns:
   row reaches, then a space and the capability as asked:
   - ✅ the Release status cell says `Release verified for <version>`.
   - ⚠️ a record documents the capability, but it is not release verified. This covers
-    documented only, pre-release verified, pre-release failed, release failed and
-    source-contract verified. The state cells say which.
+    documented only, pre-release verified, pre-release failed, a tested build's
+    partly tested, tested or failed, release failed and source-contract verified. The
+    state cells say which.
   - ❔ no record establishes it: `Not established`. This is a gap in the evidence, not
     a statement that the platform cannot do it.
   - ❌ a record states an explicit exclusion: `Not supported`. Never use ❌ for a

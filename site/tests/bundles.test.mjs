@@ -40,3 +40,15 @@ for (const [name, change] of [
   const input = fixture(); change(input.releases[0]);
   assert.throws(() => validatePublication(input));
 });
+
+test('every bundle emitted from the published data validates under its own schema label', () => {
+  const out = mkdtempSync(join(tmpdir(), 'publication-bundle-'));
+  emitBundles(JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8')), out);
+  const index = JSON.parse(readFileSync(join(out, 'releases/index.json')));
+  const schemas = index.releases.map(entry => {
+    const bundle = JSON.parse(readFileSync(join(out, entry.bundle)));
+    assert.doesNotThrow(() => validatePublication(bundle), entry.id);
+    return [entry.id, bundle.schema];
+  });
+  assert.deepEqual(Object.fromEntries(schemas)['1.2.1-tested-r4'], 7);
+});

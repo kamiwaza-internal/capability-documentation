@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {crc32, inflateRawSync, inflateSync} from 'node:zlib';
-import {CHANGE_NOTE, changesSince, compareRows, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
+import {CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
+import {currentCapabilityView, joinReleaseStamps} from '../src/catalog.mjs';
 import {toPdf, toZip} from '../scripts/evidence-files.mjs';
+import {validatePublication} from '../scripts/publication.mjs';
 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const publication = read('../data/publication.json');
@@ -137,8 +139,13 @@ test('EVD-10 the human summary puts the plain description beside the feature and
   const described = toMarkdown(summaryDocument(entry, publication, releaseStamps, descriptions));
   const id = 'authz.rebac-access-control';
   assert.ok(new RegExp(`^\\| \\*\\*.+\\*\\* \\| [^|\\n]+ \\| ${descriptions[id].slice(0, 40)}`, 'm').test(described));
-  assert.ok(!described.includes('Includes: '), 'every published capability has a description');
-  assert.ok(!described.includes('No description published yet'));
+  assert.ok(!described.includes('Includes: '), 'every curated capability has a description');
+  // Uncurated rows print no text, even when the map offers some for them.
+  const uncurated = joinReleaseStamps(currentCapabilityView(publication), releaseStamps).rows.filter(row => !curatedIds(publication, '1.3.0').has(row.id));
+  assert.equal(uncurated.length, 40);
+  assert.equal(described.split('\n').filter(line => line.endsWith(' | No description published yet |')).length, uncurated.length);
+  const offered = {...descriptions, [uncurated[0].id]: 'Uncurated text must not print.'};
+  assert.ok(!toMarkdown(summaryDocument(entry, publication, releaseStamps, offered)).includes('Uncurated text must not print.'));
   const {[id]: dropped, ...rest} = descriptions;
   assert.ok(toMarkdown(summaryDocument(entry, publication, releaseStamps, rest)).includes(' | Includes: '));
   assert.ok(!/`|<[a-z]/i.test(described), 'no code or raw HTML in the human summary');
@@ -148,8 +155,12 @@ test('EVD-11 change lists compare evidence levels across release kinds', () => {
   const item = (id, level) => ({row: {id}, name: id.toUpperCase(), level});
   const previous = [item('a', 'tested'), item('b', 'tested'), item('c', 'code-checked'), item('d', 'untested'), item('e', 'tested'), item('f', 'failed'), item('g', 'tested'), item('h', 'tested')];
   const rows = [item('a', 'tested'), item('b', 'untested'), item('c', 'tested'), item('d', 'failed'), item('e', 'code-checked'), item('f', 'failed'), item('g', 'partial'), item('h', 'failed'), item('n', 'tested'), item('m', 'untested')];
-  assert.deepEqual(compareRows(rows, previous), {recorded: ['M', 'N'], tested: ['C', 'N'], notRetested: ['B', 'E'], failing: ['D', 'H']});
-  assert.deepEqual(compareRows(previous, previous), {recorded: [], tested: [], notRetested: [], failing: []});
+  // A newly recorded feature is never also "now tested": the lists are disjoint.
+  assert.deepEqual(compareRows(rows, previous), {recorded: ['M', 'N'], tested: ['C'], notRetested: ['B', 'E'], failedLocally: [], failing: ['D', 'H']});
+  assert.deepEqual(compareRows(previous, previous), {recorded: [], tested: [], notRetested: [], failedLocally: [], failing: []});
+  // A recorded local failure is said on the row, never "not re-tested".
+  assert.deepEqual(compareRows(rows, previous, new Set(['b'])).notRetested, ['E']);
+  assert.deepEqual(compareRows(rows, previous, new Set(['b'])).failedLocally, ['B']);
 });
 
 test('EVD-12 each version but the oldest says what changed since the previous one, as evidence and never as a regression', () => {
@@ -165,8 +176,11 @@ test('EVD-12 each version but the oldest says what changed since the previous on
     }
     assert.equal(changes.since, previous.version);
     assert.ok(markdown.includes(`## What changed since ${previous.version}\n\n${CHANGE_NOTE}\n`), entry.version);
-    assert.equal(changes.lists.length, 4);
+    assert.equal(changes.lists.length, 5);
     assert.ok(changes.lists.some(([label]) => label === `Tested for ${previous.version}, not yet re-tested on ${entry.version}`));
+    const all = changes.lists.flatMap(([, names]) => names);
+    assert.equal(new Set(all).size, all.length, `${entry.version}: the lists are disjoint`);
+    assert.ok(all.length <= markdown.split('\n').filter(line => /^\| \*\*/.test(line)).length, `${entry.version}: counts never exceed the total`);
     for (const [label, names] of changes.lists) {
       assert.ok(!/remov|regress|no longer|lost|dropped|broke|did not exist/i.test(label), label);
       assert.ok(markdown.includes(`| ${label} | ${names.length} | `), label);
@@ -176,11 +190,19 @@ test('EVD-12 each version but the oldest says what changed since the previous on
   assert.match(CHANGE_NOTE, /not the product itself/);
   assert.match(CHANGE_NOTE, /does not mean the feature stopped working or was removed/);
   assert.match(CHANGE_NOTE, /may have existed earlier without a record/);
+  assert.ok(!/has not been run again/.test(CHANGE_NOTE));
+  // Both have failing scenarios in the published 2026-10-08 local 1.3.2 observation.
+  const [, , notRetested, failedLocally] = changesSince(versions[0], publication, releaseStamps).lists;
+  const local = ['Build and deploy data connectors from API descriptions', 'Tell the two Kaizen products apart under a shared catalog name'];
+  assert.deepEqual(failedLocally, ['Tested for 1.3.0; a local 1.3.2 run recorded failing scenarios', local]);
+  assert.ok(local.every(name => !notRetested[1].includes(name)));
 });
 
 test('EVD-13 a tested build says in plain words when some tests failed, and never prints operations borrowed from another version', () => {
   const entry = evidenceVersions(publication, releaseStamps).find(found => found.version === '1.2.1');
-  const markdown = toMarkdown(summaryDocument(entry, publication, releaseStamps));
+  // As the build passes them: the validated projection's map.
+  const {descriptions} = read('../data/descriptions.json');
+  const markdown = toMarkdown(summaryDocument(entry, publication, releaseStamps, descriptions));
   const mixed = publication.releases.find(release => release.id === '1.2.1-tested-r4').capabilities
     .filter(cap => cap.status === 'partial' && cap.evidence.some(record => record.outcome === 'failed')).map(cap => cap.id);
   assert.deepEqual(mixed, ['catalog.dataset-registry', 'models.local-deployment']);
@@ -190,6 +212,31 @@ test('EVD-13 a tested build says in plain words when some tests failed, and neve
   assert.ok(markdown.includes('| **Serve every model behind an OpenAI-compatible inference API** | Failed | No description published yet |\n'));
   assert.ok(!markdown.includes('Includes: '));
   assert.ok(!/verified on the named build/i.test(markdown));
+  for (const id of publication.releases.find(release => release.id === '1.2.1-tested-r4').capabilities.map(cap => cap.id)) {
+    if (descriptions[id]) assert.ok(!markdown.includes(descriptions[id].slice(0, 40)), id);
+  }
+  // Same basis line as the PDF cover, and the tested build's own caveats.
+  assert.ok(markdown.includes(`_${entry.basis}_`));
+  assert.ok(markdown.includes('- This is a draft publication on the development channel. Binding to the shipped 1.2.1 release is not established, and human release approval is pending.'));
+  // The digest prints no 1.3.0 text or operations on a 1.2.1 row, and names its kit revision as such.
+  const digest = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
+  assert.ok(!digest.includes('What it does:'));
+  assert.ok(!digest.includes('Description is historical'));
+  assert.ok(digest.includes('- Kit revision 5964dca385d869d3df276f1c55fac516c887b971\n'));
+  assert.ok(digest.includes('### Serve every model behind an OpenAI-compatible inference API (`models.openai-compatible-inference`)\n'));
+});
+
+test('EVD-13b a published tested build with title and summary but no curated declaration prints no description', () => {
+  const input = structuredClone(publication);
+  const release = input.releases.find(found => found.id === '1.2.1-tested-r4');
+  Object.assign(release, {publicationState: 'published', publishedAt: '2026-10-01T00:00:00Z', reviewReference: 'https://github.com/kamiwaza-internal/capability-documentation/pull/1'});
+  Object.assign(release.capabilities.find(cap => cap.id === 'auth.personal-access-tokens'), {title: 'Synthetic title', summary: 'Uncurated tested text'});
+  assert.doesNotThrow(() => validatePublication(input));
+  const entry = evidenceVersions(input, releaseStamps).find(found => found.version === '1.2.1');
+  assert.ok(!toMarkdown(evidenceDocument(entry, input, releaseStamps)).includes('Uncurated tested text'));
+  const summary = toMarkdown(summaryDocument(entry, input, releaseStamps));
+  assert.ok(!summary.includes('Uncurated tested text'));
+  assert.ok(!summary.includes('Includes: '));
 });
 
 test('EVD-14 a long change list shows its first names and an exact count, and a first record that fails is not "now failing"', () => {
@@ -197,7 +244,7 @@ test('EVD-14 a long change list shows its first names and an exact count, and a 
   assert.equal(shortList(['a', 'b'], 2), 'a; b');
   const versions = evidenceVersions(publication, releaseStamps);
   const entry = versions.find(found => found.version === '1.3.0');
-  const [recorded, , notRetested, failing] = changesSince(entry, publication, releaseStamps).lists;
+  const [recorded, , notRetested, , failing] = changesSince(entry, publication, releaseStamps).lists;
   assert.equal(recorded[0], 'Newly recorded in 1.3.0');
   assert.equal(recorded[1].length, 81);
   assert.deepEqual([notRetested[1], failing[1]], [[], []]);
@@ -206,4 +253,16 @@ test('EVD-14 a long change list shows its first names and an exact count, and a 
   assert.match(markdown, /; and 69 more \|\n\| Now tested/);
   const item = (id, level) => ({row: {id}, name: id, level});
   assert.deepEqual(compareRows([item('new', 'failed')], []).failing, []);
+});
+
+test('EVD-15 a table cell taller than a page is cut to one page and points to the zip', () => {
+  const long = Array.from({length: 400}, (_, i) => 'Sentence ' + i + ' of a very long cell.').join(' ');
+  const pdf = toPdf([{type: 'table', head: ['A', 'B'], rows: [['short', long], ['next', 'row']], widths: [0.3, 0.7]}], {title: 'T', footer: 'F'});
+  const text = pdf.toString('latin1');
+  const streams = [...text.matchAll(/\/Length (\d+) \/Filter \/FlateDecode >>\nstream\n/g)]
+    .map(match => inflateSync(pdf.subarray(match.index + match[0].length, match.index + match[0].length + Number(match[1]))).toString('latin1'));
+  assert.ok(streams.join('').includes('... \\(full text in the AI zip\\)'));
+  // Every drawn text line stays above the footer area on its page.
+  for (const stream of streams) for (const [, y] of stream.matchAll(/ ([\d.]+) Td \(/g)) assert.ok(Number(y) >= 30, y);
+  assert.deepEqual(pdf, toPdf([{type: 'table', head: ['A', 'B'], rows: [['short', long], ['next', 'row']], widths: [0.3, 0.7]}], {title: 'T', footer: 'F'}));
 });
