@@ -86,6 +86,8 @@ test('DSC-4 the projector reads curated ids at the pinned commit, first paragrap
   assert.equal(data.source.kitCommit, commit);
   assert.deepEqual(dropped.find(item => item.id === unsafe), {id: unsafe, reason: 'unsafe public text: internal tracker or repository reference'});
   assert.match(dropped.find(item => item.id === uncurated[0]).reason, /no curated source declaration/);
+  for (const missing of [noIntro, noRecord]) assert.match(dropped.find(item => item.id === missing)?.reason ?? '', /no record or no introductory paragraph/);
+  assert.equal(dropped.length + Object.keys(data.descriptions).length, published.size);
   assert.equal(plain('Keeps snake_case_names and 2 * 3 * 4 intact.'), 'Keeps snake_case_names and 2 * 3 * 4 intact.');
   assert.throws(() => projectDescriptions(kit, publication, 'f'.repeat(40)));
 });

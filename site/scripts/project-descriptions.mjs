@@ -83,6 +83,7 @@ export function projectDescriptions(kit, publication, commit = KIT_COMMIT) {
     const unsafe = found && unsafePublicText(plain(found));
     if (unsafe) dropped.push({id: capability, reason: 'unsafe public text: ' + unsafe});
     else if (found) descriptions[capability] = plain(found);
+    else dropped.push({id: capability, reason: 'no record or no introductory paragraph at the pinned kit commit'});
   }
   const data = validateDescriptions({schema: 'capability-description-projection.v1', baselineReleaseId: baseline.id,
     source: {kitRepository: KIT_REPOSITORY, kitCommit: commit}, descriptions}, publication);

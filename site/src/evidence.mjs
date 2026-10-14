@@ -130,7 +130,7 @@ export const revisionLabel = release => release.baselineKind || release.publicat
 // The row's own text, else the newest curated declaration of the same version (`scope.version`).
 // Text from another version would read as a claim about this one.
 function describe(row, {publication, version}) {
-  if (row.summary) return {summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
+  if (row.summary && curatedIds(publication, version).has(row.id)) return {summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
   const older = publication.releases.filter(ofVersion(version)).sort(byRevisionDesc)
     .map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && isCurated(cap))})).find(found => found.cap);
   return older ? {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from: older.release.id} : null;

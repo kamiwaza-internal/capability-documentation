@@ -5,6 +5,7 @@ import {crc32, inflateRawSync, inflateSync} from 'node:zlib';
 import {CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {currentCapabilityView, joinReleaseStamps} from '../src/catalog.mjs';
 import {toPdf, toZip} from '../scripts/evidence-files.mjs';
+import {validatePublication} from '../scripts/publication.mjs';
 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const publication = read('../data/publication.json');
@@ -223,6 +224,19 @@ test('EVD-13 a tested build says in plain words when some tests failed, and neve
   assert.ok(!digest.includes('Description is historical'));
   assert.ok(digest.includes('- Kit revision 5964dca385d869d3df276f1c55fac516c887b971\n'));
   assert.ok(digest.includes('### Serve every model behind an OpenAI-compatible inference API (`models.openai-compatible-inference`)\n'));
+});
+
+test('EVD-13b a published tested build with title and summary but no curated declaration prints no description', () => {
+  const input = structuredClone(publication);
+  const release = input.releases.find(found => found.id === '1.2.1-tested-r4');
+  Object.assign(release, {publicationState: 'published', publishedAt: '2026-10-01T00:00:00Z', reviewReference: 'https://github.com/kamiwaza-internal/capability-documentation/pull/1'});
+  Object.assign(release.capabilities.find(cap => cap.id === 'auth.personal-access-tokens'), {title: 'Synthetic title', summary: 'Uncurated tested text'});
+  assert.doesNotThrow(() => validatePublication(input));
+  const entry = evidenceVersions(input, releaseStamps).find(found => found.version === '1.2.1');
+  assert.ok(!toMarkdown(evidenceDocument(entry, input, releaseStamps)).includes('Uncurated tested text'));
+  const summary = toMarkdown(summaryDocument(entry, input, releaseStamps));
+  assert.ok(!summary.includes('Uncurated tested text'));
+  assert.ok(!summary.includes('Includes: '));
 });
 
 test('EVD-14 a long change list shows its first names and an exact count, and a first record that fails is not "now failing"', () => {
