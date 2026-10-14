@@ -168,7 +168,7 @@ export function primaryCapabilities(publication) {
     const hasDescription = row => typeof row.cap.title === 'string' && row.cap.title.trim() && typeof row.cap.summary === 'string' && row.cap.summary.trim() && (row.cap.declaration || !row.release.baselineKind);
     const newestFirst = [...all].sort((a, b) => (b.release.publicationRevision - a.release.publicationRevision) || b.release.id.localeCompare(a.release.id));
     const descriptionRow = hasDescription(selected) ? selected : newestFirst.find(hasDescription);
-    const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow.release.publicationRevision < selected.release.publicationRevision, basis: descriptionRow.cap.declaration ? 'curated-source-declaration' : 'public-snapshot-prose'} : null;
+    const description = descriptionRow ? {capability: descriptionRow.cap, snapshotId: descriptionRow.release.id, historical: descriptionRow !== selected && !describing.has(descriptionRow.release.id), basis: descriptionRow.cap.declaration ? 'curated-source-declaration' : 'public-snapshot-prose'} : null;
     const baseline = publication.releases.filter(release => release.version === selected.release.version && release.baselineKind === 'prerelease-evidence').sort((a, b) => a.publicationRevision - b.publicationRevision).at(-1);
     const includedInBaseline = baseline ? baseline.capabilities.some(cap => cap.id === selected.cap.id) : null;
     const deferred = baseline?.deferredCapabilities.includes(selected.cap.id) ?? false;

@@ -279,6 +279,8 @@ test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a stat
 
 test('EVD-17 a later description-only declaration is never labelled historical in the digest', () => {
   for (const entry of evidenceVersions(publication, releaseStamps)) {
-    assert.ok(!toMarkdown(evidenceDocument(entry, publication, releaseStamps)).includes('historical, from publication 1.3.0-declared-r5'), entry.version);
+    const md = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
+    assert.ok(!md.includes('historical, from publication 1.3.0-declared-r5'), entry.version);
+    if (entry.version !== '1.2.1') assert.ok(md.includes('Description source: curated declaration 1.3.0-declared-r5, kit revision a53cea518490d887f1d27993a910075dc13b9e21'), entry.version);
   }
 });
