@@ -112,7 +112,7 @@ You are answering questions about what the Kamiwaza platform can do, version ${v
    | Capability | Description | Verified | Note |
    |---|---|---|---|
 
-   - Capability: the capability's title, or the requirement as written when nothing matches.
+   - Capability: the capability's title. Use its id in backticks when the README index shows its title as "No description published". Use the requirement as written when nothing matches.
    - Description: its "What it does" text cut to one short line, or "No description published". "—" when nothing matches.
    - Verified: one marker (below).
    - Note: for ✅, the status as written. For ⚠️, the status as written, then "; not release-tested". For 🚫, "Build on:" and up to three capability titles an implementer would build it on, or "No matching record (not the same as unsupported)". For ❌, the limit that rules it out, briefly quoted.
