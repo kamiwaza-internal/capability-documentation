@@ -215,7 +215,7 @@ function capabilityBlocks(row, scope, status, extra = []) {
   if (!description) out.push(li('Description: none published. This does not mean unsupported.'));
   else {
     if (description.from) out.push(li(`Description is historical, from publication ${description.from}; it is not a current curated declaration.`));
-    if (description.declaredIn) out.push(li(`Description source: curated declaration ${description.declaredIn.id}, kit revision ${description.declaredIn.sourceRevision}, published after this evidence.`));
+    if (description.declaredIn) out.push(li(`Description source: curated declaration ${description.declaredIn.id}, kit revision ${description.declaredIn.sourceRevision}, published after the pre-release evidence.`));
     out.push(li('What it does:'), ...lines(description.summary).map(text => li(text, 1)));
     if (description.conditions?.length) out.push(li('Conditions:'), ...description.conditions.flatMap(lines).map(text => li(text, 1)));
     if (description.limits?.length) out.push(li('Limits:'), ...description.limits.flatMap(lines).map(text => li(text, 1)));

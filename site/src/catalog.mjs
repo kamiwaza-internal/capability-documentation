@@ -34,6 +34,8 @@ export function currentCapabilityView(publication) {
   const baseline = releases.filter(r => r.baselineKind === 'prerelease-evidence').sort(byRevisionDesc)[0];
   if (!baseline) return [];
   const older = releases.filter(r => r.publicationRevision < baseline.publicationRevision).sort(byRevisionDesc);
+  const describingIds = descriptionOnly(publication);
+  const describing = releases.filter(r => describingIds.has(r.id)).sort(byRevisionDesc);
   const finished = o => Date.parse(o.evidenceWindow.latestFinishedAt);
   const observations = [...(publication.observations ?? [])].sort((a, b) => finished(a) - finished(b));
 
@@ -65,7 +67,9 @@ export function currentCapabilityView(publication) {
       if (contract === 'whole-capability') failing.clear(); else failing.delete(contract);
       history.push({event: 'passed', ...event});
     }
-    const documentationGap = !cap.summary;
+    // A later description-only declaration describes the row; it is not a documentation gap.
+    const describedIn = describing.find(r => r.capabilities.some(c => c.id === cap.id && c.summary))?.id ?? null;
+    const documentationGap = !cap.summary && !describedIn;
     return {
       id: cap.id, title: cap.title, summary: cap.summary, conditions: cap.conditions, limits: cap.limits,
       status: !isAccepted ? cap.status : failing.size ? 'superseded' : 'verified',
@@ -75,7 +79,7 @@ export function currentCapabilityView(publication) {
         evidence: cap.evidence, assessment: cap.assessment, wholeClaim: cap.wholeClaim},
       releaseStatus: cap.releaseStatus,
       releaseCheckFailed: cap.releaseStatus === 'failed',
-      documentationGap,
+      documentationGap, describedIn,
       // Pointer only: older text is historical and is never copied into the current row.
       olderDescriptionIn: documentationGap ? older.find(r => r.capabilities.some(c => c.id === cap.id && c.summary))?.id ?? null : null,
       laterNonApplicableFailure: later.some(l => !l.applicable && l.failedScenarios > 0),
@@ -135,7 +139,9 @@ export function primaryCapabilities(publication) {
   const current = [];
   for (const all of byId.values()) {
     const evidenceRows = all.filter(row => !describing.has(row.release.id));
-    const rows = evidenceRows.length ? evidenceRows : all;
+    // Only evidence selects status: an id that appears only in a description-only release has no row.
+    if (!evidenceRows.length) continue;
+    const rows = evidenceRows;
     // Release-bound stamps outrank pre-release records; newer missing evidence never erases acceptance.
     const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
     const ordered = [...rows].sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));

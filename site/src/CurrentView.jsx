@@ -97,6 +97,7 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
             {row.localNotStamped && !row.laterNonApplicableFailure && <li>No {stampLabel.toLowerCase()}: a latest scoped scenario failed in that run. Status unchanged.</li>}
             {row.later.filter(l => !l.applicable && l.failedScenarios > 0).map(l => <li key={l.observationId}>{row.releaseStamp && Date.parse(l.finishedAt) < Date.parse(row.releaseStamp.finishedAt) ? `Older scoped failure, from the ${l.finishedAt.slice(0, 10)} run on ${l.environment} ${l.version}, before the ${tag} release stamp above` : `Later scoped failure on ${l.environment} ${l.version}`}, <Time value={l.startedAt}/> to <Time value={l.finishedAt}/>: {l.passedScenarios} passed · {l.passedWithNotesScenarios} with notes · {l.failedScenarios} failed. Applicability to the accepted contract not established; status unchanged.</li>)}
             {row.releaseCheckFailed && <li>Release check failed</li>}
+            {row.describedIn && <li>Description from curated declaration <a href={'#' + row.describedIn + '--' + row.id}><code>{row.describedIn}</code></a>, published after the pre-release evidence.</li>}
             {row.documentationGap && <li>Documentation gap: no description published in this revision{row.olderDescriptionIn && <> (<a href={'#' + row.olderDescriptionIn + '--' + row.id}>historical description in <code>{row.olderDescriptionIn}</code></a>)</>}. This does not mean unsupported.</li>}
           </ul></td>
         </tr>;
