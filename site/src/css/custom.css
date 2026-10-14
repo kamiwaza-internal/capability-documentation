@@ -51,3 +51,4 @@ code { overflow-wrap: anywhere; }
 /* Docusaurus leaves the light background transparent; embedded viewers can paint it dark. */
 [data-theme='light'] body { background-color: #ffffff; }
 [data-theme='dark'] body { background-color: #1b1b1d; }
+.instructions > li { margin-bottom: .75rem; }

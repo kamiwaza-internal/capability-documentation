@@ -19,7 +19,7 @@ function checkBuiltFiles(directory) {
 // carries its own reading rules, so it can be read with no skill.
 function assertHomeAndDownloads(site, version, expectedInDigest) {
   const home = readFileSync(join(site, 'build/index.html'), 'utf8').replaceAll('<!-- -->', '');
-  for (const expected of ['About', 'Verifications', 'FAQs', 'What do the statuses mean?', 'href="/catalog/"', 'href="/evidence/index.json"']) assert.ok(home.includes(expected), `Missing on home page: ${expected}`);
+  for (const expected of ['About', 'Releases', 'Instructions', 'FAQs', 'What do the statuses mean?', 'href="/catalog/"', 'href="/evidence/index.json"']) assert.ok(home.includes(expected), `Missing on home page: ${expected}`);
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!home.includes(absent), `Stamp content on home page for another publication: ${absent}`);
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'), 'utf8'));
   assert.deepEqual(index.versions.map(entry => entry.version), [version]);
