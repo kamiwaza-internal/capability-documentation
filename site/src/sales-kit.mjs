@@ -22,6 +22,7 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
     p(`Guidance coverage: ${guides.length} of ${rows.length} capabilities. Missing usage steps remain visible; the complete capability and evidence reference follows.`),
   ];
   if (guidance) blocks.push(p(`Guidance source: kit commit ${guidance.source.kitCommit}. Publication content SHA-256: ${guidance.publicationSha256}. This identifies the input, not approval or product verification.`));
+  else blocks.push(p('Usage guidance is unavailable for this publication. No unmatched guidance is included; the capability evidence below remains the current reference.'));
   blocks.push(h(2, 'Usage guidance and examples'));
   for (const item of guides) {
     const cid = item.row.id, guide = guidance.guides[cid];
@@ -30,7 +31,11 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
       ...guide.steps.map((step, index) => li(`${index + 1}. ${step}`)), p('Expected result: ' + guide.expected_result));
     for (const example of guide.use_cases) {
       blocks.push(p(`${example.title} — ${example.evidence_sha256.length ? 'Evidence-linked example; only the described scope is demonstrated' : 'Illustrative example; not demonstrated'}`), p(example.description));
-      for (const hash of example.evidence_sha256) blocks.push(li(`Historical runtime evidence SHA-256: ${hash}. See the capability evidence below for build, date and limits; this is not proof on ${entry.version}.`));
+      for (const hash of example.evidence_sha256) {
+        const release = publication.releases.find(r => r.publicationState !== 'draft' && r.version === guide.source_version && r.capabilities.some(c => c.id === cid && c.evidence.some(e => e.recordSha256 === hash)));
+        const record = release.capabilities.find(c => c.id === cid).evidence.find(e => e.recordSha256 === hash);
+        blocks.push(li(`Historical example evidence: ${record.scenario}; result ${record.outcome}; build ${record.build}; run finished ${record.runFinishedAt}; publication ${release.id}; SHA-256 ${hash}. This demonstrates only the described scope on that recorded build; no new verification is granted for ${entry.version}.`));
+      }
     }
   }
   if (missing.length) blocks.push(h(2, 'Usage guidance not yet published'),

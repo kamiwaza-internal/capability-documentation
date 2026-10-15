@@ -89,6 +89,14 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
   for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
   assertHomeAndDownloads(site, '0.0.0', ['synthetic.only', '&lt;script&gt;NOT_EXECUTABLE&lt;/script&gt;', 'Known input', 'Not a product claim', 'Whole-claim verification is not established.']);
+  const stale = JSON.parse(readFileSync(join(site, 'data/sales-guidance.json')));
+  stale.publicationSha256 = 'f'.repeat(64);
+  writeFileSync(join(site, 'data/sales-guidance.json'), JSON.stringify(stale));
+  const withoutGuidance = build();
+  assert.equal(withoutGuidance.status, 0, withoutGuidance.stdout + withoutGuidance.stderr);
+  assert.match(withoutGuidance.stdout + withoutGuidance.stderr, /sales-guidance.json does not match/);
+  const downloads = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
+  assert.match(readFileSync(join(site, 'build', downloads.versions[0].files.salesMd.path), 'utf8'), /Usage guidance is unavailable for this publication/);
   release.capabilities[0].status = 'verified';
   writePublication(site, {schema: 1, releases: [release]});
   const rejected = build();

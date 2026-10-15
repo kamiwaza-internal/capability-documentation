@@ -555,6 +555,7 @@ document. `scripts/published-bundles.mjs` emits matching Markdown, PDF and edita
 `/evidence/index.json`. Word uses the existing block model and ZIP writer, without another
 runtime dependency. Old evidence-bundle bytes and the short summaries are unchanged.
 
-Publication changes require regenerating the reviewed guidance sidecar. The build rejects
-mismatched data. Review prose and evidence scope as well as mechanical checks; a matching
+Publication changes require regenerating the reviewed guidance sidecar. The build omits
+valid guidance bound to another publication, warns, and identifies the missing guidance in the
+documents. Malformed or unsafe data still fails validation. Review prose and evidence scope as well as mechanical checks; a matching
 hash does not prove that an example's description follows from its test.

@@ -6,6 +6,10 @@ import {publicationDigest, validateGuidance} from '../scripts/sales-guidance.mjs
 import {salesKitDocument} from '../src/sales-kit.mjs';
 import {evidenceDocument, evidenceVersions, toMarkdown} from '../src/evidence.mjs';
 import {toDocx} from '../scripts/sales-docx.mjs';
+import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
+import {mkdtempSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 
 const read = name => JSON.parse(readFileSync(new URL('../data/' + name + '.json', import.meta.url)));
 const publication = read('publication'), stamps = read('release-stamps-1.3.2'), guidance = read('sales-guidance');
@@ -25,7 +29,9 @@ function unzip(zip) {
 test('guidance is tied to the exact publication, curated version and complete gap list', () => {
   assert.equal(validateGuidance(guidance, publication), guidance);
   const changed = structuredClone(publication); changed.releases[0].build += ' changed';
-  assert.throws(() => validateGuidance(guidance, changed), /publication mismatch/);
+  assert.equal(validateGuidance(guidance, changed), null);
+  const staleUnsafe = structuredClone(guidance); staleUnsafe.guides['catalog.registered-sources'].steps = ['PRIVATE_CANARY'];
+  assert.throws(() => validateGuidance(staleUnsafe, changed), /Unsafe/);
   for (const mutate of [
     d => d.missingGuidance.pop(),
     d => d.guides['catalog.registered-sources'].source_version = '9.9.9',
@@ -54,7 +60,23 @@ test('a Sales Dev Kit retains every evidence block, labels examples and keeps ve
       assert.match(text, /Illustrative example; not demonstrated/);
       assert.match(text, /Evidence-linked example; only the described scope is demonstrated/);
       assert.ok(text.includes(guidance.guides['catalog.registered-sources'].use_cases[0].evidence_sha256[0]));
+      for (const value of ['catalog-registered-sources-listing', 'develop@030b2a297934f4b7ad1374cd419b08e01350ab8d', '2026-09-28T23:26:34Z', '1.3.0-prerelease-r3']) assert.ok(text.includes(value));
     }
+  }
+});
+
+test('stale optional guidance cannot break evidence downloads or appear in new kits', () => {
+  const changed = structuredClone(publication); changed.releases[0].build += ' updated';
+  const out = mkdtempSync(join(tmpdir(), 'stale-sales-guidance-'));
+  emitBundles(changed, out);
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(changed, stamps, out, {}, guidance);
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  for (const entry of index.versions) {
+    const text = readFileSync(join(out, entry.files.salesMd.path), 'utf8');
+    assert.match(text, /Usage guidance is unavailable for this publication/);
+    assert.ok(!text.includes(guidance.guides['catalog.registered-sources'].purpose));
+    assert.ok(readFileSync(join(out, entry.files.md.path)).length > 0);
   }
 });
 

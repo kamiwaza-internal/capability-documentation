@@ -16,7 +16,7 @@ const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 // Per-version downloads for people and for assistants with no skill: a self-contained Markdown
 // digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
 export function emitEvidence(publication, releaseStamps, out, descriptions, guidance) {
-  if (guidance) validateGuidance(guidance, publication);
+  guidance = guidance ? validateGuidance(guidance, publication) : null;
   const index = [];
   for (const entry of evidenceVersions(publication, releaseStamps)) {
     const blocks = evidenceDocument(entry, publication, releaseStamps);
@@ -140,6 +140,7 @@ export default function bundlePlugin() {
     // Plain-language descriptions for the human summaries: validated, and unused for another publication.
     const descriptions = validateDescriptions(JSON.parse(readFileSync(new URL('../data/descriptions.json', import.meta.url), 'utf8')), data);
     const guidance = validateGuidance(JSON.parse(readFileSync(new URL('../data/sales-guidance.json', import.meta.url), 'utf8')), data);
+    if (guidance === null) console.warn('sales-guidance.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance);
   }};
 }
