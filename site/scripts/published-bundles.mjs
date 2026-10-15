@@ -7,12 +7,16 @@ import {validateReleaseStamps} from './release-stamps.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
 import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
+import {toDocx} from './sales-docx.mjs';
+import {validateGuidance} from './sales-guidance.mjs';
+import {salesKitDocument, salesKitPath} from '../src/sales-kit.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 
 // Per-version downloads for people and for assistants with no skill: a self-contained Markdown
 // digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
-export function emitEvidence(publication, releaseStamps, out, descriptions) {
+export function emitEvidence(publication, releaseStamps, out, descriptions, guidance) {
+  if (guidance) validateGuidance(guidance, publication);
   const index = [];
   for (const entry of evidenceVersions(publication, releaseStamps)) {
     const blocks = evidenceDocument(entry, publication, releaseStamps);
@@ -28,6 +32,8 @@ export function emitEvidence(publication, releaseStamps, out, descriptions) {
     mkdirSync(dir, {recursive: true});
     // People get a short summary; the zip and the detailed digest are for assistants and tools.
     const summary = summaryDocument(entry, publication, releaseStamps, descriptions);
+    const sales = salesKitDocument(entry, publication, releaseStamps, guidance);
+    const salesPath = salesKitPath(entry.version);
     const files = {
       zip: {path: entry.path + '.zip', bytes: zip, audience: 'machine'},
       md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
@@ -35,6 +41,10 @@ export function emitEvidence(publication, releaseStamps, out, descriptions) {
       summaryMd: {path: entry.summaryPath + '.md', bytes: Buffer.from(toMarkdown(summary), 'utf8'), audience: 'human'},
       summaryPdf: {path: entry.summaryPath + '.pdf', bytes: toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`,
         footer: `Kamiwaza ${entry.version} · capabilities.kamiwaza.dev · Not a release sign-off unless stated`, cover: {eyebrow: 'KAMIWAZA · CAPABILITY SUMMARY'}}), audience: 'human'},
+      salesMd: {path: salesPath + '.md', bytes: Buffer.from(toMarkdown(sales), 'utf8'), audience: 'human-and-machine'},
+      salesPdf: {path: salesPath + '.pdf', bytes: toPdf(sales, {title: `Kamiwaza and Kaizen Sales Dev Kit ${entry.version}`,
+        footer: `Kamiwaza Sales Dev Kit ${entry.version} · capabilities.kamiwaza.dev`}), audience: 'human-and-machine'},
+      salesDocx: {path: salesPath + '.docx', bytes: toDocx(sales), audience: 'human-and-machine'},
     };
     for (const file of Object.values(files)) writeFileSync(join(out, file.path), file.bytes);
     index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
@@ -42,7 +52,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions) {
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
     note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, machine-readable files (a zip with the detailed digest and the JSON records, and the same digest as Markdown and PDF; each starts with its own reading rules and needs no skill) and a short human-readable summary (Markdown and PDF). All are derived from the records above, not new evidence. Answer from the machine-readable files.\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, a complete Sales Dev Kit (salesMd, salesPdf, salesDocx: matching content for people and assistants, with usage guidance, explicit gaps and the full evidence reference), machine-readable evidence files and a short human summary. No skill is required. The Sales Dev Kit is derived from these records and reviewed guidance, not new evidence. Pasted RFPs are assessed; response drafting requires an explicit user request.\n');
 }
 
 // Pre-release evidence is labelled schema 4 and a tested build TESTED_BUNDLE_SCHEMA, so a schema-2
@@ -129,6 +139,7 @@ export default function bundlePlugin() {
     }
     // Plain-language descriptions for the human summaries: validated, and unused for another publication.
     const descriptions = validateDescriptions(JSON.parse(readFileSync(new URL('../data/descriptions.json', import.meta.url), 'utf8')), data);
-    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions);
+    const guidance = validateGuidance(JSON.parse(readFileSync(new URL('../data/sales-guidance.json', import.meta.url), 'utf8')), data);
+    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance);
   }};
 }

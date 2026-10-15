@@ -1,0 +1,150 @@
+{
+  "schema": "capability-sales-guidance.v1",
+  "publicationSha256": "5baa0e61f70e4aef846eb9a12f1d9441c5fbfe19d489375f861dc7170eb4e0d5",
+  "source": {
+    "kitRepository": "kamiwaza-internal/capability-kit",
+    "kitCommit": "4be01df6c44c1677ac6d7da7315c61740e0de450"
+  },
+  "guides": {
+    "catalog.registered-sources": {
+      "source_version": "1.3.0",
+      "purpose": "Bring an existing S3 or PostgreSQL source into the governed catalog and inspect the sources already registered.",
+      "prerequisites": [
+        "An authenticated member of the target workroom in the same tenant.",
+        "An existing supported source and a catalog secret for its credentials.",
+        "When relationship-based access control is enabled, the required ingestion administrator permission."
+      ],
+      "steps": [
+        "Have an authorized operator register the S3 or PostgreSQL source through the documented registration API.",
+        "List the registered sources through the catalog containers API and confirm the expected source appears.",
+        "Use the documented scan operation when catalog discovery is required; check the returned result before proceeding."
+      ],
+      "expected_result": "The source is registered and can be listed. Registration and scanning require separate validation; the cited runtime example establishes listing only.",
+      "use_cases": [
+        {
+          "title": "Inspect registered data sources",
+          "description": "An operator lists registered sources through the catalog containers API. The referenced development-build scenario returned a successful response containing items; it did not prove registration or scanning.",
+          "evidence_sha256": [
+            "a13497f50cb444939ceb6eeab30156e2bfcfb460029903ff2c3cb9136d0db0b9"
+          ]
+        }
+      ]
+    },
+    "context.dataset-indexing": {
+      "source_version": "1.3.0",
+      "purpose": "Make a catalog dataset searchable through a semantic and lexical index binding.",
+      "prerequisites": [
+        "Access to the source workroom and catalog dataset.",
+        "The infrastructure and permissions required by the semantic and lexical indexing profile."
+      ],
+      "steps": [
+        "Check indexing readiness through the documented API.",
+        "Create a binding for the catalog dataset through the dataset-index API.",
+        "Inspect the binding and job diagnostics until the requested content is ready.",
+        "Search the binding and inspect the returned source attribution.",
+        "Use the documented retry or deletion operation when appropriate and inspect the resulting state."
+      ],
+      "expected_result": "A ready index binding can be searched. Accepting a creation request is not proof that asynchronous indexing completed; inspect readiness and job diagnostics.",
+      "use_cases": [
+        {
+          "title": "Search a governed dataset",
+          "description": "A team prepares an authorized catalog dataset for semantic and lexical retrieval. This is an illustrative workflow; a matching successful end-to-end runtime record is required before presenting it as demonstrated.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.conversation-search": {
+      "source_version": "1.3.0",
+      "purpose": "Find authorized conversation history and navigate document or project results in Kaizen.",
+      "prerequisites": [
+        "A signed-in member and conversation history the member is authorized to search.",
+        "Primary history search enabled. Indexed history retrieval is a separate feature and is off by default in the documented source scope."
+      ],
+      "steps": [
+        "Submit the search query and supported filters through the documented search API.",
+        "Inspect the returned results and their targets.",
+        "Open an authorized result in the client and confirm that it is the intended conversation or content."
+      ],
+      "expected_result": "The member receives authorized matching results. Legacy keyword search and primary hybrid search have different semantics; this guidance does not equate them.",
+      "use_cases": [
+        {
+          "title": "Find an earlier discussion",
+          "description": "A salesperson looks up an earlier authorized conversation before responding to a follow-up question. This is an illustrative use case, not proof of a complete sales workflow.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.document-canvas-export": {
+      "source_version": "1.3.0",
+      "purpose": "Review and edit an uploaded document in Kaizen, with API export to Markdown, Word or PDF.",
+      "prerequisites": [
+        "A signed-in member who owns a processed, text-extractable document.",
+        "Document import enabled; document export also enabled when an export is needed."
+      ],
+      "steps": [
+        "Open your document from the Documents screen in the editable canvas.",
+        "Make the required text changes and save through the artifact panel.",
+        "For an export, have an authorized integration request Markdown, Word or PDF through the document export API and download the result.",
+        "Review the exported file before sharing it."
+      ],
+      "expected_result": "Saved edits form a new artifact version. The export uses the latest canvas text. In the documented source scope, export is API-only and PDF layout is best-effort.",
+      "use_cases": [
+        {
+          "title": "Review a draft before sharing",
+          "description": "A document owner edits a draft in the canvas, then requests an export through an authorized integration. This is an illustrative workflow; the published refusal-contract test does not establish successful document conversion.",
+          "evidence_sha256": []
+        }
+      ]
+    }
+  },
+  "missingGuidance": [
+    "auth.enterprise-sso",
+    "authz.rebac-access-control",
+    "catalog.writable-datasets",
+    "connectors.ai-assisted-connector-setup",
+    "connectors.connector-builder",
+    "connectors.oauth-tool-policies",
+    "context.workroom-ingestion-summary",
+    "context.workroom-raw-file-store",
+    "delegation.pending-approval-queue",
+    "federation.federated-retrieval",
+    "ingestion.document-translation",
+    "ingestion.parse-from-url",
+    "ingestion.scheduled-ingest",
+    "ingestion.structured-document-outputs",
+    "ingestion.video-frame-analysis",
+    "kaizen.admin-settings-console",
+    "kaizen.agent-auto-routing",
+    "kaizen.agent-publication-approval",
+    "kaizen.answer-feedback",
+    "kaizen.artifacts",
+    "kaizen.context-compression",
+    "kaizen.conversation-event-streaming",
+    "kaizen.document-collections",
+    "kaizen.member-token-budget",
+    "kaizen.metrics-dashboard",
+    "kaizen.multi-agent-orchestration",
+    "kaizen.notifications-inbox",
+    "kaizen.platform-operator-tools",
+    "kaizen.prebuilt-agents",
+    "kaizen.privacy-guard",
+    "kaizen.product-identity",
+    "kaizen.projects",
+    "kaizen.prompt-library-and-chains",
+    "kaizen.recipes",
+    "kaizen.scheduled-tasks",
+    "kaizen.shared-chat-typing-indicators",
+    "kaizen.workroom-notes",
+    "models.gpu-placement",
+    "models.openai-compatible-inference",
+    "models.two-node-serving",
+    "platform.access-requests",
+    "platform.airgapped-install",
+    "platform.api-reference",
+    "platform.licensing-and-eula",
+    "platform.news-feed",
+    "platform.operations-and-notifications",
+    "platform.usage-and-audit",
+    "workrooms.org-decommission"
+  ]
+}

@@ -110,3 +110,26 @@ This documentation is generated from Kamiwaza's internal capability-tracking pro
 ## Something wrong or missing?
 
 Open an issue. This repository grows every release, and a claim that reads wrong is worth reporting.
+
+## Portable Sales Dev Kit
+
+Each release has one complete Sales Dev Kit in editable Word, PDF and Markdown. The same
+content serves a salesperson or their chosen assistant: reviewed usage guidance and
+customer-agnostic examples followed by the full capability/evidence reference. No plugin or
+Slack bot is required. The existing short summary and evidence zip remain available.
+
+Guidance is authored once in the private capability records under `sales_guidance` and
+prepared by the kit's `scripts/export_sales_guidance.py` from an immutable commit. Review its
+allowlisted output before updating `site/data/sales-guidance.json`. The consumer checks the
+exact publication content hash, curated capability/version, pinned kit source and example
+runtime-record references. Regenerate the guidance projection when publication data changes;
+a mismatch fails the build instead of quietly serving stale guidance.
+
+The initial four guidance entries do not imply complete usage coverage. Missing guidance is
+listed explicitly in the document. Unreferenced examples are illustrative; evidence-linked
+examples retain their actual demonstrated scope. No download changes a verification status,
+release approval, historical bundle or publication audience.
+
+Slack remains optional. RFP attachments and pasted requirements default to capability
+assessment. A leading user request such as `Draft our response to this RFP` explicitly opts
+into full drafting, followed by content review and approval before document generation.

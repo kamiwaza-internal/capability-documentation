@@ -540,3 +540,21 @@ python3 scripts/export_release_publication.py --kit . --revision <full kit commi
 `--previous` splices the object in after the last release and keeps every existing byte. Run it
 against the publication without that revision; a revision already present is refused. Then
 regenerate `data/descriptions.json`, since newly published ids gain a description.
+
+## Complete Sales Dev Kit downloads
+
+`data/sales-guidance.json` is the reviewed, allowlisted projection of optional guidance in
+private capability records. `scripts/sales-guidance.mjs` validates its canonical publication
+hash, pinned source, curated capability/version and passing example-evidence references.
+Guidance does not compute status. The four initial entries name their 1.3.0 source scope;
+1.3.2 kit guidance is labelled as that historical source, not a new compatibility claim.
+
+`src/sales-kit.mjs` adds usage guidance and explicit gaps to the existing complete evidence
+document. `scripts/published-bundles.mjs` emits matching Markdown, PDF and editable Word under
+`/evidence/<version>/kamiwaza-sales-dev-kit-<version>.*`, indexed and hashed in
+`/evidence/index.json`. Word uses the existing block model and ZIP writer, without another
+runtime dependency. Old evidence-bundle bytes and the short summaries are unchanged.
+
+Publication changes require regenerating the reviewed guidance sidecar. The build rejects
+mismatched data. Review prose and evidence scope as well as mechanical checks; a matching
+hash does not prove that an example's description follows from its test.

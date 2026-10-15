@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY} from '../evidence.mjs';
+import {salesKitPath} from '../sales-kit.mjs';
 
 function Changes({entry}) {
   const changes = changesSince(entry, publication, releaseStamps);
@@ -26,7 +27,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
-        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each release below has a short summary for people and a zip for AI assistants. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
+        <p>The Sales Dev Kit records what Kamiwaza and Kaizen can do, how to use the functions with published guidance, and what the evidence establishes. Download one document for yourself or your chosen AI assistant. Missing usage guidance is identified inside it. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
 
       <section aria-labelledby="releases">
@@ -40,6 +41,12 @@ export default function Home() {
               <Changes entry={entry} />
             </div>
             <div className="releaseFiles">
+              <nav className="fileGroup" aria-label={'Complete Sales Dev Kit, ' + entry.version}>
+                <span className="fileGroupLabel">Complete Sales Dev Kit</span>
+                <a href={salesKitPath(entry.version) + '.docx'} download>Word</a>
+                <a href={salesKitPath(entry.version) + '.pdf'} download>PDF</a>
+                <a href={salesKitPath(entry.version) + '.md'} download>MD</a>
+              </nav>
               <nav className="fileGroup" aria-label={'For AI, ' + entry.version}>
                 <span className="fileGroupLabel">For AI</span>
                 <a href={entry.path + '.zip'} title="Detailed records an AI assistant can read and cite" download>Zip</a>
@@ -58,8 +65,8 @@ export default function Home() {
         <h2 id="instructions">Instructions</h2>
         <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
         <ol className="instructions">
-          <li><strong>Slack.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>.</li>
-          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</li>
+          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s complete Sales Dev Kit from <a href="#releases">Releases</a>, attach that one document to a new chat and ask. No skill, plugin or Slack bot is required. The evidence zip remains available for tools.</li>
+          <li><strong>Slack, optionally.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>. Pasted requirements and RFP uploads receive a capability assessment. To draft a full response, explicitly ask &ldquo;Draft our response to this RFP&rdquo;, review the draft and approve it.</li>
           <li><strong>Claude Code plugin.</strong> Add the plugin:
             <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
             Then ask a question, or paste in an RFP:
@@ -84,7 +91,7 @@ export default function Home() {
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>
-          <p>Attach that release&rsquo;s zip to a new chat and ask. It starts with its own reading rules, so no skill or plugin is needed.</p>
+          <p>Attach that release&rsquo;s complete Sales Dev Kit to a new chat and ask. It includes usage guidance, known gaps, conditions, limits and evidence. No skill or plugin is needed. Full response drafting requires an explicit request.</p>
         </details>
       </section>
     </main>
