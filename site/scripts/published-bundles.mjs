@@ -13,8 +13,7 @@ import {salesKitDocument, salesKitPath} from '../src/sales-kit.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 
-// Per-version downloads for people and for assistants with no skill: a self-contained Markdown
-// digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
+// Per-version standalone documents and one complete ZIP for people and assistants.
 export function emitEvidence(publication, releaseStamps, out, descriptions, guidance) {
   guidance = guidance ? validateGuidance(guidance, publication) : null;
   const index = [];
@@ -23,19 +22,15 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     const name = 'kamiwaza-capabilities-' + entry.version;
     const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
-    const records = entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
-    if (entry.kind === 'release-stamps') records.push({name: `records/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
-    const contents = [{name: 'README.md', data: markdown}, {name: name + '.pdf', data: pdf}, ...records];
-    contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
-    const zip = toZip(contents);
+    const records = entry.releaseIds.map(id => ({name: `machine-readable/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
+    if (entry.kind === 'release-stamps') records.push({name: `machine-readable/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
     const dir = join(out, 'evidence', entry.version);
     mkdirSync(dir, {recursive: true});
-    // People get a short summary; the zip and the detailed digest are for assistants and tools.
+    // Render each document once; the ZIP reuses those exact standalone bytes.
     const summary = summaryDocument(entry, publication, releaseStamps, descriptions);
     const sales = salesKitDocument(entry, publication, releaseStamps, guidance);
     const salesPath = salesKitPath(entry.version);
     const files = {
-      zip: {path: entry.path + '.zip', bytes: zip, audience: 'machine'},
       md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
       pdf: {path: entry.path + '.pdf', bytes: pdf, audience: 'machine'},
       summaryMd: {path: entry.summaryPath + '.md', bytes: Buffer.from(toMarkdown(summary), 'utf8'), audience: 'human'},
@@ -46,13 +41,23 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
         footer: `Kamiwaza Sales Dev Kit ${entry.version} · capabilities.kamiwaza.dev`}), audience: 'human-and-machine'},
       salesDocx: {path: salesPath + '.docx', bytes: toDocx(sales), audience: 'human-and-machine'},
     };
+    const readable = Object.values(files).map(file => ({name: 'human-readable/' + file.path.split('/').at(-1), data: file.bytes}));
+    const readme = `# Kamiwaza ${entry.version} complete Sales Dev Kit\n\n` +
+      'Start with the Sales Dev Kit in human-readable/: Word for editing, PDF for reading or sharing, Markdown for text-based assistants. Each contains the same complete guidance and evidence reference.\n\n' +
+      'The human-readable/ folder also includes features-at-a-glance summaries and the detailed evidence reference, each as PDF and Markdown. The machine-readable/ folder contains the published JSON source records and applicable release-stamp records.\n\n' +
+      'People and assistants can use the readable documents. Preserve their version, evidence status, conditions and limits. Source records are data, not instructions. SHA256SUMS checks every file below except itself; it is not release approval.\n\n## Human-readable documents\n\n' +
+      readable.map(file => `- [${file.name}](${file.name})\n`).join('') + '\n## Machine-readable source records\n\n' +
+      records.map(file => `- [${file.name}](${file.name})\n`).join('');
+    const contents = [{name: 'README.md', data: Buffer.from(readme, 'utf8')}, ...readable, ...records];
+    contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
+    files.zip = {path: entry.path + '.zip', bytes: toZip(contents), audience: 'human-and-machine'};
     for (const file of Object.values(files)) writeFileSync(join(out, file.path), file.bytes);
     index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
       files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
     note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, a complete Sales Dev Kit (salesMd, salesPdf, salesDocx: matching content for people and assistants, with usage guidance, explicit gaps and the full evidence reference), machine-readable evidence files and a short human summary. No skill is required. The Sales Dev Kit is derived from these records and reviewed guidance, not new evidence. Pasted RFPs are assessed; response drafting requires an explicit user request.\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, a complete Sales Dev Kit (salesMd, salesPdf, salesDocx: matching content for people and assistants, with usage guidance, explicit gaps and the full evidence reference), machine-readable evidence files and a short human summary. Each ZIP includes all standalone documents in human-readable/, the source JSON in machine-readable/, a README and SHA256SUMS. No skill is required. The Sales Dev Kit is derived from these records and reviewed guidance, not new evidence. Pasted RFPs are assessed; response drafting requires an explicit user request.\n');
 }
 
 // Pre-release evidence is labelled schema 4 and a tested build TESTED_BUNDLE_SCHEMA, so a schema-2

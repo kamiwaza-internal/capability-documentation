@@ -419,8 +419,12 @@ is `/catalog/` (`src/pages/catalog.jsx`).
 the newest publication revision of each version, plus a version for each applicable release-stamp
 file. Each digest opens with its own reading rules and status key, then lists every capability in
 scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
-renders it to PDF and packs a zip (digest, PDF, the JSON records it was derived from and
-`SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
+renders it to PDF with no new dependencies. `scripts/published-bundles.mjs` packs a complete ZIP:
+`human-readable/` holds all seven standalone document downloads (complete Sales Dev Kit Word/PDF/MD,
+summary PDF/MD, detailed evidence PDF/MD), while `machine-readable/` holds the source publication
+JSON and applicable release-stamp JSON. Root `README.md` identifies the audiences and entry points;
+`SHA256SUMS` checks every file except itself. Archived documents reuse the exact standalone bytes,
+and output is deterministic. Files land at
 `/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their
 SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
 nothing is written back to `data/`.

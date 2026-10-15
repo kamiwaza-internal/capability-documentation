@@ -116,7 +116,10 @@ Open an issue. This repository grows every release, and a claim that reads wrong
 Each release has one complete Sales Dev Kit in editable Word, PDF and Markdown. The same
 content serves a salesperson or their chosen assistant: reviewed usage guidance and
 customer-agnostic examples followed by the full capability/evidence reference. No plugin or
-Slack bot is required. The existing short summary and evidence zip remain available.
+Slack bot is required. Each release's Everything ZIP includes all seven document downloads
+(the complete kit in three formats, plus summary and detailed reference in PDF and Markdown)
+under `human-readable/`, with source JSON under `machine-readable/`. A root README explains the
+contents and `SHA256SUMS` covers every included file except itself. Standalone downloads remain available.
 
 Guidance is authored once in the private capability records under `sales_guidance` and
 prepared by the kit's `scripts/export_sales_guidance.py` from an immutable commit. Review its

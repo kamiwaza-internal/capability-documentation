@@ -47,9 +47,9 @@ export default function Home() {
                 <a href={salesKitPath(entry.version) + '.pdf'} download>PDF</a>
                 <a href={salesKitPath(entry.version) + '.md'} download>MD</a>
               </nav>
-              <nav className="fileGroup" aria-label={'For AI, ' + entry.version}>
-                <span className="fileGroupLabel">For AI</span>
-                <a href={entry.path + '.zip'} title="Detailed records an AI assistant can read and cite" download>Zip</a>
+              <nav className="fileGroup" aria-label={'Everything, ' + entry.version}>
+                <span className="fileGroupLabel">Everything</span>
+                <a href={entry.path + '.zip'} title="All readable documents and machine-readable source records, in labeled folders" download>Zip</a>
               </nav>
               <nav className="fileGroup" aria-label={'For people, ' + entry.version}>
                 <span className="fileGroupLabel">For people</span>
@@ -58,14 +58,14 @@ export default function Home() {
               </nav>
             </div>
           </li>)}</ul>}
-        <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. The zip holds the detailed digest and the JSON records it was derived from.</p>
+        <p className="machineLinks">Each ZIP includes all documents in a human-readable folder and source JSON in a machine-readable folder, with a README and checksums. For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>.</p>
       </section>
 
       <section aria-labelledby="instructions" className="panel panelTint">
         <h2 id="instructions">Instructions</h2>
         <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
         <ol className="instructions">
-          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s complete Sales Dev Kit from <a href="#releases">Releases</a>, attach that one document to a new chat and ask. No skill, plugin or Slack bot is required. The evidence zip remains available for tools.</li>
+          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s complete Sales Dev Kit from <a href="#releases">Releases</a>, attach that one document to a new chat and ask. No skill, plugin or Slack bot is required. Choose Everything, Zip for all readable documents and source records together.</li>
           <li><strong>Slack, optionally.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>. Pasted requirements and RFP uploads receive a capability assessment. To draft a full response, explicitly ask &ldquo;Draft our response to this RFP&rdquo;, review the draft and approve it.</li>
           <li><strong>Claude Code plugin.</strong> Add the plugin:
             <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>

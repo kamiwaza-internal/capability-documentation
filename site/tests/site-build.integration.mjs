@@ -33,11 +33,11 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'), 'utf8'));
   assert.deepEqual(index.versions.map(entry => entry.version), [version]);
   for (const [key, file] of Object.entries(index.versions[0].files)) {
-    // Buttons: the zip for assistants, the summary for people. The detailed MD and PDF are fetched by tools.
+    // The complete ZIP serves people and assistants; standalone documents remain linked.
     if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf', 'salesDocx'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
     assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
   }
-  for (const label of ['For AI', 'For people']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
+  for (const label of ['Everything', 'For people', 'human-readable folder', 'machine-readable folder']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
   const summary = readFileSync(join(site, 'build', index.versions[0].files.summaryMd.path), 'utf8');
   assert.ok(summary.includes(`# Kamiwaza ${version}: features at a glance`));
   assert.ok(!summary.includes('<script>'), 'Summary must not carry raw HTML');
