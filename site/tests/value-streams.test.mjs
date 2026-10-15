@@ -35,6 +35,10 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   assert.throws(() => validateStreams(promoted, publication), /Tested stream needs a build/);
   promoted.streams.find(row => row.id === 'Analyst:VS2-5').recipe.tested_build = '1.3.2 local';
   assert.throws(() => validateStreams(promoted, publication), /Tested stream has an untested path/);
+  assert.equal(validateStreams(streams, {...publication, releases: []}), null);
+  const leaked = structuredClone(streams);
+  leaked.streams.find(row => row.recipe).recipe.steps[0].api.example = '/Users/operator/private/example.py';
+  assert.throws(() => validateStreams(leaked, publication), /Private absolute filesystem path/);
 });
 
 test('one source snapshot supplies the human recipe and the complete ZIP JSON', () => {

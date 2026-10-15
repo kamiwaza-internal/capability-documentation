@@ -153,6 +153,7 @@ export default function bundlePlugin() {
     const guidance = validateGuidance(JSON.parse(readFileSync(new URL('../data/sales-guidance.json', import.meta.url), 'utf8')), data);
     const streams = validateStreams(JSON.parse(readFileSync(new URL('../data/value-streams.json', import.meta.url), 'utf8')), data);
     if (guidance === null) console.warn('sales-guidance.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
+    if (streams === null) console.warn('value-streams.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance, streams);
   }};
 }
