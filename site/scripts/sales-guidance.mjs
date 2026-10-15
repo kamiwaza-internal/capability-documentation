@@ -20,14 +20,16 @@ export function validateGuidance(data, publication) {
   shape(data.source, ['kitRepository', 'kitCommit']);
   requireValue(data.source.kitRepository === 'kamiwaza-internal/capability-kit' && typeof data.source.kitCommit === 'string' && /^[a-f0-9]{40}$/.test(data.source.kitCommit), 'Guidance must pin its kit source');
   requireValue(data.guides && typeof data.guides === 'object' && !Array.isArray(data.guides), 'Invalid guides');
-  const curated = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.filter(c => c.declaration).map(c => c.id)));
+  // This sidecar is a new reviewed projection from canonical source records. It can
+  // describe evidence-only rows without rewriting their historical declarations.
+  const curated = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.map(c => c.id)));
   for (const [cid, guide] of Object.entries(data.guides)) {
-    requireValue(id.test(cid) && (!applies || curated.has(cid)), 'Guidance outside curated publication');
+    requireValue(id.test(cid) && (!applies || curated.has(cid)), 'Guidance outside published capability scope');
     shape(guide, ['source_version', 'purpose', 'prerequisites', 'steps', 'expected_result', 'use_cases']);
     requireValue(typeof guide.source_version === 'string' && /^\d+\.\d+\.\d+$/.test(guide.source_version), 'Invalid guidance version');
     const caps = publication.releases.filter(r => r.version === guide.source_version && r.publicationState !== 'draft')
       .flatMap(r => r.capabilities.filter(c => c.id === cid));
-    requireValue(!applies || caps.some(c => c.declaration), 'Guidance version has no source declaration');
+    requireValue(!applies || caps.length > 0, 'Guidance version has no published capability');
     plain(guide.purpose); plain(guide.expected_result);
     texts(guide.prerequisites, 30); texts(guide.steps, 30);
     requireValue(Array.isArray(guide.use_cases) && guide.use_cases.length > 0 && guide.use_cases.length <= 10, 'Invalid use cases');

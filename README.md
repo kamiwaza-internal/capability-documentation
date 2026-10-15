@@ -121,15 +121,22 @@ Slack bot is required. The existing short summary and evidence zip remain availa
 Guidance is authored once in the private capability records under `sales_guidance` and
 prepared by the kit's `scripts/export_sales_guidance.py` from an immutable commit. Review its
 allowlisted output before updating `site/data/sales-guidance.json`. The consumer checks the
-exact publication content hash, curated capability/version, pinned kit source and example
+exact publication content hash, published capability/version, pinned kit source and example
 runtime-record references. Regenerate the guidance projection when publication data changes;
 a mismatch omits guidance with a build warning and visible document gaps. Current capability
 evidence downloads remain available. Malformed or unsafe guidance still fails validation.
 
-The initial four guidance entries do not imply complete usage coverage. Missing guidance is
-listed explicitly in the document. Unreferenced examples are illustrative; evidence-linked
+The current 1.3 reference has usage guidance for all 88 capabilities. Four historical workroom
+entries are also curated but do not enter that denominator. Other versions retain explicit gaps
+rather than inheriting instructions. Unreferenced examples are illustrative; evidence-linked
 examples retain their actual demonstrated scope. No download changes a verification status,
 release approval, historical bundle or publication audience.
+
+Newly reviewed guidance may describe an evidence-only row whose historical publication has no
+description. Its source references remain in the pinned kit record; this does not retrofit a
+declaration into the old publication. Private intake ledgers and corpus signoff from kit PR #133
+do not automatically become public content. A separately reviewed publication update still
+requires a regenerated guidance projection.
 
 Slack remains optional. RFP attachments and pasted requirements default to capability
 assessment. A leading user request such as `Draft our response to this RFP` explicitly opts

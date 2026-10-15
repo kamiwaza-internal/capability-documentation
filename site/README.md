@@ -545,9 +545,17 @@ regenerate `data/descriptions.json`, since newly published ids gain a descriptio
 
 `data/sales-guidance.json` is the reviewed, allowlisted projection of optional guidance in
 private capability records. `scripts/sales-guidance.mjs` validates its canonical publication
-hash, pinned source, curated capability/version and passing example-evidence references.
-Guidance does not compute status. The four initial entries name their 1.3.0 source scope;
+hash, pinned source, published capability/version and passing example-evidence references.
+Guidance does not compute status. All 88 capabilities in the current 1.3 reference now have
+curated usage guidance. Four historical workroom entries remain outside that denominator.
+The entries name their 1.3.0 source scope;
 1.3.2 kit guidance is labelled as that historical source, not a new compatibility claim.
+
+Guidance is a new prose projection and may describe an existing evidence-only public row.
+The exporter requires canonical source references; old publication declarations and their
+missing-description labels remain historical facts. New guidance does not change them. Private
+assessment intake, ledgers and signoff (kit PR #133) are not an automatic public input or a new
+source of usage examples. A new reviewed public projection must regenerate the guidance binding.
 
 `src/sales-kit.mjs` adds usage guidance and explicit gaps to the existing complete evidence
 document. `scripts/published-bundles.mjs` emits matching Markdown, PDF and editable Word under

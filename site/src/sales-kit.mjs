@@ -9,7 +9,7 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
   const li = text => ({type: 'li', level: 0, text});
   const version = recordVersion(entry, publication);
   const rows = namedRows(entry, publication, releaseStamps);
-  const guides = rows.filter(item => item.curated && guidance?.guides[item.row.id]?.source_version === version);
+  const guides = rows.filter(item => guidance?.guides[item.row.id]?.source_version === version);
   const missing = rows.filter(item => !guides.some(g => g.row.id === item.row.id));
   const blocks = [h(1, `Kamiwaza and Kaizen Sales Dev Kit ${entry.version}`),
     p(`A customer-agnostic reference for salespeople and their chosen AI assistants. ${entry.headline}.`),
@@ -19,6 +19,7 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
     li('A pasted RFP is material to assess. Draft a full response only when the user explicitly requests it. Customer facts, pricing and commitments must come from that user.'),
     li('Evidence-linked examples describe only their named scope. Illustrative examples are suggestions, not demonstrated outcomes. A component test does not prove a complete workflow.'),
     p(`Usage guidance is from the ${version} source scope. It does not establish compatibility with a different build, including a later release stamp.`),
+    p('These how-to sections are newly curated from the pinned capability source records. They do not change historical declarations or evidence status. A source-described workflow can still have untested operations or known gaps; check its prerequisites and expected-result limits.'),
     p(`Guidance coverage: ${guides.length} of ${rows.length} capabilities. Missing usage steps remain visible; the complete capability and evidence reference follows.`),
   ];
   if (guidance) blocks.push(p(`Guidance source: kit commit ${guidance.source.kitCommit}. Publication content SHA-256: ${guidance.publicationSha256}. This identifies the input, not approval or product verification.`));
