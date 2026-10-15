@@ -72,6 +72,8 @@ test('a Sales Dev Kit retains every evidence block, labels examples and keeps ve
     } else {
       assert.match(text, /Guidance coverage: 88 of 88/);
       assert.doesNotMatch(text, /Usage guidance not yet published/);
+      const usage = text.split('## Complete capability and evidence reference')[0];
+      assert.ok(usage.indexOf('(apps.sandbox-workload-provider)') < usage.indexOf('(auth.enterprise-sso)'));
       for (const cid of ['apps.app-garden', 'models.local-deployment', 'tools.mcp-tool-shed']) assert.ok(text.includes(guidance.guides[cid].purpose));
       assert.match(text, /Illustrative example; not demonstrated/);
       assert.match(text, /Evidence-linked example; only the described scope is demonstrated/);

@@ -9,7 +9,8 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
   const li = text => ({type: 'li', level: 0, text});
   const version = recordVersion(entry, publication);
   const rows = namedRows(entry, publication, releaseStamps);
-  const guides = rows.filter(item => guidance?.guides[item.row.id]?.source_version === version);
+  const guides = rows.filter(item => guidance?.guides[item.row.id]?.source_version === version)
+    .sort((a, b) => a.row.id.localeCompare(b.row.id, 'en'));
   const missing = rows.filter(item => !guides.some(g => g.row.id === item.row.id));
   const blocks = [h(1, `Kamiwaza and Kaizen Sales Dev Kit ${entry.version}`),
     p(`A customer-agnostic reference for salespeople and their chosen AI assistants. ${entry.headline}.`),
@@ -27,8 +28,8 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
   blocks.push(h(2, 'Usage guidance and examples'));
   for (const item of guides) {
     const cid = item.row.id, guide = guidance.guides[cid];
-    blocks.push(h(3, `${item.name} (${cid})`), p(`Evidence status for ${entry.version}: ${item.label}.`),
-      p(guide.purpose), p('Prerequisites'), ...guide.prerequisites.map(li), p('Steps'),
+    blocks.push(h(3, `${item.name} (${cid})`), p(guide.purpose),
+      p(`Evidence status for ${entry.version}: ${item.label}.`), p('Prerequisites'), ...guide.prerequisites.map(li), p('Steps'),
       ...guide.steps.map((step, index) => li(`${index + 1}. ${step}`)), p('Expected result: ' + guide.expected_result));
     for (const example of guide.use_cases) {
       blocks.push(p(`${example.title} — ${example.evidence_sha256.length ? 'Evidence-linked example; only the described scope is demonstrated' : 'Illustrative example; not demonstrated'}`), p(example.description));

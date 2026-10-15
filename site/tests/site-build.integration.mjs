@@ -11,7 +11,7 @@ import {publicationDigest} from '../scripts/sales-guidance.mjs';
 function writePublication(site, publication) {
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify(publication));
   // Synthetic publication fixtures get their own bound empty guidance, never production prose.
-  const ids = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.filter(c => c.declaration).map(c => c.id)));
+  const ids = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.map(c => c.id)));
   writeFileSync(join(site, 'data/sales-guidance.json'), JSON.stringify({schema: 'capability-sales-guidance.v1',
     publicationSha256: publicationDigest(publication), source: {kitRepository: 'kamiwaza-internal/capability-kit', kitCommit: 'a'.repeat(40)},
     guides: {}, missingGuidance: [...ids].sort()}));
