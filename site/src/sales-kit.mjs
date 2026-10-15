@@ -21,7 +21,7 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance, st
     for (const stream of ready) {
       const recipe = stream.recipe;
       blocks.push(h(3, `${stream.title} (${stream.id})`), p(recipe.outcome),
-        p(`Whole-stream status: ${stream.status}. Source scope: ${recipe.source_version}; this recipe is not whole-stream or release verification for ${entry.version}.`),
+        p(`Whole-stream status: ${stream.status}. Source scope: ${recipe.source_version}. ${recipe.tested_build ? `Recorded ${recipe.tested_build}; this fingerprint identifies the private build description, not release binding.` : `No whole-stream tested build; this recipe is not whole-stream or release verification for ${entry.version}.`}`),
         p(`Roles: ${recipe.roles.join(', ')}. Custom-app boundary: ${recipe.custom_app_boundary}`),
         p('Prerequisites'), ...recipe.prerequisites.map(li), p('Configuration'), ...recipe.configuration.map(li));
       for (const step of recipe.steps) {

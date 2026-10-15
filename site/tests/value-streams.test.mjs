@@ -33,12 +33,15 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   const promoted = structuredClone(streams);
   promoted.streams.find(row => row.id === 'Analyst:VS2-5').status = 'tested';
   assert.throws(() => validateStreams(promoted, publication), /Tested stream needs a build/);
-  promoted.streams.find(row => row.id === 'Analyst:VS2-5').recipe.tested_build = '1.3.2 local';
+  promoted.streams.find(row => row.id === 'Analyst:VS2-5').recipe.tested_build = 'build fingerprint ' + 'a'.repeat(64);
   assert.throws(() => validateStreams(promoted, publication), /Tested stream has an untested path/);
   assert.equal(validateStreams(streams, {...publication, releases: []}), null);
   const leaked = structuredClone(streams);
   leaked.streams.find(row => row.recipe).recipe.steps[0].api.example = '/Users/operator/private/example.py';
   assert.throws(() => validateStreams(leaked, publication), /Private absolute filesystem path/);
+  const privateBuild = structuredClone(streams);
+  privateBuild.streams.find(row => row.recipe).recipe.tested_build = 'ghcr.io/internal/core@sha256:abc';
+  assert.throws(() => validateStreams(privateBuild, publication), /Invalid public tested-build fingerprint/);
 });
 
 test('one source snapshot supplies the human recipe and the complete ZIP JSON', () => {
@@ -48,6 +51,9 @@ test('one source snapshot supplies the human recipe and the complete ZIP JSON', 
   assert.match(markdown, /Whole-stream status: untested/);
   assert.match(markdown, /Kaizen UI path: untested/);
   assert.match(markdown, /deployment timed out/i);
+  const future = structuredClone(streams);
+  future.streams.find(row => row.recipe).recipe.tested_build = 'build fingerprint ' + 'a'.repeat(64);
+  assert.match(toMarkdown(salesKitDocument(entry, publication, null, null, future)), /Recorded build fingerprint a{64}/);
   const out = mkdtempSync(join(tmpdir(), 'value-stream-zip-'));
   emitBundles(publication, out);
   emitEvidence(publication, null, out, data('descriptions').descriptions, data('sales-guidance'), streams);
