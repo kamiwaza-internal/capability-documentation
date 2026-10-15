@@ -3,7 +3,7 @@ import {evidenceDocument, namedRows, recordVersion} from './evidence.mjs';
 export const salesKitPath = version => '/evidence/' + version + '/kamiwaza-sales-dev-kit-' + version;
 
 // The complete evidence appendix is reused unchanged. No new status computation lives here.
-export function salesKitDocument(entry, publication, releaseStamps, guidance) {
+export function salesKitDocument(entry, publication, releaseStamps, guidance, streams) {
   const h = (level, text) => ({type: 'h', level, text});
   const p = text => ({type: 'p', text});
   const li = text => ({type: 'li', level: 0, text});
@@ -14,15 +14,35 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance) {
   const missing = rows.filter(item => !guides.some(g => g.row.id === item.row.id));
   const blocks = [h(1, `Kamiwaza and Kaizen Sales Dev Kit ${entry.version}`),
     p(`A customer-agnostic reference for salespeople and their chosen AI assistants. ${entry.headline}.`),
-    p(entry.basis), h(2, 'How to use this kit'),
+    p(entry.basis), h(2, 'Value streams and implementation paths')];
+  if (streams) {
+    const ready = streams.streams.filter(stream => stream.recipe);
+    blocks.push(p(`${streams.inventoryCount} source stream sections are indexed; ${ready.length} have a reviewed recipe. Historical candidate mappings are not current coverage or stream verification. The remaining ${streams.inventoryCount - ready.length} sections need step-level reconciliation.`));
+    for (const stream of ready) {
+      const recipe = stream.recipe;
+      blocks.push(h(3, `${stream.title} (${stream.id})`), p(recipe.outcome),
+        p(`Whole-stream status: ${stream.status}. Source scope: ${recipe.source_version}; this recipe is not whole-stream or release verification for ${entry.version}.`),
+        p(`Roles: ${recipe.roles.join(', ')}. Custom-app boundary: ${recipe.custom_app_boundary}`),
+        p('Prerequisites'), ...recipe.prerequisites.map(li), p('Configuration'), ...recipe.configuration.map(li));
+      for (const step of recipe.steps) {
+        blocks.push(p(`${step.id}: ${step.action} Depends on: ${step.depends_on.length ? step.depends_on.join(', ') : 'none'}. Capability IDs: ${step.capability_ids.join(', ')}.`),
+          p(`API path: ${step.api.status}. ${step.api.instructions.join(' ')} ${step.api.example || ''}`),
+          p(`Kaizen UI path: ${step.kaizen_ui.status}. ${step.kaizen_ui.instructions.join(' ') || 'No clickstream recorded.'}`),
+          p(`Expected result: ${step.expected_result}`));
+        if (step.historical_observation) blocks.push(p(step.historical_observation));
+      }
+      blocks.push(p('Limits'), ...recipe.limits.map(li));
+    }
+    blocks.push(p('Recipe gaps: ' + streams.streams.filter(stream => !stream.recipe).map(stream => stream.id).join(', ') + '.'));
+  } else blocks.push(p('No reviewed value-stream recipe projection applies to this publication. The capability reference remains available below.'));
+  blocks.push(h(2, 'How to use this kit'),
     li('Read the function, prerequisites and expected result before discussing a use case. Carry the conditions and limits into your answer.'),
     li('Attach this one document to your chosen assistant and ask a capability question or assess requirements. No Slack bot, plugin or additional download is required.'),
     li('A pasted RFP is material to assess. Draft a full response only when the user explicitly requests it. Customer facts, pricing and commitments must come from that user.'),
     li('Evidence-linked examples describe only their named scope. Illustrative examples are suggestions, not demonstrated outcomes. A component test does not prove a complete workflow.'),
     p(`Usage guidance is from the ${version} source scope. It does not establish compatibility with a different build, including a later release stamp.`),
     p('These how-to sections are newly curated from the pinned capability source records. They do not change historical declarations or evidence status. A source-described workflow can still have untested operations or known gaps; check its prerequisites and expected-result limits.'),
-    p(`Guidance coverage: ${guides.length} of ${rows.length} capabilities. Missing usage steps remain visible; the complete capability and evidence reference follows.`),
-  ];
+    p(`Guidance coverage: ${guides.length} of ${rows.length} capabilities. Missing usage steps remain visible; the complete capability and evidence reference follows.`));
   if (guidance) blocks.push(p(`Guidance source: kit commit ${guidance.source.kitCommit}. Publication content SHA-256: ${guidance.publicationSha256}. This identifies the input, not approval or product verification.`));
   else blocks.push(p('Usage guidance is unavailable for this publication. No unmatched guidance is included; the capability evidence below remains the current reference.'));
   blocks.push(h(2, 'Usage guidance and examples'));

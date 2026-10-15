@@ -547,6 +547,17 @@ regenerate `data/descriptions.json`, since newly published ids gain a descriptio
 
 ## Complete Sales Dev Kit downloads
 
+The additive value-stream layer is sourced from an immutable capability-kit recipe revision. `data/value-streams.json` is a reviewed public projection: 25 indexed source sections, one initial step recipe, and 24 explicit recipe gaps. The source migration manifest preserves 65 historical candidate mappings privately; none becomes current coverage by appearing in this projection. The initial connector-builder recipe reports passed API components, a timed-out deployment, no Kaizen UI clickstream and an optional extension boundary. Its whole-stream state is `untested`.
+
+The Sales Dev Kit places the stream outcome, roles, prerequisites, ordered API and Kaizen UI paths, expected results and limits before capability-by-capability guidance. It draws the same snapshot into Word, PDF and Markdown. The complete ZIP also contains `machine-readable/value-stream-recipes.json`, and `/evidence/<version>/value-stream-recipes.json` is indexed with a checksum. Source version and target download version are distinct; an older recipe does not prove a newer build. The sidecar contains no private receipt paths, raw evidence or workbook URLs. Update it only with the pinned kit exporter, then review the resulting public prose before publication:
+
+```sh
+cd ../capability-kit
+python3 scripts/export_value_streams.py --kit . --revision <full kit commit> \
+  --publication ../capability-documentation/site/data/publication.json \
+  --output ../capability-documentation/site/data/value-streams.json
+```
+
 `data/sales-guidance.json` is the reviewed, allowlisted projection of optional guidance in
 private capability records. `scripts/sales-guidance.mjs` validates its canonical publication
 hash, pinned source, published capability/version and passing example-evidence references.
