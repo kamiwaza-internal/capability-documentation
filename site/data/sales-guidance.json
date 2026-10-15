@@ -3,7 +3,7 @@
   "publicationSha256": "5baa0e61f70e4aef846eb9a12f1d9441c5fbfe19d489375f861dc7170eb4e0d5",
   "source": {
     "kitRepository": "kamiwaza-internal/capability-kit",
-    "kitCommit": "333d2cd8f19847d5e28bb40d8eea143168e39940"
+    "kitCommit": "8018ec2ba19db02c40f6b0169b1cafe28078886c"
   },
   "guides": {
     "apps.app-garden": {
@@ -16,7 +16,7 @@
       "steps": [
         "Browse the catalog and select the intended template and version",
         "Check or pull the template images and supply its required configuration",
-        "Deploy into the intended workroom, inspect status, then stop or purge when finished"
+        "Confirm the caller's resolved workroom before deploying, inspect status, then stop or purge when finished"
       ],
       "expected_result": "The selected app has a managed deployment and gateway URL. Catalog refresh alone does not select or import a local template. This legacy deployment surface is deprecated in favor of extensions.",
       "use_cases": [
@@ -37,13 +37,13 @@
       "steps": [
         "Configure the baseline file path and expected digest",
         "Load through the baseline service so the digest is checked before parsing",
-        "Inspect the retained members and resolve any malformed, duplicate-name or compatibility refusal"
+        "Confirm the baseline loads and resolve any malformed, duplicate-name or compatibility refusal"
       ],
       "expected_result": "A valid baseline retains one immutable release per name. One incompatible member refuses the whole baseline. It is an identity record, not deployment history or rollback.",
       "use_cases": [
         {
           "title": "Confirm packaged application identity",
-          "description": "An operator checks which application releases belonged to an installation's original baseline before comparing current catalog entries.",
+          "description": "An operator supplies the approved packaged baseline and checks that the installation accepts it rather than inferring its identity from current catalog entries.",
           "evidence_sha256": []
         }
       ]
@@ -75,7 +75,7 @@
       "prerequisites": [
         "An extension configured for code execution",
         "For Agent Sandbox, a preinstalled pinned upstream controller and required custom-resource API",
-        "An operator-owned Secret for the worker token"
+        "A worker token supplied inline or from the extension's own operator-owned Secret"
       ],
       "steps": [
         "Select the standard backend or explicitly choose Agent Sandbox for the extension",
@@ -96,7 +96,7 @@
       "purpose": "Let users sign in through an enterprise identity provider.",
       "prerequisites": [
         "Authentication enabled and platform Keycloak configured",
-        "For SAML, enabled feature gates, Redis session authority and relay-state secret",
+        "For SAML, enabled feature gates, Redis session authority, relay-state secret and the session-store workroom-binding backend rather than the chart-default database backend",
         "For certificate login, enabled gates, trusted mutual-TLS edge and issuer/header configuration"
       ],
       "steps": [
@@ -118,6 +118,7 @@
       "purpose": "Administer platform-local user accounts.",
       "prerequisites": [
         "An administrator session",
+        "Authentication enabled with reachable platform Keycloak for the described sign-in behavior",
         "Local accounts, rather than accounts owned by an external identity provider"
       ],
       "steps": [
@@ -253,14 +254,14 @@
       ],
       "steps": [
         "Create the secret through the API or SDK and retain its URN",
-        "Reference that URN from the consuming connector or service",
+        "Record the URN for integrations that support catalog secret references",
         "List or read metadata to inspect the secret, and delete or explicitly replace it when appropriate"
       ],
       "expected_result": "The HTTP API exposes metadata, not stored secret values. The recorded backend is single-key Fernet, with no established envelope encryption, automatic rotation or expiry reminders. A shipped UI is not established.",
       "use_cases": [
         {
           "title": "Keep a connector credential out of configuration",
-          "description": "An operator stores a source credential once and supplies its secret reference to the source configuration.",
+          "description": "An operator stores a credential and records its URN, then separately validates whether the intended integration supports that secret reference.",
           "evidence_sha256": []
         }
       ]
@@ -290,6 +291,7 @@
       "source_version": "1.3.0",
       "purpose": "Use a model to propose connector setup and attempt bounded repairs.",
       "prerequisites": [
+        "The Connector Builder extension installed and available to the caller",
         "A platform-served or configured gateway model",
         "Authorization and credentials suitable for the target connector"
       ],
@@ -311,6 +313,7 @@
       "source_version": "1.3.0",
       "purpose": "Build a connector from an API description and deploy its runtime.",
       "prerequisites": [
+        "The Connector Builder extension installed and available to the caller",
         "Platform authorization and runtime resources",
         "An OpenAPI or Postman description, documentation, or PDF text",
         "Credentials required by the target service"
@@ -449,7 +452,7 @@
         "List and read it in the same workroom context",
         "Update supported content and read it back"
       ],
-      "expected_result": "The file API provides create, list, read and update. No delete route is established here. Optional marking display does not establish complete marking enforcement. This historical workroom entry is excluded from the current 1.3 capability denominator.",
+      "expected_result": "The file API provides create, list, read and update. No delete route is established here. Optional marking display does not establish complete marking enforcement.",
       "use_cases": [
         {
           "title": "Keep a working source file",
@@ -468,7 +471,7 @@
       "steps": [
         "Identify the dataset or model destination permitted for the run",
         "Call the run-scoped dataset or model route through the configured API or SDK",
-        "Inspect the access outcome and recorded use"
+        "Inspect the access outcome"
       ],
       "expected_result": "The declared routes cover datasets and model deployments, not general egress or artifact storage. Third-party credential-binding use is not reachable at the pinned revision because the shipped lease-reservation path is absent.",
       "use_cases": [
@@ -484,14 +487,13 @@
       "purpose": "Describe a delegated workload's permissions with explicit capability grants.",
       "prerequisites": [
         "A registered, attested workload with capability material",
-        "Authorized access to the capability catalog and grant APIs"
+        "A workload assertion and proof of possession for discovery, and authorized grant inspection"
       ],
       "steps": [
-        "Select the catalog capability and intended operation scope",
-        "Issue the capability contract for the attested workload",
-        "List and read back the resulting grants before attempting resource access"
+        "Read capability discovery, distinguishing its fixed platform vocabulary from the operations permitted to the attested workload",
+        "List existing grants and read the intended grant before attempting resource access"
       ],
-      "expected_result": "Grants describe permission bounds. They do not create a broker destination, supply per-action approval, or provide quota and scheduling policy. No permission-bundle authoring UI is established.",
+      "expected_result": "Grants describe permission bounds. They do not create a broker destination, supply per-action approval, or provide quota and scheduling policy. No permission-bundle authoring UI is established. Workload deregistration is defined but not served by the pinned composition, so complete capability support is not established.",
       "use_cases": [
         {
           "title": "Inspect a delegated workload's permissions",
@@ -598,7 +600,7 @@
       "steps": [
         "Scaffold the intended extension type with kz-ext create",
         "Iterate with kz-ext dev and inspect the deployment status",
-        "Publish its catalog entry when ready and inspect it through the extension API or SDK"
+        "Publish its catalog entry when ready, inspecting the deployed extension separately through the extension API or SDK"
       ],
       "expected_result": "The tooling prepares an extension for the selected platform. Direct runtime is the umbrella-chart default; a Kubernetes custom resource requires operator mode. Publishing does not imply third-party distribution, and existing evidence does not prove the entire deployment loop.",
       "use_cases": [
@@ -879,9 +881,9 @@
       "steps": [
         "Choose Auto or pin a chat agent from the Agents screen",
         "Set the pinned agent's specialist-help policy and permitted sub-agents",
-        "Send a relevant turn and inspect which agent served it and whether a specialist was consulted"
+        "Send a relevant turn and review the answer"
       ],
-      "expected_result": "The serving agent can receive a one-turn grant to consult one specialist. Selection is rule-based, not model-based, and ties select nobody. Exclusions apply to the pinned path, not Default's consult pool.",
+      "expected_result": "The serving agent can receive a one-turn grant to consult one specialist. Selection is rule-based, not model-based, and ties select nobody. Exclusions apply to the pinned path, not Default's consult pool. Consult grants are written best effort to an internal audit store that is not exposed through the conversation API.",
       "use_cases": [
         {
           "title": "Get specialist help within a chat",
@@ -1002,7 +1004,7 @@
       "purpose": "Follow primary Kaizen conversation events from an integration.",
       "prerequisites": [
         "A compatible primary Kaizen conversation instance and member access",
-        "An SDK revision implementing the canonical methods and documented timeout handling"
+        "For the documented silent-stream timeout behavior, an SDK build containing a8c6257e; at source review this was an unmerged change, not established in a released SDK"
       ],
       "steps": [
         "Open the canonical event stream with the instance base URL and conversation identifier",
@@ -1044,7 +1046,7 @@
       "purpose": "Create and configure an assistant in Kaizen Legacy.",
       "prerequisites": [
         "Kaizen Legacy and workroom write access",
-        "A model configuration and skills available to bind afterward"
+        "A model configuration and a published skills-library skill to bind afterward"
       ],
       "steps": [
         "Create a named Legacy agent with its instructions and model configuration",
@@ -1055,7 +1057,7 @@
       "use_cases": [
         {
           "title": "Prepare a specialist Legacy assistant",
-          "description": "An analyst configures a local assistant for a repeatable task and attaches an existing skill without assuming it is approved for wider publication.",
+          "description": "An analyst configures a local assistant and attaches a published skill, without assuming the agent is approved for wider publication.",
           "evidence_sha256": []
         }
       ]
@@ -1134,14 +1136,13 @@
       ],
       "steps": [
         "Set the per-member daily cap through the admin Rate limits settings",
-        "Inspect the member's recorded successful-call usage for the UTC day",
         "Check that further direct calls are refused after recorded use reaches the cap"
       ],
       "expected_result": "The pre-call check uses already-recorded tokens and does not reserve the next call, so a call can exceed the cap. System ingestion embeddings bypass it. A positive cap also enables process-local category limits; this is not a hard currency budget.",
       "use_cases": [
         {
           "title": "Bound ordinary daily model use",
-          "description": "An administrator sets a token threshold and reviews observed use without treating it as an exact spending ceiling.",
+          "description": "An administrator sets a token threshold and confirms refusal once recorded use reaches it, without treating it as an exact spending ceiling.",
           "evidence_sha256": []
         }
       ]
@@ -1176,14 +1177,14 @@
       ],
       "steps": [
         "For chat, use the permitted invoke_agent delegation path",
-        "For an enabled A2A bounded-plan path, inspect the plan and durable trace",
+        "For an enabled A2A path, account for the fact that linking an A2A turn to the available trace route is not established",
         "Before operational use, verify interruption behavior and retain a separate stop strategy"
       ],
       "expected_result": "Partial planning and tracing exist, but bounded-plan resume and cancel are not established at this pin. Canceling the A2A subscriber does not stop the detached producer. Do not present the complete orchestration capability as supported.",
       "use_cases": [
         {
           "title": "Evaluate a specialist coordination design",
-          "description": "A developer examines a bounded delegation plan in a controlled setting and checks its unresolved interruption limits before proposing production use.",
+          "description": "A developer evaluates bounded delegation in a controlled setting and checks its unresolved trace and interruption limits before proposing production use.",
           "evidence_sha256": []
         }
       ]
@@ -1197,7 +1198,7 @@
       ],
       "steps": [
         "List the member's notifications and unread count",
-        "Read an individual notification",
+        "Review notification details in the returned list",
         "Mark one notification or all notifications read"
       ],
       "expected_result": "The API exposes a durable inbox. It does not establish email or Slack delivery; the default outbound notifier is log-only. Work watched live can suppress notification creation.",
@@ -1305,10 +1306,10 @@
       ],
       "steps": [
         "Create or select the Project and invite members as an owner",
-        "Link your own permitted Library items as a writer",
+        "Before linking your own Library items as a writer, choose whether new pointers should be shared or private",
         "Review each pointer's shared or private access and revoke it when needed"
       ],
-      "expected_result": "A shared pointer can lend an active Project member read access to an owned artifact, document or prompt. It copies no data and transfers no edit or re-sharing rights. Revoking the link or membership withdraws that read on the next query.",
+      "expected_result": "New links are shared by default unless the member turns off the share-new-items preference. A shared pointer can lend an active Project member read access to an owned artifact, document or prompt. It copies no data and transfers no edit or re-sharing rights. Revoking the link or membership withdraws that read on the next query.",
       "use_cases": [
         {
           "title": "Collect a team's working references",
@@ -1416,7 +1417,7 @@
         "Open the note and edit supported text in the side pane",
         "Save, rename the note if needed, or delete it through the permitted file surface"
       ],
-      "expected_result": "Notes are workroom files under kaizen-notes. Only notes can be renamed; content-type and size limits apply. This is the Legacy file workflow, not primary Kaizen canvas or collections, and is outside the current 1.3 workroom denominator.",
+      "expected_result": "Notes are workroom files under kaizen-notes. Only notes can be renamed; content-type and size limits apply. This is the Legacy file workflow, separate from primary Kaizen canvas or collections.",
       "use_cases": [
         {
           "title": "Keep working notes beside a conversation",
@@ -1541,7 +1542,8 @@
       "prerequisites": [
         "An owner-enabled tenant resource path with owner-controlled verifier settings",
         "A valid immutable signed bundle bound to this cluster and namespace",
-        "A shipped CPU or NVIDIA engine compatible with the attested hardware and driver"
+        "A shipped CPU or NVIDIA engine compatible with the attested hardware and driver",
+        "The Kamiwaza administrator role for deploying models, distinct from namespace administrator permissions"
       ],
       "steps": [
         "Have the cluster owner detect hardware, sign the profile bundle and publish it under the protected configuration",
@@ -1552,7 +1554,7 @@
       "use_cases": [
         {
           "title": "Offer constrained local serving to a namespace",
-          "description": "A cluster owner prepares a bounded CPU or NVIDIA profile and a tenant administrator checks one permitted deployment before relying on it.",
+          "description": "A cluster owner prepares a bounded CPU or NVIDIA profile and a Kamiwaza administrator checks one permitted deployment before relying on it.",
           "evidence_sha256": []
         }
       ]
@@ -1655,6 +1657,7 @@
       "steps": [
         "Obtain the chart and exact image list for the approved release, resolving documented placeholder locations first",
         "Mirror the chart and all required images by digest, including selected inference engines",
+        "On OpenShift with GreyMatter, also mirror its proxy image and configure global.airgap.registry.url for that image relocation",
         "Install with the internal image prefixes and bundled LOCAL catalogs, then verify actual pulls"
       ],
       "expected_result": "This is a source-described registry-mirror path, not proof that a complete published release bundle exists. Customer cluster and mesh images are separate prerequisites. Installation offline does not establish the platform's runtime network behavior.",
@@ -1693,12 +1696,13 @@
       "prerequisites": [
         "A compatible SDK with kz-ext and the extension runtime library",
         "An authenticated active connection to a reachable instance",
-        "An image registry available to the deployment loop"
+        "An image registry available to the deployment loop",
+        "A local SDK checkout supplied with --sdk-repo until a published package satisfies the scaffold pin; the recorded package-availability gap has not been rechecked"
       ],
       "steps": [
         "Scaffold an app with kz-ext create --type app",
-        "Iterate locally with kz-ext dev local and validate the manifest and compose file",
-        "Deploy with kz-ext dev and inspect the application before use"
+        "Iterate locally with kz-ext dev local --sdk-repo pointing to that checkout, and validate the manifest and compose file",
+        "Deploy with kz-ext dev --sdk-repo pointing to that checkout and inspect the application before use"
       ],
       "expected_result": "The scaffold integrates identity and platform calls. This is a developer-driven CLI path, not a conversational app builder. Typed workroom-boundary error translation is an open runtime-library gap, and deployment is distinct from application launch evidence.",
       "use_cases": [
@@ -1715,7 +1719,8 @@
       "prerequisites": [
         "Customer-provided GreyMatter, tenant configuration management and edge infrastructure",
         "Explicit GreyMatter selection for mesh and ingress",
-        "Reviewed listener identity, certificates and GitOps configuration"
+        "Reviewed listener identity, certificates and GitOps configuration",
+        "The static tenant GSL rendered and synchronized before installation so pods can join the mesh"
       ],
       "steps": [
         "Choose the GreyMatter routing values and intended security mode",
@@ -1891,9 +1896,9 @@
       "steps": [
         "Create the retrieval job for the dataset URN",
         "Poll its state or read SSE results, or fetch Flight batches where available",
-        "Use the REST cancellation route if the owned job must stop"
+        "Use the REST route to mark an owned job canceled, without relying on it to stop in-flight SSE delivery"
       ],
-      "expected_result": "Jobs are dataset-addressed and owner-checked. The SDK cannot materialize Kafka or cancel jobs here. Offset, filters and ordering belong to a separate query-jobs contract; setting them on this route is rejected.",
+      "expected_result": "Jobs are dataset-addressed and owner-checked. The SDK cannot materialize Kafka or cancel jobs here. Offset, filters and ordering belong to a separate query-jobs contract; setting them on this route is rejected. A recorded cancellation changed status while SSE continued delivering data; cancellation is not a reliable delivery cutoff.",
       "use_cases": [
         {
           "title": "Read a large permitted dataset",
@@ -1915,7 +1920,7 @@
         "Include the provided embed script on applicable extension surfaces",
         "Check the displayed content and acceptance behavior through the actual edge"
       ],
-      "expected_result": "Consent is acknowledgment rather than authorization. Extension coverage depends on including the script. Acceptance is browser-session scoped, not a durable per-user ledger, and some throttled embed paths can admit users without an audit event.",
+      "expected_result": "Consent is acknowledgment rather than authorization. Extension coverage depends on including the script. Acceptance is browser-session scoped, not a durable per-user ledger. On the embed script and Legacy client, any failed acceptance request can admit the user without a server audit event; the newer client blocks on failure.",
       "use_cases": [
         {
           "title": "Apply an approved usage acknowledgment",
@@ -1980,7 +1985,7 @@
         "Create the plan only when ready for its room-creation side effect, then inspect it",
         "Confirm with the exact organization name and follow read-only state, deletion processing and tombstones"
       ],
-      "expected_result": "Confirmation archives planned rooms and the background task deletes them at cutoff. There is no cancel route, both strategy values behave alike, and changed inventory can strand a draft until expiry handling. This historical workroom entry is outside the current 1.3 denominator.",
+      "expected_result": "Confirmation archives planned rooms and the background task deletes them at cutoff. There is no cancel route, both strategy values behave alike, and changed inventory can strand a draft until expiry handling.",
       "use_cases": [
         {
           "title": "Prepare an approved organization shutdown",
