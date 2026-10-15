@@ -47,7 +47,7 @@ export function validateStreams(data, publication) {
     prose(recipe.outcome); prose(recipe.custom_app_boundary);
     proseList(recipe.roles); proseList(recipe.prerequisites); proseList(recipe.configuration); proseList(recipe.limits);
     requireValue(recipe.tested_build === null || (typeof recipe.tested_build === 'string' && /^build fingerprint [a-f0-9]{64}$/.test(recipe.tested_build)), 'Invalid public tested-build fingerprint');
-    requireValue(item.status !== 'tested' || recipe.tested_build, 'Tested stream needs a build');
+    requireValue(item.status !== 'tested', 'Whole-stream tested requires a sequence proof contract');
     requireValue(item.status === 'tested' || recipe.tested_build === null, 'Untested stream cannot name a whole-stream tested build');
     requireValue(Array.isArray(recipe.steps) && recipe.steps.length > 0 && recipe.steps.length <= 50, 'Invalid stream steps');
     const ordered = new Set();
@@ -59,7 +59,6 @@ export function validateStreams(data, publication) {
       requireValue(Array.isArray(step.capability_ids) && step.capability_ids.length > 0 && new Set(step.capability_ids).size === step.capability_ids.length, 'Invalid step capabilities');
       for (const cid of step.capability_ids) requireValue(id.test(cid) && (!applies || published.has(`${recipe.source_version}:${cid}`)), 'Step capability outside published source version');
       path(step.api); path(step.kaizen_ui);
-      if (item.status === 'tested') requireValue([step.api, step.kaizen_ui].every(surface => ['tested', 'inapplicable'].includes(surface.status)), 'Tested stream has an untested path');
       if (step.historical_observation !== null) prose(step.historical_observation);
     }
   }

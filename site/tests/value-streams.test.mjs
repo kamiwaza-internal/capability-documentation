@@ -32,9 +32,9 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   assert.equal(pilot.recipe.steps[0].kaizen_ui.status, 'untested');
   const promoted = structuredClone(streams);
   promoted.streams.find(row => row.id === 'Analyst:VS2-5').status = 'tested';
-  assert.throws(() => validateStreams(promoted, publication), /Tested stream needs a build/);
+  assert.throws(() => validateStreams(promoted, publication), /Whole-stream tested requires a sequence proof contract/);
   promoted.streams.find(row => row.id === 'Analyst:VS2-5').recipe.tested_build = 'build fingerprint ' + 'a'.repeat(64);
-  assert.throws(() => validateStreams(promoted, publication), /Tested stream has an untested path/);
+  assert.throws(() => validateStreams(promoted, publication), /Whole-stream tested requires a sequence proof contract/);
   assert.equal(validateStreams(streams, {...publication, releases: []}), null);
   const leaked = structuredClone(streams);
   leaked.streams.find(row => row.recipe).recipe.steps[0].api.example = '/Users/operator/private/example.py';
@@ -51,14 +51,13 @@ test('one source snapshot supplies the human recipe and the complete ZIP JSON', 
   assert.match(markdown, /Whole-stream status: untested/);
   assert.match(markdown, /Kaizen UI path: untested/);
   assert.match(markdown, /deployment timed out/i);
-  const future = structuredClone(streams);
-  future.streams.find(row => row.recipe).recipe.tested_build = 'build fingerprint ' + 'a'.repeat(64);
-  assert.match(toMarkdown(salesKitDocument(entry, publication, null, null, future)), /Recorded build fingerprint a{64}/);
+  assert.match(markdown, /connector-builder-import-test-generate\.py/);
   const out = mkdtempSync(join(tmpdir(), 'value-stream-zip-'));
   emitBundles(publication, out);
   emitEvidence(publication, null, out, data('descriptions').descriptions, data('sales-guidance'), streams);
   const zip = readFileSync(join(out, 'evidence/1.3.0/kamiwaza-capabilities-1.3.0.zip'));
   assert.deepEqual(JSON.parse(zipEntry(zip, 'machine-readable/value-stream-recipes.json')), streams);
+  assert.match(zipEntry(zip, 'examples/connector-builder-import-test-generate.py').toString(), /Deployment was not attempted/);
   assert.equal(JSON.parse(readFileSync(join(out, 'evidence/1.3.0/value-stream-recipes.json'))).streams.length, 25);
   assert.ok(!zip.toString().includes('reports/eng-13825'));
 });

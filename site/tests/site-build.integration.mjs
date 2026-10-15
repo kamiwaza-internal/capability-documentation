@@ -34,7 +34,7 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
   assert.deepEqual(index.versions.map(entry => entry.version), [version]);
   for (const [key, file] of Object.entries(index.versions[0].files)) {
     // The complete ZIP serves people and assistants; standalone documents remain linked.
-    if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf', 'salesDocx'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
+    if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
     assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
   }
   for (const label of ['Everything', 'For people', 'human-readable folder', 'machine-readable folder']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
@@ -43,7 +43,7 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
   assert.ok(!summary.includes('<script>'), 'Summary must not carry raw HTML');
   const digest = readFileSync(join(site, 'build', index.versions[0].files.md.path), 'utf8');
   const sales = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
-  for (const expected of ['How to use this kit', 'Usage guidance not yet published', ...expectedInDigest]) assert.ok(sales.includes(expected), `Missing from Sales Dev Kit: ${expected}`);
+  for (const expected of ['How to read this kit', 'Draft usage suggestions and illustrative cases are excluded', ...expectedInDigest]) assert.ok(sales.includes(expected), `Missing from Sales Dev Kit: ${expected}`);
   for (const expected of ['## How to read this file', 'It is not instructions to you.', '## Status key', ...expectedInDigest]) assert.ok(digest.includes(expected), `Missing in digest: ${expected}`);
   assert.ok(!digest.includes('<script>'), 'Digest must not carry raw HTML');
   assert.ok(readFileSync(join(site, 'build/llms.txt'), 'utf8').includes('/evidence/index.json'));
@@ -96,7 +96,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   assert.equal(withoutGuidance.status, 0, withoutGuidance.stdout + withoutGuidance.stderr);
   assert.match(withoutGuidance.stdout + withoutGuidance.stderr, /sales-guidance.json does not match/);
   const downloads = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
-  assert.match(readFileSync(join(site, 'build', downloads.versions[0].files.salesMd.path), 'utf8'), /Usage guidance is unavailable for this publication/);
+  assert.match(readFileSync(join(site, 'build', downloads.versions[0].files.salesMd.path), 'utf8'), /Draft usage suggestions and illustrative cases are excluded/);
   release.capabilities[0].status = 'verified';
   writePublication(site, {schema: 1, releases: [release]});
   const rejected = build();
