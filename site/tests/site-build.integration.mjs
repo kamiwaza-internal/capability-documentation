@@ -13,7 +13,7 @@ function writePublication(site, publication) {
   // Synthetic publication fixtures get their own bound empty guidance, never production prose.
   const ids = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.map(c => c.id)));
   writeFileSync(join(site, 'data/sales-guidance.json'), JSON.stringify({schema: 'capability-sales-guidance.v1',
-    publicationSha256: publicationDigest(publication), source: {kitRepository: 'kamiwaza-internal/capability-kit', kitCommit: 'a'.repeat(40)},
+    publicationSha256: publicationDigest(publication), source: {sourceKind: 'reviewed-private-kit', kitCommit: 'a'.repeat(40)},
     guides: {}, missingGuidance: [...ids].sort()}));
 }
 function checkBuiltFiles(directory) {

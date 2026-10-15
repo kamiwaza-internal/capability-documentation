@@ -25,6 +25,9 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
   }
   const index = [];
   for (const entry of evidenceVersions(publication, releaseStamps)) {
+    const scopedStreams = streams && streams.streams.some(row => row.recipe?.source_version === entry.version)
+      ? {...streams, streams: streams.streams.map(row => row.recipe?.source_version === entry.version
+        ? row : {...row, status: 'unmapped', recipe: null})} : null;
     const blocks = evidenceDocument(entry, publication, releaseStamps);
     const name = 'kamiwaza-capabilities-' + entry.version;
     const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
@@ -39,7 +42,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     mkdirSync(dir, {recursive: true});
     // Render each document once; the ZIP reuses those exact standalone bytes.
     const summary = summaryDocument(entry, publication, releaseStamps, descriptions);
-    const sales = salesKitDocument(entry, publication, releaseStamps, guidance, streams);
+    const sales = salesKitDocument(entry, publication, releaseStamps, guidance, scopedStreams);
     const salesPath = salesKitPath(entry.version);
     const files = {
       md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
@@ -51,11 +54,11 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
       salesPdf: {path: salesPath + '.pdf', bytes: toPdf(sales, {title: `Kamiwaza and Kaizen Sales Dev Kit ${entry.version}`,
         footer: `Kamiwaza Sales Dev Kit ${entry.version} · capabilities.kamiwaza.dev`}), audience: 'human-and-machine'},
     };
-    if (streams) files.streamsJson = {path: `/evidence/${entry.version}/value-stream-recipes.json`,
-      bytes: Buffer.from(JSON.stringify(streams, null, 2) + '\n'), audience: 'machine'};
+    if (scopedStreams) files.streamsJson = {path: `/evidence/${entry.version}/value-stream-recipes.json`,
+      bytes: Buffer.from(JSON.stringify(scopedStreams, null, 2) + '\n'), audience: 'machine'};
     const readable = Object.entries(files).filter(([key]) => key !== 'streamsJson')
       .map(([, file]) => ({name: 'human-readable/' + file.path.split('/').at(-1), data: file.bytes}));
-    if (streams) records.push({name: 'machine-readable/value-stream-recipes.json', data: files.streamsJson.bytes});
+    if (scopedStreams) records.push({name: 'machine-readable/value-stream-recipes.json', data: files.streamsJson.bytes});
     const readme = `# Kamiwaza ${entry.version} complete Sales Dev Kit\n\n` +
       'Start with the Sales Dev Kit in human-readable/: PDF for reading or sharing, Markdown for text-based assistants. Each contains the same evidence-grounded content and explicit gaps.\n\n' +
       'The human-readable/ folder also includes features-at-a-glance summaries and the detailed evidence reference, each as PDF and Markdown. The machine-readable/ folder contains the published JSON source records, applicable release-stamp records and reviewed value-stream recipes when available. Any examples/ source is an API illustration for its stated source scope, not live acceptance or release verification.\n\n' +

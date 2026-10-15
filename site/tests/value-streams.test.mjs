@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync, mkdtempSync} from 'node:fs';
+import {readFileSync, mkdtempSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {inflateRawSync} from 'node:zlib';
@@ -30,6 +30,9 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   assert.equal(pilot.status, 'untested');
   assert.equal(pilot.recipe.steps.at(-1).api.status, 'partial');
   assert.equal(pilot.recipe.steps[0].kaizen_ui.status, 'untested');
+  const driftedExample = structuredClone(streams);
+  driftedExample.exampleSha256 = '0'.repeat(64);
+  assert.throws(() => validateStreams(driftedExample, publication), /Public example differs from pinned private source/);
   const promoted = structuredClone(streams);
   promoted.streams.find(row => row.id === 'Analyst:VS2-5').status = 'tested';
   assert.throws(() => validateStreams(promoted, publication), /Whole-stream tested requires a sequence proof contract/);
@@ -54,10 +57,17 @@ test('one source snapshot supplies the human recipe and the complete ZIP JSON', 
   assert.match(markdown, /connector-builder-import-test-generate\.py/);
   const out = mkdtempSync(join(tmpdir(), 'value-stream-zip-'));
   emitBundles(publication, out);
-  emitEvidence(publication, null, out, data('descriptions').descriptions, data('sales-guidance'), streams);
+  const stamps = data('release-stamps-1.3.2');
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(publication, stamps, out, data('descriptions').descriptions, data('sales-guidance'), streams);
   const zip = readFileSync(join(out, 'evidence/1.3.0/kamiwaza-capabilities-1.3.0.zip'));
   assert.deepEqual(JSON.parse(zipEntry(zip, 'machine-readable/value-stream-recipes.json')), streams);
   assert.match(zipEntry(zip, 'examples/connector-builder-import-test-generate.py').toString(), /Deployment was not attempted/);
   assert.equal(JSON.parse(readFileSync(join(out, 'evidence/1.3.0/value-stream-recipes.json'))).streams.length, 25);
   assert.ok(!zip.toString().includes('reports/eng-13825'));
+  for (const version of ['1.2.1', '1.3.2']) {
+    const other = readFileSync(join(out, `evidence/${version}/kamiwaza-sales-dev-kit-${version}.md`), 'utf8');
+    assert.ok(!other.includes('Analyst:VS2-5'), `1.3.0 recipe leaked into ${version}`);
+    assert.ok(!readFileSync(join(out, `evidence/${version}/kamiwaza-capabilities-${version}.zip`)).includes(Buffer.from('value-stream-recipes.json')));
+  }
 });

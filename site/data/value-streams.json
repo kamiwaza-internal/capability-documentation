@@ -2,9 +2,10 @@
   "schema": "public-value-stream-recipes.v1",
   "publicationSha256": "5baa0e61f70e4aef846eb9a12f1d9441c5fbfe19d489375f861dc7170eb4e0d5",
   "source": {
-    "kitRepository": "kamiwaza-internal/capability-kit",
-    "kitCommit": "cd6c12c88b77d780312d0f466eefb9e3266e5efd"
+    "sourceKind": "reviewed-private-kit",
+    "kitCommit": "ba395d3f94083e10f442e239ea062f146322fe6b"
   },
+  "exampleSha256": "4aeba79d5d718bdcdf263d6c8f4feba8112d71c63ec52dfa61767567ca2fdf93",
   "inventoryCount": 25,
   "historicalMappingCount": 65,
   "streams": [

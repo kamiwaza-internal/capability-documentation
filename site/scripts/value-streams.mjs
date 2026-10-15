@@ -1,3 +1,5 @@
+import {createHash} from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import {publicationDigest} from './sales-guidance.mjs';
 import {id, requireValue, shape, text} from './local-stamps.mjs';
 import {assertPublicOutputSafe, unsafePublicText} from './public-output-privacy.mjs';
@@ -21,13 +23,14 @@ const path = value => {
 };
 
 export function validateStreams(data, publication) {
-  shape(data, ['schema', 'publicationSha256', 'source', 'inventoryCount', 'historicalMappingCount', 'streams']);
+  shape(data, ['schema', 'publicationSha256', 'source', 'exampleSha256', 'inventoryCount', 'historicalMappingCount', 'streams']);
   requireValue(data.schema === 'public-value-stream-recipes.v1', 'Unsupported stream recipes');
   requireValue(typeof data.publicationSha256 === 'string' && /^[a-f0-9]{64}$/.test(data.publicationSha256), 'Invalid stream publication hash');
   const applies = data.publicationSha256 === publicationDigest(publication);
-  shape(data.source, ['kitRepository', 'kitCommit']);
-  requireValue(data.source.kitRepository === 'kamiwaza-internal/capability-kit' && /^[a-f0-9]{40}$/.test(data.source.kitCommit), 'Unpinned stream source');
+  shape(data.source, ['sourceKind', 'kitCommit']);
+  requireValue(data.source.sourceKind === 'reviewed-private-kit' && /^[a-f0-9]{40}$/.test(data.source.kitCommit), 'Unpinned stream source');
   requireValue(Number.isInteger(data.inventoryCount) && data.inventoryCount > 0 && Number.isInteger(data.historicalMappingCount) && data.historicalMappingCount >= 0, 'Invalid stream migration totals');
+  requireValue(data.exampleSha256 === null || (typeof data.exampleSha256 === 'string' && /^[a-f0-9]{64}$/.test(data.exampleSha256)), 'Invalid example digest');
   requireValue(Array.isArray(data.streams) && data.streams.length === data.inventoryCount, 'Incomplete stream inventory');
   const seen = new Set();
   const published = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.map(c => `${r.version}:${c.id}`)));
@@ -61,6 +64,10 @@ export function validateStreams(data, publication) {
       path(step.api); path(step.kaizen_ui);
       if (step.historical_observation !== null) prose(step.historical_observation);
     }
+  }
+  if (applies && data.streams.some(row => row.id === 'Analyst:VS2-5' && row.recipe)) {
+    const bytes = readFileSync(new URL('../static/examples/connector-builder-import-test-generate.py', import.meta.url));
+    requireValue(createHash('sha256').update(bytes).digest('hex') === data.exampleSha256, 'Public example differs from pinned private source');
   }
   assertPublicOutputSafe(JSON.stringify(data));
   return applies ? data : null;
