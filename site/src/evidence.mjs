@@ -121,7 +121,7 @@ export function curatedIds(publication, version) {
     .flatMap(release => release.capabilities.filter(cap => isCurated(cap, release))).map(cap => cap.id));
 }
 // The version whose publications describe an entry's rows: a stamp file's is its baseline's.
-const recordVersion = (entry, publication) => publication.releases.find(release => entry.releaseIds.includes(release.id)).version;
+export const recordVersion = (entry, publication) => publication.releases.find(release => entry.releaseIds.includes(release.id)).version;
 // A name identifies the feature and claims nothing, so it may come from any version's record.
 const titleOf = (row, publication) => row.title ?? [...publication.releases].sort(byRevisionDesc)
   .map(release => release.capabilities.find(cap => cap.id === row.id)?.title).find(Boolean) ?? null;
@@ -337,7 +337,7 @@ const labelMeaning = label => MEANINGS.find(([pattern]) => pattern.test(label))?
 
 // `curated` marks a row whose version publishes a curated declaration for it: only then may it
 // print a description; its operation list comes from that same version.
-const namedRows = (entry, publication, releaseStamps) => {
+export const namedRows = (entry, publication, releaseStamps) => {
   const scope = {publication, version: recordVersion(entry, publication)};
   const curated = curatedIds(publication, scope.version);
   return summaryRows(entry, publication, releaseStamps).map(item => {

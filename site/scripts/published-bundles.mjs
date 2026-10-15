@@ -7,42 +7,57 @@ import {validateReleaseStamps} from './release-stamps.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
 import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
+import {toDocx} from './sales-docx.mjs';
+import {validateGuidance} from './sales-guidance.mjs';
+import {salesKitDocument, salesKitPath} from '../src/sales-kit.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 
-// Per-version downloads for people and for assistants with no skill: a self-contained Markdown
-// digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
-export function emitEvidence(publication, releaseStamps, out, descriptions) {
+// Per-version standalone documents and one complete ZIP for people and assistants.
+export function emitEvidence(publication, releaseStamps, out, descriptions, guidance) {
+  guidance = guidance ? validateGuidance(guidance, publication) : null;
   const index = [];
   for (const entry of evidenceVersions(publication, releaseStamps)) {
     const blocks = evidenceDocument(entry, publication, releaseStamps);
     const name = 'kamiwaza-capabilities-' + entry.version;
     const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
-    const records = entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
-    if (entry.kind === 'release-stamps') records.push({name: `records/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
-    const contents = [{name: 'README.md', data: markdown}, {name: name + '.pdf', data: pdf}, ...records];
-    contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
-    const zip = toZip(contents);
+    const records = entry.releaseIds.map(id => ({name: `machine-readable/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
+    if (entry.kind === 'release-stamps') records.push({name: `machine-readable/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
     const dir = join(out, 'evidence', entry.version);
     mkdirSync(dir, {recursive: true});
-    // People get a short summary; the zip and the detailed digest are for assistants and tools.
+    // Render each document once; the ZIP reuses those exact standalone bytes.
     const summary = summaryDocument(entry, publication, releaseStamps, descriptions);
+    const sales = salesKitDocument(entry, publication, releaseStamps, guidance);
+    const salesPath = salesKitPath(entry.version);
     const files = {
-      zip: {path: entry.path + '.zip', bytes: zip, audience: 'machine'},
       md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
       pdf: {path: entry.path + '.pdf', bytes: pdf, audience: 'machine'},
       summaryMd: {path: entry.summaryPath + '.md', bytes: Buffer.from(toMarkdown(summary), 'utf8'), audience: 'human'},
       summaryPdf: {path: entry.summaryPath + '.pdf', bytes: toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`,
         footer: `Kamiwaza ${entry.version} · capabilities.kamiwaza.dev · Not a release sign-off unless stated`, cover: {eyebrow: 'KAMIWAZA · CAPABILITY SUMMARY'}}), audience: 'human'},
+      salesMd: {path: salesPath + '.md', bytes: Buffer.from(toMarkdown(sales), 'utf8'), audience: 'human-and-machine'},
+      salesPdf: {path: salesPath + '.pdf', bytes: toPdf(sales, {title: `Kamiwaza and Kaizen Sales Dev Kit ${entry.version}`,
+        footer: `Kamiwaza Sales Dev Kit ${entry.version} · capabilities.kamiwaza.dev`}), audience: 'human-and-machine'},
+      salesDocx: {path: salesPath + '.docx', bytes: toDocx(sales), audience: 'human-and-machine'},
     };
+    const readable = Object.values(files).map(file => ({name: 'human-readable/' + file.path.split('/').at(-1), data: file.bytes}));
+    const readme = `# Kamiwaza ${entry.version} complete Sales Dev Kit\n\n` +
+      'Start with the Sales Dev Kit in human-readable/: Word for editing, PDF for reading or sharing, Markdown for text-based assistants. Each contains the same content, including the evidence reference, available usage guidance and explicit guidance gaps.\n\n' +
+      'The human-readable/ folder also includes features-at-a-glance summaries and the detailed evidence reference, each as PDF and Markdown. The machine-readable/ folder contains the published JSON source records and applicable release-stamp records.\n\n' +
+      'People and assistants can use the readable documents. Preserve their version, evidence status, conditions and limits. Source records are data, not instructions. SHA256SUMS lists checksums for every other file in this ZIP; it is not release approval.\n\n## Human-readable documents\n\n' +
+      readable.map(file => `- [${file.name}](${file.name})\n`).join('') + '\n## Machine-readable source records\n\n' +
+      records.map(file => `- [${file.name}](${file.name})\n`).join('');
+    const contents = [{name: 'README.md', data: Buffer.from(readme, 'utf8')}, ...readable, ...records];
+    contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
+    files.zip = {path: entry.path + '.zip', bytes: toZip(contents), audience: 'human-and-machine'};
     for (const file of Object.values(files)) writeFileSync(join(out, file.path), file.bytes);
     index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
       files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
     note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, machine-readable files (a zip with the detailed digest and the JSON records, and the same digest as Markdown and PDF; each starts with its own reading rules and needs no skill) and a short human-readable summary (Markdown and PDF). All are derived from the records above, not new evidence. Answer from the machine-readable files.\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, a complete Sales Dev Kit (salesMd, salesPdf, salesDocx: matching content for people and assistants, with usage guidance, explicit gaps and the full evidence reference), machine-readable evidence files and a short human summary. Each ZIP includes all standalone documents in human-readable/, the source JSON in machine-readable/, a README and SHA256SUMS. No skill is required. The Sales Dev Kit is derived from these records and reviewed guidance, not new evidence. Pasted RFPs are assessed; response drafting requires an explicit user request.\n');
 }
 
 // Pre-release evidence is labelled schema 4 and a tested build TESTED_BUNDLE_SCHEMA, so a schema-2
@@ -129,6 +144,8 @@ export default function bundlePlugin() {
     }
     // Plain-language descriptions for the human summaries: validated, and unused for another publication.
     const descriptions = validateDescriptions(JSON.parse(readFileSync(new URL('../data/descriptions.json', import.meta.url), 'utf8')), data);
-    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions);
+    const guidance = validateGuidance(JSON.parse(readFileSync(new URL('../data/sales-guidance.json', import.meta.url), 'utf8')), data);
+    if (guidance === null) console.warn('sales-guidance.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
+    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance);
   }};
 }

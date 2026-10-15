@@ -28,7 +28,7 @@ code { overflow-wrap: anywhere; }
 .statusKey dt { font-weight: 600; }
 .statusKey dd { margin: 0; }
 .releaseList { list-style: none; padding: 0; margin: 0; }
-.releaseRow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--ifm-color-emphasis-300); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: .75rem; }
+.releaseRow { display: flex; flex-direction: column; align-items: stretch; gap: 1rem; border: 1px solid var(--ifm-color-emphasis-300); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: .75rem; }
 .releaseText { display: flex; flex-direction: column; gap: .2rem; min-width: 0; }
 .releaseVersion { font-size: 1.35rem; font-weight: 700; }
 .releaseBasis { font-size: .85rem; color: var(--ifm-color-emphasis-700); }
@@ -36,8 +36,8 @@ code { overflow-wrap: anywhere; }
 .releaseChanges summary { cursor: pointer; font-weight: 600; }
 .releaseChanges dt { margin-top: .5rem; }
 .releaseChanges dd { margin: 0; }
-.releaseFiles { display: flex; gap: 1.25rem; flex-shrink: 0; }
-.fileGroup { display: flex; align-items: center; gap: .4rem; }
+.releaseFiles { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+.fileGroup { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; max-width: 100%; }
 .fileGroupLabel { font-size: .75rem; color: var(--ifm-color-emphasis-700); margin-right: .1rem; }
 .releaseFiles a { border: 1px solid var(--ifm-color-primary); border-radius: 8px; padding: .3rem .75rem; font-weight: 600; }
 .releaseFiles a:hover { background: var(--ifm-color-primary); color: var(--ifm-background-color); text-decoration: none; }

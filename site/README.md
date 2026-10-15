@@ -419,8 +419,12 @@ is `/catalog/` (`src/pages/catalog.jsx`).
 the newest publication revision of each version, plus a version for each applicable release-stamp
 file. Each digest opens with its own reading rules and status key, then lists every capability in
 scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
-renders it to PDF and packs a zip (digest, PDF, the JSON records it was derived from and
-`SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
+renders it to PDF with no new dependencies. `scripts/published-bundles.mjs` packs a complete ZIP:
+`human-readable/` holds all seven standalone document downloads (complete Sales Dev Kit Word/PDF/MD,
+summary PDF/MD, detailed evidence PDF/MD), while `machine-readable/` holds the source publication
+JSON and applicable release-stamp JSON. Root `README.md` identifies the audiences and entry points;
+`SHA256SUMS` checks every file except itself. Archived documents reuse the exact standalone bytes,
+and output is deterministic. Files land at
 `/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their
 SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
 nothing is written back to `data/`.
@@ -540,3 +544,30 @@ python3 scripts/export_release_publication.py --kit . --revision <full kit commi
 `--previous` splices the object in after the last release and keeps every existing byte. Run it
 against the publication without that revision; a revision already present is refused. Then
 regenerate `data/descriptions.json`, since newly published ids gain a description.
+
+## Complete Sales Dev Kit downloads
+
+`data/sales-guidance.json` is the reviewed, allowlisted projection of optional guidance in
+private capability records. `scripts/sales-guidance.mjs` validates its canonical publication
+hash, pinned source, published capability/version and passing example-evidence references.
+Guidance does not compute status. All 88 capabilities in the current 1.3 reference now have
+curated usage guidance. Four historical workroom entries remain outside that denominator.
+The entries name their 1.3.0 source scope;
+1.3.2 kit guidance is labelled as that historical source, not a new compatibility claim.
+
+Guidance is a new prose projection and may describe an existing evidence-only public row.
+The exporter requires canonical source references; old publication declarations and their
+missing-description labels remain historical facts. New guidance does not change them. Private
+assessment intake, ledgers and signoff (kit PR #133) are not an automatic public input or a new
+source of usage examples. A new reviewed public projection must regenerate the guidance binding.
+
+`src/sales-kit.mjs` adds usage guidance and explicit gaps to the existing complete evidence
+document. `scripts/published-bundles.mjs` emits matching Markdown, PDF and editable Word under
+`/evidence/<version>/kamiwaza-sales-dev-kit-<version>.*`, indexed and hashed in
+`/evidence/index.json`. Word uses the existing block model and ZIP writer, without another
+runtime dependency. Old evidence-bundle bytes and the short summaries are unchanged.
+
+Publication changes require regenerating the reviewed guidance sidecar. The build omits
+valid guidance bound to another publication, warns, and identifies the missing guidance in the
+documents. Malformed or unsafe data still fails validation. Review prose and evidence scope as well as mechanical checks; a matching
+hash does not prove that an example's description follows from its test.

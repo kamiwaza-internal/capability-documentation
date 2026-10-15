@@ -1,0 +1,1999 @@
+{
+  "schema": "capability-sales-guidance.v1",
+  "publicationSha256": "5baa0e61f70e4aef846eb9a12f1d9441c5fbfe19d489375f861dc7170eb4e0d5",
+  "source": {
+    "kitRepository": "kamiwaza-internal/capability-kit",
+    "kitCommit": "8018ec2ba19db02c40f6b0169b1cafe28078886c"
+  },
+  "guides": {
+    "apps.app-garden": {
+      "source_version": "1.3.0",
+      "purpose": "Deploy and manage applications from the available App Garden catalog.",
+      "prerequisites": [
+        "An authenticated operator and an available local template",
+        "A healthy model deployment for apps that need inference"
+      ],
+      "steps": [
+        "Browse the catalog and select the intended template and version",
+        "Check or pull the template images and supply its required configuration",
+        "Confirm the caller's resolved workroom before deploying, inspect status, then stop or purge when finished"
+      ],
+      "expected_result": "The selected app has a managed deployment and gateway URL. Catalog refresh alone does not select or import a local template. This legacy deployment surface is deprecated in favor of extensions.",
+      "use_cases": [
+        {
+          "title": "Launch a packaged assistant",
+          "description": "An operator prepares a catalog app for a team and checks its deployment before use. This is an illustrative sequence, not a claim that every catalog app has been tested.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "apps.deployment-baseline": {
+      "source_version": "1.3.0",
+      "purpose": "Identify the exact packaged application baseline a deployment was built from.",
+      "prerequisites": [
+        "An operator-configured readable baseline file and its expected SHA-256",
+        "A running Core version compatible with every baseline member"
+      ],
+      "steps": [
+        "Configure the baseline file path and expected digest",
+        "Load through the baseline service so the digest is checked before parsing",
+        "Confirm the baseline loads and resolve any malformed, duplicate-name or compatibility refusal"
+      ],
+      "expected_result": "A valid baseline retains one immutable release per name. One incompatible member refuses the whole baseline. It is an identity record, not deployment history or rollback.",
+      "use_cases": [
+        {
+          "title": "Confirm packaged application identity",
+          "description": "An operator supplies the approved packaged baseline and checks that the installation accepts it rather than inferring its identity from current catalog entries.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "apps.release-digest-pinning": {
+      "source_version": "1.3.0",
+      "purpose": "Require newly published application releases to identify images by digest.",
+      "prerequisites": [
+        "Operator access to deployment configuration",
+        "A release publication workflow and digest-addressed image artifacts"
+      ],
+      "steps": [
+        "Enable the digest-pin requirement with a recognized true configuration value",
+        "Publish a new release with digest-pinned artifacts",
+        "Inspect any explicit pinning refusal and correct the release before retrying"
+      ],
+      "expected_result": "The opt-in rule refuses new unpinned published releases. Retained releases and the packaged baseline are exempt. This policy does not perform rollback or verify pulled image bytes.",
+      "use_cases": [
+        {
+          "title": "Constrain future application publications",
+          "description": "An operator tightens publication policy for future releases while retaining the ability to withdraw older releases.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "apps.sandbox-workload-provider": {
+      "source_version": "1.3.0",
+      "purpose": "Choose the workload backend used by an extension's code sandbox.",
+      "prerequisites": [
+        "An extension configured for code execution",
+        "For Agent Sandbox, a preinstalled pinned upstream controller and required custom-resource API",
+        "A worker token supplied inline or from the extension's own operator-owned Secret"
+      ],
+      "steps": [
+        "Select the standard backend or explicitly choose Agent Sandbox for the extension",
+        "Configure the warm pool, update strategy, optional claim lifetime and image prefix allowlist",
+        "Inspect the resulting sandbox workload and controller behavior before use"
+      ],
+      "expected_result": "The extension uses the selected backend. The default remains shared-kernel containers, with no stronger isolation implied. Lifetime reclamation is conditional, and an empty image allowlist imposes no constraint.",
+      "use_cases": [
+        {
+          "title": "Prepare reusable sandbox capacity",
+          "description": "An operator configures a warm pool for code-running extensions and checks its behavior without claiming a new security isolation boundary.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "auth.enterprise-sso": {
+      "source_version": "1.3.0",
+      "purpose": "Let users sign in through an enterprise identity provider.",
+      "prerequisites": [
+        "Authentication enabled and platform Keycloak configured",
+        "For SAML, enabled feature gates, Redis session authority, relay-state secret and the session-store workroom-binding backend rather than the chart-default database backend",
+        "For certificate login, enabled gates, trusted mutual-TLS edge and issuer/header configuration"
+      ],
+      "steps": [
+        "Have the identity administrator configure the chosen OIDC, SAML or certificate path",
+        "Confirm the deployment meets that path's session and edge prerequisites",
+        "Sign in through that path and verify the resulting identity and applicable permissions"
+      ],
+      "expected_result": "A configured identity path can establish a session. SAML and certificate login default off. Identity authentication alone does not establish access to every resource or certification compliance.",
+      "use_cases": [
+        {
+          "title": "Use an existing enterprise login",
+          "description": "A team connects an approved identity provider and validates sign-in before opening access to platform resources.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "auth.local-user-administration": {
+      "source_version": "1.3.0",
+      "purpose": "Administer platform-local user accounts.",
+      "prerequisites": [
+        "An administrator session",
+        "Authentication enabled with reachable platform Keycloak for the described sign-in behavior",
+        "Local accounts, rather than accounts owned by an external identity provider"
+      ],
+      "steps": [
+        "Create the local account through the administration API",
+        "List or resolve the account and update the intended details or reset its password",
+        "When removing the account, verify credential access separately from the deleted account record"
+      ],
+      "expected_result": "Account administration supports creation, reads, changes and removal. Historical evidence found that deletion did not stop password sign-in or existing tokens. Do not treat deletion as a complete access cutoff.",
+      "use_cases": [
+        {
+          "title": "Maintain a local test account",
+          "description": "An administrator creates a scoped account for a planned activity, then removes its record and independently checks credential cleanup.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "auth.personal-access-tokens": {
+      "source_version": "1.3.0",
+      "purpose": "Authenticate user-owned automation with personal access tokens.",
+      "prerequisites": [
+        "A signed-in user permitted to mint the requested scope",
+        "A secure place to hold the returned token"
+      ],
+      "steps": [
+        "Read the available PAT scopes and lifetime policy",
+        "Create a token within the caller's scope ceiling and use it with the API or SDK",
+        "List owned tokens and revoke the specific token when finished"
+      ],
+      "expected_result": "Automation authenticates as the token's user. A PAT is not a machine identity. Scope restriction effects and revocation propagation timing are not fully established by the recorded tests.",
+      "use_cases": [
+        {
+          "title": "Connect a user's automation",
+          "description": "A user gives a script a time-bounded credential and records which token to revoke after the activity.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "auth.session-revocation": {
+      "source_version": "1.3.0",
+      "purpose": "Log out and administer tracked session records.",
+      "prerequisites": [
+        "Authentication enabled with reachable Keycloak",
+        "Administrator authority for deleting or purging session records",
+        "The configured DB or Redis session authority available"
+      ],
+      "steps": [
+        "For logout, use the client that holds the relevant session material, including its refresh token where applicable",
+        "For administrator cleanup, delete a session or purge the subject's records through the API or SDK",
+        "Verify remaining session records and refresh behavior separately from already-issued access tokens"
+      ],
+      "expected_result": "Logout and record removal have different effects. Already-issued access tokens can remain valid, and removing a tracked record is not a complete credential cutoff. An unavailable authority can produce a logout failure.",
+      "use_cases": [
+        {
+          "title": "Clean up tracked sessions",
+          "description": "An administrator removes stale session records while separately handling credential expiry or incident response.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "authz.rebac-access-control": {
+      "source_version": "1.3.0",
+      "purpose": "Manage resource relationships and evaluate access decisions.",
+      "prerequisites": [
+        "ReBAC explicitly enabled, since it defaults off",
+        "An authorized administrator and the identity attributes required by configured gates",
+        "A separately configured marking provider when marking enforcement is needed"
+      ],
+      "steps": [
+        "Define the intended subject, relation and resource grants through the API or SDK",
+        "Bind applicable dataset attribute gates and inspect effective policy",
+        "Check representative allowed and denied access, and retain decision logs in the deployment's log backend"
+      ],
+      "expected_result": "Configured guards evaluate relationships and attributes. Guard coverage is limited to the documented surfaces, decision history is bounded in process memory, and no accreditation or audit-only enforcement mode is implied.",
+      "use_cases": [
+        {
+          "title": "Restrict a dataset audience",
+          "description": "An administrator grants a defined group access to a dataset and checks both a permitted user and a user outside that group.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "catalog.dataset-registry": {
+      "source_version": "1.3.0",
+      "purpose": "Make datasets and containers discoverable through catalog metadata.",
+      "prerequisites": [
+        "An authenticated caller with the appropriate workroom read or write context",
+        "A reachable catalog backend"
+      ],
+      "steps": [
+        "Register the dataset or container metadata through the catalog API or SDK",
+        "Record the resulting URN and schema details",
+        "Search the catalog and read the entry in the intended workroom context"
+      ],
+      "expected_result": "Applications can refer to a catalog entity by URN. Registration describes data rather than materializing it. SDK publisher and register-from-spec methods lack matching server routes at the recorded source revision.",
+      "use_cases": [
+        {
+          "title": "Find data by business name",
+          "description": "A team registers dataset metadata so an application can locate the intended dataset without embedding a connection string.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "catalog.registered-sources": {
+      "source_version": "1.3.0",
+      "purpose": "Bring an existing S3 or PostgreSQL source into the governed catalog and inspect the sources already registered.",
+      "prerequisites": [
+        "An authenticated member of the target workroom in the same tenant.",
+        "An existing supported source and a catalog secret for its credentials.",
+        "When relationship-based access control is enabled, the required ingestion administrator permission."
+      ],
+      "steps": [
+        "Have an authorized operator register the S3 or PostgreSQL source through the documented registration API.",
+        "List the registered sources through the catalog containers API and confirm the expected source appears.",
+        "Use the documented scan operation when catalog discovery is required; check the returned result before proceeding."
+      ],
+      "expected_result": "The source is registered and can be listed. Registration and scanning require separate validation; the cited runtime example establishes listing only.",
+      "use_cases": [
+        {
+          "title": "Inspect registered data sources",
+          "description": "An operator lists registered sources through the catalog containers API. The referenced development-build scenario returned a successful response containing items; it did not prove registration or scanning.",
+          "evidence_sha256": [
+            "a13497f50cb444939ceb6eeab30156e2bfcfb460029903ff2c3cb9136d0db0b9"
+          ]
+        }
+      ]
+    },
+    "catalog.secrets-management": {
+      "source_version": "1.3.0",
+      "purpose": "Store connector and service credentials as governed catalog secrets.",
+      "prerequisites": [
+        "Authorization for the catalog secret operation",
+        "A configured catalog encryption backend and a credential supplied through a secure channel"
+      ],
+      "steps": [
+        "Create the secret through the API or SDK and retain its URN",
+        "Record the URN for integrations that support catalog secret references",
+        "List or read metadata to inspect the secret, and delete or explicitly replace it when appropriate"
+      ],
+      "expected_result": "The HTTP API exposes metadata, not stored secret values. The recorded backend is single-key Fernet, with no established envelope encryption, automatic rotation or expiry reminders. A shipped UI is not established.",
+      "use_cases": [
+        {
+          "title": "Keep a connector credential out of configuration",
+          "description": "An operator stores a credential and records its URN, then separately validates whether the intended integration supports that secret reference.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "catalog.writable-datasets": {
+      "source_version": "1.3.0",
+      "purpose": "Upload and maintain files in a platform-managed dataset.",
+      "prerequisites": [
+        "A healthy file or object-storage backend",
+        "A role allowed to create the dataset and the required workroom permissions"
+      ],
+      "steps": [
+        "Create or select a writable dataset, then upload a new path",
+        "List and read content, retaining the revision identifier",
+        "Replace only with the required If-Match value, or delete to create a tombstone"
+      ],
+      "expected_result": "The dataset keeps manifests, revisions and content. Existing live paths are not overwritten by POST. Default caps apply; retired bytes count toward them. Consumer acknowledgements can permit early purge, and seven days is not a guaranteed recovery window or deletion deadline.",
+      "use_cases": [
+        {
+          "title": "Maintain an approved reference file",
+          "description": "A team updates a shared reference using revision checks so a stale edit does not silently replace newer content.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "connectors.ai-assisted-connector-setup": {
+      "source_version": "1.3.0",
+      "purpose": "Use a model to propose connector setup and attempt bounded repairs.",
+      "prerequisites": [
+        "The Connector Builder extension installed and available to the caller",
+        "A platform-served or configured gateway model",
+        "Authorization and credentials suitable for the target connector"
+      ],
+      "steps": [
+        "Request a preview plan without saving it",
+        "Review the proposed setup and choose whether to run automatic setup",
+        "If needed, request bounded repair and inspect the result before using the connector"
+      ],
+      "expected_result": "The model proposes or attempts setup and repair with preview and revision checks. Attempts can fail; arbitrary APIs are not guaranteed to work.",
+      "use_cases": [
+        {
+          "title": "Accelerate a connector configuration attempt",
+          "description": "An operator reviews a generated connection plan before attempting it against an authorized source.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "connectors.connector-builder": {
+      "source_version": "1.3.0",
+      "purpose": "Build a connector from an API description and deploy its runtime.",
+      "prerequisites": [
+        "The Connector Builder extension installed and available to the caller",
+        "Platform authorization and runtime resources",
+        "An OpenAPI or Postman description, documentation, or PDF text",
+        "Credentials required by the target service"
+      ],
+      "steps": [
+        "Import the description into a connector project",
+        "Test the definition and inspect the result",
+        "Generate the tool package and deploy the dedicated runtime with its required credentials"
+      ],
+      "expected_result": "The alpha integration builds a connector package and runtime. Missing credentials can leave it suspended. It does not establish universal API compatibility or every sharing and governance requirement.",
+      "use_cases": [
+        {
+          "title": "Package a documented internal API",
+          "description": "A developer turns a supported API description into a connector candidate, tests it, then prepares its runtime for authorized use.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "connectors.managed-data-sources": {
+      "source_version": "1.3.0",
+      "purpose": "Configure and maintain existing connector types as managed data sources.",
+      "prerequisites": [
+        "An administrator identity",
+        "A reachable connector catalog or directly registered manifest type",
+        "The source-specific configuration and credentials"
+      ],
+      "steps": [
+        "Open Settings, Data Connectors, or use the management API or SDK",
+        "Choose an available type and create or register its configuration",
+        "Deploy the connector and inspect its state, updating or disabling it as needed"
+      ],
+      "expected_result": "The platform manages configured connector instances. Available providers depend on the deployment catalog. Verification probes the calling user's connection; it is not fleet verification on behalf of all users.",
+      "use_cases": [
+        {
+          "title": "Onboard an approved source type",
+          "description": "An administrator configures a catalog-listed connector so authorized users can connect their accounts.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "connectors.oauth-tool-policies": {
+      "source_version": "1.3.0",
+      "purpose": "Limit a tool's provider operations on the OAuth broker's standard proxy path.",
+      "prerequisites": [
+        "The app-installation owner or an administrator",
+        "An installed tool and registered provider operations"
+      ],
+      "steps": [
+        "Create a policy for the app installation, tool and provider with the intended allowed operations",
+        "Read the policy back and check the requested scope subset",
+        "Exercise intended allowed and denied operations through the standard broker proxy before use"
+      ],
+      "expected_result": "Standard proxy calls require an allowed tool and matching policy. These policies do not govern every connector or delegated execution path. The surface is API-only, and default email-tool provisioning is not read-only.",
+      "use_cases": [
+        {
+          "title": "Configure a read-only mail integration",
+          "description": "An owner permits search and message reads while omitting send operations, then checks refusal through the governed proxy path.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "connectors.user-oauth-authorization": {
+      "source_version": "1.3.0",
+      "purpose": "Connect a user's own data-source account through OAuth or OIDC.",
+      "prerequisites": [
+        "An administrator-configured deployed connector with per-user credentials",
+        "Reachable provider and an approved public callback URI"
+      ],
+      "steps": [
+        "Choose the connector's connect action",
+        "Complete the provider's redirect or device-code flow as the intended user",
+        "Verify the connection, then disconnect it when no longer required"
+      ],
+      "expected_result": "The platform stores provider credentials server-side and brokers downstream access. Shared or public-credential connectors have no per-user connect flow. Broker lease expiry does not guarantee provider-side token invalidation.",
+      "use_cases": [
+        {
+          "title": "Connect a personal document account",
+          "description": "A user authorizes a configured source under their own identity so downstream access follows that account's entitlements.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "context.dataset-indexing": {
+      "source_version": "1.3.0",
+      "purpose": "Make a catalog dataset searchable through a semantic and lexical index binding.",
+      "prerequisites": [
+        "Access to the source workroom and catalog dataset.",
+        "The infrastructure and permissions required by the semantic and lexical indexing profile."
+      ],
+      "steps": [
+        "Check indexing readiness through the documented API.",
+        "Create a binding for the catalog dataset through the dataset-index API.",
+        "Inspect the binding and job diagnostics until the requested content is ready.",
+        "Search the binding and inspect the returned source attribution.",
+        "Use the documented retry or deletion operation when appropriate and inspect the resulting state."
+      ],
+      "expected_result": "A ready index binding can be searched. Accepting a creation request is not proof that asynchronous indexing completed; inspect readiness and job diagnostics.",
+      "use_cases": [
+        {
+          "title": "Search a governed dataset",
+          "description": "A team prepares an authorized catalog dataset for semantic and lexical retrieval. This is an illustrative workflow; a matching successful end-to-end runtime record is required before presenting it as demonstrated.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "context.workroom-ingestion-summary": {
+      "source_version": "1.3.0",
+      "purpose": "Read a workroom's ingestion counts and source summary.",
+      "prerequisites": [
+        "View permission on the workroom",
+        "API or SDK access to the workroom summary"
+      ],
+      "steps": [
+        "Request the workroom ingestion summary through the API or SDK",
+        "Read source counts, source-type breakdown, creation-date range and catalog count",
+        "Investigate unexpected zeros against the backing systems rather than assuming ingestion is healthy"
+      ],
+      "expected_result": "The response is a best-effort summary. Failed backing queries can appear as zero or empty without an error marker, and warning count is always zero at this revision. No shipped summary screen is established.",
+      "use_cases": [
+        {
+          "title": "Review source onboarding progress",
+          "description": "A workroom member checks the recorded counts while cross-checking unexpected results with an operator.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "context.workroom-raw-file-store": {
+      "source_version": "1.3.0",
+      "purpose": "Store and update raw workroom files through the API or SDK.",
+      "prerequisites": [
+        "Workroom read or write permission as appropriate",
+        "An available object-storage backend and a non-archived workroom"
+      ],
+      "steps": [
+        "Create a raw file within the decoded-size cap",
+        "List and read it in the same workroom context",
+        "Update supported content and read it back"
+      ],
+      "expected_result": "The file API provides create, list, read and update. No delete route is established here. Optional marking display does not establish complete marking enforcement.",
+      "use_cases": [
+        {
+          "title": "Keep a working source file",
+          "description": "An authorized member stores a raw input file and reads it back before a separate processing step.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "delegation.brokered-resource-access": {
+      "source_version": "1.3.0",
+      "purpose": "Reach datasets and model deployments in a delegated run's context.",
+      "prerequisites": [
+        "An authorized claimed run and its run identifier",
+        "A resolvable resource binding and the required grants"
+      ],
+      "steps": [
+        "Identify the dataset or model destination permitted for the run",
+        "Call the run-scoped dataset or model route through the configured API or SDK",
+        "Inspect the access outcome"
+      ],
+      "expected_result": "The declared routes cover datasets and model deployments, not general egress or artifact storage. Third-party credential-binding use is not reachable at the pinned revision because the shipped lease-reservation path is absent.",
+      "use_cases": [
+        {
+          "title": "Separate a workload from data credentials",
+          "description": "An integration uses an authorized run-scoped resource path rather than handing the workload a standing provider secret.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "delegation.capability-grants": {
+      "source_version": "1.3.0",
+      "purpose": "Describe a delegated workload's permissions with explicit capability grants.",
+      "prerequisites": [
+        "A registered, attested workload with capability material",
+        "A workload assertion and proof of possession for discovery, and authorized grant inspection"
+      ],
+      "steps": [
+        "Read capability discovery, distinguishing its fixed platform vocabulary from the operations permitted to the attested workload",
+        "List existing grants and read the intended grant before attempting resource access"
+      ],
+      "expected_result": "Grants describe permission bounds. They do not create a broker destination, supply per-action approval, or provide quota and scheduling policy. No permission-bundle authoring UI is established. Workload deregistration is defined but not served by the pinned composition, so complete capability support is not established.",
+      "use_cases": [
+        {
+          "title": "Inspect a delegated workload's permissions",
+          "description": "An operator reads the grants attached to an attested workload before allowing it to attempt a bounded task.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "delegation.consent-and-approval-gates": {
+      "source_version": "1.3.0",
+      "purpose": "Record consent and gate configured delegated effects on human decisions.",
+      "prerequisites": [
+        "A declared intent and, for effect approval, a reserved effect",
+        "A configured delegated runtime and a resource action whose approval class requires review",
+        "An authorized member or approver for the relevant decision"
+      ],
+      "steps": [
+        "Inspect the intent and applicable consent requirement",
+        "Record the member's consent through the supported consent flow",
+        "For an effect requiring exact approval, inspect its details and record the approver's decision before execution"
+      ],
+      "expected_result": "Consent and effect approval are separate checks. Not every action is gated by default. The API queue does not provide an inbox screen, notification or escalation; approvals can expire.",
+      "use_cases": [
+        {
+          "title": "Review a configured consequential action",
+          "description": "A member reviews an intent and an authorized approver decides on a separately reserved effect that requires approval.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "delegation.pending-approval-queue": {
+      "source_version": "1.3.0",
+      "purpose": "List and decide delegated effects awaiting approval.",
+      "prerequisites": [
+        "A built delegated authority runtime with valid keys and return-prefix configuration",
+        "A signed-in admin or it_approver in the effect's tenant",
+        "A valid CSRF token for a decision"
+      ],
+      "steps": [
+        "List pending approvals for your own tenant through the API or SDK",
+        "Inspect the effect digest and policy version",
+        "Approve or deny the matching effect, or poll again using the SDK watcher"
+      ],
+      "expected_result": "The queue lists reserved effects awaiting a decision. Watching is client-side polling, not server push. No reviewer inbox UI or outbound notification is established, and the routes are absent when runtime prerequisites are unmet.",
+      "use_cases": [
+        {
+          "title": "Process a pending effect review",
+          "description": "An authorized reviewer polls their tenant's queue and records a decision against the exact effect and policy version.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "delegation.run-claims-lifecycle": {
+      "source_version": "1.3.0",
+      "purpose": "Track delegated work through reserved and claimed runs.",
+      "prerequisites": [
+        "An attested registered workload with capability material",
+        "An existing run reservation"
+      ],
+      "steps": [
+        "Claim the reserved run through the delegated-workload API or SDK",
+        "Record progress and reserve intended effects before acting",
+        "Complete or cancel through the declared lifecycle and inspect the recorded state"
+      ],
+      "expected_result": "Runs carry explicit state transitions. This is not a scheduler, cross-cluster agent federation or artifact store. Heartbeats can detect stalled claims but do not establish tested recovery or failover.",
+      "use_cases": [
+        {
+          "title": "Track a bounded background operation",
+          "description": "An integration records which workload claimed a task and how that run reached its terminal state.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "delegation.workload-identity-and-attestation": {
+      "source_version": "1.3.0",
+      "purpose": "Give a Kubernetes workload a distinct attested identity.",
+      "prerequisites": [
+        "The delegated-workload runtime configured on the platform",
+        "A Kubernetes deployment identity and its service-account token",
+        "A workload-held proof-of-possession key"
+      ],
+      "steps": [
+        "Register the intended workload identity",
+        "Present its Kubernetes service-account material through the composed offline attestation path",
+        "Use the issued capability material with proof of possession and verify it against the published keys"
+      ],
+      "expected_result": "The workload receives identity bound to its key. Identity alone grants no resource permission. Non-Kubernetes attestation, Agent Card discovery and mesh certificate administration are outside this scope.",
+      "use_cases": [
+        {
+          "title": "Attribute an integration's actions to its workload",
+          "description": "An operator provisions a separate workload identity instead of lending a personal credential to a Kubernetes service.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "extensions.developer-path": {
+      "source_version": "1.3.0",
+      "purpose": "Build and publish a custom app, tool or service with kz-ext.",
+      "prerequisites": [
+        "A compatible SDK and authenticated connection to a live cluster",
+        "A reachable image registry the cluster can pull from",
+        "Knowledge of the deployment's direct or operator extension runtime"
+      ],
+      "steps": [
+        "Scaffold the intended extension type with kz-ext create",
+        "Iterate with kz-ext dev and inspect the deployment status",
+        "Publish its catalog entry when ready, inspecting the deployed extension separately through the extension API or SDK"
+      ],
+      "expected_result": "The tooling prepares an extension for the selected platform. Direct runtime is the umbrella-chart default; a Kubernetes custom resource requires operator mode. Publishing does not imply third-party distribution, and existing evidence does not prove the entire deployment loop.",
+      "use_cases": [
+        {
+          "title": "Develop a team-specific tool",
+          "description": "A developer scaffolds a tool extension, iterates against an authorized cluster, and prepares a platform-local catalog entry.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "federation.cluster-pairing": {
+      "source_version": "1.3.0",
+      "purpose": "Establish and inspect a governed relationship between two clusters.",
+      "prerequisites": [
+        "Two reachable clusters with distinct names and hostnames",
+        "The documented version-matched baseline, Istio and SAN-correct TLS certificates",
+        "Receiver-side authority to choose identity mode and allowed subjects"
+      ],
+      "steps": [
+        "Configure the peer and receiver identity mode through the federation API or SDK",
+        "Allowlist the subjects the receiver is willing to broker",
+        "Inspect and diagnose the pairing, then disconnect it when no longer needed"
+      ],
+      "expected_result": "Pairing creates an inspectable relationship. In shared_idp mode the receiver strips source roles and uses token-derived attributes; legacy peer_kc has weaker trust semantics. Attribute changes wait for new tokens, and cross-version compatibility is not established.",
+      "use_cases": [
+        {
+          "title": "Connect two governed sites",
+          "description": "Receiving-site administrators pair clusters and explicitly choose whose identities may cross the boundary.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "federation.execution-gates": {
+      "source_version": "1.3.0",
+      "purpose": "Apply the receiving cluster's policy before dispatching federated work.",
+      "prerequisites": [
+        "An authorized native-cluster administrator for gate changes",
+        "An installed gate package and valid gate configuration"
+      ],
+      "steps": [
+        "Discover and bind the cluster-wide execution gate through the API or deployment values",
+        "Read back the effective binding and test intended allow and deny decisions",
+        "When clearing an API binding, check whether environment or chart configuration becomes active again"
+      ],
+      "expected_result": "The gate controls whether a caller can run jobs on the cluster. It is not row filtering. Without a gate, mesh jobs are denied but local submissions are allowed; an unknown configured decision is denied for both.",
+      "use_cases": [
+        {
+          "title": "Restrict remote compute use",
+          "description": "A receiving cluster binds an execution policy and checks that an unauthorized remote subject cannot dispatch a job.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "federation.federated-retrieval": {
+      "source_version": "1.3.0",
+      "purpose": "Retrieve results from data held on a paired cluster.",
+      "prerequisites": [
+        "A paired federation and active receiver-side subject allowlist",
+        "Explicit dataset grants on the receiving cluster",
+        "For Flight, direct network reachability and trusted TLS to its advertised endpoints"
+      ],
+      "steps": [
+        "Discover the remote datasets you are authorized to read",
+        "Submit retrieval for the intended remote dataset",
+        "Read inline or streamed results, using Flight only when its separate transport is reachable"
+      ],
+      "expected_result": "The remote cluster processes retrieval and returns results. This path is not bulk replication, and home-cluster administrator status does not confer remote access. Query-in-place does not prevent an authorized user from exporting results.",
+      "use_cases": [
+        {
+          "title": "Analyze a remote dataset",
+          "description": "A permitted user retrieves results from another site while the underlying source data remains on its owning cluster.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "federation.remote-jobs": {
+      "source_version": "1.3.0",
+      "purpose": "Submit and monitor compute jobs on a paired cluster.",
+      "prerequisites": [
+        "A PAIRED remote cluster and reachable TLS ingress",
+        "An authenticated caller accepted by receiver execution policy",
+        "Dependencies already available on the receiving side"
+      ],
+      "steps": [
+        "Submit a synchronous or asynchronous job through the SDK with a valid target_cluster selector",
+        "Poll or wait for status, retaining the target when changing clients",
+        "Read results or logs, or cancel through the remote job surface"
+      ],
+      "expected_result": "Calls travel through the mesh proxy and remain subject to receiver checks. Runtime package, module and working-directory convenience inputs are stripped server-side; only environment variables survive. This is not remote agent-to-agent delegation.",
+      "use_cases": [
+        {
+          "title": "Run compute beside a remote source",
+          "description": "An integration submits a prepared job to a paired site and follows its status from the initiating cluster.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.document-translation": {
+      "source_version": "1.3.0",
+      "purpose": "Translate parsed Markdown through the OmniParse extension.",
+      "prerequisites": [
+        "A reachable OmniParse REST service",
+        "Translation enabled and a configured model endpoint"
+      ],
+      "steps": [
+        "Select the parsed document and requested target language",
+        "Request translation through the extension API",
+        "List and retrieve the persisted translated Markdown, then review its quality"
+      ],
+      "expected_result": "The extension stores translated artifacts. This is not an established Core ingestion translation pipeline; language detection and translation quality depend on the model. Default language and model names are not a closed support list.",
+      "use_cases": [
+        {
+          "title": "Prepare a translated working copy",
+          "description": "A user requests a translation of a parsed document and reviews the output before using it in a response.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.multimedia-extraction": {
+      "source_version": "1.3.0",
+      "purpose": "Extract searchable text from supported images, audio and video during ingestion.",
+      "prerequisites": [
+        "A reachable OmniParse service and appropriate extraction configuration",
+        "A transcription model for audio or video and a vision model for video",
+        "Authorized input within the configured file-size and timeout limits"
+      ],
+      "steps": [
+        "Check supported file types and audio readiness for the workroom",
+        "Submit a representative input through the ingestion pipeline",
+        "Inspect extraction and indexing results, treating media failure as a failed file"
+      ],
+      "expected_result": "The pipeline can route media for text extraction. Media failures do not silently index the file without extraction. Quality depends on OmniParse and its models; face matching, object detection guarantees and change detection are outside this claim.",
+      "use_cases": [
+        {
+          "title": "Make a recording searchable",
+          "description": "A team submits an authorized recording after checking transcription readiness, then reviews the extracted text before relying on search results.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.parse-from-url": {
+      "source_version": "1.3.0",
+      "purpose": "Fetch a public document into OmniParse for later parsing.",
+      "prerequisites": [
+        "A reachable authenticated OmniParse REST service with URL fetching enabled",
+        "Outbound access to a public HTTP or HTTPS URL on port 80 or 443",
+        "An allowed content type within the configured size and redirect caps"
+      ],
+      "steps": [
+        "Submit the URL to the from-url endpoint",
+        "Retain the returned document identifier",
+        "Request Markdown or HTML, which triggers conversion as needed, and review the result"
+      ],
+      "expected_result": "The service stores a public document and exposes parsed output. Intranet, loopback, link-local and credential-bearing URLs are rejected. Every redirect is rechecked; this is the extension surface rather than Core ingestion.",
+      "use_cases": [
+        {
+          "title": "Read a public reference document",
+          "description": "A user submits an approved public document URL and obtains a parsed working copy without manually uploading it.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.scheduled-ingest": {
+      "source_version": "1.3.0",
+      "purpose": "Run ingestion now and distinguish stored schedules from actual execution.",
+      "prerequisites": [
+        "A supported source or deployed connector with valid configuration",
+        "The required ingestion or connector-management authority",
+        "A workroom context matching the request"
+      ],
+      "steps": [
+        "Run the registered source immediately, or trigger the intended connector ingest",
+        "Read the returned status and inspect resulting catalog datasets",
+        "If registering a cron job, record that the current source stores it in memory without an execution scheduler"
+      ],
+      "expected_result": "On-demand ingestion can run. A registered cron expression is not an unattended recurring job: the recorded implementation never executes stored schedules, and those registrations are lost on restart.",
+      "use_cases": [
+        {
+          "title": "Perform a controlled source refresh",
+          "description": "An authorized operator runs a one-time refresh and inspects the resulting data rather than relying on an unexecuted stored schedule.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.security-markings": {
+      "source_version": "1.3.0",
+      "purpose": "Apply a configured provider's marking interpretation on the declared DDE ingest paths.",
+      "prerequisites": [
+        "An operator-enabled marking provider and its separately supplied grammar",
+        "A supported DDE document, connector-seed or S3 ingestion path",
+        "Authorized source boundaries and defaults"
+      ],
+      "steps": [
+        "Configure the provider and the intended source boundary",
+        "Submit a document with provider-managed marking input through the supported path",
+        "Inspect the stored result or governed refusal and review failed-document accounting"
+      ],
+      "expected_result": "Provider-managed markings are off by default. Core has no built-in CAPCO or ICISM grammar at this source revision. Legacy security_marking metadata is uninterpreted; older parser tests do not verify the current provider model. Current behavior remains unvalidated for RFI claims.",
+      "use_cases": [
+        {
+          "title": "Check a source marking boundary",
+          "description": "An operator prepares a provider-specific marking workflow and validates its behavior before making any customer-facing enforcement claim.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.structured-document-outputs": {
+      "source_version": "1.3.0",
+      "purpose": "Read tables, figure metadata and chunks from parsed documents.",
+      "prerequisites": [
+        "A supported document in OmniParse",
+        "The required parser, pipeline and models configured"
+      ],
+      "steps": [
+        "Parse or select the document through the extension API",
+        "Request its tables, figures or chunks",
+        "Compare the extracted structure with the source before reuse"
+      ],
+      "expected_result": "The declared routes expose structured outputs. Full layout JSON and annotated source-PDF overlays are placeholders at the recorded revision and are not supported outputs; extraction fidelity remains unverified.",
+      "use_cases": [
+        {
+          "title": "Reuse a document table",
+          "description": "An analyst retrieves a parsed table and checks its values against the source before including it in a draft.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "ingestion.video-frame-analysis": {
+      "source_version": "1.3.0",
+      "purpose": "Describe sampled video frames and retrieve a transcript through OmniParse.",
+      "prerequisites": [
+        "OmniParse with ffmpeg and ffprobe",
+        "Transcription enabled with a reachable endpoint",
+        "Vision enabled or a valid per-request override and endpoint"
+      ],
+      "steps": [
+        "Submit an asynchronous video job with I-frame or interval sampling and the desired cap",
+        "Poll the job identifier until completion or failure",
+        "Retrieve the analysis, transcript and frame images, checking per-frame errors"
+      ],
+      "expected_result": "The result contains sampled-frame model descriptions and transcription. Vision is off by default. A transcription failure fails the job, while individual vision failures can appear in an otherwise completed result. No face or identity matching is provided.",
+      "use_cases": [
+        {
+          "title": "Review a video briefing",
+          "description": "An analyst samples an authorized briefing for descriptive text and checks error fields before using those descriptions.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.admin-settings-console": {
+      "source_version": "1.3.0",
+      "purpose": "Inspect and change primary Kaizen configuration through its administration API.",
+      "prerequisites": [
+        "A Kaizen administrator",
+        "The configuration store enabled for editable settings"
+      ],
+      "steps": [
+        "List settings and inspect the effective configuration",
+        "Review the intended change and the setting's apply mode",
+        "Update or reset it and compare the effective configuration afterward"
+      ],
+      "expected_result": "The API supports audited settings changes and differences. Some settings require a restart rather than taking effect live. The packaged install enables the configuration store, while the bare Python default does not.",
+      "use_cases": [
+        {
+          "title": "Adjust an application setting",
+          "description": "An administrator changes one documented setting and checks when it takes effect before opening the feature to users.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.agent-auto-routing": {
+      "source_version": "1.3.0",
+      "purpose": "Allow rule-based specialist help while keeping the serving agent in charge.",
+      "prerequisites": [
+        "Primary Kaizen with routing enabled",
+        "A selectable chat agent and reviewed sub-agent choices"
+      ],
+      "steps": [
+        "Choose Auto or pin a chat agent from the Agents screen",
+        "Set the pinned agent's specialist-help policy and permitted sub-agents",
+        "Send a relevant turn and review the answer"
+      ],
+      "expected_result": "The serving agent can receive a one-turn grant to consult one specialist. Selection is rule-based, not model-based, and ties select nobody. Exclusions apply to the pinned path, not Default's consult pool. Consult grants are written best effort to an internal audit store that is not exposed through the conversation API.",
+      "use_cases": [
+        {
+          "title": "Get specialist help within a chat",
+          "description": "A member pins an agent and allows a permitted specialist to contribute to a relevant turn while retaining the same serving agent.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.agent-packages": {
+      "source_version": "1.3.0",
+      "purpose": "Manage frozen package copies and bound the tools an agent receives.",
+      "prerequisites": [
+        "Primary Kaizen with migrated package storage and packages enabled",
+        "A Kaizen administrator for registry mutations and configured sidecar for npm import",
+        "An agent owner or collaborator for its package grant list"
+      ],
+      "steps": [
+        "Have an administrator import a vetted version and inspect its stored manifest and integrity identity",
+        "Grant an active registered package to an agent within its capability ceiling",
+        "Inspect effective tools and disable or remove a package when needed"
+      ],
+      "expected_result": "Runtime uses the stored copy, and effective tools are limited by the ceiling. No shipped dependency or vulnerability scanner runs: imports record a warning, not a scan pass. Complete capability support, including the required scan, is not established.",
+      "use_cases": [
+        {
+          "title": "Control which package tools an agent can use",
+          "description": "An administrator vets a package externally, records its fixed version, and an agent owner limits the resulting tool grant without claiming an automatic security scan.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.agent-publication-approval": {
+      "source_version": "1.3.0",
+      "purpose": "Submit an agent or package proposal for administrator review.",
+      "prerequisites": [
+        "Primary Kaizen with Agent Studio enabled",
+        "The member's own proposal and a workroom Kaizen administrator for review"
+      ],
+      "steps": [
+        "Draft and review the proposal through the API or supported builder tools",
+        "Test a draft chat agent in the private read-only sandbox when applicable, then submit",
+        "Have the administrator approve or reject through the review API and inspect the resulting state"
+      ],
+      "expected_result": "An approved proposal becomes active through the review lane. Review is API-only at this source revision. Private agents can be created outside this lane without approval, and search presets cannot use the draft chat sandbox.",
+      "use_cases": [
+        {
+          "title": "Review an agent before wider publication",
+          "description": "A member submits a proposed shared assistant for administrator review rather than assuming a private agent is already approved for all members.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.answer-feedback": {
+      "source_version": "1.3.0",
+      "purpose": "Record a thumbs-up or thumbs-down signal on a primary Kaizen answer.",
+      "prerequisites": [
+        "A signed-in member",
+        "Feedback enabled and an answer with a turn identifier"
+      ],
+      "steps": [
+        "Read the answer and identify the turn to rate",
+        "Select its thumbs-up or thumbs-down control",
+        "Use administrator usage metrics to inspect recorded feedback when authorized"
+      ],
+      "expected_result": "The vote is an audit signal. Recording is best effort and can be dropped even when the request succeeds. Votes do not retrain the model, automatically change answers or retire sources; no withdrawal route is established.",
+      "use_cases": [
+        {
+          "title": "Collect a response-quality signal",
+          "description": "A member flags a disappointing answer so an administrator can consider the recorded feedback during a separate review.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.artifacts": {
+      "source_version": "1.3.0",
+      "purpose": "Create and revise versioned outputs in primary Kaizen.",
+      "prerequisites": [
+        "An authenticated member with access to the artifact",
+        "The relevant artifact API and any required renderer enabled"
+      ],
+      "steps": [
+        "Create or read the artifact through the supported API",
+        "Submit a revision and inspect its version history",
+        "Fork or publish only within the artifact's permitted audience, and unpublish when appropriate"
+      ],
+      "expected_result": "Revisions retain version history. A shared slug still requires member authentication. Governed structured-data artifacts cannot widen their audience through attaching, renaming or publishing, and optional rendering is not universally enabled.",
+      "use_cases": [
+        {
+          "title": "Revise a reusable draft",
+          "description": "A member keeps successive versions of an output so the reviewed revision can be distinguished from earlier text.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.context-compression": {
+      "source_version": "1.3.0",
+      "purpose": "Choose primary Kaizen compression controls and compact long chats.",
+      "prerequisites": [
+        "A signed-in member",
+        "Deployment permission for the selected compression controls",
+        "Ownership of a chat for manual compaction"
+      ],
+      "steps": [
+        "Open Settings, Compression and enable the master switch plus the desired controls",
+        "Inspect the effective settings and estimated savings",
+        "For a long owned chat, run Compact this chat or /compact with any needed guidance and follow progress"
+      ],
+      "expected_result": "Tool-result compression, Plain-speak and prompt trim are opt-in and were traced through the Pi adapter. Savings are estimates. Manual compaction is owner-only and is independent of the compression feature flag.",
+      "use_cases": [
+        {
+          "title": "Reduce a long chat's working context",
+          "description": "A member compacts an owned conversation and checks the result while retaining the original transcript behavior described by the source.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.conversation-event-streaming": {
+      "source_version": "1.3.0",
+      "purpose": "Follow primary Kaizen conversation events from an integration.",
+      "prerequisites": [
+        "A compatible primary Kaizen conversation instance and member access",
+        "For the documented silent-stream timeout behavior, an SDK build containing a8c6257e; at source review this was an unmerged change, not established in a released SDK"
+      ],
+      "steps": [
+        "Open the canonical event stream with the instance base URL and conversation identifier",
+        "Parse event frames and retain a journal position for replay",
+        "Close the response when finished, or use chat_canonical with a bounded wait for a submitted turn"
+      ],
+      "expected_result": "The stream provides events and cursor replay. Raw streaming does not reconnect automatically. chat_canonical retries some opening or closed-stream cases, but not every read error; resync can be required. This contract is separate from Legacy polling.",
+      "use_cases": [
+        {
+          "title": "Follow a submitted conversation turn",
+          "description": "An integration waits for a primary Kaizen answer over its canonical stream and handles timeout or replay conflicts explicitly.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.conversation-search": {
+      "source_version": "1.3.0",
+      "purpose": "Find authorized conversation history and navigate document or project results in Kaizen.",
+      "prerequisites": [
+        "A signed-in member and conversation history the member is authorized to search.",
+        "Primary history search enabled. Indexed history retrieval is a separate feature and is off by default in the documented source scope."
+      ],
+      "steps": [
+        "Submit the search query and supported filters through the documented search API.",
+        "Inspect the returned results and their targets.",
+        "Open an authorized result in the client and confirm that it is the intended conversation or content."
+      ],
+      "expected_result": "The member receives authorized matching results. Legacy keyword search and primary hybrid search have different semantics; this guidance does not equate them.",
+      "use_cases": [
+        {
+          "title": "Find an earlier discussion",
+          "description": "A salesperson looks up an earlier authorized conversation before responding to a follow-up question. This is an illustrative use case, not proof of a complete sales workflow.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.custom-agents": {
+      "source_version": "1.3.0",
+      "purpose": "Create and configure an assistant in Kaizen Legacy.",
+      "prerequisites": [
+        "Kaizen Legacy and workroom write access",
+        "A model configuration and a published skills-library skill to bind afterward"
+      ],
+      "steps": [
+        "Create a named Legacy agent with its instructions and model configuration",
+        "List the agent and inspect the saved configuration",
+        "Bind the intended skill after creation using the Legacy API or SDK"
+      ],
+      "expected_result": "The Legacy creation contract differs from primary Kaizen's canonical contract. Skill bindings are added after creation. This entry does not establish runtime output quality, publication approval or remote agent delegation.",
+      "use_cases": [
+        {
+          "title": "Prepare a specialist Legacy assistant",
+          "description": "An analyst configures a local assistant and attaches a published skill, without assuming the agent is approved for wider publication.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.data-chat": {
+      "source_version": "1.3.0",
+      "purpose": "Ask follow-up questions about workroom data in Kaizen Legacy.",
+      "prerequisites": [
+        "A deployed Kaizen Legacy instance in the intended workroom",
+        "An existing Legacy agent and authorized data or tools",
+        "Workroom write permission to add turns"
+      ],
+      "steps": [
+        "Open or resume a Legacy conversation using the correct instance contract",
+        "Send the message and run the agent, or use the SDK's combined chat operation",
+        "Poll Legacy event pages for the answer and review any source references before relying on it"
+      ],
+      "expected_result": "The conversation follows the Legacy contract rather than primary Kaizen streaming. send_message alone does not trigger execution. Citation behavior depends on the agents and tools, and the SDK event contract itself has no citation field.",
+      "use_cases": [
+        {
+          "title": "Explore an authorized reference set",
+          "description": "An analyst asks a question and a follow-up about available workroom data, then checks the supporting material shown by the configured agent.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.document-canvas-export": {
+      "source_version": "1.3.0",
+      "purpose": "Review and edit an uploaded document in Kaizen, with API export to Markdown, Word or PDF.",
+      "prerequisites": [
+        "A signed-in member who owns a processed, text-extractable document.",
+        "Document import enabled; document export also enabled when an export is needed."
+      ],
+      "steps": [
+        "Open your document from the Documents screen in the editable canvas.",
+        "Make the required text changes and save through the artifact panel.",
+        "For an export, have an authorized integration request Markdown, Word or PDF through the document export API and download the result.",
+        "Review the exported file before sharing it."
+      ],
+      "expected_result": "Saved edits form a new artifact version. The export uses the latest canvas text. In the documented source scope, export is API-only and PDF layout is best-effort.",
+      "use_cases": [
+        {
+          "title": "Review a draft before sharing",
+          "description": "A document owner edits a draft in the canvas, then requests an export through an authorized integration. This is an illustrative workflow; the published refusal-contract test does not establish successful document conversion.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.document-collections": {
+      "source_version": "1.3.0",
+      "purpose": "Organize primary Kaizen documents into named working sets.",
+      "prerequisites": [
+        "A signed-in member with access to the documents",
+        "The primary Kaizen collection API"
+      ],
+      "steps": [
+        "Create a named document collection",
+        "Add or remove the intended documents and update its details",
+        "Share the collection when permitted and verify the reader's document access"
+      ],
+      "expected_result": "The collection stores a working set. Membership in it never overrides a document's access rules. Legacy saved-search file sets have a different schema and are not interchangeable.",
+      "use_cases": [
+        {
+          "title": "Group sources for a recurring task",
+          "description": "A member assembles a permitted set of documents for a repeated grounding workflow without granting new document access.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.member-token-budget": {
+      "source_version": "1.3.0",
+      "purpose": "Set a daily direct-model-call token threshold per member.",
+      "prerequisites": [
+        "A Kaizen administrator and enabled configuration store for live changes",
+        "A positive daily token cap, since zero disables the check"
+      ],
+      "steps": [
+        "Set the per-member daily cap through the admin Rate limits settings",
+        "Check that further direct calls are refused after recorded use reaches the cap"
+      ],
+      "expected_result": "The pre-call check uses already-recorded tokens and does not reserve the next call, so a call can exceed the cap. System ingestion embeddings bypass it. A positive cap also enables process-local category limits; this is not a hard currency budget.",
+      "use_cases": [
+        {
+          "title": "Bound ordinary daily model use",
+          "description": "An administrator sets a token threshold and confirms refusal once recorded use reaches it, without treating it as an exact spending ceiling.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.metrics-dashboard": {
+      "source_version": "1.3.0",
+      "purpose": "Read primary Kaizen administrator metrics and usage summaries.",
+      "prerequisites": [
+        "A primary Kaizen administrator",
+        "Access to the metrics and usage API"
+      ],
+      "steps": [
+        "Request the metrics or usage snapshot",
+        "For a member-level question, use the separately audited member-usage read",
+        "Interpret the recorded counts alongside their scope and collection limits"
+      ],
+      "expected_result": "The API returns content-free metrics and scoped usage. Member-usage disclosure is separately audited. This entry does not establish Legacy analytics-tab parity or a shipped dashboard screen.",
+      "use_cases": [
+        {
+          "title": "Review team usage trends",
+          "description": "An administrator inspects primary Kaizen usage counts while avoiding conversation content disclosure.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.multi-agent-orchestration": {
+      "source_version": "1.3.0",
+      "purpose": "Inspect the documented bounds of primary Kaizen specialist delegation.",
+      "prerequisites": [
+        "An agent allowed to delegate and orchestration enabled",
+        "For bounded plans, an explicitly enabled A2A inbound path, whose flags ship off"
+      ],
+      "steps": [
+        "For chat, use the permitted invoke_agent delegation path",
+        "For an enabled A2A path, account for the fact that linking an A2A turn to the available trace route is not established",
+        "Before operational use, verify interruption behavior and retain a separate stop strategy"
+      ],
+      "expected_result": "Partial planning and tracing exist, but bounded-plan resume and cancel are not established at this pin. Canceling the A2A subscriber does not stop the detached producer. Do not present the complete orchestration capability as supported.",
+      "use_cases": [
+        {
+          "title": "Evaluate a specialist coordination design",
+          "description": "A developer evaluates bounded delegation in a controlled setting and checks its unresolved trace and interruption limits before proposing production use.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.notifications-inbox": {
+      "source_version": "1.3.0",
+      "purpose": "Read and acknowledge primary Kaizen's stored member notifications.",
+      "prerequisites": [
+        "An authenticated member",
+        "Access to the notification API"
+      ],
+      "steps": [
+        "List the member's notifications and unread count",
+        "Review notification details in the returned list",
+        "Mark one notification or all notifications read"
+      ],
+      "expected_result": "The API exposes a durable inbox. It does not establish email or Slack delivery; the default outbound notifier is log-only. Work watched live can suppress notification creation.",
+      "use_cases": [
+        {
+          "title": "Catch up on recorded work notifications",
+          "description": "A member reads stored notifications after returning to the application and marks the reviewed entries read.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.platform-operator-tools": {
+      "source_version": "1.3.0",
+      "purpose": "Inspect platform resources and preview bounded Demo Blueprint changes.",
+      "prerequisites": [
+        "The closed SDK tool family enabled and granted to the agent",
+        "A member turn carrying the forwarded platform identity",
+        "An approval mode appropriate to the intended changes"
+      ],
+      "steps": [
+        "Use the inspection tool to read the permitted platform state",
+        "Preview the desired bounded demo action and retain its environment binding and digest",
+        "Apply only against that unchanged preview and handle the resolved approval policy"
+      ],
+      "expected_result": "Apply is bound to the preview and environment. The built-in Never ask default can apply without prompting; read-only mode denies it. No arbitrary SDK call, URL, credential, delete or raw payload is accepted.",
+      "use_cases": [
+        {
+          "title": "Prepare a controlled demo environment",
+          "description": "A member reviews a bounded demo preview and uses the configured approval mode before applying the same desired state.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.prebuilt-agents": {
+      "source_version": "1.3.0",
+      "purpose": "Choose a bundled primary Kaizen specialist from the Agents gallery.",
+      "prerequisites": [
+        "Agent bundle loading and the member Agents surface enabled",
+        "A configured model and any tools or network access the chosen agent needs"
+      ],
+      "steps": [
+        "Open the Agents gallery and confirm the intended bundle was provisioned",
+        "Choose the specialist for the chat turn",
+        "Review its output and any tools or permissions it requires"
+      ],
+      "expected_result": "The recorded bundles include Web Researcher, Software Engineer, Ontology Builder and Demo Builder. Startup loading is best effort, and shipping an agent does not establish useful or correct output. Ontology Builder is not persistent graph memory.",
+      "use_cases": [
+        {
+          "title": "Start with a supplied specialist",
+          "description": "A member chooses an available research specialist and verifies its sources before using the answer.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.privacy-guard": {
+      "source_version": "1.3.0",
+      "purpose": "Review sensitive typed text before sending a Kaizen Legacy chat message.",
+      "prerequisites": [
+        "Kaizen Legacy's browser chat",
+        "Ownership to change the conversation mode",
+        "A chosen off, warn or redact mode, since it defaults off"
+      ],
+      "steps": [
+        "Set the conversation's Privacy Guard mode or an applicable agent default",
+        "Type the message and review findings when warn mode prompts",
+        "Edit or redact the text before sending and separately inspect attachments"
+      ],
+      "expected_result": "The browser checks fixed patterns in typed text. It is not comprehensive data-loss prevention, does not scan attached images, and direct API clients bypass the browser check. Warn mode allows sending the original.",
+      "use_cases": [
+        {
+          "title": "Review a message before external processing",
+          "description": "A member uses warn mode as an extra review step and manually checks details the pattern list may miss.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.product-identity": {
+      "source_version": "1.3.0",
+      "purpose": "Identify which Kaizen product a catalog release represents.",
+      "prerequisites": [
+        "A catalog release containing compose content",
+        "Access to its source and overlay provenance"
+      ],
+      "steps": [
+        "Inspect the release's product-owned compose markers",
+        "Classify the product line rather than comparing version numbers",
+        "Check the reserved name, catalog source and overlay status before presenting it as canonical"
+      ],
+      "expected_result": "Product identity comes from compose markers. Unrelated version lines cannot identify the newer product. Untrusted rows lose canonical presentation rather than being blocked, and an absent classification is not a negative verdict.",
+      "use_cases": [
+        {
+          "title": "Avoid choosing the wrong Kaizen integration",
+          "description": "An operator checks the actual product identity before selecting an SDK conversation or agent contract.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.projects": {
+      "source_version": "1.3.0",
+      "purpose": "Group chats and Library pointers in primary Kaizen Projects.",
+      "prerequisites": [
+        "Project workspaces and shared-chat collaboration enabled",
+        "A signed-in member to create a Project",
+        "The owner or writer role needed for changes to an existing Project"
+      ],
+      "steps": [
+        "Create or select the Project and invite members as an owner",
+        "Before linking your own Library items as a writer, choose whether new pointers should be shared or private",
+        "Review each pointer's shared or private access and revoke it when needed"
+      ],
+      "expected_result": "New links are shared by default unless the member turns off the share-new-items preference. A shared pointer can lend an active Project member read access to an owned artifact, document or prompt. It copies no data and transfers no edit or re-sharing rights. Revoking the link or membership withdraws that read on the next query.",
+      "use_cases": [
+        {
+          "title": "Collect a team's working references",
+          "description": "A Project owner invites colleagues and each owner shares selected Library references while preserving ownership and revocable access.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.prompt-library-and-chains": {
+      "source_version": "1.3.0",
+      "purpose": "Save prompts and run versioned multi-step prompt chains.",
+      "prerequisites": [
+        "Primary Kaizen with member prompts and chains enabled",
+        "Access to every model, resource and tool the chain will use"
+      ],
+      "steps": [
+        "Create or edit the reusable prompt or chain through the API",
+        "Validate and debug the intended version",
+        "Run the validated version and review its result"
+      ],
+      "expected_result": "Prompts and chains are reusable, versioned definitions. Resource and tool permissions still apply. Scheduling is a separate Tasks capability with additional readiness gates.",
+      "use_cases": [
+        {
+          "title": "Reuse a reviewed analysis sequence",
+          "description": "A member versions a short analysis chain and validates it before running the same sequence against another authorized input.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.recipes": {
+      "source_version": "1.3.0",
+      "purpose": "Save and look up a successful tool call in Kaizen Legacy.",
+      "prerequisites": [
+        "Kaizen Legacy and a tool-call result on the Search page",
+        "A write-capable workroom role for saving or modifying recipes"
+      ],
+      "steps": [
+        "Use Save as Recipe on the selected tool-call result and choose a name",
+        "Inspect the stored arguments, result and notes in the Recipes tab",
+        "Have an agent look it up by tool name or keyword, rechecking current permissions before any repeat call"
+      ],
+      "expected_result": "A recipe stores redacted arguments and results subject to payload caps. Shared-workroom members can see its recipes, and write-capable members can rename or delete them. The saved call is a reference, not an automatic authorization to execute.",
+      "use_cases": [
+        {
+          "title": "Reuse a known query pattern",
+          "description": "A member saves an authorized tool call for later lookup and adapts it to a new task after reviewing its arguments.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.scheduled-tasks": {
+      "source_version": "1.3.0",
+      "purpose": "Define owner-bound agent tasks and check whether scheduling is ready.",
+      "prerequisites": [
+        "Primary Kaizen Tasks enabled",
+        "Server-owned delegated-workload readiness across all required families",
+        "Valid attestation, resource and model checks, a current readiness report and rollout approval"
+      ],
+      "steps": [
+        "Preview the intended task definition and inspect its owner and resource scope",
+        "Create and activate it only when the server's readiness gates permit",
+        "Inspect run history and pause or delete it when no longer needed"
+      ],
+      "expected_result": "Scheduling depends on the full readiness chain, not the task feature switch alone. The scheduler holds work when the platform is unavailable. This guidance does not establish scheduling availability on the current live instance.",
+      "use_cases": [
+        {
+          "title": "Prepare a recurring review",
+          "description": "A member defines a bounded recurring task and an operator verifies readiness before relying on unattended execution.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.shared-chat-typing-indicators": {
+      "source_version": "1.3.0",
+      "purpose": "See participant presence and typing in a shared primary Kaizen chat.",
+      "prerequisites": [
+        "A shared conversation and the relevant collaboration access",
+        "Write access for sending typing state",
+        "An available Valkey presence store"
+      ],
+      "steps": [
+        "Open the shared chat so its live event stream creates a presence lease",
+        "Type in the shared conversation and observe other active participants",
+        "Leave the chat or let the short-lived presence lease expire when finished"
+      ],
+      "expected_result": "Presence is ephemeral and scoped to the chat and tab. Your own typing is not shown to you. If the store is unavailable, the indicator is hidden rather than proving nobody is typing.",
+      "use_cases": [
+        {
+          "title": "Coordinate a live shared discussion",
+          "description": "Two permitted writers use the shared chat's typing indicator to avoid talking over each other.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "kaizen.workroom-notes": {
+      "source_version": "1.3.0",
+      "purpose": "Create and edit text notes in Kaizen Legacy's workroom files.",
+      "prerequisites": [
+        "Kaizen Legacy with a write-capable workroom role",
+        "For the side-pane editor, the metadata-explorer frontend flag enabled",
+        "Supported text content within the edit-size cap"
+      ],
+      "steps": [
+        "Create a Markdown note from the Files panel or ask the agent's create_note tool",
+        "Open the note and edit supported text in the side pane",
+        "Save, rename the note if needed, or delete it through the permitted file surface"
+      ],
+      "expected_result": "Notes are workroom files under kaizen-notes. Only notes can be renamed; content-type and size limits apply. This is the Legacy file workflow, separate from primary Kaizen canvas or collections.",
+      "use_cases": [
+        {
+          "title": "Keep working notes beside a conversation",
+          "description": "An analyst saves a short Markdown note for colleagues with workroom access and edits it as the analysis progresses.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.discover-and-download": {
+      "source_version": "1.3.0",
+      "purpose": "Find model artifacts and download selected files into the platform.",
+      "prerequisites": [
+        "Outbound access to the source model hub",
+        "An authenticated caller with download permission for the model",
+        "Sufficient admitted storage and any hub access approval"
+      ],
+      "steps": [
+        "Search the model hub and inspect available files and quantization variants",
+        "Choose the required files and initiate the authorized download",
+        "Track file status and verify the artifacts are ready before attempting deployment"
+      ],
+      "expected_result": "The platform acquires selected model artifacts. Hub licenses and account access still apply. A completed acquisition does not establish successful serving, and public-hub downloads require network access.",
+      "use_cases": [
+        {
+          "title": "Prepare an open-weight model",
+          "description": "An operator selects a permitted quantization and tracks its download before a separate deployment check.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.external-endpoints": {
+      "source_version": "1.3.0",
+      "purpose": "Register an existing inference provider behind the platform's model lifecycle.",
+      "prerequisites": [
+        "An administrator for model registration",
+        "Reachable provider endpoints and valid account credentials",
+        "An existing Azure deployment or a supported provider model as applicable"
+      ],
+      "steps": [
+        "Open the external endpoint setup wizard or use its API",
+        "For OpenAI-compatible or Azure providers, discover and select models, or enter the AWS model explicitly",
+        "Register, deploy through the normal lifecycle and test the selected model before application use"
+      ],
+      "expected_result": "Kamiwaza fronts the provider's service; quota, quality and availability remain provider properties. Bedrock is Converse-only here. AWS setup does not enumerate models, and review edits identity metadata rather than default generation parameters.",
+      "use_cases": [
+        {
+          "title": "Use an existing inference contract",
+          "description": "An operator registers a supported provider model so an application can use it through the governed deployment surface.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.gpu-placement": {
+      "source_version": "1.3.0",
+      "purpose": "Inspect and configure automatic model placement and memory budgeting.",
+      "prerequisites": [
+        "A serving stack and correctly labeled accelerator capacity",
+        "For operator-planned placement, operator emission explicitly enabled with its custom resources and permissions",
+        "A hardware sharing strategy where applicable"
+      ],
+      "steps": [
+        "Estimate the model's footprint, treating fallback estimates with care",
+        "Deploy through the configured placement path",
+        "Inspect the reported allocation or no-fit reason and compare it with actual hardware use"
+      ],
+      "expected_result": "Operator-planned placement is opt-in, not the umbrella-chart default. The operator selects placement automatically; it does not provide user-chosen GPU pinning. Tracked budgets omit other processes, and a fit does not guarantee freedom from runtime memory exhaustion.",
+      "use_cases": [
+        {
+          "title": "Plan model density on shared hardware",
+          "description": "An operator compares model demand with the configured placement path and checks observed allocation before adding another model.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.local-deployment": {
+      "source_version": "1.3.0",
+      "purpose": "Deploy and manage a prepared local model.",
+      "prerequisites": [
+        "Downloaded registered model files in a deployable storage form",
+        "An administrator for deployment",
+        "A compatible engine and sufficient configured hardware"
+      ],
+      "steps": [
+        "Select the prepared model and intended configuration",
+        "Deploy with the automatic or chosen engine and follow its status",
+        "Read logs on failure, then stop or retire the deployment through the authorized lifecycle"
+      ],
+      "expected_result": "DEPLOYED means the engine loaded the model. Stop and delete are owner-scoped with an admin override. Existing evidence covers a prepared model, not every downloadable artifact; mixed file and OCI storage can prevent startup.",
+      "use_cases": [
+        {
+          "title": "Serve an approved local model",
+          "description": "An operator deploys a prepared model, confirms it loaded, and then separately checks inference before opening it to an application.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.openai-compatible-inference": {
+      "source_version": "1.3.0",
+      "purpose": "Call a deployed model through its OpenAI-compatible endpoint.",
+      "prerequisites": [
+        "A local or external model deployment in DEPLOYED state",
+        "An authenticated bearer credential",
+        "A reachable published deployment route and support for the requested modality"
+      ],
+      "steps": [
+        "Resolve the selected deployment's base URL or obtain its configured OpenAI client",
+        "Call the operation the deployment supports, such as chat or embeddings",
+        "Check the response and streaming behavior for that specific engine or provider"
+      ],
+      "expected_result": "Compatibility is scoped to declared endpoints and the selected deployment. The request's model field does not select another deployment. Invoke authorization is a separate control that defaults off; port-only fallback URLs do not establish reachability.",
+      "use_cases": [
+        {
+          "title": "Connect an existing chat client",
+          "description": "A developer points a compatible client at a reachable approved deployment and validates the chat operation before broader use.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.tenant-mode-inference": {
+      "source_version": "1.3.0",
+      "purpose": "Serve qualified local models using owner-signed compute profiles.",
+      "prerequisites": [
+        "An owner-enabled tenant resource path with owner-controlled verifier settings",
+        "A valid immutable signed bundle bound to this cluster and namespace",
+        "A shipped CPU or NVIDIA engine compatible with the attested hardware and driver",
+        "The Kamiwaza administrator role for deploying models, distinct from namespace administrator permissions"
+      ],
+      "steps": [
+        "Have the cluster owner detect hardware, sign the profile bundle and publish it under the protected configuration",
+        "Deploy a prepared model through the normal API, UI or SDK using an allowed owner binding",
+        "Inspect signature or placement refusals and actual startup, re-signing after hardware or driver changes"
+      ],
+      "expected_result": "This preview path is off by default and build-specific. AMD serving is not established. Accounted shares are not hard isolation, and signatures do not protect against a tenant that controls the verifier settings. Live qualification is limited; not every 1.3 candidate contains this path.",
+      "use_cases": [
+        {
+          "title": "Offer constrained local serving to a namespace",
+          "description": "A cluster owner prepares a bounded CPU or NVIDIA profile and a Kamiwaza administrator checks one permitted deployment before relying on it.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.tensor-parallel-serving": {
+      "source_version": "1.3.0",
+      "purpose": "Split one vLLM replica across several GPUs on one node.",
+      "prerequisites": [
+        "A supported serving path and vLLM configuration",
+        "Enough compatible GPUs on the same node",
+        "For tenant mode, at most eight whole devices with attested peer-to-peer capability"
+      ],
+      "steps": [
+        "Set tensor_parallel_size in the intended model configuration",
+        "Deploy through the chosen path and inspect admission or placement refusals",
+        "Confirm the requested shard count and loaded model before measuring inference"
+      ],
+      "expected_result": "Kubernetes tensor parallelism is vLLM-only here and stays on one node. Placement and GPU-count checks differ by launch path; a detected count is not free capacity. Tenant MIG slices and accounted shares are excluded. This is not two-host serving.",
+      "use_cases": [
+        {
+          "title": "Fit a larger model on one multi-GPU node",
+          "description": "An operator prepares a same-node vLLM configuration and verifies the actual deployment rather than assuming total cluster GPUs are usable.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "models.two-node-serving": {
+      "source_version": "1.3.0",
+      "purpose": "Attach one SSH-paired GPU node for the declared Docker serving paths.",
+      "prerequisites": [
+        "An administrator and a reachable SSH host",
+        "The Docker-over-SSH vLLM or llama.cpp serving path",
+        "Prepared model files and appropriate remote GPU resources"
+      ],
+      "steps": [
+        "Attach the paired host through the cluster administration API, explicitly choosing strict host-key checking when required",
+        "Inspect the stored pairing and reported GPU inventory",
+        "Launch through the supported engine path and inspect remote status, then detach when appropriate"
+      ],
+      "expected_result": "Only one paired node is supported. This is not an established Kubernetes deployment topology. vLLM auto targeting stays local, while llama.cpp uses the attached node; do not infer arbitrary multi-node or vendor coverage.",
+      "use_cases": [
+        {
+          "title": "Evaluate a paired-host serving setup",
+          "description": "An administrator checks the source-defined paired-host path in a controlled environment before making a topology support claim.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.access-requests": {
+      "source_version": "1.3.0",
+      "purpose": "Record a request for resource access and a grantor's decision.",
+      "prerequisites": [
+        "An authenticated tenant user",
+        "A current resource grantor authorized to resolve the request"
+      ],
+      "steps": [
+        "Submit the intended resource access request through the API or SDK",
+        "Have the current grantor approve or deny it",
+        "Inspect the decision and separately verify that the required access grant has actually been provisioned"
+      ],
+      "expected_result": "Requests are rate-limited and deduplicated, with decision notifications. The inspected resolution implementation records the decision but does not write the access grant. A shipped request UI is not established.",
+      "use_cases": [
+        {
+          "title": "Track a permission request",
+          "description": "A user requests a dataset and a grantor records approval, then an administrator separately checks the permission change.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.admin-copilot": {
+      "source_version": "1.3.0",
+      "purpose": "Ask operational questions through the platform copilot protocol.",
+      "prerequisites": [
+        "An operator-configured Kamiwaza-hosted inference deployment",
+        "A current authenticated user and the permitted action set",
+        "A bounded thread-and-run request"
+      ],
+      "steps": [
+        "Create or use an authorized copilot thread and submit the operational question",
+        "Inspect run state and any referenced result handles",
+        "Review and explicitly confirm a parked write before allowing it to proceed"
+      ],
+      "expected_result": "The durable protocol includes ownership, budgets, audit and write confirmation. Its current reasoning loop is an interim shim with one tool call per turn; this is not evidence of answer quality or multi-step autonomous operations.",
+      "use_cases": [
+        {
+          "title": "Inspect an operational question with reviewable actions",
+          "description": "An administrator follows a copilot run and checks its referenced results and any pending write before acting on the answer.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.airgapped-install": {
+      "source_version": "1.3.0",
+      "purpose": "Prepare an installation that pulls release artifacts from an internal registry.",
+      "prerequisites": [
+        "A customer-prepared Kubernetes cluster and trusted reachable registry",
+        "A copy tool preserving every image platform and digest",
+        "An approved release chart and complete image list with locations confirmed by the release runbook"
+      ],
+      "steps": [
+        "Obtain the chart and exact image list for the approved release, resolving documented placeholder locations first",
+        "Mirror the chart and all required images by digest, including selected inference engines",
+        "On OpenShift with GreyMatter, also mirror its proxy image and configure global.airgap.registry.url for that image relocation",
+        "Install with the internal image prefixes and bundled LOCAL catalogs, then verify actual pulls"
+      ],
+      "expected_result": "This is a source-described registry-mirror path, not proof that a complete published release bundle exists. Customer cluster and mesh images are separate prerequisites. Installation offline does not establish the platform's runtime network behavior.",
+      "use_cases": [
+        {
+          "title": "Plan a disconnected deployment",
+          "description": "A delivery team assembles approved artifacts in the site's registry and validates the release-specific procedure before installation.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.api-reference": {
+      "source_version": "1.3.0",
+      "purpose": "Read the platform's OpenAPI schema and interactive API reference.",
+      "prerequisites": [
+        "Access to the deployment's documentation routes",
+        "Any authentication required by that deployment"
+      ],
+      "steps": [
+        "Open the deployment's OpenAPI schema",
+        "Use its same-origin Swagger UI or ReDoc to inspect request and response shapes",
+        "Check route authorization separately before calling an operation"
+      ],
+      "expected_result": "Reference assets are vendored for offline use. Schema authentication annotations describe intended policy, not runtime proof, and API availability does not imply a matching SDK method.",
+      "use_cases": [
+        {
+          "title": "Prepare an API integration",
+          "description": "A developer checks the deployed contract and required fields before implementing an authorized client request.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.app-generation-path": {
+      "source_version": "1.3.0",
+      "purpose": "Scaffold and iterate a platform-integrated application using kz-ext.",
+      "prerequisites": [
+        "A compatible SDK with kz-ext and the extension runtime library",
+        "An authenticated active connection to a reachable instance",
+        "An image registry available to the deployment loop",
+        "A local SDK checkout supplied with --sdk-repo until a published package satisfies the scaffold pin; the recorded package-availability gap has not been rechecked"
+      ],
+      "steps": [
+        "Scaffold an app with kz-ext create --type app",
+        "Iterate locally with kz-ext dev local --sdk-repo pointing to that checkout, and validate the manifest and compose file",
+        "Deploy with kz-ext dev --sdk-repo pointing to that checkout and inspect the application before use"
+      ],
+      "expected_result": "The scaffold integrates identity and platform calls. This is a developer-driven CLI path, not a conversational app builder. Typed workroom-boundary error translation is an open runtime-library gap, and deployment is distinct from application launch evidence.",
+      "use_cases": [
+        {
+          "title": "Build a small internal application",
+          "description": "A developer starts from the platform-integrated scaffold and validates identity handling before adding a business workflow.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.greymatter-mesh-integration": {
+      "source_version": "1.3.0",
+      "purpose": "Configure Kamiwaza routing within a customer-operated GreyMatter mesh.",
+      "prerequisites": [
+        "Customer-provided GreyMatter, tenant configuration management and edge infrastructure",
+        "Explicit GreyMatter selection for mesh and ingress",
+        "Reviewed listener identity, certificates and GitOps configuration",
+        "The static tenant GSL rendered and synchronized before installation so pods can join the mesh"
+      ],
+      "steps": [
+        "Choose the GreyMatter routing values and intended security mode",
+        "Deploy the route writer against the tenant configuration branch",
+        "Inspect generated routes, authentication mode and removal or retention behavior"
+      ],
+      "expected_result": "This source-defined integration is opt-in and not release-qualified for the stated target. Some legacy route intents without auth_mode bypass edge authentication. OpenShift route retention can require manual pruning; neither SPIRE nor PKI implies qualification.",
+      "use_cases": [
+        {
+          "title": "Prepare an integration with an existing mesh",
+          "description": "A platform team reviews route generation and edge-authentication behavior on its target before accepting a support statement.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.kubernetes-install": {
+      "source_version": "1.3.0",
+      "purpose": "Install a release into a customer-prepared Kubernetes environment.",
+      "prerequisites": [
+        "Linux amd64 and the published resource floors for the chosen workload",
+        "A prepared cluster, namespace, storage, routing and installer permissions",
+        "Qualified NVIDIA hardware for the documented local GPU lane"
+      ],
+      "steps": [
+        "Choose the release and deployment environment, then verify the platform prerequisites",
+        "Run the documented namespace Helm installation with the appropriate identity",
+        "Inspect platform inventory and separately validate application and model behavior"
+      ],
+      "expected_result": "The customer prepares the cluster. Multi-node means one Kubernetes cluster across nodes, not the retired two-node guide. Inventory is not a qualification test, and AMD serving is not established for the documented tenant lane.",
+      "use_cases": [
+        {
+          "title": "Plan an installation on existing infrastructure",
+          "description": "A platform team checks requirements and installs an approved release before verifying the specific workloads it intends to run.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.licensing-and-eula": {
+      "source_version": "1.3.0",
+      "purpose": "Validate a signed license and inspect its status.",
+      "prerequisites": [
+        "An authorized signed license file",
+        "Correct deployment configuration and required EULA acceptance"
+      ],
+      "steps": [
+        "Provide the approved license through the supported deployment process",
+        "Check startup signature and freshness validation",
+        "Inspect runtime license status and distinguish validity enforcement from commercial-term warnings"
+      ],
+      "expected_result": "Signed-file checks and commercial-term expiry warnings are distinct. Offline signature validation does not establish a license-server dependency. This guidance provides no pricing or commercial commitment.",
+      "use_cases": [
+        {
+          "title": "Prepare license material for an install",
+          "description": "An operator confirms the approved license is accepted and the applicable status is visible before handing over the environment.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.news-feed": {
+      "source_version": "1.3.0",
+      "purpose": "Read the configured news feed with its static fallback.",
+      "prerequisites": [
+        "Access to the platform's news API",
+        "An optional configured remote feed URL"
+      ],
+      "steps": [
+        "Read the quadrant news feed",
+        "If remote content is required, configure the approved feed and check cached or fallback behavior",
+        "Use the quadrant response rather than treating the legacy latest route as a complete feed"
+      ],
+      "expected_result": "An unset URL makes no feed request and uses static content. Remote failures fall back. At the recorded source revision the legacy latest route returns empty content, so the whole two-operation claim is not established.",
+      "use_cases": [
+        {
+          "title": "Show installation news without a live feed",
+          "description": "An operator uses the static quadrant fallback where outbound feed access is unnecessary.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.observability": {
+      "source_version": "1.3.0",
+      "purpose": "Inspect deployment logs and export telemetry to an existing observability stack.",
+      "prerequisites": [
+        "Appropriate administrator access for log content and analysis",
+        "For telemetry export, enabled collectors and a configured OTLP endpoint"
+      ],
+      "steps": [
+        "List and read the relevant deployment logs or supported analysis output",
+        "Read resource-readiness counts while distinguishing missing configuration from service health",
+        "Enable and verify telemetry delivery to the intended backend when required"
+      ],
+      "expected_result": "Readiness counts configured resources rather than probing liveness. Some UI log functions lack matching routes. Telemetry export is not alerting, paging or incident workflow, and retention and volume limits are not characterized here.",
+      "use_cases": [
+        {
+          "title": "Investigate a model startup problem",
+          "description": "An administrator reads the deployment's logs and correlates available telemetry in the organization's own monitoring system.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.operations-and-notifications": {
+      "source_version": "1.3.0",
+      "purpose": "Read the current user's platform operation and notification feeds.",
+      "prerequisites": [
+        "An authenticated platform identity",
+        "Access to the recipient-scoped feed API"
+      ],
+      "steps": [
+        "List the user's operations or notifications through the API",
+        "Read the selected item and its operation state",
+        "Mark it seen or dismiss it when appropriate"
+      ],
+      "expected_result": "Feeds persist per user and remain recipient-scoped. The API does not establish a shipped UI or outbound delivery. This operation lifecycle is separate from aggregate usage and audit queries.",
+      "use_cases": [
+        {
+          "title": "Track a requested platform operation",
+          "description": "A user reads the recorded operation state and dismisses its notification after reviewing it.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.tenant-namespace-install": {
+      "source_version": "1.3.0",
+      "purpose": "Prepare a namespace-scoped Helm installation on a customer-owned cluster.",
+      "prerequisites": [
+        "A platform-prepared namespace, storage, pull credentials, edge and required security bindings",
+        "A namespace administrator with supplemental installer Roles",
+        "Explicit platform and routing values, including required egress CIDRs"
+      ],
+      "steps": [
+        "Have the platform team verify environment-specific prerequisites and node settings",
+        "Render the selected tenant-direct configuration and inspect it against the tenant contract",
+        "Install into the prepared namespace, then separately verify application and model paths"
+      ],
+      "expected_result": "Tenant-direct creates namespaced resources without a Node-read grant. This does not qualify every target or GPU path. The shipped EZUA overlay adds cluster-scoped node-reader permissions, and the target support matrix remains unqualified. Fixed model pod IDs can conflict with OpenShift security constraints.",
+      "use_cases": [
+        {
+          "title": "Prepare a constrained tenant installation",
+          "description": "A customer's platform team supplies prerequisites and reviews rendered permissions before a namespace administrator installs the release.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "platform.usage-and-audit": {
+      "source_version": "1.3.0",
+      "purpose": "Query recorded user activity and authorization decisions.",
+      "prerequisites": [
+        "An administrator permitted to read activity and decision exports",
+        "A configured logging or telemetry backend when durable decision retention is needed"
+      ],
+      "steps": [
+        "Read the recent activity feed through the API or SDK",
+        "Export the available authorization decisions",
+        "Correlate the scoped records with retained logs, noting replica and retention boundaries"
+      ],
+      "expected_result": "Activity writes are best effort. Decision exports are bounded process-local buffers lost on restart. This surface is not an authentication-session audit trail, report generator or redaction tool, and activity retention is not established.",
+      "use_cases": [
+        {
+          "title": "Review recent resource-access decisions",
+          "description": "An administrator inspects available decision records and uses the configured log backend for any longer-lived review.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "retrieval.async-retrieval-jobs": {
+      "source_version": "1.3.0",
+      "purpose": "Retrieve a registered dataset through an asynchronous job.",
+      "prerequisites": [
+        "A catalog dataset URN and viewer or higher access",
+        "The required workroom read context",
+        "For Arrow Flight, reachable trusted TLS endpoints"
+      ],
+      "steps": [
+        "Create the retrieval job for the dataset URN",
+        "Poll its state or read SSE results, or fetch Flight batches where available",
+        "Use the REST route to mark an owned job canceled, without relying on it to stop in-flight SSE delivery"
+      ],
+      "expected_result": "Jobs are dataset-addressed and owner-checked. The SDK cannot materialize Kafka or cancel jobs here. Offset, filters and ordering belong to a separate query-jobs contract; setting them on this route is rejected. A recorded cancellation changed status while SSE continued delivering data; cancellation is not a reliable delivery cutoff.",
+      "use_cases": [
+        {
+          "title": "Read a large permitted dataset",
+          "description": "An integration follows a retrieval job without holding one blocking request and handles the selected result transport explicitly.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "security.consent-and-banners": {
+      "source_version": "1.3.0",
+      "purpose": "Configure acknowledgment text and classification banners.",
+      "prerequisites": [
+        "An administrator and explicitly enabled consent or banner settings",
+        "A reviewed public configuration and trusted proxy setup",
+        "The embed script included by extensions that must display the markings"
+      ],
+      "steps": [
+        "Set the approved consent text, banner text and colors through supported configuration",
+        "Include the provided embed script on applicable extension surfaces",
+        "Check the displayed content and acceptance behavior through the actual edge"
+      ],
+      "expected_result": "Consent is acknowledgment rather than authorization. Extension coverage depends on including the script. Acceptance is browser-session scoped, not a durable per-user ledger. On the embed script and Legacy client, any failed acceptance request can admit the user without a server audit event; the newer client blocks on failure.",
+      "use_cases": [
+        {
+          "title": "Apply an approved usage acknowledgment",
+          "description": "A deployment administrator configures approved text and checks it on the main UI and each integrated extension.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "skills.skills-library": {
+      "source_version": "1.3.0",
+      "purpose": "Import and curate reusable agent instruction packages.",
+      "prerequisites": [
+        "Skills read context for discovery and write context for mutation or export",
+        "A ZIP with a valid SKILL.md and supported optional resources"
+      ],
+      "steps": [
+        "Import the package as a draft and inspect its metadata and contents",
+        "Curate and publish it through the allowed lifecycle",
+        "Download the published package or export the intended snapshot or bundle, archiving or deleting when appropriate"
+      ],
+      "expected_result": "The library preserves package identity and shares authorized skills. Import validates structure, not behavioral safety or quality, and the library does not execute the skill. Enabling it in an agent is a separate consuming workflow.",
+      "use_cases": [
+        {
+          "title": "Share a reviewed team instruction package",
+          "description": "A curator imports a repeatable instruction package, reviews it, and publishes it for permitted consumers.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "tools.mcp-tool-shed": {
+      "source_version": "1.3.0",
+      "purpose": "Deploy and discover managed MCP tool servers.",
+      "prerequisites": [
+        "An authenticated caller and an available template or supported container image",
+        "Required credentials supplied through managed configuration",
+        "Administrator authority for catalog refresh or template administration"
+      ],
+      "steps": [
+        "Select a locally available tool template or image and provide required configuration",
+        "Deploy it and inspect the recorded status and endpoint",
+        "Connect an authorized MCP client and test the needed tool, then stop the deployment when finished"
+      ],
+      "expected_result": "Discovery returns names, URLs and status, with no populated capability list. The health route reads stored deployment status rather than contacting MCP. This legacy surface is deprecated in favor of extensions, and agent permissions remain a separate concern.",
+      "use_cases": [
+        {
+          "title": "Prepare a managed tool endpoint",
+          "description": "An operator deploys a tool server and independently checks the MCP operation the consuming application needs.",
+          "evidence_sha256": []
+        }
+      ]
+    },
+    "workrooms.org-decommission": {
+      "source_version": "1.3.0",
+      "purpose": "Retire an organization's workrooms under an explicitly confirmed plan.",
+      "prerequisites": [
+        "A tenant administrator with an approved retirement decision",
+        "A reviewed room inventory, future timezone-aware cutoff and retention contact",
+        "Awareness that creating a draft immediately disables new room creation"
+      ],
+      "steps": [
+        "List the room inventory and review the intended retirement scope",
+        "Create the plan only when ready for its room-creation side effect, then inspect it",
+        "Confirm with the exact organization name and follow read-only state, deletion processing and tombstones"
+      ],
+      "expected_result": "Confirmation archives planned rooms and the background task deletes them at cutoff. There is no cancel route, both strategy values behave alike, and changed inventory can strand a draft until expiry handling.",
+      "use_cases": [
+        {
+          "title": "Prepare an approved organization shutdown",
+          "description": "An administrator reviews an authorized retirement plan and its irreversible consequences before confirming it.",
+          "evidence_sha256": []
+        }
+      ]
+    }
+  },
+  "missingGuidance": []
+}
