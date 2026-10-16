@@ -75,7 +75,8 @@ test('one source snapshot supplies the human recipe and the complete ZIP JSON', 
   assert.deepEqual(JSON.parse(zipEntry(zip, 'machine-readable/value-stream-recipes.json')), streams);
   assert.match(zipEntry(zip, 'examples/connector-builder-import-test-generate.py').toString(), /Deployment was not attempted/);
   assert.equal(JSON.parse(readFileSync(join(out, 'evidence/1.3.0/value-stream-recipes.json'))).streams.length, 25);
-  assert.ok(!zip.toString().includes('reports/eng-13825'));
+  assert.doesNotMatch(zipEntry(zip, 'machine-readable/value-stream-recipes.json').toString(), /(?:reports|probes|verification)\//);
+  assert.doesNotMatch(markdown, /(?:reports|probes|verification)\//);
   for (const version of ['1.2.1', '1.3.2']) {
     const other = readFileSync(join(out, `evidence/${version}/kamiwaza-sales-dev-kit-${version}.md`), 'utf8');
     assert.ok(!other.includes('Analyst:VS2-5'), `1.3.0 recipe leaked into ${version}`);
