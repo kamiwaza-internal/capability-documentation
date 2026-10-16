@@ -6,6 +6,8 @@ import {assertPublicOutputSafe, unsafePublicText} from './public-output-privacy.
 
 const pathStatus = new Set(['untested', 'partial', 'tested', 'inapplicable']);
 const streamStatus = new Set(['unmapped', ...pathStatus]);
+// Updated only after reviewing the projection from its pinned private kit commit.
+const reviewedStreamsSha256 = '47758f678c243990c437d49fb28ad8c43c7fd3722c8751b7bb739b94d2421aec';
 const prose = value => {
   text(value);
   requireValue(value.length <= 2000 && !unsafePublicText(value), 'Unsafe stream prose');
@@ -76,5 +78,7 @@ export function validateStreams(data, publication) {
     requireValue(createHash('sha256').update(bytes).digest('hex') === data.exampleSha256, 'Public example differs from pinned private source');
   }
   assertPublicOutputSafe(JSON.stringify(data));
+  if (applies) requireValue(createHash('sha256').update(JSON.stringify(data)).digest('hex') === reviewedStreamsSha256,
+    'Stream projection differs from reviewed kit export');
   return applies ? data : null;
 }

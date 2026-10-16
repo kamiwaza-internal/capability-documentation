@@ -51,6 +51,11 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   const unscopedApi = structuredClone(streams);
   unscopedApi.streams.find(row => row.recipe).recipe.steps[0].historical_observation = null;
   assert.throws(() => validateStreams(unscopedApi, publication), /scoped passing observation/);
+  const falseDeploy = structuredClone(streams);
+  const deploy = falseDeploy.streams.find(row => row.recipe).recipe.steps.at(-1);
+  deploy.api.status = 'tested';
+  deploy.historical_observation = '1.3.2 local api component: passed. No release binding or whole-stream credit.';
+  assert.throws(() => validateStreams(falseDeploy, publication), /differs from reviewed kit export/);
 });
 
 test('one source snapshot supplies the human recipe and the complete ZIP JSON', () => {
