@@ -35,6 +35,7 @@ test('each ZIP contains every readable download and source record in labeled fol
   emitEvidence(publication, stamps, out, {}, guidance);
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
   for (const entry of index.versions) {
+    assert.equal(Object.hasOwn(entry.files, 'salesDocx'), false);
     assert.equal(entry.files.zip.audience, 'human-and-machine');
     const bytes = readFileSync(join(out, entry.files.zip.path));
     const archive = unzip(bytes, false);
@@ -72,58 +73,33 @@ test('each ZIP contains every readable download and source record in labeled fol
 
 test('guidance is tied to the exact publication, published version and complete gap list', () => {
   assert.equal(validateGuidance(guidance, publication), guidance);
+  assert.deepEqual(guidance.guides, {});
   const changed = structuredClone(publication); changed.releases[0].build += ' changed';
   assert.equal(validateGuidance(guidance, changed), null);
-  const staleUnsafe = structuredClone(guidance); staleUnsafe.guides['catalog.registered-sources'].steps = ['PRIVATE_CANARY'];
-  assert.throws(() => validateGuidance(staleUnsafe, changed), /Unsafe/);
   for (const mutate of [
     d => d.missingGuidance.push('unpublished.capability'),
-    d => d.guides['catalog.registered-sources'].source_version = '9.9.9',
-    d => d.guides['catalog.registered-sources'].use_cases[0].evidence_sha256 = ['f'.repeat(64)],
-    d => d.guides['catalog.registered-sources'].steps = ['PRIVATE_CANARY in /Users/person/private'],
-    d => d.guides['catalog.registered-sources'].releaseVerified = true,
+    d => d.missingGuidance.pop(),
+    d => d.guides['unpublished.capability'] = {},
   ]) { const data = structuredClone(guidance); mutate(data); assert.throws(() => validateGuidance(data, publication)); }
   const reordered = Object.fromEntries(Object.entries(publication).reverse());
   assert.equal(publicationDigest(reordered), publicationDigest(publication));
 });
 
-test('newly curated guidance covers evidence-only rows without altering historical declarations', () => {
-  const cid = 'apps.app-garden';
-  assert.equal(publication.releases.find(r => r.id === '1.3.0-prerelease-r3').capabilities.find(c => c.id === cid).declaration, null);
-  assert.ok(guidance.guides[cid]);
-  const changed = structuredClone(guidance);
-  changed.guides['unpublished.capability'] = structuredClone(changed.guides[cid]);
-  assert.throws(() => validateGuidance(changed, publication));
-  const draftOnly = structuredClone(publication);
-  for (const release of draftOnly.releases) release.capabilities = release.capabilities.filter(c => c.id !== cid);
-  draftOnly.releases.find(r => r.publicationState === 'draft').capabilities.push({id: cid, evidence: []});
-  const rebound = structuredClone(guidance); rebound.publicationSha256 = publicationDigest(draftOnly);
-  assert.throws(() => validateGuidance(rebound, draftOnly));
+test('release-facing guidance source contains no illustrative cases', () => {
+  const raw = readFileSync(new URL('../data/sales-guidance.json', import.meta.url), 'utf8');
+  assert.ok(!raw.includes('use_cases'));
+  assert.ok(guidance.missingGuidance.includes('apps.app-garden'));
 });
 
-test('a Sales Dev Kit retains every evidence block, labels examples and keeps version boundaries', () => {
+test('a Sales Dev Kit retains every evidence block and excludes draft examples', () => {
   for (const entry of evidenceVersions(publication, stamps)) {
     const blocks = salesKitDocument(entry, publication, stamps, guidance);
     const text = toMarkdown(blocks);
     const reference = evidenceDocument(entry, publication, stamps).slice(1);
     assert.deepEqual(blocks.slice(-reference.length), reference);
-    assert.match(text, /Draft a full response only when the user explicitly requests it/);
-    assert.match(text, /No Slack bot, plugin or additional download is required/);
-    if (entry.version === '1.2.1') {
-      assert.match(text, /Guidance coverage: 0 of 8/);
-      assert.match(text, /Usage guidance not yet published/);
-      assert.ok(!text.includes(guidance.guides['catalog.registered-sources'].purpose));
-    } else {
-      assert.match(text, /Guidance coverage: 88 of 88/);
-      assert.doesNotMatch(text, /Usage guidance not yet published/);
-      const usage = text.split('## Complete capability and evidence reference')[0];
-      assert.ok(usage.indexOf('(apps.sandbox-workload-provider)') < usage.indexOf('(auth.enterprise-sso)'));
-      for (const cid of ['apps.app-garden', 'models.local-deployment', 'tools.mcp-tool-shed']) assert.ok(text.includes(guidance.guides[cid].purpose));
-      assert.match(text, /Illustrative example; not demonstrated/);
-      assert.match(text, /Evidence-linked example; only the described scope is demonstrated/);
-      assert.ok(text.includes(guidance.guides['catalog.registered-sources'].use_cases[0].evidence_sha256[0]));
-      for (const value of ['catalog-registered-sources-listing', 'develop@030b2a297934f4b7ad1374cd419b08e01350ab8d', '2026-09-28T23:26:34Z', '1.3.0-prerelease-r3']) assert.ok(text.includes(value));
-    }
+    assert.match(text, /How to read this kit/);
+    assert.doesNotMatch(text, /Draft a full response|Illustrative example; not demonstrated|Usage guidance and examples/);
+    assert.ok(!text.includes('Illustrative example; not demonstrated'));
   }
 });
 
@@ -136,8 +112,8 @@ test('stale optional guidance cannot break evidence downloads or appear in new k
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
   for (const entry of index.versions) {
     const text = readFileSync(join(out, entry.files.salesMd.path), 'utf8');
-    assert.match(text, /Usage guidance is unavailable for this publication/);
-    assert.ok(!text.includes(guidance.guides['catalog.registered-sources'].purpose));
+    assert.match(text, /Draft usage suggestions and illustrative cases are excluded/);
+    assert.ok(!text.includes('Illustrative example; not demonstrated'));
     assert.ok(readFileSync(join(out, entry.files.md.path)).length > 0);
   }
 });

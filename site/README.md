@@ -420,7 +420,7 @@ the newest publication revision of each version, plus a version for each applica
 file. Each digest opens with its own reading rules and status key, then lists every capability in
 scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
 renders it to PDF with no new dependencies. `scripts/published-bundles.mjs` packs a complete ZIP:
-`human-readable/` holds all seven standalone document downloads (complete Sales Dev Kit Word/PDF/MD,
+`human-readable/` holds all six standalone document downloads (complete Sales Dev Kit PDF/MD,
 summary PDF/MD, detailed evidence PDF/MD), while `machine-readable/` holds the source publication
 JSON and applicable release-stamp JSON. Root `README.md` identifies the audiences and entry points;
 `SHA256SUMS` checks every file except itself. Archived documents reuse the exact standalone bytes,
@@ -547,6 +547,17 @@ regenerate `data/descriptions.json`, since newly published ids gain a descriptio
 
 ## Complete Sales Dev Kit downloads
 
+The additive value-stream layer is sourced from an immutable capability-kit recipe revision. `data/value-streams.json` is a reviewed public projection: 25 indexed source sections, one initial step recipe, and 24 explicit recipe gaps. The source migration manifest preserves 65 historical candidate mappings privately; none becomes current coverage by appearing in this projection. The initial connector-builder recipe reports passed API components, a timed-out deployment, no Kaizen UI clickstream and an optional extension boundary. Its whole-stream state is `untested`.
+
+The Sales Dev Kit places the stream outcome, roles, prerequisites, ordered API and Kaizen UI paths, expected results and limits before the capability evidence detail. It draws the same snapshot into PDF and Markdown. The complete ZIP also contains `machine-readable/value-stream-recipes.json`, and `/evidence/<version>/value-stream-recipes.json` is indexed with a checksum. Source version and target download version are distinct; an older recipe does not prove a newer build. The sidecar contains no private receipt paths, raw evidence or workbook URLs. Update it only with the pinned kit exporter, review the resulting public prose, and update `reviewedStreamsSha256` to the SHA-256 of `JSON.stringify` of the reviewed JSON object before publication:
+
+```sh
+cd ../capability-kit
+python3 scripts/export_value_streams.py --kit . --revision <full kit commit> \
+  --publication ../capability-documentation/site/data/publication.json \
+  --output ../capability-documentation/site/data/value-streams.json
+```
+
 `data/sales-guidance.json` is the reviewed, allowlisted projection of optional guidance in
 private capability records. `scripts/sales-guidance.mjs` validates its canonical publication
 hash, pinned source, published capability/version and passing example-evidence references.
@@ -561,11 +572,11 @@ missing-description labels remain historical facts. New guidance does not change
 assessment intake, ledgers and signoff (kit PR #133) are not an automatic public input or a new
 source of usage examples. A new reviewed public projection must regenerate the guidance binding.
 
-`src/sales-kit.mjs` adds usage guidance and explicit gaps to the existing complete evidence
-document. `scripts/published-bundles.mjs` emits matching Markdown, PDF and editable Word under
+`src/sales-kit.mjs` adds reviewed stream paths and explicit gaps to the existing complete evidence
+document. The curated guidance sidecar is validated but is not rendered into this release-facing kit.
+`scripts/published-bundles.mjs` emits matching Markdown and PDF under
 `/evidence/<version>/kamiwaza-sales-dev-kit-<version>.*`, indexed and hashed in
-`/evidence/index.json`. Word uses the existing block model and ZIP writer, without another
-runtime dependency. Old evidence-bundle bytes and the short summaries are unchanged.
+`/evidence/index.json`. Old evidence-bundle bytes and the short summaries are unchanged.
 
 Publication changes require regenerating the reviewed guidance sidecar. The build omits
 valid guidance bound to another publication, warns, and identifies the missing guidance in the

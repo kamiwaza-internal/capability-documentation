@@ -17,8 +17,8 @@ export function validateGuidance(data, publication) {
   requireValue(data.schema === 'capability-sales-guidance.v1', 'Unsupported sales guidance');
   requireValue(typeof data.publicationSha256 === 'string' && /^[a-f0-9]{64}$/.test(data.publicationSha256), 'Invalid guidance publication hash');
   const applies = data.publicationSha256 === publicationDigest(publication);
-  shape(data.source, ['kitRepository', 'kitCommit']);
-  requireValue(data.source.kitRepository === 'kamiwaza-internal/capability-kit' && typeof data.source.kitCommit === 'string' && /^[a-f0-9]{40}$/.test(data.source.kitCommit), 'Guidance must pin its kit source');
+  shape(data.source, ['sourceKind', 'kitCommit']);
+  requireValue(data.source.sourceKind === 'reviewed-private-kit' && typeof data.source.kitCommit === 'string' && /^[a-f0-9]{40}$/.test(data.source.kitCommit), 'Guidance must pin its kit source');
   requireValue(data.guides && typeof data.guides === 'object' && !Array.isArray(data.guides), 'Invalid guides');
   // This sidecar is a new reviewed projection from canonical source records. It can
   // describe evidence-only rows without rewriting their historical declarations.
