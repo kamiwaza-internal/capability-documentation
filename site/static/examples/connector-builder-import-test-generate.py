@@ -9,11 +9,22 @@ import argparse
 import json
 import os
 from pathlib import Path
-from urllib.parse import quote
-from urllib.request import Request, urlopen
+from urllib.parse import quote, urlsplit
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+
+class RejectRedirect(HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, message, headers, newurl):
+        raise RuntimeError('Redirect refused; bearer token was not forwarded')
+
+
+OPENER = build_opener(RejectRedirect())
 
 
 def post(base_url, token, path, payload):
+    parsed = urlsplit(base_url)
+    if parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password or parsed.query or parsed.fragment:
+        raise ValueError('--base-url must be an HTTPS URL without credentials, query or fragment')
     url = base_url.rstrip('/') + path
     body = json.dumps(payload).encode('utf-8')
     request = Request(url, data=body, method='POST', headers={
@@ -21,7 +32,7 @@ def post(base_url, token, path, payload):
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     })
-    with urlopen(request, timeout=30) as response:
+    with OPENER.open(request, timeout=30) as response:
         if response.status != 200:
             raise RuntimeError(f'{path} returned HTTP {response.status}')
         return json.load(response)

@@ -28,7 +28,7 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   assert.equal(streams.streams.filter(row => row.recipe).length, 1);
   const pilot = streams.streams.find(row => row.id === 'Analyst:VS2-5');
   assert.equal(pilot.status, 'untested');
-  assert.equal(pilot.recipe.steps.at(-1).api.status, 'partial');
+  assert.equal(pilot.recipe.steps.at(-1).api.status, 'untested');
   assert.equal(pilot.recipe.steps[0].kaizen_ui.status, 'untested');
   const driftedExample = structuredClone(streams);
   driftedExample.exampleSha256 = '0'.repeat(64);
@@ -45,6 +45,12 @@ test('stream sidecar keeps 25 gaps visible and cannot promote a component test t
   const privateBuild = structuredClone(streams);
   privateBuild.streams.find(row => row.recipe).recipe.tested_build = 'ghcr.io/internal/core@sha256:abc';
   assert.throws(() => validateStreams(privateBuild, publication), /Invalid public tested-build fingerprint/);
+  const falseUi = structuredClone(streams);
+  falseUi.streams.find(row => row.recipe).recipe.steps[0].kaizen_ui.status = 'tested';
+  assert.throws(() => validateStreams(falseUi, publication), /Tested Kaizen UI path requires an operation proof contract/);
+  const unscopedApi = structuredClone(streams);
+  unscopedApi.streams.find(row => row.recipe).recipe.steps[0].historical_observation = null;
+  assert.throws(() => validateStreams(unscopedApi, publication), /scoped passing observation/);
 });
 
 test('one source snapshot supplies the human recipe and the complete ZIP JSON', () => {

@@ -62,6 +62,12 @@ export function validateStreams(data, publication) {
       requireValue(Array.isArray(step.capability_ids) && step.capability_ids.length > 0 && new Set(step.capability_ids).size === step.capability_ids.length, 'Invalid step capabilities');
       for (const cid of step.capability_ids) requireValue(id.test(cid) && (!applies || published.has(`${recipe.source_version}:${cid}`)), 'Step capability outside published source version');
       path(step.api); path(step.kaizen_ui);
+      requireValue(step.kaizen_ui.status !== 'tested', 'Tested Kaizen UI path requires an operation proof contract');
+      if (step.api.status === 'tested' || step.api.status === 'partial') {
+        requireValue(typeof step.historical_observation === 'string' &&
+          /\b\d+\.\d+\.\d+ local api component: passed\b/.test(step.historical_observation),
+        'Tested or partial API path needs a scoped passing observation');
+      }
       if (step.historical_observation !== null) prose(step.historical_observation);
     }
   }

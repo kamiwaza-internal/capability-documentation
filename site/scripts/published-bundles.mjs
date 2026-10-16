@@ -34,7 +34,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
     const records = entry.releaseIds.map(id => ({name: `machine-readable/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
     if (entry.kind === 'release-stamps') records.push({name: `machine-readable/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
-    if (streams && entry.version === '1.3.0' && streams.streams.some(row => row.id === 'Analyst:VS2-5' && row.recipe)) {
+    if (scopedStreams && scopedStreams.streams.some(row => row.id === 'Analyst:VS2-5' && row.recipe)) {
       records.push({name: 'examples/connector-builder-import-test-generate.py',
         data: readFileSync(new URL('../static/examples/connector-builder-import-test-generate.py', import.meta.url))});
     }
