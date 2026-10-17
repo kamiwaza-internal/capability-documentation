@@ -6910,7 +6910,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "4d8206a281e9fcfdbc9338712f61c75ab70ac7ee8795d45b0cced4387ce1ee15",
@@ -6936,7 +6938,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "b0579575730a536c215f5ee5bd82805768354504d32ccb0ea9d387ea15ac6392",
@@ -6962,7 +6966,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "134ecda96ea0b2648b1b142041ddd6ae2448530a26e16258469f2b206eeded0b",
@@ -6988,7 +6994,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "03d4298ccc2dee599b21feca0a1cc58fab518296b59fafbef18e14a7f3cbe19c",
@@ -7029,7 +7037,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "8ee22749cb8f3c37a0813d192137195d1024055dca260220cf7fa27a652cf687",
@@ -7055,7 +7065,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "4a1d6e8f9c935ae43dc886256b60f20d53d64462581c73c1ab7377f5a27c268e",
@@ -7082,7 +7094,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The registered probe established dataset listing shape with seeded metadata, not arbitrary writes to source data."
+            "The registered probe established dataset listing shape with seeded metadata, not arbitrary writes to source data.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "f64c9554a4c3e6b0ff01f339ee621bd4d299f2b9fdcfd80e7821f7a2f7e0f7e4",
@@ -7153,7 +7167,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "9e5edddd5ceea24de27698b753edc5e0b3c422b42a3e9a8ee6ca1fe4b2bd377a",
@@ -7209,7 +7225,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "f45ea89ca379e2601b059873401e17530617c749596a71e10798ca89b424fad6",
@@ -7563,7 +7581,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "50077a7617263643a6568ba33f569a5f383752e272590200ec6835f900c7e973",
@@ -7620,7 +7640,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "1192e8c43d523d2bb2553ecfbb11f3ca06ca3869c75888848359714ddf435da5",
@@ -7647,7 +7669,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "f52ac034a3d4f012ffa70b2a5759a0614fc50aff95cacae892d67fa88141f7c7",
@@ -7674,7 +7698,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "69aa9bce028155032a64e220ced8a47fbfec9ffe919fcaf01e5624ec9b3e4cee",
@@ -7701,7 +7727,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "639666cfcce2ef4de4fe1b03c823abaef51300e5fddd1c0496913fb81353ef63",
@@ -7749,7 +7777,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "2c92b057567d844c60338fcb7727454138731042d087a6e5bab3c97a7aa28647",
@@ -7806,7 +7836,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "d421fb7e40bc6a111b1623b3161d7a4524fb55f03963f642016f2371c9a538b4",
@@ -7833,7 +7865,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "18e433140c43b3e2f3b002ceb5be6ab849ada561a79b716264c4ff6d6e9dc51b",
@@ -7875,7 +7909,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "516d9cf537571d7b0ceb8b84d25b6b1141d2a1ac49e99b485e9eb3d57fd390e0",
@@ -7902,7 +7938,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "a916ef0665d3bee71588f9fb52d8e49abc3444394262ac096e068ed96375fee5",
@@ -7930,7 +7968,9 @@
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
             "A synthetic owned notification exercised authenticated inbox shape. End-to-end notification delivery was not proved.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "5c9ca70b6d42e5adb40afd351a6b2bbbcdb8017f82aa1720342acafefa5a7c0b",
@@ -7972,7 +8012,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "8b327a152bedded5e14002915e3d2ac1c9efc2b234e26a04bb2f7eecb6961fb9",
@@ -8035,7 +8077,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "22071e5090e4fd719a39d1f72faf926f7a08daf7360d92a7a41369f8fb758513",
@@ -8062,7 +8106,9 @@
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
             "Whole-capability certification and human release sign-off are not established.",
-            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "150fbfafc1185748f26d5fb07cc61e871f293449b82cad6646920993ff5563b2",
@@ -8295,7 +8341,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "5484243429db703945e333000d3ad6ca56b12280b9bf7fb4c2caee35af346cbf",
@@ -8351,7 +8399,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "3bda136c9c2e2f546f8b46c70713b813c8ac7190da6b85bafd81d3ebb9285ebf",
@@ -8437,7 +8487,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "92a2931247057e80abd84e400f4057e74b35b94030a565dfd21d1e702e48b902",
@@ -8478,7 +8530,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "2ad0cd3ee6ae9e13f57c7c3221b89a9be8c10ac74d7dd3c2bb62d777a14c0279",
@@ -8565,7 +8619,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "0f4b9dffd6c60bf86178b92771d721269767a08f45b9b0fbc598fc1f573cf471",
@@ -8591,7 +8647,9 @@
           "assumptions": [],
           "limits": [
             "The result covers the stated scenarios, not every operation or configuration.",
-            "Whole-capability certification and human release sign-off are not established."
+            "Whole-capability certification and human release sign-off are not established.",
+            "Source-to-image identity is operator-asserted from the published release bill of materials, without an independent image source-revision attestation.",
+            "The replay ran on a local ARM64 CPU cluster; accelerator configurations were not verified."
           ],
           "stamp": {
             "id": "ac14e8b8654fb07cdcb246334cb24fba3ad06eaf83715030539133e8f4b6a13a",
