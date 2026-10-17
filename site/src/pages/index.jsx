@@ -18,6 +18,8 @@ function Changes({entry}) {
 export default function Home() {
   const versions = evidenceVersions(publication, releaseStamps);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
+  const currentReplays = (publication.releaseStamps ?? []).filter(snapshot =>
+    !publication.releaseStamps.some(other => other.version === snapshot.version && other.publicationRevision > snapshot.publicationRevision));
   return <Layout description="What each Kamiwaza release can do, with the evidence behind it, as one download per release.">
     <header className="kitHero"><div className="container">
       <p className="eyebrow">KAMIWAZA SALES DEV KIT</p>
@@ -31,11 +33,11 @@ export default function Home() {
 
       {(publication.releaseStamps ?? []).length > 0 && <section aria-labelledby="release-replays">
         <h2 id="release-replays">Release build verification</h2>
-        <ul className="releaseList">{[...publication.releaseStamps].sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true})).map(snapshot => <li key={snapshot.id} className="releaseRow">
+        <ul className="releaseList">{currentReplays.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true})).map(snapshot => <li key={snapshot.id} className="releaseRow">
           <div className="releaseText">
             <span className="releaseVersion">{snapshot.version}</span>
             <span className="releaseHeadline">{snapshot.counts.releaseStamped} of {snapshot.counts.included} included capabilities release stamped · {snapshot.counts.failed} failed · {snapshot.counts.notStamped} not stamped</span>
-            <span className="releaseBasis">Fresh scoped replay on the named release build. {snapshot.counts.catalog} inventory definitions retained; {snapshot.counts.excluded} excluded. Human release sign-off: {snapshot.approval.status}.</span>
+            <span className="releaseBasis">Fresh scoped replay on the named release build. Each stamp covers only its stated scenarios. {snapshot.counts.catalog} inventory definitions retained; {snapshot.counts.excluded} excluded. Human release sign-off: {snapshot.approval.status}.</span>
           </div>
           <div className="releaseFiles">
             <Link to={'/catalog/#' + snapshot.id}>Scope and failures</Link>
