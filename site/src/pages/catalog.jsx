@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
@@ -73,8 +74,8 @@ function ScopedObservations({observation}) {
 // Full inventory decision and individually scoped replay stamps are separate axes.
 function ReleaseStamps({snapshot}) {
   const {counts: c, source, approval: decision} = snapshot;
-  return <section className="release" id={snapshot.id}>
-    <h2>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</h2>
+  return <section className="release">
+    <Heading as="h2" id={snapshot.id}>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</Heading>
     <aside className="evidenceNotice">Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification. Full inventory release approval is {decision.status}.</aside>
     <p>Exact source <code>{source.ref}@{source.sourceRevision}</code> · qualified running manifest <code>{snapshot.manifestId}</code>.</p>
     <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>

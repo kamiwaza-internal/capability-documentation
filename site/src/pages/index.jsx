@@ -18,6 +18,8 @@ function Changes({entry}) {
 export default function Home() {
   const versions = evidenceVersions(publication, releaseStamps);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
+  const currentReplays = (publication.releaseStamps ?? []).filter(snapshot =>
+    !publication.releaseStamps.some(other => other.version === snapshot.version && other.publicationRevision > snapshot.publicationRevision));
   return <Layout description="What each Kamiwaza release can do, with the evidence behind it, as one download per release.">
     <header className="kitHero"><div className="container">
       <p className="eyebrow">KAMIWAZA SALES DEV KIT</p>
@@ -28,6 +30,21 @@ export default function Home() {
         <h2 id="about">About</h2>
         <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each release below has a short summary for people and a zip for AI assistants. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
       </section>
+
+      {(publication.releaseStamps ?? []).length > 0 && <section aria-labelledby="release-replays">
+        <h2 id="release-replays">Release build verification</h2>
+        <ul className="releaseList">{currentReplays.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true})).map(snapshot => <li key={snapshot.id} className="releaseRow">
+          <div className="releaseText">
+            <span className="releaseVersion">{snapshot.version}</span>
+            <span className="releaseHeadline">{snapshot.counts.releaseStamped} of {snapshot.counts.included} included capabilities release stamped · {snapshot.counts.failed} failed · {snapshot.counts.notStamped} not stamped</span>
+            <span className="releaseBasis">Fresh scoped replay on the named release build. Each stamp covers only its stated scenarios. {snapshot.counts.catalog} inventory definitions retained; {snapshot.counts.excluded} excluded. Human release sign-off: {snapshot.approval.status}.</span>
+          </div>
+          <div className="releaseFiles">
+            <Link to={'/catalog/#' + snapshot.id}>Scope and failures</Link>
+            <a href={'/release-stamps/' + snapshot.id + '/bundle.json'} download>Evidence JSON</a>
+          </div>
+        </li>)}</ul>
+      </section>}
 
       <section aria-labelledby="releases">
         <h2 id="releases">Releases</h2>

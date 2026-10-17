@@ -25,7 +25,7 @@ const legacy = () => ({schema:1,releases:[{
 }]});
 test('every actual excluded ID retains its explicit later omission event, including four previously declared IDs',()=>{
   const publication=actual(),before=JSON.stringify(publication),baseline=publication.releases.find(r=>r.id==='1.3.0-prerelease-r3');
-  const rows=primaryCapabilities(publication);
+  const rows=primaryCapabilities(publication).filter(row=>['1.2.1','1.3.0'].includes(row.version));
   const older=new Set(publication.releases.filter(r=>r.publicationRevision<baseline.publicationRevision).flatMap(r=>r.capabilities.map(c=>c.id)));
   assert.equal(baseline.omittedCapabilities.filter(id=>older.has(id)).length,4);
   for(const id of baseline.omittedCapabilities){
@@ -42,7 +42,7 @@ test('later omission preserves earlier accepted status, scope and original evide
   const publication=actual(),baseline=publication.releases.find(r=>r.id==='1.3.0-prerelease-r3');
   const accepted=baseline.capabilities.find(cap=>cap.status==='prerelease-verified'&&cap.evidence.length);
   const next=omitLater(publication,accepted);
-  const row=primaryCapabilities(publication).find(row=>row.id===accepted.id);
+  const row=primaryCapabilities(publication).find(row=>row.id===accepted.id&&row.version===baseline.version);
   assert.equal(row.status,'prerelease-verified');assert.equal(row.omitted,true);assert.equal(row.omissionSnapshotId,next.id);
   assert.equal(row.retainedCapability,accepted);assert.equal(row.evidence,accepted.evidence);
   assert.ok(row.history.some(event=>event.snapshotId===next.id&&event.omitted));
@@ -66,7 +66,7 @@ test('valid older schema1 prose remains labelled historical when the accepted ro
 test('uncurated prerelease text does not become a valid current description',()=>{
   const publication=actual(),baseline=publication.releases.find(r=>r.id==='1.3.0-prerelease-r3');
   const cap=baseline.capabilities.find(cap=>cap.declaration===null);cap.title='Synthetic uncurated title';cap.summary='Synthetic uncurated description.';
-  const row=primaryCapabilities(publication).find(row=>row.id===cap.id);
+  const row=primaryCapabilities(publication).find(row=>row.id===cap.id&&row.version===baseline.version);
   assert.notEqual(row.description?.capability,cap);
 });
 
@@ -74,7 +74,7 @@ test('later omission links to its own snapshot while an earlier failed verdict s
   const publication=actual(),baseline=publication.releases.find(r=>r.id==='1.3.0-prerelease-r3');
   const failed=baseline.capabilities.find(cap=>cap.status==='failed-or-mixed');
   const next=omitLater(publication,failed);
-  const row=primaryCapabilities(publication).find(row=>row.id===failed.id);
+  const row=primaryCapabilities(publication).find(row=>row.id===failed.id&&row.version===baseline.version);
   assert.equal(row.status,'failed-or-mixed');assert.equal(row.snapshotId,baseline.id);
   assert.equal(row.omitted,true);assert.equal(row.omissionSnapshotId,next.id);
   assert.equal(row.retainedCapability,failed);
