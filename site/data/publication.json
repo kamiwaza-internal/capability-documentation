@@ -1,5 +1,5 @@
 {
-  "schema": 5,
+  "schema": 6,
   "releases": [
     {
       "id": "1.3.0-declared-r1",
@@ -6793,6 +6793,2034 @@
           "failedScenarios": 1
         }
       ]
+    }
+  ],
+  "releaseStamps": [
+    {
+      "id": "1.3.4-release-replay-r1",
+      "version": "1.3.4",
+      "basis": "canonical-release-replay",
+      "source": {
+        "ref": "v1.3.4",
+        "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+      },
+      "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+      "images": [
+        {
+          "component": "core",
+          "digest": "sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612"
+        },
+        {
+          "component": "frontend",
+          "digest": "sha256:c216496036aae362c5ba0a8edbdbeaa27db3d48ae3f6b7641515425bdcd16503"
+        }
+      ],
+      "evidenceWindow": {
+        "earliestStartedAt": "2026-10-17T18:41:40.532905Z",
+        "latestFinishedAt": "2026-10-17T18:47:42.001696Z"
+      },
+      "generatedAt": "2026-10-17T18:54:31.371513Z",
+      "publicationRevision": 1,
+      "publishedAt": "2026-10-17T18:56:27Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/27",
+      "capabilities": [
+        {
+          "id": "apps.app-garden",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The SDK deployment lifecycle passed; the selected UI producer was not executed for this release, so no stamp is granted."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "apps.deployment-baseline",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "apps.release-digest-pinning",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "apps.sandbox-workload-provider",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "auth.enterprise-sso",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "auth.local-user-administration",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "4d8206a281e9fcfdbc9338712f61c75ab70ac7ee8795d45b0cced4387ce1ee15",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "auth.local-user-administration",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:46:26.099340Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "auth.personal-access-tokens",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "b0579575730a536c215f5ee5bd82805768354504d32ccb0ea9d387ea15ac6392",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "auth.personal-access-tokens",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:46:26.099340Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "auth.session-revocation",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "134ecda96ea0b2648b1b142041ddd6ae2448530a26e16258469f2b206eeded0b",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "auth.session-revocation",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:46:26.099340Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "authz.rebac-access-control",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "03d4298ccc2dee599b21feca0a1cc58fab518296b59fafbef18e14a7f3cbe19c",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "authz.rebac-access-control",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:46:26.099340Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "catalog.dataset-registry",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "catalog.registered-sources",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "8ee22749cb8f3c37a0813d192137195d1024055dca260220cf7fa27a652cf687",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "catalog.registered-sources",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "catalog.secrets-management",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "4a1d6e8f9c935ae43dc886256b60f20d53d64462581c73c1ab7377f5a27c268e",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "catalog.secrets-management",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:45:06.140933Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "catalog.writable-datasets",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The registered probe established dataset listing shape with seeded metadata, not arbitrary writes to source data."
+          ],
+          "stamp": {
+            "id": "f64c9554a4c3e6b0ff01f339ee621bd4d299f2b9fdcfd80e7821f7a2f7e0f7e4",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "catalog.writable-datasets",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "connectors.ai-assisted-connector-setup",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "connectors.connector-builder",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "connectors.managed-data-sources",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "connectors.oauth-tool-policies",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "9e5edddd5ceea24de27698b753edc5e0b3c422b42a3e9a8ee6ca1fe4b2bd377a",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "connectors.oauth-tool-policies",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "connectors.user-oauth-authorization",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "connectors.workroom-surface-access",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.dataset-indexing",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "f45ea89ca379e2601b059873401e17530617c749596a71e10798ca89b424fad6",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "context.dataset-indexing",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "context.workroom-document-search",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.workroom-ingestion-summary",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.workroom-raw-file-store",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.brokered-resource-access",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.capability-grants",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.consent-and-approval-gates",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.pending-approval-queue",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.run-claims-lifecycle",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.workload-identity-and-attestation",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "extensions.developer-path",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "federation.cluster-pairing",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Federation was intentionally outside this execution scope. Its product inventory definition is retained without verification credit.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "federation.execution-gates",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Federation was intentionally outside this execution scope. Its product inventory definition is retained without verification credit.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "federation.federated-retrieval",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Federation was intentionally outside this execution scope. Its product inventory definition is retained without verification credit.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "federation.remote-jobs",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Federation was intentionally outside this execution scope. Its product inventory definition is retained without verification credit.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ingestion.document-translation",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ingestion.multimedia-extraction",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ingestion.parse-from-url",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ingestion.scheduled-ingest",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "failed",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-10-17T18:10:35.039182Z",
+              "summary": "A scheduled ingestion job was accepted, but subsequent job-status lookup returned not found. The separate managed-connector trigger fixture is also unavailable.",
+              "resolvedByStampId": null
+            }
+          ]
+        },
+        {
+          "id": "ingestion.security-markings",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "failed",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-10-17T18:42:35.854380Z",
+              "summary": "The registered marking-admission checks were refused by source-access controls. The required fixture and clearance boundary remains unresolved; marking semantics are not established by this run.",
+              "resolvedByStampId": null
+            }
+          ]
+        },
+        {
+          "id": "ingestion.structured-document-outputs",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ingestion.video-frame-analysis",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.admin-settings-console",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "50077a7617263643a6568ba33f569a5f383752e272590200ec6835f900c7e973",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.admin-settings-console",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.agent-auto-routing",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.agent-packages",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.agent-publication-approval",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "1192e8c43d523d2bb2553ecfbb11f3ca06ca3869c75888848359714ddf435da5",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.agent-publication-approval",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.answer-feedback",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "f52ac034a3d4f012ffa70b2a5759a0614fc50aff95cacae892d67fa88141f7c7",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.answer-feedback",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.artifacts",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "69aa9bce028155032a64e220ced8a47fbfec9ffe919fcaf01e5624ec9b3e4cee",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.artifacts",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.context-compression",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "639666cfcce2ef4de4fe1b03c823abaef51300e5fddd1c0496913fb81353ef63",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.context-compression",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.conversation-event-streaming",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "failed",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-10-17T18:47:41.886138Z",
+              "summary": "The replayable-conversation check reached the real CPU-only model but exceeded the shipped inactivity deadline. No streaming pass is claimed.",
+              "resolvedByStampId": null
+            }
+          ]
+        },
+        {
+          "id": "kaizen.conversation-search",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "2c92b057567d844c60338fcb7727454138731042d087a6e5bab3c97a7aa28647",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.conversation-search",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.custom-agents",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.data-chat",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.document-canvas-export",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "d421fb7e40bc6a111b1623b3161d7a4524fb55f03963f642016f2371c9a538b4",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.document-canvas-export",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.document-collections",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "18e433140c43b3e2f3b002ceb5be6ab849ada561a79b716264c4ff6d6e9dc51b",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.document-collections",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.member-token-budget",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.metrics-dashboard",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "516d9cf537571d7b0ceb8b84d25b6b1141d2a1ac49e99b485e9eb3d57fd390e0",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.metrics-dashboard",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.multi-agent-orchestration",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "a916ef0665d3bee71588f9fb52d8e49abc3444394262ac096e068ed96375fee5",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.multi-agent-orchestration",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.notifications-inbox",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "A synthetic owned notification exercised authenticated inbox shape. End-to-end notification delivery was not proved.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "5c9ca70b6d42e5adb40afd351a6b2bbbcdb8017f82aa1720342acafefa5a7c0b",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.notifications-inbox",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.platform-operator-tools",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.prebuilt-agents",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "8b327a152bedded5e14002915e3d2ac1c9efc2b234e26a04bb2f7eecb6961fb9",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.prebuilt-agents",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:47:42.001696Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.privacy-guard",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.product-identity",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "failed",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-10-17T18:42:36.224312Z",
+              "summary": "The historical catalog identity probe expects obsolete names and version ordering. Its assertions failed against the shipped catalog; a product regression is not established.",
+              "resolvedByStampId": null
+            }
+          ]
+        },
+        {
+          "id": "kaizen.projects",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "22071e5090e4fd719a39d1f72faf926f7a08daf7360d92a7a41369f8fb758513",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.projects",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.prompt-library-and-chains",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "The stamp is limited to the passing registered scenarios. Broader browser UAT and other model-dependent workflows remain separate checks."
+          ],
+          "stamp": {
+            "id": "150fbfafc1185748f26d5fb07cc61e871f293449b82cad6646920993ff5563b2",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "kaizen.prompt-library-and-chains",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:43:36.135991Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "kaizen.recipes",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.scheduled-tasks",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.shared-chat-typing-indicators",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.workroom-notes",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.discover-and-download",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.external-endpoints",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.gpu-placement",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.local-deployment",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "failed",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-10-17T18:10:39.733146Z",
+              "summary": "Diffusion setup was refused before inference. Separate CPU text deployment and chat checks passed, while image-generation and accelerator breadth remain incomplete.",
+              "resolvedByStampId": null
+            },
+            {
+              "finishedAt": "2026-10-17T18:10:39.733146Z",
+              "summary": "Diffusion setup was refused before inference. Separate CPU text deployment and chat checks passed, while image-generation and accelerator breadth remain incomplete.",
+              "resolvedByStampId": null
+            }
+          ]
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "Text chat passed, but required embedding, transcription and image-generation operations were not all exercised."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.tenant-mode-inference",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.tensor-parallel-serving",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.two-node-serving",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "This verification lane belongs to another owner and was not run in this execution. The product inventory denominator is unchanged.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ontology.workroom-knowledge-graph",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.access-requests",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "5484243429db703945e333000d3ad6ca56b12280b9bf7fb4c2caee35af346cbf",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "platform.access-requests",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "platform.admin-copilot",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.airgapped-install",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.api-reference",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "3bda136c9c2e2f546f8b46c70713b813c8ac7190da6b85bafd81d3ebb9285ebf",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "platform.api-reference",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "platform.app-generation-path",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.greymatter-mesh-integration",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.kubernetes-install",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.licensing-and-eula",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.news-feed",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "92a2931247057e80abd84e400f4057e74b35b94030a565dfd21d1e702e48b902",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "platform.news-feed",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "platform.observability",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.operations-and-notifications",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "2ad0cd3ee6ae9e13f57c7c3221b89a9be8c10ac74d7dd3c2bb62d777a14c0279",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "platform.operations-and-notifications",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:42:36.231177Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "platform.tenant-namespace-install",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.usage-and-audit",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "retrieval.async-retrieval-jobs",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established.",
+            "Verified-TLS Flight and inline row round trips passed. Required registered scenario identifiers absent from the tagged emitter prevent a release stamp."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "security.consent-and-banners",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "No complete passing registered-kit release replay is retained for this capability.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "skills.skills-library",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "0f4b9dffd6c60bf86178b92771d721269767a08f45b9b0fbc598fc1f573cf471",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "skills.skills-library",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:44:06.324147Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "tools.mcp-tool-shed",
+          "distribution": "public",
+          "disposition": "included",
+          "status": "release-stamped",
+          "wholeClaim": false,
+          "scope": "Fresh replay covers only the registered kit scenarios on this release build.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": {
+            "id": "ac14e8b8654fb07cdcb246334cb24fba3ad06eaf83715030539133e8f4b6a13a",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.3.4",
+            "capability": "tools.mcp-tool-shed",
+            "manifestId": "2643dc6772031b4006709cf61fff9da03b84434fcb1f35c81cadee71fcaabc3f",
+            "releaseSource": {
+              "ref": "v1.3.4",
+              "sourceRevision": "5f5f64656802eb497167f6eae6021093cfcdccf2"
+            },
+            "finishedAt": "2026-10-17T18:44:06.324147Z"
+          },
+          "failures": []
+        },
+        {
+          "id": "workrooms.admin-oversight",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.app-launch",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.app-runtime-binding",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.archive-and-delete",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.create",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.export-bundle",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.membership-and-roles",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.org-decommission",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.presence",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.s3-object-storage",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.session-scoping",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.shared-credentials",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.shared-threads",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Retained historical product exclusion; no verification was attempted or credited in this replay.",
+          "assumptions": [],
+          "limits": [
+            "The result covers the stated scenarios, not every operation or configuration.",
+            "Whole-capability certification and human release sign-off are not established."
+          ],
+          "stamp": null,
+          "failures": []
+        }
+      ],
+      "counts": {
+        "catalog": 107,
+        "included": 88,
+        "excluded": 19,
+        "deferred": 0,
+        "otherOwner": 0,
+        "releaseStamped": 29,
+        "failed": 5,
+        "notStamped": 54,
+        "wholeCapabilityPromotions": 0
+      },
+      "approval": {
+        "status": "pending",
+        "scope": "full-inventory",
+        "approvedBy": null,
+        "approvedAt": null,
+        "snapshotSha256": null
+      }
     }
   ]
 }

@@ -17,7 +17,7 @@ function timeline(finish = '2026-10-01T11:00:00.000003Z') {
   p.releaseStamps.push(next); return p;
 }
 test('actual primary view retains 50 accepted proofs, explicit gaps, exclusions and News release hold', () => {
-  const p = actual(), before = JSON.stringify(p), rows = primaryCapabilities(p);
+  const p = actual(), before = JSON.stringify(p), rows = primaryCapabilities(p).filter(row => ['1.2.1', '1.3.0'].includes(row.version));
   const verified = filterCapabilities(rows, '', 'verified');
   assert.equal(rows.length,115); assert.equal(verified.length,50);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='historical-scenario').length,33);
@@ -42,7 +42,7 @@ test('newer untested/skipped, absent or uncurated sources never erase accepted v
   const source=structuredClone(p.releases[0]); source.id='synthetic-new-source';source.publicationRevision=99;
   source.capabilities=[{...source.capabilities[0],id:pass.id,status:'untested',evidence:[{build:source.build,outcome:'skipped',summary:'Synthetic skipped test.'}]}];
   p.releases.push(source,{...source,id:'synthetic-absent',publicationRevision:100,capabilities:[]});
-  const current=primaryCapabilities(p).find(cap=>cap.id===pass.id);
+  const current=primaryCapabilities(p).find(cap=>cap.id===pass.id&&cap.version===baseline.version);
   assert.equal(current.status,'prerelease-verified');assert.equal(current.snapshotId,baseline.id);
 });
 test('qualified later failure of the same environment and complete bounded contract supersedes', () => {
@@ -78,7 +78,7 @@ test('development labels do not prove environment applicability for a later scen
   const p=actual(), baseline=p.releases.find(r=>r.baselineKind==='prerelease-evidence'), cap=baseline.capabilities.find(c=>c.verificationBasis==='historical-scenario'&&c.status==='prerelease-verified');
   const next=structuredClone(baseline);next.id='synthetic-later-scenario';next.publicationRevision=99;next.capabilities=[structuredClone(cap)];
   next.capabilities[0].status='failed-or-mixed';next.capabilities[0].evidence=[{...cap.evidence[0],outcome:'failed',runFinishedAt:'2026-10-08T23:00:00Z'}];p.releases.push(next);
-  const row=primaryCapabilities(p).find(c=>c.id===cap.id);
+  const row=primaryCapabilities(p).find(c=>c.id===cap.id&&c.version===baseline.version);
   assert.equal(row.status,'prerelease-verified');assert.ok(row.failures.some(f=>!f.applicable&&f.axis==='scenario'));
 });
 test('bounded stamp cannot replace a broader whole-claim verified contract',()=>{

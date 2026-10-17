@@ -45,7 +45,7 @@ export default function Home() {
       </section>}
 
       <section aria-labelledby="releases">
-        <h2 id="releases">Other evidence and downloads</h2>
+        <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
           <ul className="releaseList">{versions.map(entry => <li key={entry.version} className="releaseRow">
             <div className="releaseText">
