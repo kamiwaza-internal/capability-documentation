@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {inflateRawSync} from 'node:zlib';
 import {validateStreams} from '../scripts/value-streams.mjs';
+import {publicationDigest} from '../scripts/sales-guidance.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {salesKitDocument} from '../src/sales-kit.mjs';
 import {evidenceVersions, toMarkdown} from '../src/evidence.mjs';
@@ -128,4 +129,25 @@ for (const [name, change, reason] of [
   ['unreviewed whole stream pass', x => x.streams.find(row => row.recipe).status = 'tested', /Whole-stream tested requires/],
 ]) test('typed stream contract rejects ' + name, () => {
   const x = typedFixture(); change(x); assert.throws(() => validateStreams(x, publication), reason);
+});
+
+function syntheticRevisionLink(releaseId, capabilityId) {
+  const revised = structuredClone(publication);
+  revised.releases.find(row => row.id === releaseId).capabilities.push({id: capabilityId});
+  const typed = typedFixture();
+  const stream = typed.streams.find(row => row.recipe);
+  const step = stream.recipe.steps[0];
+  const replaced = step.capability_ids[0];
+  step.capability_ids[0] = capabilityId;
+  typed.claimLinks.find(link => link.streamId === stream.id && link.stepId === step.id && link.capabilityId === replaced).capabilityId = capabilityId;
+  typed.publicationSha256 = publicationDigest(revised);
+  return {typed, revised};
+}
+test('typed recipe rejects a synthetic older-only capability absent from its bound revision', () => {
+  const {typed, revised} = syntheticRevisionLink('1.3.0-declared-r2', 'synthetic.older-only');
+  assert.throws(() => validateStreams(typed, revised), /outside bound publication revision/);
+});
+test('typed recipe accepts a synthetic capability present in its exact bound revision while publication remains disabled', () => {
+  const {typed, revised} = syntheticRevisionLink('1.3.0-prerelease-r3', 'synthetic.bound-only');
+  assert.equal(validateStreams(typed, revised), null);
 });
