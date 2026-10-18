@@ -11,9 +11,10 @@ import {mkdtempSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
+import {reviewedSidecarPublication} from './fixtures/reviewed-sidecar-publication.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL('../data/' + name + '.json', import.meta.url)));
-const publication = read('publication'), stamps = read('release-stamps-1.3.2'), guidance = read('sales-guidance');
+const publication = reviewedSidecarPublication, stamps = read('release-stamps-1.3.2'), guidance = read('sales-guidance');
 
 function unzip(zip, decode = true) {
   const entries = {};
