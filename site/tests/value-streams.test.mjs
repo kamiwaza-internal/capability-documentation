@@ -83,3 +83,49 @@ test('one source snapshot supplies the human recipe and the complete ZIP JSON', 
     assert.ok(!readFileSync(join(out, `evidence/${version}/kamiwaza-capabilities-${version}.zip`)).includes(Buffer.from('value-stream-recipes.json')));
   }
 });
+
+// The typed contract is intentionally dormant until a separate review pins
+// the exact projection hash. These synthetic links are never capability credit.
+function typedFixture() {
+  const typed = structuredClone(streams);
+  const source = publication.releases.find(row => row.id === '1.3.0-prerelease-r3');
+  typed.schema = 'public-value-stream-recipes.v3';
+  typed.release = source.version;
+  typed.publicationRevision = source.publicationRevision;
+  typed.source.kitCommit = source.sourceRevision;
+  typed.claimLinks = [];
+  for (const stream of typed.streams) {
+    if (!stream.recipe) continue;
+    stream.recipe.sha256 = 'a'.repeat(64);
+    for (const step of stream.recipe.steps) for (const capabilityId of step.capability_ids) {
+      typed.claimLinks.push({streamId: stream.id, recipeRevision: stream.recipe.revision,
+        recipeSha256: stream.recipe.sha256, stepId: step.id, capabilityId, role: 'uses', basis: null});
+    }
+  }
+  return typed;
+}
+test('typed recipe links validate as ingredients but remain unpublished without a reviewed projection hash', () => {
+  const typed = typedFixture();
+  assert.equal(validateStreams(typed, publication), null);
+  const first = typed.claimLinks[0];
+  first.role = 'verifies';
+  first.basis = 'A reviewed recipe link; not an effective capability verdict.';
+  assert.equal(validateStreams(typed, publication), null);
+  const entry = evidenceVersions(publication, null).find(row => row.version === typed.release);
+  const markdown = toMarkdown(salesKitDocument(entry, publication, null, null, typed));
+  assert.match(markdown, /Capability links:/);
+  assert.match(markdown, /effective credit comes only from the published capability verdict/);
+});
+for (const [name, change, reason] of [
+  ['missing step link', x => x.claimLinks.pop(), /links are incomplete/],
+  ['unreviewed capability', x => x.claimLinks[0].capabilityId = 'private.unknown', /outside a reviewed step/],
+  ['ingredient claims proof', x => x.claimLinks[0].basis = 'Proof of full capability', /Ingredient link cannot claim proof/],
+  ['verifies link lacks basis', x => { x.claimLinks[0].role = 'verifies'; x.claimLinks[0].basis = null; }, /Invalid text/],
+  ['private link basis', x => { x.claimLinks[0].role = 'verifies'; x.claimLinks[0].basis = '/home/private/receipt'; }, /Unsafe stream prose/],
+  ['wrong source commit', x => x.source.kitCommit = 'f'.repeat(40), /source and publication revision differ/],
+  ['wrong publication revision', x => x.publicationRevision++, /source and publication revision differ/],
+  ['declaration mistaken for reviewed evidence', x => { const r = publication.releases.find(row => row.id === '1.3.0-declared-r1'); x.publicationRevision = r.publicationRevision; x.source.kitCommit = r.sourceRevision; }, /source and publication revision differ/],
+  ['unreviewed whole stream pass', x => x.streams.find(row => row.recipe).status = 'tested', /Whole-stream tested requires/],
+]) test('typed stream contract rejects ' + name, () => {
+  const x = typedFixture(); change(x); assert.throws(() => validateStreams(x, publication), reason);
+});

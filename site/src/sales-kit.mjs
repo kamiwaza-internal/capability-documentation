@@ -20,7 +20,7 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance, st
         p(`Roles: ${recipe.roles.join(', ')}. Custom-app boundary: ${recipe.custom_app_boundary}`),
         p('Prerequisites'), ...recipe.prerequisites.map(li), p('Configuration'), ...recipe.configuration.map(li));
       for (const step of recipe.steps) {
-        blocks.push(p(`${step.id}: ${step.action} Depends on: ${step.depends_on.length ? step.depends_on.join(', ') : 'none'}. Capability IDs: ${step.capability_ids.join(', ')}.`),
+        blocks.push(p(`${step.id}: ${step.action} Depends on: ${step.depends_on.length ? step.depends_on.join(', ') : 'none'}. ${streams.schema === 'public-value-stream-recipes.v3' ? 'Capability links: ' + streams.claimLinks.filter(link => link.streamId === stream.id && link.stepId === step.id).map(link => link.capabilityId + ' (' + link.role + ')').join(', ') + '. Links are recipe ingredients; effective credit comes only from the published capability verdict' : 'Capability IDs: ' + step.capability_ids.join(', ')}.`),
           p(`API path: ${step.api.status}. ${step.api.instructions.join(' ')} ${step.api.example || ''}`),
           p(`Kaizen UI path: ${step.kaizen_ui.status}. ${step.kaizen_ui.instructions.join(' ') || 'No clickstream recorded.'}`),
           p(`Expected result: ${step.expected_result}`));
