@@ -119,7 +119,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
     'row totals overlap and must not be added as distinct scenarios',
     // The four dates are labelled apart, and the test date is the record's own.
     'Test runs finished', '2026-09-30T16:27:15Z', 'ingested <time datetime="2026-09-30T19:51:14Z">',
-    'Kit revision committed <time datetime="2026-10-08T00:40:22Z">', 'Draft preparation, not publication or a test date.',
+    'Kit revision committed</dt><dd><time datetime="2026-10-08T00:40:22Z">', 'Draft preparation, not publication or a test date.',
     'Site build: commit <code>' + 'f'.repeat(40), 'A site build or deployment is not a test run or a publication.',
     // Pre-release proof, release verification and approval stay separate.
     '2 of 4 project pre-release verified', '0 of 4 release verified', '1 release check failed', 'Pending release-manager sign-off.',
