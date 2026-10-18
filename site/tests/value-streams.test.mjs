@@ -124,6 +124,7 @@ for (const [name, change, reason] of [
   ['private link basis', x => { x.claimLinks[0].role = 'verifies'; x.claimLinks[0].basis = '/home/private/receipt'; }, /Unsafe stream prose/],
   ['wrong source commit', x => x.source.kitCommit = 'f'.repeat(40), /source and publication revision differ/],
   ['wrong publication revision', x => x.publicationRevision++, /source and publication revision differ/],
+  ['declaration mistaken for reviewed evidence', x => { const r = publication.releases.find(row => row.id === '1.3.0-declared-r1'); x.publicationRevision = r.publicationRevision; x.source.kitCommit = r.sourceRevision; }, /source and publication revision differ/],
   ['unreviewed whole stream pass', x => x.streams.find(row => row.recipe).status = 'tested', /Whole-stream tested requires/],
 ]) test('typed stream contract rejects ' + name, () => {
   const x = typedFixture(); change(x); assert.throws(() => validateStreams(x, publication), reason);
