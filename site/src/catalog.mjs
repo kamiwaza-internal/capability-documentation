@@ -31,7 +31,7 @@ export function currentCapabilityView(publication) {
 
   return baseline.capabilities.map(cap => {
     const isAccepted = cap.status === 'prerelease-verified';
-    const acceptedAt = !isAccepted ? null : cap.evidence.map(e => e.runFinishedAt)
+    const acceptedAt = !isAccepted ? null : cap.verificationBasis === 'value-stream' ? cap.proof.observedAt : cap.evidence.map(e => e.runFinishedAt)
       .reduce((a, b) => (a && Date.parse(a) >= Date.parse(b) ? a : b), null) ?? cap.assessment?.assessedAt ?? null;
     const scenarios = new Set(cap.evidence.map(e => e.scenario));
     const failing = new Set(); // contracts with an unresolved later applicable failure
@@ -64,7 +64,7 @@ export function currentCapabilityView(publication) {
       acceptedAt,
       // Lineage is passed through by reference, never copied, re-versioned or re-labelled.
       lineage: {releaseId: baseline.id, version: baseline.version, verificationBasis: cap.verificationBasis,
-        evidence: cap.evidence, assessment: cap.assessment, wholeClaim: cap.wholeClaim},
+        evidence: cap.evidence, assessment: cap.assessment, ...(Object.hasOwn(cap, 'proof') ? {proof: cap.proof} : {}), wholeClaim: cap.wholeClaim},
       releaseStatus: cap.releaseStatus,
       releaseCheckFailed: cap.releaseStatus === 'failed',
       documentationGap,
@@ -84,6 +84,7 @@ export function summarizeCurrentView(rows) {
     verified: count(r => r.status === 'verified'),
     scenarioBacked: count(r => r.status === 'verified' && r.lineage.verificationBasis === 'historical-scenario'),
     developerAssessed: count(r => r.status === 'verified' && r.lineage.verificationBasis === 'developer-assessment'),
+    scopedProofVerified: count(r => r.status === 'verified' && r.lineage.verificationBasis === 'value-stream'),
     superseded: count(r => r.status === 'superseded'),
     laterNonApplicableFailure: count(r => wasAccepted(r) && r.laterNonApplicableFailure),
     documentationGap: count(r => wasAccepted(r) && r.documentationGap),
@@ -99,7 +100,7 @@ const timeKey = value => value?.replace(/(?:\.(\d+))?Z$/, (_, fraction = '') => 
 const releaseRef = ref => ref.replace(/^refs\/tags\//, '');
 const compareTime = (a, b) => timeKey(a).localeCompare(timeKey(b));
 const latest = values => values.filter(Boolean).sort(compareTime).at(-1) ?? null;
-const evidenceTime = cap => latest([cap.assessment?.assessedAt, ...cap.evidence.map(record => record.runFinishedAt)]);
+const evidenceTime = cap => cap.verificationBasis === 'value-stream' ? cap.proof?.observedAt ?? null : latest([cap.assessment?.assessedAt, ...cap.evidence.map(record => record.runFinishedAt)]);
 
 // A presentation projection: immutable upstream verdicts and original receipts stay intact.
 export function primaryCapabilities(publication) {

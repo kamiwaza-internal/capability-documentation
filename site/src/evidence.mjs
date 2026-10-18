@@ -47,7 +47,7 @@ export function evidenceVersions(publication, releaseStamps) {
       const rows = view.filter(row => row.lineage.releaseId === latest.id);
       const n = status => rows.filter(row => row.status === status).length;
       headline = `${n('verified')} pre-release verified · ${n('failed-or-mixed')} failed or mixed · ${n('not-yet-verified')} not yet verified, of ${rows.length} capabilities`;
-      basis = `Development-build scenarios and local-contract assessments. Not release verified; binding to a shipped ${version} release is not established.`;
+      basis = 'Development-build scenarios and local-contract assessments' + (latest.counts.scopedProofVerified ? ', plus established scoped proofs' : '') + '. Not release verified; binding to a shipped ' + version + ' release is not established.';
     } else if (latest.baselineKind === 'source-declaration') {
       headline = `${latest.capabilities.length} capabilities declared in source (Tier 1)`;
       basis = 'Source declarations only; runtime untested.';
@@ -154,11 +154,12 @@ function capabilityBlocks(row, scope, status, extra = []) {
 
 function evidenceLines(row) {
   const out = [];
-  const {verificationBasis, evidence = [], assessment, wholeClaim} = row.lineage ?? {};
+  const {verificationBasis, evidence = [], assessment, proof, wholeClaim} = row.lineage ?? {};
   if (verificationBasis === 'developer-assessment' && assessment) {
     out.push(`Basis: developer assessment, ${assessment.assessedAt}. ${assessment.scope}`);
     for (const text of [...assessment.assumptions, ...assessment.limits]) out.push('Assessment note: ' + text);
   }
+  if (proof) out.push('Scoped proof ' + proof.state + ': ' + proof.scope + ' Reviewed recipe ' + proof.recipeId + ' revision ' + proof.recipeRevision + ', observed ' + proof.observedAt + '; not release verification. Limits: ' + proof.limits.join(' '));
   for (const record of evidence) out.push(`Scenario ${record.scenario}: ${record.outcome.replaceAll('_', ' ')} on ${record.build}, run finished ${record.runFinishedAt}`);
   if (wholeClaim === false && row.status !== 'not-yet-verified') out.push('Covers part of the capability; whole-claim verification is not established.');
   if (row.releaseStatus === 'failed') out.push('A release check failed for this capability.');
@@ -296,10 +297,10 @@ function includes(summary) {
 const stampGrade = (row, tag) => row.releaseStamp ? [0, `Tested on ${tag}`, 'tested']
   : row.sourceContractStamp ? [1, `Code tests passed for ${tag} (not on a running system)`, 'code-checked'] : [2, `Not yet tested on ${tag}`, 'untested'];
 const PRERELEASE_GRADE = {
-  verified: [0, 'Tested before release', 'tested'], assessed: [1, 'Checked with local tests before release', 'code-checked'],
+  verified: [0, 'Tested before release', 'tested'], proof: [0, 'Scoped proof before release', 'tested'], assessed: [1, 'Checked with local tests before release', 'code-checked'],
   superseded: [2, 'A later test failed', 'failed'], 'failed-or-mixed': [3, 'Test failed or mixed', 'failed'], 'not-yet-verified': [4, 'Not yet verified', 'untested'],
 };
-const prereleaseGrade = row => PRERELEASE_GRADE[row.status === 'verified' && row.lineage.verificationBasis === 'developer-assessment' ? 'assessed' : row.status];
+const prereleaseGrade = row => PRERELEASE_GRADE[row.status === 'verified' && row.lineage.verificationBasis === 'developer-assessment' ? 'assessed' : row.status === 'verified' && row.lineage.verificationBasis === 'value-stream' ? 'proof' : row.status];
 const SNAPSHOT_LEVEL = {verified: 'tested', partial: 'tested', failed: 'failed', untested: 'untested'};
 const someFailed = cap => cap.status === 'partial' && cap.evidence.some(record => record.outcome === 'failed');
 const snapshotGrade = cap => someFailed(cap) ? [1.5, 'Partly tested; some tests failed', 'failed']

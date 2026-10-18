@@ -123,7 +123,7 @@ test('CUR-F published data: 50 verifications retained, 4 later non-applicable fa
   const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
   const rows = currentCapabilityView(deepFreeze(published));
   assert.deepEqual(summarizeCurrentView(rows), {
-    capabilities: 88, verified: 50, scenarioBacked: 33, developerAssessed: 17, superseded: 0, laterNonApplicableFailure: 4,
+    capabilities: 88, verified: 50, scenarioBacked: 33, developerAssessed: 17, scopedProofVerified: 0, superseded: 0, laterNonApplicableFailure: 4,
     documentationGap: 37, failedOrMixed: 5, notYetVerified: 33, releaseVerified: 0, releaseCheckFailed: 1,
   });
   assert.equal(new Set(rows.map(row => row.id)).size, 88);

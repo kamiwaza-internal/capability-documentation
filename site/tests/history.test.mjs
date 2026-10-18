@@ -24,3 +24,11 @@ test('reordering keys inside a published release or observation is a rewrite', (
   assert.throws(() => preserveHistory(old, {...old, releases: [{claim: 'declared', id: 'r1'}]}), /revision/);
   assert.throws(() => preserveHistory(old, {...old, observations: [{state: 'seen', id: 'o1'}]}), /observations/);
 });
+
+test('schema 8 adds scoped proof revisions without rewriting schema 6 history', () => {
+  const old = {schema: 6, releases: [{id: 'r3', claim: 'scenario'}], observations: [{id: 'o1'}], releaseStamps: [{id: 's1'}]};
+  const next = {schema: 8, releases: [...old.releases, {id: 'r4', claim: 'scoped-proof'}], observations: old.observations, releaseStamps: old.releaseStamps};
+  assert.doesNotThrow(() => preserveHistory(old, next));
+  assert.throws(() => preserveHistory(old, {...next, releases: [{id: 'r3', claim: 'scoped-proof'}, next.releases[1]]}), /revision/);
+  assert.throws(() => preserveHistory(old, {...next, observations: []}), /observations/);
+});
