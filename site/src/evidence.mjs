@@ -44,10 +44,15 @@ export function evidenceVersions(publication, releaseStamps) {
     const latest = revisions[0];
     let headline, basis;
     if (latest.baselineKind === 'prerelease-evidence') {
-      const rows = view.filter(row => row.lineage.releaseId === latest.id);
+      const rows = currentCapabilityView(publication, version).filter(row => row.lineage.releaseId === latest.id);
       const n = status => rows.filter(row => row.status === status).length;
       headline = `${n('verified')} pre-release verified · ${n('failed-or-mixed')} failed or mixed · ${n('not-yet-verified')} not yet verified, of ${rows.length} capabilities`;
-      basis = 'Development-build scenarios and local-contract assessments' + (latest.counts.scopedProofVerified ? ', plus established scoped proofs' : '') + '. Not release verified; binding to a shipped ' + version + ' release is not established.';
+      const bases = [
+        ...(latest.evidenceWindow ? ['development-build scenarios'] : []),
+        ...(latest.assessmentWindow ? ['local-contract assessments'] : []),
+        ...(latest.proofWindow ? [latest.counts.scopedProofVerified ? 'established scoped proofs' : 'scoped proof outcomes without effective credit'] : []),
+      ];
+      basis = (bases.length ? bases.join(' and ') : 'No qualifying evidence') + '. Not release verified; binding to a shipped ' + version + ' release is not established.';
     } else if (latest.baselineKind === 'source-declaration') {
       headline = `${latest.capabilities.length} capabilities declared in source (Tier 1)`;
       basis = 'Source declarations only; runtime untested.';
@@ -96,7 +101,7 @@ export const STATUS_KEY = {
     ['Not stamped', 'No stamp for this release. The capability\'s earlier pre-release status is shown for context and is not a status for this release.'],
   ],
   'prerelease-evidence': [
-    ['Pre-release verified', 'Accepted on development builds before release, either by passing test scenarios or by a developer assessment of local contract tests. Not release verified.'],
+    ['Pre-release verified', 'Accepted before release through passing development-build scenarios, a local-contract developer assessment or a native-scored scoped proof. Not release verified.'],
     ['Superseded', 'Was pre-release verified; a later applicable test on the same version failed.'],
     ['Failed or mixed', 'At least one test failed or results disagree.'],
     ['Not yet verified', 'Declared, with no accepted verification. Not the same as unsupported.'],
@@ -210,8 +215,10 @@ function prereleaseParts({view, latest, scope}) {
     li(`Publication ${latest.id}, revision ${latest.publicationRevision}, published ${latest.publishedAt}`),
     li(`Kit source revision ${latest.sourceRevision}; review ${latest.reviewReference}`),
     li(`Build basis: ${latest.build}`),
-    li(`Tested builds: ${latest.testedBuilds.join(', ')}`),
-    li(`Scenario runs between ${latest.evidenceWindow.earliestRunFinishedAt} and ${latest.evidenceWindow.latestRunFinishedAt}`),
+    li(`Scenario tested builds: ${latest.testedBuilds.length ? latest.testedBuilds.join(', ') : 'none in this revision'}`),
+    ...(latest.evidenceWindow ? [li(`Scenario runs between ${latest.evidenceWindow.earliestRunFinishedAt} and ${latest.evidenceWindow.latestRunFinishedAt}`)] : []),
+    ...(latest.assessmentWindow ? [li(`Developer assessments between ${latest.assessmentWindow.earliestAssessedAt} and ${latest.assessmentWindow.latestAssessedAt}`)] : []),
+    ...(latest.proofWindow ? [li(`Scoped proof outcomes observed between ${latest.proofWindow.earliestObservedAt} and ${latest.proofWindow.latestObservedAt}`)] : []),
     li(`Release binding: not established. Human release approval: ${latest.approval.status}.`),
     h(2, 'Summary'),
     countTable([['Pre-release verified', n('verified')], ['Superseded', n('superseded')], ['Failed or mixed', n('failed-or-mixed')], ['Not yet verified', n('not-yet-verified')], ['Capabilities in scope', rows.length]]));
@@ -235,7 +242,7 @@ function snapshotParts({latest, scope}) {
 }
 
 export function evidenceDocument(entry, publication, releaseStamps) {
-  const view = currentCapabilityView(publication);
+  const view = currentCapabilityView(publication, recordVersion(entry, publication));
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
   const latest = [...releases].sort(byRevisionDesc)[0];
   const scope = {publication, version: recordVersion(entry, publication)};
@@ -310,7 +317,7 @@ const TONE = {tested: 'green', 'code-checked': 'amber', failed: 'red', untested:
 const graded = (row, [rank, label, level]) => ({row, rank, label, level, tone: row.status === 'partial' ? 'amber' : TONE[level]});
 
 function summaryRows(entry, publication, releaseStamps) {
-  const view = currentCapabilityView(publication);
+  const view = currentCapabilityView(publication, recordVersion(entry, publication));
   if (entry.kind === 'release-stamps') return joinReleaseStamps(view, releaseStamps).rows.map(row => graded(row, stampGrade(row, releaseStamps.targetRelease)));
   const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
   if (entry.kind === 'prerelease-evidence') return view.filter(row => row.lineage.releaseId === latest.id).map(row => graded(row, prereleaseGrade(row)));
@@ -323,6 +330,7 @@ const MEANINGS = [
   [/^Code tests passed/, 'Its code passed contract tests for this release; not yet run on a live system.'],
   [/^Not yet tested on /, 'No test result for this release yet. Not the same as unsupported.'],
   [/^Tested before release$/, 'Its test scenarios passed on development builds before release.'],
+  [/^Scoped proof before release$/, 'An established scoped proof earned native pre-release credit for its stated journey and limits. Not whole-capability or release verification.'],
   [/^Checked with local tests/, 'Reviewed against local contract tests before release; no live run.'],
   [/^A later test failed$/, 'Passed before, then a later test on the same version failed.'],
   [/^Test failed or mixed$/, 'At least one test failed, or results disagree.'],
@@ -438,7 +446,7 @@ export function summaryDocument(entry, publication, releaseStamps, descriptions 
     li(`"Tested on ${releaseStamps.targetRelease}" means the feature's registered test scenarios passed on the ${releaseStamps.releaseTag} build, run on a ${releaseStamps.environment} cluster. It is not proof of every operation, and not a human release sign-off.`),
     li(`Labels for ${releaseStamps.targetRelease} come from new test runs only. Earlier 1.3.0 results are in the 1.3.0 summary.`));
   if (entry.kind === 'prerelease-evidence') blocks.push(
-    li(`Testing ran on development builds before ${entry.version} shipped. It is not proof of the released ${entry.version} build.`));
+    li(`Evidence recorded before ${entry.version} shipped. Scoped proofs, scenarios and assessments each retain their own limits; none verifies the released ${entry.version} build.`));
   blocks.push(...testedNotes(entry, publication));
   blocks.push(
     li('A feature that is not yet tested, or not listed, is not a feature Kamiwaza lacks. It means the evidence does not show it yet.'),
