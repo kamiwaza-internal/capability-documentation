@@ -126,15 +126,18 @@ export function primaryCapabilities(publication) {
   }
   const current = [];
   for (const rows of byId.values()) {
-    // Release-bound stamps outrank pre-release records; newer missing evidence never erases acceptance.
+    // Release-bound stamps outrank pre-release records; ordinary missing observations do not erase acceptance.
     const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
     const ordered = [...rows].sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
     const verified = rows.filter(row => accepted.has(row.cap.status)).sort((a, b) => rank(a) - rank(b) || compareTime(a.at, b.at) || a.release.id.localeCompare(b.release.id));
     const retained = verified.at(-1) ?? ordered.filter(row => ['failed', 'failed-or-mixed', 'partial'].includes(row.cap.status)).at(-1) ?? ordered.at(-1);
     // A newer full native prerelease score for this version is authoritative.
     // An explicit omission is different: it keeps the earlier accepted result.
-    const native = ordered.filter(row => !row.qualified && !row.omitted &&
-      row.release.baselineKind === 'prerelease-evidence' && Object.hasOwn(row.release.counts ?? {}, 'scopedProofVerified')).at(-1);
+    const nativeRows = ordered.filter(row => !row.qualified && !row.omitted &&
+      row.release.baselineKind === 'prerelease-evidence' && Object.hasOwn(row.release.counts ?? {}, 'scopedProofVerified'));
+    const native = nativeRows.at(-1);
+    const effectiveProof = row => row?.cap.status === 'prerelease-verified' &&
+      row.cap.verificationBasis === 'value-stream' && row.cap.proof?.state === 'established';
     const selected = native && !retained.qualified && !(retained.cap.status === 'verified' && retained.cap.wholeClaim)
       ? native : retained;
     let status = selected.cap.status;
@@ -154,13 +157,19 @@ export function primaryCapabilities(publication) {
     }
     for (const row of ordered) {
       if (row.cap.releaseStatus === 'failed') failures.push({snapshotId: row.release.id, at: null, applicable: false, axis: 'release', reason: 'Retained release failure; public chronology is not established.'});
-      if (row.cap.proof?.state === 'failed') failures.push({
-        snapshotId: row.release.id, at: row.cap.proof.observedAt, applicable: row === native,
-        supersedes: row === native && selected === row, superseded: row !== native && Boolean(native),
-        axis: 'scoped-proof', reason: row === native
-          ? 'Latest native-scored scoped proof failed for this release.'
-          : 'Historical scoped proof failure retained.',
-      });
+      if (row.cap.proof?.state === 'failed') {
+        const nativeIndex = nativeRows.indexOf(row);
+        const authoritative = row === native && selected === row;
+        failures.push({
+          snapshotId: row.release.id, at: row.cap.proof.observedAt, applicable: authoritative,
+          supersedes: authoritative && effectiveProof(nativeRows[nativeIndex - 1]),
+          superseded: nativeIndex >= 0 && nativeIndex < nativeRows.length - 1 &&
+            selected === native && effectiveProof(native),
+          axis: 'scoped-proof', reason: authoritative
+            ? 'Latest native-scored scoped proof failed for this release.'
+            : 'Historical scoped proof failure retained.',
+        });
+      }
       for (const record of row.cap.evidence.filter(record => record.outcome === 'failed')) {
         if (!selected.at || compareTime(record.runFinishedAt, selected.at) > 0) failures.push({snapshotId: row.release.id, at: record.runFinishedAt ?? null, applicable: false, axis: 'scenario', reason: 'Failure retained; matching environment and claim applicability are not established.'});
       }

@@ -183,6 +183,8 @@ test('CUR-G rendered page: stamp badges, counts and paragraphs appear only for t
 
   // v1.3.2 leads: computed headline and its limits first, the 1.3.0 counts only under the "Earlier" sub-heading.
   const text = real.replace(/<[^>]+>/g, '').replaceAll('&#x27;', "'");
+  assert.match(text, /A newer native-scored pre-release revision for that version can also withdraw effective proof credit/);
+  assert.doesNotMatch(text, /absent later results and missing descriptive text never remove it/);
   const at = needle => { const index = text.indexOf(needle); assert.notEqual(index, -1, needle); return index; };
   const lead = text.slice(at('Current capability status'), at('Earlier: 1.3.0 pre-release baseline'));
   assert.ok(lead.startsWith('Current capability status45 of 88 capabilities stamped for v1.3.2: 29 release stamped (live run on the v1.3.2 build) · 16 source-contract verified (tests on v1.3.2 source, not runtime evidence) · 43 not stampedNot human release sign-off.'), lead.slice(0, 300));
