@@ -1,0 +1,1514 @@
+{
+  "schema": "sanitized-release-corpus.v1",
+  "release": "1.3.4",
+  "publication": {
+    "state": "review-candidate",
+    "sitePublished": false,
+    "publicationBinding": null,
+    "humanReleaseApproval": "not-established"
+  },
+  "pins": {
+    "kitMergeCommit": "3678acc067afbe6ea84811eb7fcab18afbb7ad13",
+    "productTag": "v1.3.4",
+    "productCoreCommit": "5f5f64656802eb497167f6eae6021093cfcdccf2",
+    "sdkProofProducerTag": "kamiwaza-v1.3.4",
+    "sdkProofProducerCommit": "8e4524bf29615085f2ec9cda2f3a1c0c16709d40",
+    "kaizenUatProducerTag": "kamiwaza-v1.3.4",
+    "kaizenUatProducerCommit": "240dafcaad009a72d4990a9d330494581322d27c",
+    "approvedSessionHelperMergeCommit": "96d1fde7f338484f0958ddca5be4d1b7d8606f8c"
+  },
+  "counts": {
+    "capabilityDefinitions": 107,
+    "includedCapabilities": 88,
+    "excludedCapabilities": 19,
+    "distinctPrereleaseCredits": 6,
+    "establishedScopedSdkProofs": 4,
+    "freshCompleteUiProofs": 0,
+    "technicalReleaseReplay": {
+      "scopedStamps": 30,
+      "failedSelections": 6,
+      "unstamped": 52
+    },
+    "recipeDefinitions": 32,
+    "workbookRecipes": 25,
+    "scopedProgrammaticRecipes": 7
+  },
+  "capabilities": [
+    {
+      "id": "apps.app-garden",
+      "title": "Deploy curated applications from the App Garden",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "verified",
+      "prereleaseBasis": "value-stream-proof"
+    },
+    {
+      "id": "apps.deployment-baseline",
+      "title": "Verify and retain the shipped app baseline a deployment was built from",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "apps.release-digest-pinning",
+      "title": "Require digest-pinned images on newly published app releases",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "apps.sandbox-workload-provider",
+      "title": "Select the workload backend for an extension's code sandbox",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "auth.enterprise-sso",
+      "title": "Sign in through enterprise identity: SAML/OIDC brokering, CAC/PKI, sessions",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "auth.local-user-administration",
+      "title": "Administer local user accounts",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "auth.personal-access-tokens",
+      "title": "Authenticate automation with personal access tokens",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "auth.session-revocation",
+      "title": "End sessions by logout and remove tracked sessions as an administrator",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "authz.rebac-access-control",
+      "title": "Govern access with relationship-based access control and attribute gates",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "catalog.dataset-registry",
+      "title": "Register and search datasets and containers in the data catalog",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "verified",
+      "prereleaseBasis": "value-stream-proof"
+    },
+    {
+      "id": "catalog.registered-sources",
+      "title": "Register S3 and PostgreSQL sources, then scan into the governed catalog",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "catalog.secrets-management",
+      "title": "Store connector and service credentials as governed catalog secrets",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "catalog.writable-datasets",
+      "title": "Manage file content inside platform-managed datasets",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "connectors.ai-assisted-connector-setup",
+      "title": "Model-assisted connector setup and repair",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "connectors.connector-builder",
+      "title": "Build and deploy data connectors from API descriptions",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "connectors.managed-data-sources",
+      "title": "Configure and manage governed data-source connectors",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "connectors.oauth-tool-policies",
+      "title": "Per-tool OAuth operation policies",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "connectors.user-oauth-authorization",
+      "title": "Authorize personal data-source access with OAuth/OIDC brokering",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "connectors.workroom-surface-access",
+      "title": "Browse, search, and fetch connector content inside a workroom under the member's own entitlements",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "context.dataset-indexing",
+      "title": "Bind a catalog dataset to a searchable semantic/lexical index",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "context.workroom-document-search",
+      "title": "Upload documents into workroom collections and search them semantically",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "context.workroom-ingestion-summary",
+      "title": "Workroom ingestion statistics",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "context.workroom-raw-file-store",
+      "title": "Store, list, read and update workroom raw files",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "delegation.brokered-resource-access",
+      "title": "Let a delegated workload reach data and models through a broker instead of holding credentials",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "delegation.capability-grants",
+      "title": "Bound what a delegated workload may do with explicit, inspectable grants",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "delegation.consent-and-approval-gates",
+      "title": "Require human consent and approval before a delegated workload acts",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "delegation.pending-approval-queue",
+      "title": "Pending-approval queue for delegated actions",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "delegation.run-claims-lifecycle",
+      "title": "Track delegated work as claimed runs with explicit, recorded state transitions",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "delegation.workload-identity-and-attestation",
+      "title": "Give a delegated workload its own attested identity instead of borrowing a user's credential",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "extensions.developer-path",
+      "title": "Build, deploy, and publish custom extensions with the kz-ext toolchain",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "federation.cluster-pairing",
+      "title": "Pair Kamiwaza clusters into a governed federation",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "federation.execution-gates",
+      "title": "Enforce receiver-side policy on federated work with execution gates",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "federation.federated-retrieval",
+      "title": "Discover and retrieve data from federated clusters, query-in-place",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "federation.remote-jobs",
+      "title": "Submit and monitor jobs on federated clusters",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.document-translation",
+      "title": "Translate parsed documents through OmniParse",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.multimedia-extraction",
+      "title": "Extract text and transcripts from images, audio, and video during ingestion",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.parse-from-url",
+      "title": "Parse a document fetched from a public URL",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.scheduled-ingest",
+      "title": "Run and schedule ingestion jobs against connected sources",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.security-markings",
+      "title": "Parse and apply source security markings during ingestion",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.structured-document-outputs",
+      "title": "Extract document tables, figures and chunks",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ingestion.video-frame-analysis",
+      "title": "Describe video keyframes with a vision model",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.admin-settings-console",
+      "title": "Admin settings console",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.agent-auto-routing",
+      "title": "Automatic specialist help in chat, with member pin and exclude policy",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.agent-packages",
+      "title": "Vendor and grant admin-vetted agent capability packages",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.agent-publication-approval",
+      "title": "Admin approval for member-proposed agents and packages",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.answer-feedback",
+      "title": "Rate chat answers with thumbs up or down",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.artifacts",
+      "title": "Versioned artifacts",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.context-compression",
+      "title": "Member chat compression controls",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.conversation-event-streaming",
+      "title": "Stream Kaizen conversation events",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.conversation-search",
+      "title": "Conversation and content search",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.custom-agents",
+      "title": "Create and configure custom agents in Kaizen",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.data-chat",
+      "title": "Converse with workroom data in Kaizen with cited answers",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.document-canvas-export",
+      "title": "Open documents in an editable canvas; export to Word or PDF through the API",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.document-collections",
+      "title": "Document collections / working sets",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.member-token-budget",
+      "title": "Daily model-token budget per member",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.metrics-dashboard",
+      "title": "Primary Kaizen administrator metrics and usage",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.multi-agent-orchestration",
+      "title": "Governed multi-agent delegation",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.notifications-inbox",
+      "title": "Durable notification inbox",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.platform-operator-tools",
+      "title": "Governed platform inspection and demo actions",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.prebuilt-agents",
+      "title": "Prebuilt specialist agents",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.privacy-guard",
+      "title": "Warn about or redact sensitive text before a chat message is sent",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.product-identity",
+      "title": "Tell the two Kaizen products apart under a shared catalog name",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.projects",
+      "title": "Shared project workspaces",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.prompt-library-and-chains",
+      "title": "Prompt library and multi-step workflows",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.recipes",
+      "title": "Save tool calls as recipes that agents can look up",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.scheduled-tasks",
+      "title": "Scheduled and background agent tasks",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.shared-chat-typing-indicators",
+      "title": "Typing indicators in shared chats",
+      "disposition": "included",
+      "sourceDeclaration": "re-review-required",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "kaizen.workroom-notes",
+      "title": "Workroom notes and in-pane text editing",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "models.discover-and-download",
+      "title": "Discover and download models from model hubs",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "verified",
+      "prereleaseBasis": "value-stream-proof"
+    },
+    {
+      "id": "models.external-endpoints",
+      "title": "Register external model endpoints behind the same catalog and controls",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "models.gpu-placement",
+      "title": "Control model placement across hardware classes, including fractional GPU serving",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "models.local-deployment",
+      "title": "Deploy and manage local models on cluster hardware",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "verified",
+      "prereleaseBasis": "value-stream-proof"
+    },
+    {
+      "id": "models.openai-compatible-inference",
+      "title": "Serve every model behind an OpenAI-compatible inference API",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "verified",
+      "prereleaseBasis": "value-stream-proof"
+    },
+    {
+      "id": "models.tenant-mode-inference",
+      "title": "Serve CPU and NVIDIA GPU models on a restricted tenant install from owner-signed compute profiles",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "models.tensor-parallel-serving",
+      "title": "Serve one model replica across several GPUs on one node (tensor parallelism)",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "models.two-node-serving",
+      "title": "Serve models on an SSH-paired second GPU node",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "ontology.workroom-knowledge-graph",
+      "title": "Build and query a workroom knowledge graph (ontology) from ingested data",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.access-requests",
+      "title": "Request resource access and record grantor approval/denial",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.admin-copilot",
+      "title": "Ask an operations copilot grounded questions about the platform",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.airgapped-install",
+      "title": "Install offline from verified bundle artifacts (air-gapped)",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.api-reference",
+      "title": "Serve machine-readable OpenAPI and offline interactive reference",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.app-generation-path",
+      "title": "Generate, develop, and deploy an application with kz-ext and the SDK runtime contract",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.greymatter-mesh-integration",
+      "title": "Run Kamiwaza inside a customer-operated Grey Matter service mesh",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.kubernetes-install",
+      "title": "Install Kamiwaza on supported platforms, including multi-node clusters",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.licensing-and-eula",
+      "title": "Validate signed license files and surface commercial-term status",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.news-feed",
+      "title": "Display configured vendor news with offline fallback",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.observability",
+      "title": "Observe the platform: log viewer, service logs, OpenTelemetry",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.operations-and-notifications",
+      "title": "Read persistent per-user operations and notification feeds",
+      "disposition": "included",
+      "sourceDeclaration": "declared",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.tenant-namespace-install",
+      "title": "Install Kamiwaza with Helm into a namespace of a customer-owned Kubernetes cluster (reference target Red Hat OpenShift)",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "platform.usage-and-audit",
+      "title": "Record and query user activity and audit events",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "retrieval.async-retrieval-jobs",
+      "title": "Run asynchronous retrieval jobs with streaming results",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "verified",
+      "prereleaseBasis": "value-stream-proof"
+    },
+    {
+      "id": "security.consent-and-banners",
+      "title": "Configure consent gates and classification banners across every surface",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "skills.skills-library",
+      "title": "Curate and share reusable agent skills in a platform skills library",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "tools.mcp-tool-shed",
+      "title": "Deploy and manage MCP tools from the Tool Shed",
+      "disposition": "included",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.admin-oversight",
+      "title": "Administer workrooms across the platform",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.app-launch",
+      "title": "Launch an application from Workroom Manager with workroom-scoped identity",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.app-runtime-binding",
+      "title": "Run workroom-bound apps under the workroom runtime contract",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.archive-and-delete",
+      "title": "Retire a workroom: archive, restore, delete with preview",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.create",
+      "title": "Create a workroom",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.export-bundle",
+      "title": "Export a workroom's contents as a bundle",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.membership-and-roles",
+      "title": "Share a workroom with role-based membership",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.org-decommission",
+      "title": "Retire every workroom in an organization under a confirmed plan",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.presence",
+      "title": "See who is present in a workroom in real time",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.s3-object-storage",
+      "title": "Back workroom storage with external S3",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.session-scoping",
+      "title": "Enter a workroom and scope platform operations to it",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.shared-credentials",
+      "title": "Register shared credentials in a workroom with member consent",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    },
+    {
+      "id": "workrooms.shared-threads",
+      "title": "Collaborate in shared workroom threads with agent turn-taking",
+      "disposition": "excluded",
+      "sourceDeclaration": "not-established",
+      "prereleaseStatus": "not-yet-verified",
+      "prereleaseBasis": null
+    }
+  ],
+  "recipes": [
+    {
+      "id": "Analyst:VS1",
+      "title": "VS1: Intake Mission and Create / Manage Projects",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 36,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS2",
+      "title": "VS2: Discover and Select Data Sources",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 35,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS2-5",
+      "title": "No-code self-service data connector integration",
+      "definitionSchema": "value-stream-recipe.v1",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 4,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "typed-definition-needed",
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS2:registered-dataset-sdk-retrieval",
+      "title": "Register owned S3 datasets and retrieve exact seeded rows over inline and trusted Flight transports",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.4",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 1,
+      "reviewedVerifies": [
+        "catalog.dataset-registry",
+        "retrieval.async-retrieval-jobs"
+      ],
+      "scopedSdkProof": "established",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS4",
+      "title": "VS4: Background Agent Tasks",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 25,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS5",
+      "title": "VS5: Configure, Manage, and Govern Agents / A2A Across the Kamiwaza Mesh",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 20,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS5:conversation-streaming",
+      "title": "Follow and replay a primary Kaizen agent conversation turn",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.4.0",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 4,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS5:supplied-specialist",
+      "title": "Start a conversation with a supplied Kaizen specialist",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.4.0",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 3,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS6",
+      "title": "VS6: Use Ontologies in Workroom",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 21,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:VS7",
+      "title": "VS7: Manage Ontologies",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 25,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Analyst:Workroom",
+      "title": "Workroom",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 49,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:Configure-Data-Connectors-Service-Accounts",
+      "title": "DRAFT — Configure Data Connectors – Service Accounts",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 12,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS1",
+      "title": "VS1: Configure Models",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 16,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS1:cold-gguf-acquisition",
+      "title": "Acquire one previously absent quantized GGUF through the native SDK",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.4",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 1,
+      "reviewedVerifies": [
+        "models.discover-and-download"
+      ],
+      "scopedSdkProof": "established",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS1:cpu-model-lifecycle-and-text-client",
+      "title": "Deploy and retire one CPU model with real native OpenAI arithmetic completions",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.4",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 1,
+      "reviewedVerifies": [
+        "models.local-deployment",
+        "models.openai-compatible-inference"
+      ],
+      "scopedSdkProof": "established",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS1:text-inference",
+      "title": "Existing model deployment through native streamed text inference",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.4.0",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 1,
+      "reviewedVerifies": [
+        "models.openai-compatible-inference"
+      ],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS2",
+      "title": "VS2: Configure Data Connectors",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 15,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS3",
+      "title": "VS3: Configure MCP Tools and Applications",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 15,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS3:app-garden-sdk-lifecycle",
+      "title": "Deploy, inspect and retire one owned App Garden application through the SDK",
+      "definitionSchema": "value-stream-recipe.v3",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.4",
+      "definitionKind": "scoped-programmatic",
+      "orderedStepCount": 1,
+      "reviewedVerifies": [
+        "apps.app-garden"
+      ],
+      "scopedSdkProof": "established",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS4",
+      "title": "VS4: Configure Users and Access",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 14,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS5",
+      "title": "VS5: Preconfigured Application Profiles",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 16,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS6",
+      "title": "VS6: Configure Agent Management and A2A Policies",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 14,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "Operator:VS7",
+      "title": "VS7: Create and Manage Workrooms",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 18,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:Assist-Operator-with-Remote-Source-Performance",
+      "title": "Assist Operator with Remote Source Performance",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 18,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:Manage-Users-and-Access-Control",
+      "title": "Manage Users and Access Control",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 12,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:Monitor-Health-and-Respond-to-Incidents",
+      "title": "Monitor Health and Respond to Incidents",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 10,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:Provision-and-Configure-Platform",
+      "title": "Provision and Configure Platform",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 15,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:Support-Audit-and-Compliance",
+      "title": "Support Audit and Compliance",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 21,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:SysAdmin-Assistant-for-Operational-Questions",
+      "title": "SysAdmin Assistant for Operational Questions",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 10,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:System-High-and-Banner-Configuration",
+      "title": "System High and Banner Configuration",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 10,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:Track-Usage-by-Users",
+      "title": "Track Usage by Users",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 12,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    },
+    {
+      "id": "SysAdmin:VS9",
+      "title": "VS9: Provision, Operate, and Govern Agent/A2A Mesh Infrastructure",
+      "definitionSchema": "value-stream-recipe.v4",
+      "definitionRevision": 1,
+      "sourceVersion": "1.3.0",
+      "definitionKind": "workbook-source",
+      "orderedStepCount": 17,
+      "reviewedVerifies": [],
+      "scopedSdkProof": "none",
+      "completeUiProof": false,
+      "releaseMembership": "unestablished",
+      "gaps": [
+        "release-adaptation-needed",
+        "reviewed-verifies-needed",
+        "complete-ui-observation-needed"
+      ]
+    }
+  ],
+  "establishedScopedProofs": [
+    {
+      "recipeId": "Analyst:VS2:registered-dataset-sdk-retrieval",
+      "basis": "complete-scoped-sdk-journey",
+      "creditedCapabilityIds": [
+        "catalog.dataset-registry",
+        "retrieval.async-retrieval-jobs"
+      ]
+    },
+    {
+      "recipeId": "Operator:VS1:cold-gguf-acquisition",
+      "basis": "complete-scoped-sdk-journey",
+      "creditedCapabilityIds": [
+        "models.discover-and-download"
+      ]
+    },
+    {
+      "recipeId": "Operator:VS1:cpu-model-lifecycle-and-text-client",
+      "basis": "complete-scoped-sdk-journey",
+      "creditedCapabilityIds": [
+        "models.local-deployment",
+        "models.openai-compatible-inference"
+      ]
+    },
+    {
+      "recipeId": "Operator:VS3:app-garden-sdk-lifecycle",
+      "basis": "complete-scoped-sdk-journey",
+      "creditedCapabilityIds": [
+        "apps.app-garden"
+      ]
+    }
+  ],
+  "gaps": [
+    "No versioned 1.3.4 recipe-release listing establishes recipe membership.",
+    "The 32 recipe definitions are a reviewed inventory, not 32 complete journeys.",
+    "No fresh complete UI recipe proof was established at this source snapshot.",
+    "Human full-release approval and public publication binding are not established."
+  ]
+}
