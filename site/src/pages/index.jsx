@@ -46,7 +46,7 @@ export default function Home() {
               <span className="releaseVersion">{entry.version}</span>
               <span className="releaseHeadline">{entry.headline}</span>
               <span className="releaseBasis">{entry.basis}</span>
-              {replay && <span className="releaseBasis">Scoped build replay: {replay.counts.releaseStamped} of {replay.counts.included} included capabilities have scenario stamps; {replay.counts.failed} failed selections; {replay.counts.notStamped} not stamped. {replay.counts.catalog} inventory definitions, {replay.counts.excluded} excluded. Human release sign-off: {replay.approval.status}. This is not whole-release approval.</span>}
+              {replay && <span className="releaseBasis">Scoped build replay: {replay.counts.releaseStamped} of {replay.counts.included} included capabilities have scenario stamps; {replay.counts.failed} failed selections; {replay.counts.notStamped} not stamped. {replay.counts.catalog} inventory definitions, {replay.counts.excluded} excluded. Scenario stamps alone do not establish whole-release approval. Human release sign-off: {replay.approval.status}.</span>}
               <Changes entry={entry} />
             </div>
             <div className="releaseFiles">

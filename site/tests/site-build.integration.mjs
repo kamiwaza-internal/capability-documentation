@@ -234,7 +234,9 @@ test('BUILD-3 production homepage has one three-download card per version and re
   assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
   for (const expected of ['6 distinct pre-release credits', '30 of 88 included capabilities',
-    '6 failed selections', '52 not stamped', 'Human release sign-off: pending',
+    '6 failed selections', '52 not stamped', 'Scenario stamps alone do not establish whole-release approval',
+    'Human release sign-off: pending',
     'No publication binding or human release approval']) assert.ok(corpusCard.includes(expected), expected);
+  assert.ok(!corpusCard.includes('This is not whole-release approval'), 'do not negate a future approved inventory decision');
   console.log(`Offline release-card build evidence: ${root}`);
 });
