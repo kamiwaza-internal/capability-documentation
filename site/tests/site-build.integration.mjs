@@ -7,6 +7,7 @@ import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
+import {zipMembers} from '../scripts/check-release-corpus.mjs';
 import {publicationDigest} from '../scripts/sales-guidance.mjs';
 function writePublication(site, publication) {
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify(publication));
@@ -24,6 +25,36 @@ function checkBuiltFiles(directory) {
   }
 }
 
+function assertReleaseCards(site) {
+  const home = readFileSync(join(site, 'build/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  assert.ok(!home.includes('Release build verification'), 'scoped replay must not have a second release section');
+  const section = home.match(/<section aria-labelledby="releases">([\s\S]*?)<\/section>/)?.[1];
+  assert.ok(section, 'Releases section must render');
+  const cards = [...section.matchAll(/<li class="releaseRow">([\s\S]*?)<\/li>/g)].map(match => match[1]);
+  const versions = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'))).versions;
+  assert.equal(cards.length, versions.length, 'one card per version');
+  for (const entry of versions) {
+    const matches = cards.filter(card => card.includes(`<span class="releaseVersion">${entry.version}</span>`));
+    assert.equal(matches.length, 1, `${entry.version} renders exactly once`);
+    const groups = [...matches[0].matchAll(/<nav class="fileGroup" aria-label="([^"]+)">([\s\S]*?)<\/nav>/g)];
+    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`]);
+    const actions = groups.flatMap(group => [...group[2].matchAll(/<a href="([^"]+)"[^>]*download[^>]*>([^<]+)<\/a>/g)]
+      .map(match => ({label: match[2], path: match[1]})));
+    assert.deepEqual(actions, [
+      {label: 'ZIP', path: entry.files.zip.path},
+      {label: 'PDF', path: entry.files.salesPdf.path},
+      {label: 'MD', path: entry.files.salesMd.path},
+    ], `${entry.version} has exactly three version-matched downloads`);
+    const zip = zipMembers(readFileSync(join(site, 'build', entry.files.zip.path)));
+    for (const key of ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf']) {
+      const file = entry.files[key];
+      assert.deepEqual(zip.get('human-readable/' + file.path.split('/').at(-1)),
+        readFileSync(join(site, 'build', file.path)), `${entry.version} ZIP retains ${key}`);
+    }
+  }
+  return cards;
+}
+
 // The home page lists one evidence bundle per version; each listed file exists and the Markdown
 // carries its own reading rules, so it can be read with no skill.
 function assertHomeAndDownloads(site, version, expectedInDigest) {
@@ -33,13 +64,13 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'), 'utf8'));
   assert.deepEqual(index.versions.map(entry => entry.version), [version]);
   for (const [key, file] of Object.entries(index.versions[0].files)) {
-    // The complete ZIP serves people and assistants; standalone documents remain linked.
-    if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
+    if (['zip', 'salesMd', 'salesPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
     assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
   }
   const zip = readFileSync(join(site, 'build', index.versions[0].files.zip.path));
   for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(zip.includes(name), `Missing in zip: ${name}`);
-  for (const label of ['Everything', 'For people', 'human-readable folder', 'machine-readable folder']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
+  for (const label of ['For AI', 'For people', 'human-readable folder', 'machine-readable folder']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
+  assertReleaseCards(site);
   const summary = readFileSync(join(site, 'build', index.versions[0].files.summaryMd.path), 'utf8');
   assert.ok(summary.includes(`# Kamiwaza ${version}: features at a glance`));
   assert.ok(!summary.includes('<script>'), 'Summary must not carry raw HTML');
@@ -183,4 +214,29 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
     assert.match(rejected.stdout + rejected.stderr, message);
   }
   console.log(`Offline pre-release build evidence: ${root}`);
+});
+
+test('BUILD-3 production homepage has one three-download card per version and retains all ZIP documents', () => {
+  const source = fileURLToPath(new URL('..', import.meta.url));
+  const root = mkdtempSync(join(tmpdir(), 'capability-site-release-cards-'));
+  const site = join(root, 'site');
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'docusaurus.config.js', 'package.json', 'package-lock.json'])
+    cpSync(join(source, path), join(site, path), {recursive: true});
+  cpSync(join(source, '../corpus'), join(root, 'corpus'), {recursive: true});
+  const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
+    {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
+  assert.equal(install.status, 0, install.stdout + install.stderr);
+  const build = spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
+    {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
+  assert.equal(build.status, 0, build.stdout + build.stderr);
+  const cards = assertReleaseCards(site);
+  const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
+  assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
+  const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
+  for (const expected of ['6 distinct pre-release credits', '30 of 88 included capabilities',
+    '6 failed selections', '52 not stamped', 'Scenario stamps alone do not establish whole-release approval',
+    'Human release sign-off: pending',
+    'No publication binding or human release approval']) assert.ok(corpusCard.includes(expected), expected);
+  assert.ok(!corpusCard.includes('This is not whole-release approval'), 'do not negate a future approved inventory decision');
+  console.log(`Offline release-card build evidence: ${root}`);
 });

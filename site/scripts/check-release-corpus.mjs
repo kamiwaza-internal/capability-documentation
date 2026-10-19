@@ -32,6 +32,38 @@ export function zipMembers(bytes) {
   return members;
 }
 
+function checkHomeDownloadCards(home, index, publication, out) {
+  assert.ok(!home.includes('Release build verification'), 'release replay must not render as a second release section');
+  const section = home.match(/<section aria-labelledby="releases">([\s\S]*?)<\/section>/)?.[1];
+  assert.ok(section, 'missing Releases section');
+  const cards = [...section.matchAll(/<li class="releaseRow">([\s\S]*?)<\/li>/g)].map(match => match[1]);
+  assert.equal(cards.length, index.versions.length, 'one release card per download version');
+  for (const entry of index.versions) {
+    const cardsForVersion = cards.filter(card => card.includes(`<span class="releaseVersion">${entry.version}</span>`));
+    assert.equal(cardsForVersion.length, 1, `exactly one release card for ${entry.version}`);
+    const card = cardsForVersion[0];
+    const groups = [...card.matchAll(/<nav class="fileGroup" aria-label="([^"]+)">([\s\S]*?)<\/nav>/g)];
+    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`],
+      `${entry.version} download group labels`);
+    const links = groups.flatMap(group => [...group[2].matchAll(/<a href="([^"]+)"[^>]*\sdownload(?:="")?[^>]*>([^<]+)<\/a>/g)]
+      .map(match => [match[2], match[1]]));
+    assert.deepEqual(links, [['ZIP', entry.files.zip.path], ['PDF', entry.files.salesPdf.path], ['MD', entry.files.salesMd.path]],
+      `${entry.version} must show only the complete kit's three downloads`);
+    for (const [, path] of links) readFileSync(join(out, path));
+    const replay = (publication.releaseStamps ?? []).filter(row => row.version === entry.version)
+      .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
+    if (replay) {
+      const visible = card.replaceAll('<!-- -->', '');
+      assert.ok(visible.includes(`${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities`),
+        `${entry.version} scoped replay totals must remain in its release card`);
+      assert.ok(visible.includes(`${replay.counts.failed} failed selections`) &&
+        visible.includes(`${replay.counts.notStamped} not stamped`) &&
+        visible.includes(`Human release sign-off: ${replay.approval.status}`),
+      `${entry.version} failures, gaps and approval must remain visible`);
+    }
+  }
+}
+
 export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/build')} = {}) {
   const publication = JSON.parse(readFileSync(join(repo, 'site/data/publication.json')));
   const stamps = JSON.parse(readFileSync(join(repo, 'site/data/release-stamps-1.3.2.json')));
@@ -39,6 +71,7 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
   const home = readFileSync(join(out, 'index.html'), 'utf8');
   assert.equal(index.schema, 'capability-evidence-downloads.v1');
+  checkHomeDownloadCards(home, index, publication, out);
   const expectedEntries = evidenceVersions(publication, stamps, corpora).filter(row => row.kind === 'release-corpus');
   assert.deepEqual(index.versions.filter(row => row.kind === 'release-corpus').map(row => row.version), expectedEntries.map(row => row.version));
   for (const entry of expectedEntries) {
@@ -90,7 +123,7 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
       for (const [key, file] of Object.entries(expected.files)) {
         assert.ok(readFileSync(join(out, file.path)).equals(readFileSync(join(expectedOut, file.path))),
           `missing or stale ${entry.version}/${key}`);
-        if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) {
+        if (['zip', 'salesMd', 'salesPdf'].includes(key)) {
           assert.ok(home.includes(`href="${file.path}"`), `home page missing ${file.path}`);
         }
       }

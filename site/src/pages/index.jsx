@@ -20,8 +20,11 @@ function Changes({entry}) {
 export default function Home() {
   const versions = evidenceVersions(publication, releaseStamps, releaseCorpora.corpora);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
-  const currentReplays = (publication.releaseStamps ?? []).filter(snapshot =>
-    !publication.releaseStamps.some(other => other.version === snapshot.version && other.publicationRevision > snapshot.publicationRevision));
+  const currentReplays = new Map();
+  for (const snapshot of publication.releaseStamps ?? []) {
+    const previous = currentReplays.get(snapshot.version);
+    if (!previous || previous.publicationRevision < snapshot.publicationRevision) currentReplays.set(snapshot.version, snapshot);
+  }
   return <Layout description="What each Kamiwaza release can do, with the evidence behind it, as one download per release.">
     <header className="kitHero"><div className="container">
       <p className="eyebrow">KAMIWAZA SALES DEV KIT</p>
@@ -33,48 +36,31 @@ export default function Home() {
         <p>The Sales Dev Kit records published evidence, conditions and gaps for each version. Download the PDF, Markdown or ZIP to read or share it. Published release records are in the <Link to="/catalog/">full catalog</Link>; review-candidate corpora retain their source and approval limits in the download.</p>
       </section>
 
-      {(publication.releaseStamps ?? []).length > 0 && <section aria-labelledby="release-replays">
-        <h2 id="release-replays">Release build verification</h2>
-        <ul className="releaseList">{currentReplays.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true})).map(snapshot => <li key={snapshot.id} className="releaseRow">
-          <div className="releaseText">
-            <span className="releaseVersion">{snapshot.version}</span>
-            <span className="releaseHeadline">{snapshot.counts.releaseStamped} of {snapshot.counts.included} included capabilities release stamped · {snapshot.counts.failed} failed · {snapshot.counts.notStamped} not stamped</span>
-            <span className="releaseBasis">Fresh scoped replay on the named release build. Each stamp covers only its stated scenarios. {snapshot.counts.catalog} inventory definitions retained; {snapshot.counts.excluded} excluded. Human release sign-off: {snapshot.approval.status}.</span>
-          </div>
-          <div className="releaseFiles">
-            <Link to={'/catalog/#' + snapshot.id}>Scope and failures</Link>
-            <a href={'/release-stamps/' + snapshot.id + '/bundle.json'} download>Evidence JSON</a>
-          </div>
-        </li>)}</ul>
-      </section>}
-
       <section aria-labelledby="releases">
         <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
-          <ul className="releaseList">{versions.map(entry => <li key={entry.version} className="releaseRow">
+          <ul className="releaseList">{versions.map(entry => {
+            const replay = currentReplays.get(entry.version);
+            return <li key={entry.version} className="releaseRow">
             <div className="releaseText">
               <span className="releaseVersion">{entry.version}</span>
               <span className="releaseHeadline">{entry.headline}</span>
               <span className="releaseBasis">{entry.basis}</span>
+              {replay && <span className="releaseBasis">Scoped build replay: {replay.counts.releaseStamped} of {replay.counts.included} included capabilities have scenario stamps; {replay.counts.failed} failed selections; {replay.counts.notStamped} not stamped. {replay.counts.catalog} inventory definitions, {replay.counts.excluded} excluded. Scenario stamps alone do not establish whole-release approval. Human release sign-off: {replay.approval.status}.</span>}
               <Changes entry={entry} />
             </div>
             <div className="releaseFiles">
-              <nav className="fileGroup" aria-label={'Complete Sales Dev Kit, ' + entry.version}>
-                <span className="fileGroupLabel">Complete Sales Dev Kit</span>
-                <a href={salesKitPath(entry.version) + '.pdf'} download>PDF</a>
-                <a href={salesKitPath(entry.version) + '.md'} download>MD</a>
-              </nav>
-              <nav className="fileGroup" aria-label={'Everything, ' + entry.version}>
-                <span className="fileGroupLabel">Everything</span>
-                <a href={entry.path + '.zip'} title="All readable documents and machine-readable source records, in labeled folders" download>Zip</a>
+              <nav className="fileGroup" aria-label={'For AI, ' + entry.version}>
+                <span className="fileGroupLabel">For AI</span>
+                <a href={entry.path + '.zip'} title="All readable documents and machine-readable source records, in labeled folders" download>ZIP</a>
               </nav>
               <nav className="fileGroup" aria-label={'For people, ' + entry.version}>
                 <span className="fileGroupLabel">For people</span>
-                <a href={entry.summaryPath + '.pdf'} title="Features at a glance" download>PDF</a>
-                <a href={entry.summaryPath + '.md'} title="Features at a glance" download>MD</a>
+                <a href={salesKitPath(entry.version) + '.pdf'} title="Complete Sales Dev Kit PDF" download>PDF</a>
+                <a href={salesKitPath(entry.version) + '.md'} title="Complete Sales Dev Kit Markdown" download>MD</a>
               </nav>
             </div>
-          </li>)}</ul>}
+          </li>;})}</ul>}
         <p className="machineLinks">Each ZIP includes all documents in a human-readable folder and source JSON in a machine-readable folder, with a README and checksums. Reviewed value-stream recipes are included as JSON when available, with untested paths and gaps explicit. For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>.</p>
       </section>
 
