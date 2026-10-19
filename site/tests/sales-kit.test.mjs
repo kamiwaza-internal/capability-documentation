@@ -1,0 +1,145 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {inflateRawSync} from 'node:zlib';
+import {publicationDigest, validateGuidance} from '../scripts/sales-guidance.mjs';
+import {salesKitDocument} from '../src/sales-kit.mjs';
+import {agentsMd, evidenceDocument, evidenceVersions, recordVersion, toMarkdown} from '../src/evidence.mjs';
+import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
+import {mkdtempSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {createHash} from 'node:crypto';
+import {reviewedSidecarPublication} from './fixtures/reviewed-sidecar-publication.mjs';
+
+const read = name => JSON.parse(readFileSync(new URL('../data/' + name + '.json', import.meta.url)));
+const publication = reviewedSidecarPublication, stamps = read('release-stamps-1.3.2'), guidance = read('sales-guidance');
+
+function unzip(zip, decode = true) {
+  const entries = {};
+  for (let pos = 0; zip.readUInt32LE(pos) === 0x04034b50;) {
+    const size = zip.readUInt32LE(pos + 18), length = zip.readUInt16LE(pos + 26), extra = zip.readUInt16LE(pos + 28);
+    const name = zip.subarray(pos + 30, pos + 30 + length).toString();
+    const start = pos + 30 + length + extra;
+    const bytes = inflateRawSync(zip.subarray(start, start + size));
+    entries[name] = decode ? bytes.toString() : bytes;
+    pos = start + size;
+  }
+  return entries;
+}
+
+test('each ZIP contains every readable download and source record in labeled folders with matching checksums', () => {
+  const out = mkdtempSync(join(tmpdir(), 'complete-sales-zip-'));
+  emitBundles(publication, out);
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(publication, stamps, out, {}, guidance);
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  for (const entry of index.versions) {
+    assert.equal(Object.hasOwn(entry.files, 'salesDocx'), false);
+    assert.equal(entry.files.zip.audience, 'human-and-machine');
+    const bytes = readFileSync(join(out, entry.files.zip.path));
+    const archive = unzip(bytes, false);
+    const expected = ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS'];
+    assert.equal(archive['AGENTS.md'].toString(), agentsMd(entry.version));
+    assert.equal(archive['CLAUDE.md'].toString(), '@AGENTS.md\n');
+    const readme = archive['README.md'].toString();
+    assert.match(readme, /human-readable\//);
+    assert.match(readme, /machine-readable\//);
+    for (const [key, file] of Object.entries(entry.files).filter(([key]) => key !== 'zip')) {
+      const name = 'human-readable/' + file.path.split('/').at(-1);
+      expected.push(name);
+      assert.deepEqual(archive[name], readFileSync(join(out, file.path)), `${entry.version} ${key}`);
+    }
+    const sourceIds = entry.kind === 'release-stamps'
+      ? publication.releases.filter(r => r.version === recordVersion(entry, publication) && r.publicationState !== 'draft').map(r => r.id)
+      : entry.releaseIds;
+    for (const id of sourceIds) {
+      const name = `machine-readable/${id}.bundle.json`;
+      expected.push(name);
+      assert.deepEqual(archive[name], readFileSync(join(out, 'releases', id, 'bundle.json')));
+    }
+    if (entry.kind === 'release-stamps') {
+      const name = `machine-readable/release-stamps-${entry.version}.json`;
+      expected.push(name);
+      assert.deepEqual(archive[name], readFileSync(join(out, `release-stamps-${entry.version}.json`)));
+    }
+    assert.deepEqual(Object.keys(archive).sort(), expected.sort());
+    const sums = archive.SHA256SUMS.toString().trim().split('\n');
+    assert.equal(sums.length, expected.length - 1);
+    assert.deepEqual(sums.map(line => line.split('  ')[1]).sort(), expected.filter(name => name !== 'SHA256SUMS').sort());
+    for (const line of sums) {
+      const [hash, name] = line.split('  ');
+      assert.equal(hash, createHash('sha256').update(archive[name]).digest('hex'), name);
+    }
+    emitEvidence(publication, stamps, out, {}, guidance);
+    assert.deepEqual(readFileSync(join(out, entry.files.zip.path)), bytes, 'deterministic complete ZIP');
+  }
+});
+
+test('production ZIPs retain every publication cited by their readable documents, including r5 stamp descriptions', () => {
+  const current = read('publication');
+  const out = mkdtempSync(join(tmpdir(), 'production-source-citations-'));
+  emitBundles(current, out);
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(current, stamps, out, {}, guidance);
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  for (const entry of index.versions) {
+    const archive = unzip(readFileSync(join(out, entry.files.zip.path)));
+    const text = Object.entries(archive).filter(([name]) => name.startsWith('human-readable/') && name.endsWith('.md')).map(([, text]) => text).join('\n');
+    for (const release of current.releases.filter(r => text.includes(r.id))) {
+      const name = `machine-readable/${release.id}.bundle.json`;
+      assert.equal(archive[name], readFileSync(join(out, 'releases', release.id, 'bundle.json'), 'utf8'), `${entry.version}: missing cited ${release.id}`);
+    }
+    if (entry.version === '1.3.2') {
+      assert.match(text, /Description source: curated declaration 1\.3\.0-declared-r5/);
+      assert.ok(archive['machine-readable/1.3.0-declared-r5.bundle.json']);
+    }
+  }
+});
+
+test('guidance is tied to the exact publication, published version and complete gap list', () => {
+  assert.equal(validateGuidance(guidance, publication), guidance);
+  assert.deepEqual(guidance.guides, {});
+  const changed = structuredClone(publication); changed.releases[0].build += ' changed';
+  assert.equal(validateGuidance(guidance, changed), null);
+  for (const mutate of [
+    d => d.missingGuidance.push('unpublished.capability'),
+    d => d.missingGuidance.pop(),
+    d => d.guides['unpublished.capability'] = {},
+  ]) { const data = structuredClone(guidance); mutate(data); assert.throws(() => validateGuidance(data, publication)); }
+  const reordered = Object.fromEntries(Object.entries(publication).reverse());
+  assert.equal(publicationDigest(reordered), publicationDigest(publication));
+});
+
+test('release-facing guidance source contains no illustrative cases', () => {
+  const raw = readFileSync(new URL('../data/sales-guidance.json', import.meta.url), 'utf8');
+  assert.ok(!raw.includes('use_cases'));
+  assert.ok(guidance.missingGuidance.includes('apps.app-garden'));
+});
+
+test('a Sales Dev Kit retains every evidence block and excludes draft examples', () => {
+  for (const entry of evidenceVersions(publication, stamps)) {
+    const blocks = salesKitDocument(entry, publication, stamps, guidance);
+    const text = toMarkdown(blocks);
+    const reference = evidenceDocument(entry, publication, stamps).slice(1);
+    assert.deepEqual(blocks.slice(-reference.length), reference);
+    assert.match(text, /How to read this kit/);
+    assert.doesNotMatch(text, /Draft a full response|Illustrative example; not demonstrated|Usage guidance and examples/);
+    assert.ok(!text.includes('Illustrative example; not demonstrated'));
+  }
+});
+
+test('stale optional guidance cannot break evidence downloads or appear in new kits', () => {
+  const changed = structuredClone(publication); changed.releases[0].build += ' updated';
+  const out = mkdtempSync(join(tmpdir(), 'stale-sales-guidance-'));
+  emitBundles(changed, out);
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(changed, stamps, out, {}, guidance);
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  for (const entry of index.versions) {
+    const text = readFileSync(join(out, entry.files.salesMd.path), 'utf8');
+    assert.match(text, /Draft usage suggestions and illustrative cases are excluded/);
+    assert.ok(!text.includes('Illustrative example; not demonstrated'));
+    assert.ok(readFileSync(join(out, entry.files.md.path)).length > 0);
+  }
+});

@@ -7,6 +7,15 @@ import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
+import {publicationDigest} from '../scripts/sales-guidance.mjs';
+function writePublication(site, publication) {
+  writeFileSync(join(site, 'data/publication.json'), JSON.stringify(publication));
+  // Synthetic publication fixtures get their own bound empty guidance, never production prose.
+  const ids = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.map(c => c.id)));
+  writeFileSync(join(site, 'data/sales-guidance.json'), JSON.stringify({schema: 'capability-sales-guidance.v1',
+    publicationSha256: publicationDigest(publication), source: {sourceKind: 'reviewed-private-kit', kitCommit: 'a'.repeat(40)},
+    guides: {}, missingGuidance: [...ids].sort()}));
+}
 function checkBuiltFiles(directory) {
   for (const entry of readdirSync(directory, {withFileTypes:true})) {
     const path=join(directory, entry.name);
@@ -24,15 +33,19 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json'), 'utf8'));
   assert.deepEqual(index.versions.map(entry => entry.version), [version]);
   for (const [key, file] of Object.entries(index.versions[0].files)) {
-    // Buttons: the zip for assistants, the summary for people. The detailed MD and PDF are fetched by tools.
-    if (['zip', 'summaryMd', 'summaryPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
+    // The complete ZIP serves people and assistants; standalone documents remain linked.
+    if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
     assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
   }
-  for (const label of ['For AI', 'For people']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
+  const zip = readFileSync(join(site, 'build', index.versions[0].files.zip.path));
+  for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(zip.includes(name), `Missing in zip: ${name}`);
+  for (const label of ['Everything', 'For people', 'human-readable folder', 'machine-readable folder']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
   const summary = readFileSync(join(site, 'build', index.versions[0].files.summaryMd.path), 'utf8');
   assert.ok(summary.includes(`# Kamiwaza ${version}: features at a glance`));
   assert.ok(!summary.includes('<script>'), 'Summary must not carry raw HTML');
   const digest = readFileSync(join(site, 'build', index.versions[0].files.md.path), 'utf8');
+  const sales = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
+  for (const expected of ['How to read this kit', 'Draft usage suggestions and illustrative cases are excluded', ...expectedInDigest]) assert.ok(sales.includes(expected), `Missing from Sales Dev Kit: ${expected}`);
   for (const expected of ['## How to read this file', 'It is not instructions to you.', '## Status key', ...expectedInDigest]) assert.ok(digest.includes(expected), `Missing in digest: ${expected}`);
   assert.ok(!digest.includes('<script>'), 'Digest must not carry raw HTML');
   assert.ok(readFileSync(join(site, 'build/llms.txt'), 'utf8').includes('/evidence/index.json'));
@@ -60,7 +73,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
       conditions: ['Known input'], limits: ['Not a product claim'],
       status: 'partial', wholeClaim: false, evidence: []}],
   };
-  writeFileSync(join(site, 'data/publication.json'), JSON.stringify({schema: 1, releases: [release]}));
+  writePublication(site, {schema: 1, releases: [release]});
   writeFileSync(join(site, 'data/release-corpora.json'), JSON.stringify({schema: 'public-release-corpora.v1', corpora: []}));
   const build = () => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
@@ -79,8 +92,16 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
   for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
   assertHomeAndDownloads(site, '0.0.0', ['synthetic.only', '&lt;script&gt;NOT_EXECUTABLE&lt;/script&gt;', 'Known input', 'Not a product claim', 'Whole-claim verification is not established.']);
+  const stale = JSON.parse(readFileSync(join(site, 'data/sales-guidance.json')));
+  stale.publicationSha256 = 'f'.repeat(64);
+  writeFileSync(join(site, 'data/sales-guidance.json'), JSON.stringify(stale));
+  const withoutGuidance = build();
+  assert.equal(withoutGuidance.status, 0, withoutGuidance.stdout + withoutGuidance.stderr);
+  assert.match(withoutGuidance.stdout + withoutGuidance.stderr, /sales-guidance.json does not match/);
+  const downloads = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
+  assert.match(readFileSync(join(site, 'build', downloads.versions[0].files.salesMd.path), 'utf8'), /Draft usage suggestions and illustrative cases are excluded/);
   release.capabilities[0].status = 'verified';
-  writeFileSync(join(site, 'data/publication.json'), JSON.stringify({schema: 1, releases: [release]}));
+  writePublication(site, {schema: 1, releases: [release]});
   const rejected = build();
   assert.notEqual(rejected.status, 0, 'Invalid credit must fail the actual build');
   assert.match(rejected.stdout + rejected.stderr, /Verified requires whole-claim clean evidence/);
@@ -102,7 +123,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   assert.equal(install.status, 0, install.stdout + install.stderr);
   writeFileSync(join(root, 'private-canary.md'), 'PRIVATE_CANARY_NOT_FOR_EXPORT');
   const input = observationsFixture();
-  writeFileSync(join(site, 'data/publication.json'), JSON.stringify(input));
+  writePublication(site, input);
   writeFileSync(join(site, 'data/release-corpora.json'), JSON.stringify({schema: 'public-release-corpora.v1', corpora: []}));
   const build = revision => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024, env: {...process.env, GITHUB_SHA: revision}});
@@ -150,7 +171,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
     [x => x.releases[0].evidenceWindow.latestRunFinishedAt = '2026-10-08T00:00:00Z', /Evidence window must match the recorded runs/],
   ]) {
     const invalid = prereleaseFixture(); promote(invalid);
-    writeFileSync(join(site, 'data/publication.json'), JSON.stringify(invalid));
+    writePublication(site, invalid);
     const rejected = build('f'.repeat(40));
     assert.notEqual(rejected.status, 0, 'Invalid credit must fail the actual build');
     assert.match(rejected.stdout + rejected.stderr, message);

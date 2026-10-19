@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {inflateRawSync} from 'node:zlib';
-import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
-import {toPdf, toZip} from './evidence-files.mjs';
+import {evidenceVersions} from '../src/evidence.mjs';
+import {emitBundles, emitEvidence} from './published-bundles.mjs';
+import {validateDescriptions} from './project-descriptions.mjs';
 import {loadReleaseCorpora, sha256} from './release-corpora.mjs';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 
@@ -39,49 +41,52 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
   assert.equal(index.schema, 'capability-evidence-downloads.v1');
   const expectedEntries = evidenceVersions(publication, stamps, corpora).filter(row => row.kind === 'release-corpus');
   assert.deepEqual(index.versions.filter(row => row.kind === 'release-corpus').map(row => row.version), expectedEntries.map(row => row.version));
-  for (const entry of expectedEntries) {
-    const meta = entry.corpus, actual = index.versions.find(row => row.version === entry.version);
-    assert.ok(actual, `missing corpus download ${entry.version}`);
-    assert.equal(actual.kind, 'release-corpus');
-    assert.deepEqual(actual.releaseIds, []);
-    assert.equal(actual.headline, entry.headline);
-    assert.equal(actual.basis, entry.basis);
-    assert.deepEqual(actual.source, {catalogSha256: meta.sha256, kitMergeCommit: meta.kitMergeCommit,
-      productTag: meta.productTag, productCoreCommit: meta.productCoreCommit,
-      publicationBinding: null, humanReleaseApproval: 'not-established'});
-    const name = `kamiwaza-capabilities-${entry.version}`;
-    const markdown = Buffer.from(toMarkdown(evidenceDocument(entry, publication, stamps)));
-    const pdf = toPdf(evidenceDocument(entry, publication, stamps), {title: `Kamiwaza platform capabilities, version ${entry.version}`,
-      footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
-    const summary = summaryDocument(entry, publication, stamps);
-    const summaryMd = Buffer.from(toMarkdown(summary));
-    const summaryPdf = toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`,
-      footer: `Kamiwaza ${entry.version} · capabilities.kamiwaza.dev · Not a release sign-off unless stated`,
-      cover: {eyebrow: 'KAMIWAZA · CAPABILITY SUMMARY'}});
-    const members = [
-      {name: 'README.md', data: markdown}, {name: `${name}.pdf`, data: pdf},
-      {name: 'records/release-corpus-catalog.json', data: meta.bytes},
-      {name: 'records/release-corpus-manifest.json', data: meta.manifestBytes},
-    ];
-    members.push({name: 'SHA256SUMS', data: members.map(file => `${sha256(file.data)}  ${file.name}\n`).join('')});
-    const zip = toZip(members);
-    const files = {
-      zip: [entry.path + '.zip', zip, 'machine'], md: [entry.path + '.md', markdown, 'machine'],
-      pdf: [entry.path + '.pdf', pdf, 'machine'], summaryMd: [entry.summaryPath + '.md', summaryMd, 'human'],
-      summaryPdf: [entry.summaryPath + '.pdf', summaryPdf, 'human'],
-    };
-    assert.deepEqual(Object.keys(actual.files).sort(), Object.keys(files).sort());
-    for (const [key, [path, expected, audience]] of Object.entries(files)) {
-      const item = actual.files[key];
-      assert.deepEqual(item, {path, audience, sha256: sha256(expected), bytes: expected.length}, `index metadata ${entry.version}/${key}`);
-      const built = readFileSync(join(out, path));
-      assert.deepEqual(built, expected, `missing or stale ${entry.version}/${key}`);
-      if (['zip', 'summaryMd', 'summaryPdf'].includes(key)) assert.ok(home.includes(`href="${path}"`), `home page missing ${path}`);
+  // Rebuild the complete kit contract in isolation, so this gate follows the same reviewed
+  // packaging as historical downloads and validates every emitted corpus file and ZIP member.
+  const expectedOut = mkdtempSync(join(tmpdir(), 'release-corpus-consistency-'));
+  try {
+    emitBundles(publication, expectedOut);
+    writeFileSync(join(expectedOut, 'release-stamps-1.3.2.json'), JSON.stringify(stamps, null, 2) + '\n');
+    const read = name => JSON.parse(readFileSync(join(repo, 'site/data', name)));
+    const descriptions = validateDescriptions(read('descriptions.json'), publication);
+    emitEvidence(publication, stamps, expectedOut, descriptions?.descriptions,
+      read('sales-guidance.json'), read('value-streams.json'), corpora);
+    const expectedIndex = JSON.parse(readFileSync(join(expectedOut, 'evidence/index.json')));
+    for (const entry of expectedEntries) {
+      const actual = index.versions.find(row => row.version === entry.version);
+      const expected = expectedIndex.versions.find(row => row.version === entry.version);
+      assert.deepEqual(actual, expected, `corpus download metadata ${entry.version}`);
+      for (const [key, file] of Object.entries(expected.files)) {
+        assert.deepEqual(readFileSync(join(out, file.path)), readFileSync(join(expectedOut, file.path)),
+          `missing or stale ${entry.version}/${key}`);
+        if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) {
+          assert.ok(home.includes(`href="${file.path}"`), `home page missing ${file.path}`);
+        }
+      }
+      const unzipped = zipMembers(readFileSync(join(out, entry.path + '.zip')));
+      const expectedMembers = zipMembers(readFileSync(join(expectedOut, entry.path + '.zip')));
+      assert.deepEqual(unzipped, expectedMembers, 'complete ZIP members must match reviewed kit');
+      assert.deepEqual(unzipped.get('machine-readable/release-corpus-catalog.json'), entry.corpus.bytes);
+      assert.deepEqual(unzipped.get('machine-readable/release-corpus-manifest.json'), entry.corpus.manifestBytes);
+      const readableKeys = ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'];
+      for (const key of readableKeys) {
+        assert.ok(actual.files[key], `corpus kit must include ${key}`);
+        const file = actual.files[key], name = 'human-readable/' + file.path.split('/').at(-1);
+        assert.deepEqual(unzipped.get(name), readFileSync(join(out, file.path)), `ZIP must include standalone ${key}`);
+        assert.equal(file.sha256, sha256(unzipped.get(name)), `standalone digest ${key}`);
+      }
+      for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(unzipped.has(name), `missing ${name}`);
+      assert.equal(unzipped.get('CLAUDE.md').toString(), '@AGENTS.md\n');
+      assert.match(unzipped.get('AGENTS.md').toString(), /machine-readable\//);
+      assert.match(unzipped.get('README.md').toString(), /AGENTS\.md/);
+      const checksums = unzipped.get('SHA256SUMS').toString().trimEnd().split('\n').sort();
+      assert.deepEqual(checksums, [...unzipped].filter(([name]) => name !== 'SHA256SUMS')
+        .map(([name, bytes]) => `${sha256(bytes)}  ${name}`).sort(), 'checksums must cover every other member');
+
+      console.log(`Checked ${entry.version}: ${entry.corpus.sha256}; complete kit, corpus, manifest, digests and home links`);
     }
-    const unzipped = zipMembers(readFileSync(join(out, entry.path + '.zip')));
-    assert.deepEqual([...unzipped.keys()], members.map(file => file.name), 'ZIP members must match reviewed manifest');
-    for (const member of members) assert.deepEqual(unzipped.get(member.name), Buffer.from(member.data), `ZIP member ${member.name}`);
-    console.log(`Checked ${entry.version}: ${meta.sha256}; MD, PDF, ZIP, summaries, manifest, digests and home links`);
+  } finally {
+    rmSync(expectedOut, {recursive: true, force: true});
   }
   return expectedEntries.length;
 }

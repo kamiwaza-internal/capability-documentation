@@ -5,6 +5,7 @@ import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import releaseCorpora from '../../data/release-corpora.json';
 import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY} from '../evidence.mjs';
+import {salesKitPath} from '../sales-kit.mjs';
 
 function Changes({entry}) {
   const changes = changesSince(entry, publication, releaseStamps);
@@ -29,7 +30,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
-        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each entry below has a short summary for people and a zip for AI assistants. Published release records are in the <Link to="/catalog/">full catalog</Link>; a review-candidate corpus is labelled separately in its download.</p>
+        <p>The Sales Dev Kit records published evidence, conditions and gaps for each version. Download the PDF, Markdown or ZIP to read or share it. Published release records are in the <Link to="/catalog/">full catalog</Link>; review-candidate corpora retain their source and approval limits in the download.</p>
       </section>
 
       {(publication.releaseStamps ?? []).length > 0 && <section aria-labelledby="release-replays">
@@ -58,9 +59,14 @@ export default function Home() {
               <Changes entry={entry} />
             </div>
             <div className="releaseFiles">
-              <nav className="fileGroup" aria-label={'For AI, ' + entry.version}>
-                <span className="fileGroupLabel">For AI</span>
-                <a href={entry.path + '.zip'} title="Detailed records an AI assistant can read and cite" download>Zip</a>
+              <nav className="fileGroup" aria-label={'Complete Sales Dev Kit, ' + entry.version}>
+                <span className="fileGroupLabel">Complete Sales Dev Kit</span>
+                <a href={salesKitPath(entry.version) + '.pdf'} download>PDF</a>
+                <a href={salesKitPath(entry.version) + '.md'} download>MD</a>
+              </nav>
+              <nav className="fileGroup" aria-label={'Everything, ' + entry.version}>
+                <span className="fileGroupLabel">Everything</span>
+                <a href={entry.path + '.zip'} title="All readable documents and machine-readable source records, in labeled folders" download>Zip</a>
               </nav>
               <nav className="fileGroup" aria-label={'For people, ' + entry.version}>
                 <span className="fileGroupLabel">For people</span>
@@ -69,21 +75,12 @@ export default function Home() {
               </nav>
             </div>
           </li>)}</ul>}
-        <p className="machineLinks">For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>. The zip holds the detailed digest and the JSON records it was derived from.</p>
+        <p className="machineLinks">Each ZIP includes all documents in a human-readable folder and source JSON in a machine-readable folder, with a README and checksums. Reviewed value-stream recipes are included as JSON when available, with untested paths and gaps explicit. For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>.</p>
       </section>
 
       <section aria-labelledby="instructions" className="panel panelTint">
         <h2 id="instructions">Instructions</h2>
-        <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
-        <ol className="instructions">
-          <li><strong>Slack.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>.</li>
-          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</li>
-          <li><strong>Claude Code plugin.</strong> Add the plugin:
-            <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
-            Then ask a question, or paste in an RFP:
-            <pre><code>/capability-grounding:capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
-          </li>
-        </ol>
+        <p>Choose the release version, then read its PDF or Markdown kit. The ZIP includes those files, the published source records and AGENTS.md reading instructions for your assistant. If it cannot open a ZIP, attach AGENTS.md, README.md and the evidence documents and source records that README.md lists. Keep each status, condition and limit with any answer you share.</p>
       </section>
 
       <section aria-labelledby="faqs" className="panel">
@@ -98,11 +95,11 @@ export default function Home() {
         </details>
         <details className="faq">
           <summary>Does a missing capability mean Kamiwaza can&rsquo;t do it?</summary>
-          <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only an explicit exclusion means &ldquo;not supported&rdquo;.</p>
+          <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only a source record explicitly ruling out the requested behavior establishes &ldquo;not supported&rdquo;. Inventory exclusion means outside this publication.</p>
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>
-          <p>Attach that release&rsquo;s zip to a new chat and ask. It starts with its own reading rules, so no skill or plugin is needed.</p>
+          <p>Attach that release&rsquo;s Sales Dev Kit to a new chat and ask. It includes published evidence, conditions, limits and known gaps. The ZIP also includes AGENTS.md for consistent answers and README.md listing its evidence documents and source records. The statuses are scoped to the named version.</p>
         </details>
       </section>
     </main>

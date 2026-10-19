@@ -11,6 +11,9 @@ import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const publication = JSON.parse(readFileSync(join(root, 'site/data/publication.json')));
 const stamps = JSON.parse(readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
+const descriptions = JSON.parse(readFileSync(join(root, 'site/data/descriptions.json'))).descriptions;
+const guidance = JSON.parse(readFileSync(join(root, 'site/data/sales-guidance.json')));
+const streams = JSON.parse(readFileSync(join(root, 'site/data/value-streams.json')));
 
 test('site workflow runs the consistency check after the production build', () => {
   const workflow = readFileSync(join(root, '.github/workflows/site.yml'), 'utf8');
@@ -24,27 +27,27 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   const out = mkdtempSync(join(tmpdir(), 'release-corpus-bundle-'));
   emitBundles(publication, out);
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
-  emitEvidence(publication, stamps, out, undefined, loadReleaseCorpora({publication}));
+  emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}));
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
   const entry = index.versions.find(row => row.version === '1.3.4');
   assert.equal(entry.kind, 'release-corpus');
   const prior = mkdtempSync(join(tmpdir(), 'release-corpus-historical-'));
   emitBundles(publication, prior);
   writeFileSync(join(prior, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
-  emitEvidence(publication, stamps, prior);
+  emitEvidence(publication, stamps, prior, descriptions, guidance, streams);
   for (const historical of index.versions.filter(row => row.version !== '1.3.4')) {
     for (const file of Object.values(historical.files)) assert.deepEqual(readFileSync(join(out, file.path)),
       readFileSync(join(prior, file.path)), `historical download ${file.path} must retain its bytes`);
   }
   assert.deepEqual(readFileSync(join(out, 'releases/index.json')), readFileSync(join(prior, 'releases/index.json')));
-  writeFileSync(join(out, 'index.html'), `<a href="${entry.files.zip.path}">ZIP</a><a href="${entry.files.summaryMd.path}">MD</a><a href="${entry.files.summaryPdf.path}">PDF</a>`);
+  writeFileSync(join(out, 'index.html'), Object.values(entry.files).map(file => `<a href="${file.path}">Download</a>`).join(''));
   assert.equal(checkReleaseCorpusBuild({out}), 1);
   const members = zipMembers(readFileSync(join(out, entry.files.zip.path)));
-  assert.deepEqual(members.get('records/release-corpus-catalog.json'), readFileSync(join(root, 'corpus/1.3.4/catalog.json')));
-  assert.deepEqual(members.get('README.md'), readFileSync(join(out, entry.files.md.path)));
-  assert.match(members.get('README.md').toString(), /Distinct pre-release credits \| 6/);
-  assert.match(members.get('README.md').toString(), /Scoped release stamps \| 30/);
-  assert.match(members.get('README.md').toString(), /Human release approval: not established/);
+  assert.deepEqual(members.get('machine-readable/release-corpus-catalog.json'), readFileSync(join(root, 'corpus/1.3.4/catalog.json')));
+  assert.deepEqual(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)), readFileSync(join(out, entry.files.md.path)));
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Distinct pre-release credits \| 6/);
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Scoped release stamps \| 30/);
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Human release approval: not established/);
   for (const file of ['md', 'pdf', 'zip']) {
     const path = join(out, entry.files[file].path);
     const valid = readFileSync(path);
