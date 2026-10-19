@@ -113,34 +113,22 @@ Open an issue. This repository grows every release, and a claim that reads wrong
 
 ## Portable Sales Dev Kit
 
-Each release has one complete Sales Dev Kit in editable Word, PDF and Markdown. The same
-content serves a salesperson or their chosen assistant: reviewed usage guidance and
-customer-agnostic examples followed by the full capability/evidence reference. No plugin or
-Slack bot is required. Each release's Everything ZIP includes all seven document downloads
-(the complete kit in three formats, plus summary and detailed reference in PDF and Markdown)
-under `human-readable/`, with source JSON under `machine-readable/`. A root README explains the
-contents and `SHA256SUMS` covers every included file except itself. Standalone downloads remain available.
+Each published evidence version has a complete Sales Dev Kit in PDF and Markdown.
+It contains the capability evidence, conditions, limits and explicit gaps. The
+Everything ZIP includes six readable documents under `human-readable/` and their
+published source JSON under `machine-readable/`, plus reading instructions and
+checksums. No plugin or Slack bot is required. Draft usage suggestions,
+illustrative cases and Word output are excluded from this release-facing kit.
 
-Guidance is authored once in the private capability records under `sales_guidance` and
-prepared by the kit's `scripts/export_sales_guidance.py` from an immutable commit. Review its
-allowlisted output before updating `site/data/sales-guidance.json`. The consumer checks the
-exact publication content hash, published capability/version, pinned kit source and example
-runtime-record references. Regenerate the guidance projection when publication data changes;
-a mismatch omits guidance with a build warning and visible document gaps. Current capability
-evidence downloads remain available. Malformed or unsafe guidance still fails validation.
+Recipe content is optional and bound to the exact reviewed publication. The
+older 1.3.0 Connector Builder pilot is retained as a historical source projection;
+it is omitted from current downloads because its publication binding is stale.
+A future recipe publication needs a freshly generated, reviewed binding. Typed
+recipe links must match one exact source and publication revision, and their
+publication gate remains disabled until a reviewed export is pinned.
 
-The current 1.3 reference has usage guidance for all 88 capabilities. Four historical workroom
-entries are also curated but do not enter that denominator. Other versions retain explicit gaps
-rather than inheriting instructions. Unreferenced examples are illustrative; evidence-linked
-examples retain their actual demonstrated scope. No download changes a verification status,
-release approval, historical bundle or publication audience.
-
-Newly reviewed guidance may describe an evidence-only row whose historical publication has no
-description. Its source references remain in the pinned kit record; this does not retrofit a
-declaration into the old publication. Private intake ledgers and corpus signoff from kit PR #133
-do not automatically become public content. A separately reviewed publication update still
-requires a regenerated guidance projection.
-
-Slack remains optional. RFP attachments and pasted requirements default to capability
-assessment. A leading user request such as `Draft our response to this RFP` explicitly opts
-into full drafting, followed by content review and approval before document generation.
+`corpus/1.3.4/` is a separate review candidate containing the new release inventory
+and recipe-readiness summary. The website and ZIPs do not consume it. Its four
+scoped SDK proofs and six prerelease capability credits remain separate from the
+30 scoped release stamps. This download change does not publish that corpus,
+award new proof, or grant human release approval.

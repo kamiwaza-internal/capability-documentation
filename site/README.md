@@ -547,38 +547,43 @@ regenerate `data/descriptions.json`, since newly published ids gain a descriptio
 
 ## Complete Sales Dev Kit downloads
 
-The additive value-stream layer is sourced from an immutable capability-kit recipe revision. `data/value-streams.json` is a reviewed public projection: 25 indexed source sections, one initial step recipe, and 24 explicit recipe gaps. The source migration manifest preserves 65 historical candidate mappings privately; none becomes current coverage by appearing in this projection. The initial connector-builder recipe reports passed API components, a timed-out deployment, no Kaizen UI clickstream and an optional extension boundary. Its whole-stream state is `untested`.
+`src/sales-kit.mjs` adds reviewed stream paths and explicit gaps to the complete
+published capability evidence. `scripts/published-bundles.mjs` emits matching
+Markdown and PDF under `/evidence/<version>/kamiwaza-sales-dev-kit-<version>.*`,
+indexed and hashed in `/evidence/index.json`. Draft usage suggestions, illustrative
+cases and Word output are excluded. Historical publication bundles are unchanged.
 
-The Sales Dev Kit places the stream outcome, roles, prerequisites, ordered API and Kaizen UI paths, expected results and limits before the capability evidence detail. It draws the same snapshot into PDF and Markdown. The complete ZIP also contains `machine-readable/value-stream-recipes.json`, and `/evidence/<version>/value-stream-recipes.json` is indexed with a checksum. Source version and target download version are distinct; an older recipe does not prove a newer build. The sidecar contains no private receipt paths, raw evidence or workbook URLs. Update it only with the pinned kit exporter, review the resulting public prose, and update `reviewedStreamsSha256` to the SHA-256 of `JSON.stringify` of the reviewed JSON object before publication:
+`data/value-streams.json` retains the reviewed historical 1.3.0 projection: 25 source
+sections, 65 historical candidate mappings in aggregate, one Connector Builder
+pilot and 24 recipe gaps. Its whole-stream status is `untested`; passing API
+components do not establish deployment or a complete UI journey. This is not the
+new 32-recipe 1.3.4 inventory in `../corpus/1.3.4/`.
 
-```sh
-cd ../capability-kit
-python3 scripts/export_value_streams.py --kit . --revision <full kit commit> \
-  --publication ../capability-documentation/site/data/publication.json \
-  --output ../capability-documentation/site/data/value-streams.json
-```
+The consumer validates the complete projection digest and the publication content
+hash. A stale optional projection is omitted with a build warning; capability
+evidence downloads remain available and explicitly report the missing recipe
+projection. The current publication has changed since the historical projection,
+so neither its recipe JSON nor its example is emitted in production. A matching
+projection includes `machine-readable/value-stream-recipes.json` in the applicable
+version's ZIP and indexes `/evidence/<version>/value-stream-recipes.json` with a
+checksum. Older recipes never prove a newer build.
 
-`data/sales-guidance.json` is the reviewed, allowlisted projection of optional guidance in
-private capability records. `scripts/sales-guidance.mjs` validates its canonical publication
-hash, pinned source, published capability/version and passing example-evidence references.
-Guidance does not compute status. All 88 capabilities in the current 1.3 reference now have
-curated usage guidance. Four historical workroom entries remain outside that denominator.
-The entries name their 1.3.0 source scope;
-1.3.2 kit guidance is labelled as that historical source, not a new compatibility claim.
+A fresh projection must be generated from an immutable private kit source and
+reviewed for public prose, exact version/revision scope and privacy before changing
+its publication binding or reviewed digest. Never update a hash merely to force an
+old projection onto a newer publication. The v3 typed consumer additionally requires
+one exact matching prerelease revision, its source commit and recipe digests, and
+complete `uses`/`verifies` step links. `reviewedTypedSha256` remains null: no typed
+projection is served until a separate publication review pins the export.
 
-Guidance is a new prose projection and may describe an existing evidence-only public row.
-The exporter requires canonical source references; old publication declarations and their
-missing-description labels remain historical facts. New guidance does not change them. Private
-assessment intake, ledgers and signoff (kit PR #133) are not an automatic public input or a new
-source of usage examples. A new reviewed public projection must regenerate the guidance binding.
+`data/sales-guidance.json` retains an empty reviewed guidance projection with
+explicit gaps. Its validator checks source/version, publication binding, privacy
+and complete gaps; guidance is not rendered into this release-facing kit and does
+not compute status. Valid stale guidance is omitted with a warning. Malformed or
+unsafe data still fails validation.
 
-`src/sales-kit.mjs` adds reviewed stream paths and explicit gaps to the existing complete evidence
-document. The curated guidance sidecar is validated but is not rendered into this release-facing kit.
-`scripts/published-bundles.mjs` emits matching Markdown and PDF under
-`/evidence/<version>/kamiwaza-sales-dev-kit-<version>.*`, indexed and hashed in
-`/evidence/index.json`. Old evidence-bundle bytes and the short summaries are unchanged.
-
-Publication changes require regenerating the reviewed guidance sidecar. The build omits
-valid guidance bound to another publication, warns, and identifies the missing guidance in the
-documents. Malformed or unsafe data still fails validation. Review prose and evidence scope as well as mechanical checks; a matching
-hash does not prove that an example's description follows from its test.
+The sanitized 1.3.4 corpus is a review candidate outside `data/publication.json`.
+This consumer change does not publish its native prerelease verdicts or recipe
+membership. New scoped proof publication requires a separate reviewed schema-8
+projection. Prerelease credit, technical release replay and human release approval
+remain independent.

@@ -5,7 +5,6 @@ import {inflateRawSync} from 'node:zlib';
 import {publicationDigest, validateGuidance} from '../scripts/sales-guidance.mjs';
 import {salesKitDocument} from '../src/sales-kit.mjs';
 import {evidenceDocument, evidenceVersions, toMarkdown} from '../src/evidence.mjs';
-import {toDocx} from '../scripts/sales-docx.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {mkdtempSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -116,22 +115,5 @@ test('stale optional guidance cannot break evidence downloads or appear in new k
     assert.match(text, /Draft usage suggestions and illustrative cases are excluded/);
     assert.ok(!text.includes('Illustrative example; not demonstrated'));
     assert.ok(readFileSync(join(out, entry.files.md.path)).length > 0);
-  }
-});
-
-test('Word output is deterministic, editable OOXML with safe text and real tables', () => {
-  const blocks = [{type: 'h', level: 1, text: 'Sales Dev Kit'}, {type: 'p', text: 'Keep <xml> & "quotes" and café.'},
-    {type: 'li', level: 0, text: 'An ordered step'}, {type: 'table', head: ['Name', 'Result'], rows: [['One', 'Two']], widths: [0.3, 0.7]}];
-  const bytes = toDocx(blocks);
-  assert.deepEqual(bytes, toDocx(blocks));
-  const files = unzip(bytes), xml = files['word/document.xml'];
-  assert.match(xml, /Keep &lt;xml&gt; &amp; &quot;quotes&quot; and café/);
-  assert.match(xml, /w:pStyle w:val="Title"/);
-  assert.match(xml, /<w:tbl>/); assert.match(xml, /<w:tblHeader\/>/);
-  assert.ok(!Object.values(files).some(value => /TargetMode="External"|vbaProject/.test(value)));
-  for (const entry of evidenceVersions(publication, stamps)) {
-    const blocks = salesKitDocument(entry, publication, stamps, guidance);
-    const document = unzip(toDocx(blocks))['word/document.xml'];
-    for (const block of blocks.filter(b => b.type === 'h')) assert.ok(document.includes(block.text.replace(/\*\*|`/g, '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;')));
   }
 });
