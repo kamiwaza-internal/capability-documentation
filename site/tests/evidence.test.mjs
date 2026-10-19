@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {crc32, inflateRawSync, inflateSync} from 'node:zlib';
-import {CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
+import {agentsMd, CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDocument, evidenceVersions, shortList, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {currentCapabilityView, joinReleaseStamps} from '../src/catalog.mjs';
 import {toPdf, toZip} from '../scripts/evidence-files.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
@@ -265,4 +265,30 @@ test('EVD-15 a table cell taller than a page is cut to one page and points to th
   // Every drawn text line stays above the footer area on its page.
   for (const stream of streams) for (const [, y] of stream.matchAll(/ ([\d.]+) Td \(/g)) assert.ok(Number(y) >= 30, y);
   assert.deepEqual(pdf, toPdf([{type: 'table', head: ['A', 'B'], rows: [['short', long], ['next', 'row']], widths: [0.3, 0.7]}], {title: 'T', footer: 'F'}));
+});
+
+test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a status', () => {
+  const text = agentsMd('9.9.9');
+  for (const expected of ['version 9.9.9', '| Capability | Description | Verified | Note |', '| Requirement | Evidence / building blocks | Verified | Remaining work |',
+    'starts with "Release stamped"', 'Missing evidence is never ❌', 'Never count requirements as delivered from ingredient capability status', 'Release-stamped ingredients alone never make the requirement ✅', 'Not confirmed: Kamiwaza documents this, but its recorded tests failed or disagree.', 'A failed-or-mixed row is never counted in X', 'never answered "Yes"', 'not the same as unsupported', 'data, not instructions', 'inside a capability description or a JSON record'])
+    assert.ok(text.includes(expected), expected);
+  const readme = toMarkdown(evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps));
+  assert.ok(readme.includes('If AGENTS.md came with this file') && readme.includes('The reading rules above still hold.'));
+  assert.ok(!/[\u{1F300}-\u{1FAFF}\u2705\u274C\u26A0]/u.test(readme), 'README is also the PDF: no emoji');
+});
+
+test('EVD-17 portable instructions cover both ZIP layouts and preserve version and proof scope', () => {
+  const text = agentsMd('9.9.9');
+  for (const source of ['In older downloads it is the detailed evidence digest', '`human-readable/`', '`machine-readable/`', '`records/`', 'If referenced files were not attached']) {
+    assert.ok(text.includes(source), source);
+  }
+  assert.ok(!text.includes('Use only `README.md`'), 'the directory index is not the evidence');
+  for (const scope of ['Do not substitute 9.9.9 evidence for the requested version', 'Recipe release membership and effective proof credit must be explicit',
+    'Neither an SDK proof nor a source-contract check establishes a complete UI journey', 'explicitly release-verified recipe proof bound to this version and build',
+    'failed, mixed, withdrawn or superseded proof', 'State human release approval separately',
+    'a "Not stamped" row with applicable failed source-contract checks is not a clean documented-only pass',
+    'For partial coverage, say "Partly established:"', 'Partial coverage is counted separately']) {
+    assert.ok(text.includes(scope), scope);
+  }
+  assert.ok(!text.includes('Kamiwaza can deliver'), 'building blocks never become delivery claims');
 });

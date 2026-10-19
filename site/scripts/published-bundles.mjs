@@ -5,7 +5,7 @@ import {TESTED_BUNDLE_SCHEMA, validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
-import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
+import {agentsMd, evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -21,7 +21,9 @@ export function emitEvidence(publication, releaseStamps, out, descriptions) {
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
     const records = entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
     if (entry.kind === 'release-stamps') records.push({name: `records/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
-    const contents = [{name: 'README.md', data: markdown}, {name: name + '.pdf', data: pdf}, ...records];
+    // AGENTS.md carries the answer format; CLAUDE.md imports it, as Claude Code expects.
+    const contents = [{name: 'README.md', data: markdown}, {name: 'AGENTS.md', data: Buffer.from(agentsMd(entry.version), 'utf8')},
+      {name: 'CLAUDE.md', data: Buffer.from('@AGENTS.md\n', 'utf8')}, {name: name + '.pdf', data: pdf}, ...records];
     contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
     const zip = toZip(contents);
     const dir = join(out, 'evidence', entry.version);
@@ -42,7 +44,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions) {
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
     note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, machine-readable files (a zip with the detailed digest and the JSON records, and the same digest as Markdown and PDF; each starts with its own reading rules and needs no skill) and a short human-readable summary (Markdown and PDF). All are derived from the records above, not new evidence. Answer from the machine-readable files.\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, machine-readable files (a zip with AGENTS.md, which sets the answer format, the detailed digest and the JSON records, and the same digest as Markdown and PDF; each starts with its own reading rules and needs no skill) and a short human-readable summary (Markdown and PDF). All are derived from the records above, not new evidence. Answer from the machine-readable files.\n');
 }
 
 // Historical pre-release evidence is labelled schema 4, proof revisions schema 8,
