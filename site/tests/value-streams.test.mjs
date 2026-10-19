@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {inflateRawSync} from 'node:zlib';
 import {validateStreams} from '../scripts/value-streams.mjs';
 import {publicationDigest, validateGuidance} from '../scripts/sales-guidance.mjs';
+import {validatePublication} from '../scripts/publication.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {salesKitDocument} from '../src/sales-kit.mjs';
 import {evidenceVersions, toMarkdown} from '../src/evidence.mjs';
@@ -151,6 +152,34 @@ test('typed recipe rejects a synthetic older-only capability absent from its bou
 test('typed recipe accepts a synthetic capability present in its exact bound revision while publication remains disabled', () => {
   const {typed, revised} = syntheticRevisionLink('1.3.0-prerelease-r3', 'synthetic.bound-only');
   assert.equal(validateStreams(typed, revised), null);
+});
+
+test('typed recipe accepts one matching published prerelease', () => {
+  const typed = typedFixture();
+  assert.equal(validateStreams(typed, publication), null);
+});
+
+test('typed recipe rejects zero matching published prereleases', () => {
+  const typed = typedFixture();
+  typed.source.kitCommit = 'f'.repeat(40);
+  assert.throws(() => validateStreams(typed, publication), /source and publication revision differ/);
+});
+
+test('typed recipe rejects duplicate binding tuples in either release order', () => {
+  const bound = publication.releases.find(row => row.id === '1.3.0-prerelease-r3');
+  const duplicate = structuredClone(bound);
+  duplicate.id = '1.3.0-prerelease-r3-copy';
+  const capabilityId = typedFixture().streams.find(row => row.recipe).recipe.steps[0].capability_ids[0];
+  duplicate.capabilities.find(cap => cap.id === capabilityId).id = 'synthetic.other-capability';
+  for (const duplicateFirst of [true, false]) {
+    const ambiguous = structuredClone(publication);
+    const boundIndex = ambiguous.releases.findIndex(row => row.id === bound.id);
+    ambiguous.releases.splice(boundIndex + Number(!duplicateFirst), 0, duplicate);
+    assert.doesNotThrow(() => validatePublication(ambiguous));
+    const typed = typedFixture();
+    typed.publicationSha256 = publicationDigest(ambiguous);
+    assert.throws(() => validateStreams(typed, ambiguous), /Ambiguous typed recipe publication revision/);
+  }
 });
 
 test('a combined-stack publication mismatch omits stale optional sidecars but keeps core evidence downloads', () => {

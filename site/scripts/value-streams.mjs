@@ -39,9 +39,11 @@ export function validateStreams(data, publication) {
   if (typed) {
     requireValue(typeof data.release === 'string' && /^\d+\.\d+\.\d+$/.test(data.release) &&
       Number.isSafeInteger(data.publicationRevision) && data.publicationRevision > 0, 'Invalid typed projection release binding');
-    boundRelease = publication.releases.find(r => r.version === data.release && r.publicationRevision === data.publicationRevision &&
+    const boundReleases = publication.releases.filter(r => r.version === data.release && r.publicationRevision === data.publicationRevision &&
       r.publicationState === 'published' && r.baselineKind === 'prerelease-evidence' && r.sourceRevision === data.source.kitCommit);
-    requireValue(boundRelease, 'Typed recipe source and publication revision differ');
+    requireValue(boundReleases.length > 0, 'Typed recipe source and publication revision differ');
+    requireValue(boundReleases.length === 1, 'Ambiguous typed recipe publication revision');
+    boundRelease = boundReleases[0];
     requireValue(Array.isArray(data.claimLinks) && data.claimLinks.length <= 5000, 'Invalid typed claim links');
   }
   requireValue(Number.isInteger(data.inventoryCount) && data.inventoryCount > 0 && Number.isInteger(data.historicalMappingCount) && data.historicalMappingCount >= 0, 'Invalid stream migration totals');
