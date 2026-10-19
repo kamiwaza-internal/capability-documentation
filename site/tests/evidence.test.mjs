@@ -285,7 +285,9 @@ test('EVD-17 portable instructions cover both ZIP layouts and preserve version a
   assert.ok(!text.includes('Use only `README.md`'), 'the directory index is not the evidence');
   for (const scope of ['Do not substitute 9.9.9 evidence for the requested version', 'Recipe release membership and effective proof credit must be explicit',
     'Neither an SDK proof nor a source-contract check establishes a complete UI journey', 'explicitly release-verified recipe proof bound to this version and build',
-    'failed, mixed, withdrawn or superseded proof', 'State human release approval separately']) {
+    'failed, mixed, withdrawn or superseded proof', 'State human release approval separately',
+    'a "Not stamped" row with applicable failed source-contract checks is not a clean documented-only pass',
+    'For partial coverage, say "Partly established:"', 'Partial coverage is counted separately']) {
     assert.ok(text.includes(scope), scope);
   }
   assert.ok(!text.includes('Kamiwaza can deliver'), 'building blocks never become delivery claims');
