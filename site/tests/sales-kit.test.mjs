@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {inflateRawSync} from 'node:zlib';
 import {publicationDigest, validateGuidance} from '../scripts/sales-guidance.mjs';
 import {salesKitDocument} from '../src/sales-kit.mjs';
-import {agentsMd, evidenceDocument, evidenceVersions, toMarkdown} from '../src/evidence.mjs';
+import {agentsMd, evidenceDocument, evidenceVersions, recordVersion, toMarkdown} from '../src/evidence.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {mkdtempSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -50,7 +50,10 @@ test('each ZIP contains every readable download and source record in labeled fol
       expected.push(name);
       assert.deepEqual(archive[name], readFileSync(join(out, file.path)), `${entry.version} ${key}`);
     }
-    for (const id of entry.releaseIds) {
+    const sourceIds = entry.kind === 'release-stamps'
+      ? publication.releases.filter(r => r.version === recordVersion(entry, publication) && r.publicationState !== 'draft').map(r => r.id)
+      : entry.releaseIds;
+    for (const id of sourceIds) {
       const name = `machine-readable/${id}.bundle.json`;
       expected.push(name);
       assert.deepEqual(archive[name], readFileSync(join(out, 'releases', id, 'bundle.json')));
@@ -70,6 +73,27 @@ test('each ZIP contains every readable download and source record in labeled fol
     }
     emitEvidence(publication, stamps, out, {}, guidance);
     assert.deepEqual(readFileSync(join(out, entry.files.zip.path)), bytes, 'deterministic complete ZIP');
+  }
+});
+
+test('production ZIPs retain every publication cited by their readable documents, including r5 stamp descriptions', () => {
+  const current = read('publication');
+  const out = mkdtempSync(join(tmpdir(), 'production-source-citations-'));
+  emitBundles(current, out);
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(current, stamps, out, {}, guidance);
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  for (const entry of index.versions) {
+    const archive = unzip(readFileSync(join(out, entry.files.zip.path)));
+    const text = Object.entries(archive).filter(([name]) => name.startsWith('human-readable/') && name.endsWith('.md')).map(([, text]) => text).join('\n');
+    for (const release of current.releases.filter(r => text.includes(r.id))) {
+      const name = `machine-readable/${release.id}.bundle.json`;
+      assert.equal(archive[name], readFileSync(join(out, 'releases', release.id, 'bundle.json'), 'utf8'), `${entry.version}: missing cited ${release.id}`);
+    }
+    if (entry.version === '1.3.2') {
+      assert.match(text, /Description source: curated declaration 1\.3\.0-declared-r5/);
+      assert.ok(archive['machine-readable/1.3.0-declared-r5.bundle.json']);
+    }
   }
 });
 

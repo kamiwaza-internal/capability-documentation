@@ -5,7 +5,7 @@ import {TESTED_BUNDLE_SCHEMA, validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
-import {agentsMd, evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
+import {agentsMd, evidenceDocument, evidenceVersions, recordVersion, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
 import {validateGuidance} from './sales-guidance.mjs';
 import {validateStreams} from './value-streams.mjs';
@@ -32,7 +32,11 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     const name = 'kamiwaza-capabilities-' + entry.version;
     const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
-    const records = entry.releaseIds.map(id => ({name: `machine-readable/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
+    // Stamp digests also cite declarations from their source baseline's version.
+    const sourceIds = entry.kind === 'release-stamps'
+      ? publication.releases.filter(r => r.version === recordVersion(entry, publication) && r.publicationState !== 'draft').map(r => r.id)
+      : entry.releaseIds;
+    const records = sourceIds.map(id => ({name: `machine-readable/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
     if (entry.kind === 'release-stamps') records.push({name: `machine-readable/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
     if (scopedStreams && scopedStreams.streams.some(row => row.id === 'Analyst:VS2-5' && row.recipe)) {
       records.push({name: 'examples/connector-builder-import-test-generate.py',
