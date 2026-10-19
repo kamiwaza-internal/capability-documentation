@@ -18,7 +18,8 @@ module.exports = async function config() {
     trailingSlash: true,
     onBrokenLinks: 'throw',
     onDuplicateRoutes: 'throw',
-    staticDirectories: [],
+    staticDirectories: ['static'],
+    favicon: 'favicon.svg',
     // The commit this site was built from, when CI provides it. Not a test or publication date.
     customFields: {buildRevision: process.env.GITHUB_SHA || null, builtAt: new Date().toISOString()},
     plugins: ['./scripts/published-bundles.mjs'],

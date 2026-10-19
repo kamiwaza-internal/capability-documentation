@@ -73,16 +73,14 @@ export default function Home() {
 
       <section aria-labelledby="instructions" className="panel panelTint">
         <h2 id="instructions">Instructions</h2>
-        <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. There are three ways to ask what Kamiwaza can do:</p>
-        <ol className="instructions">
-          <li><strong>Slack.</strong> Ask <a href="https://kamiwaza-workspace.slack.com/team/U092VSNNSKZ">@capability_bot</a>.</li>
-          <li><strong>Any AI assistant.</strong> Download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</li>
-          <li><strong>Claude Code plugin.</strong> Add the plugin:
-            <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
-            Then ask a question, or paste in an RFP:
-            <pre><code>/capability-grounding:capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
-          </li>
-        </ol>
+        <p><span className="betaBadge">Beta</span> This is a beta test of how to work with the kit. To ask what Kamiwaza can do, download a release&rsquo;s zip from <a href="#releases">Releases</a>, attach it to a new chat with any AI assistant and ask. Its <code>README.md</code> starts with its own reading rules, so no skill or plugin is needed. If your assistant can&rsquo;t open a zip, unzip it and attach <code>README.md</code> on its own.</p>
+        <details className="faq">
+          <summary><span className="betaBadge">Dev only</span> Claude Code plugin</summary>
+          <p>Add the plugin:</p>
+          <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
+          <p>Then ask a question, or paste in an RFP:</p>
+          <pre><code>/capability-grounding:capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
+        </details>
       </section>
 
       <section aria-labelledby="faqs" className="panel">
@@ -98,6 +96,10 @@ export default function Home() {
         <details className="faq">
           <summary>Does a missing capability mean Kamiwaza can&rsquo;t do it?</summary>
           <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only an explicit exclusion means &ldquo;not supported&rdquo;.</p>
+        </details>
+        <details className="faq">
+          <summary>What are recipes and value streams?</summary>
+          <p>A <strong>value stream</strong> is an end-to-end job a customer persona does with Kamiwaza, such as an analyst taking in a mission and managing its projects, written as ordered steps from start to outcome. A <strong>recipe</strong> is the reviewed, step-by-step definition of one value stream that can be run against a named build. When a recipe runs completely on that build, it becomes a <strong>scoped proof</strong>: evidence for the capabilities the recipe was reviewed to exercise, on that build only. A recipe on its own is a plan, not a result; it verifies nothing until a complete run on the named build is recorded.</p>
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>
