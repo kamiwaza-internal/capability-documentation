@@ -33,7 +33,7 @@ export function salesKitDocument(entry, publication, releaseStamps, guidance, st
   blocks.push(h(2, 'How to read this kit'),
     li('Use only the evidence status shown for this version. A pre-release assessment, component observation or source declaration does not establish release verification.'),
     li('Keep conditions, limits and unresolved failures with any capability answer. An untested recipe is a gap, not a demonstrated workflow.'),
-    p('The complete published capability and evidence reference follows. Draft usage suggestions and illustrative cases are excluded from this release-facing document.'));
+    p('The complete capability and evidence reference follows. Draft usage suggestions and illustrative cases are excluded from this release-facing document.'));
   blocks.push(h(2, 'Complete capability and evidence reference'),
     ...evidenceDocument(entry, publication, releaseStamps).slice(1));
   return blocks;
