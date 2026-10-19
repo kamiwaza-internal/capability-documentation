@@ -12,6 +12,8 @@ for (const path of [
   '/home/ec2-user/tmp/arbitrary-snapshot/site/scripts/published-bundles.mjs',
   '/Users/reviewer/private-snapshot/site/scripts/published-bundles.mjs',
   '/tmp/arbitrary-snapshot/site/scripts/published-bundles.mjs',
+  '/private/tmp/review/site/scripts/published-bundles.mjs',
+  '/private/auth/users/review/site/scripts/published-bundles.mjs',
   '/var/private/site/plugin.mjs', '/etc/private/plugin.mjs',
   String.raw`\/home\/ec2-user\/private\/plugin.mjs`,
   String.raw`\u002fhome\u002fec2-user\u002fprivate\u002fplugin.mjs`,

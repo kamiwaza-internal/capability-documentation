@@ -2,7 +2,9 @@
 export function assertPublicOutputSafe(bytes, privateValues = []) {
   const raw = typeof bytes === 'string' ? bytes : bytes.toString('utf8');
   const normalized = raw.replaceAll('\\/', '/').replace(/\\u002f/gi, '/').replace(/&#(?:47|x2f);/gi, '/');
-  if (/(?<!\w)\/(?:home|Users|tmp)\//i.test(normalized) || /\/(?:var|etc)\/private\//i.test(normalized) || /[a-z]:\\+(?:Users|Temp)\\+/i.test(raw)) {
+  // Only standalone, published API routes are exempt; nested checkout paths still fail.
+  const paths = normalized.replace(/(^|[\s"'`>])\/auth\/users\//g, '$1/auth/user-route/');
+  if (/\/(?:home|Users|tmp)\//i.test(paths) || /\/(?:var|etc)\/private\//i.test(normalized) || /[a-z]:\\+(?:Users|Temp)\\+/i.test(raw)) {
     throw new Error('Private absolute filesystem path in public artifact');
   }
   for (const value of privateValues) {
