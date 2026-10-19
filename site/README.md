@@ -422,7 +422,8 @@ scope once under its status, with conditions, limits and evidence. `scripts/evid
 renders it to PDF with no new dependencies. `scripts/published-bundles.mjs` packs a complete ZIP:
 `human-readable/` holds all six standalone document downloads (complete Sales Dev Kit PDF/MD,
 summary PDF/MD, detailed evidence PDF/MD), while `machine-readable/` holds the source publication
-JSON and applicable release-stamp JSON. Root `README.md` identifies the audiences and entry points;
+JSON and applicable release-stamp JSON. Root `README.md` identifies the audiences and entry points. `AGENTS.md` gives assistant
+answering instructions and `CLAUDE.md` imports it;
 `SHA256SUMS` checks every file except itself. Archived documents reuse the exact standalone bytes,
 and output is deterministic. Files land at
 `/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their

@@ -79,7 +79,7 @@ export default function Home() {
 
       <section aria-labelledby="instructions" className="panel panelTint">
         <h2 id="instructions">Instructions</h2>
-        <p>Choose the release version, then read its PDF or Markdown kit. The ZIP includes those files and the published source records. Keep each status, condition and limit with any answer you share.</p>
+        <p>Choose the release version, then read its PDF or Markdown kit. The ZIP includes those files, the published source records and AGENTS.md reading instructions for your assistant. If it cannot open a ZIP, attach AGENTS.md, README.md and the evidence documents and source records that README.md lists. Keep each status, condition and limit with any answer you share.</p>
       </section>
 
       <section aria-labelledby="faqs" className="panel">
@@ -98,7 +98,7 @@ export default function Home() {
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>
-          <p>Attach that release&rsquo;s Sales Dev Kit to a new chat and ask. It includes published evidence, conditions, limits and known gaps. The statuses are scoped to the named version.</p>
+          <p>Attach that release&rsquo;s Sales Dev Kit to a new chat and ask. It includes published evidence, conditions, limits and known gaps. The ZIP also includes AGENTS.md for consistent answers and README.md listing its evidence documents and source records. The statuses are scoped to the named version.</p>
         </details>
       </section>
     </main>

@@ -37,6 +37,8 @@ function assertHomeAndDownloads(site, version, expectedInDigest) {
     if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) assert.ok(home.includes(`href="${file.path}"`), `Home page does not link ${key}`);
     assert.equal(readFileSync(join(site, 'build', file.path)).length, file.bytes);
   }
+  const zip = readFileSync(join(site, 'build', index.versions[0].files.zip.path));
+  for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(zip.includes(name), `Missing in zip: ${name}`);
   for (const label of ['Everything', 'For people', 'human-readable folder', 'machine-readable folder']) assert.ok(home.includes(label), `Missing on home page: ${label}`);
   const summary = readFileSync(join(site, 'build', index.versions[0].files.summaryMd.path), 'utf8');
   assert.ok(summary.includes(`# Kamiwaza ${version}: features at a glance`));
