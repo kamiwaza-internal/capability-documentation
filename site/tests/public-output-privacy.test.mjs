@@ -12,6 +12,8 @@ for (const path of [
   '/home/ec2-user/tmp/arbitrary-snapshot/site/scripts/published-bundles.mjs',
   '/Users/reviewer/private-snapshot/site/scripts/published-bundles.mjs',
   '/tmp/arbitrary-snapshot/site/scripts/published-bundles.mjs',
+  '/private/tmp/review/site/scripts/published-bundles.mjs',
+  '/private/auth/users/review/site/scripts/published-bundles.mjs',
   '/var/private/site/plugin.mjs', '/etc/private/plugin.mjs',
   String.raw`\/home\/ec2-user\/private\/plugin.mjs`,
   String.raw`\u002fhome\u002fec2-user\u002fprivate\u002fplugin.mjs`,
@@ -22,4 +24,8 @@ for (const path of [
 });
 test('rejects an arbitrary snapshot marker independently of known home prefixes', () => {
   assert.throws(()=>assertPublicOutputSafe('siteConfig.privateRoot="PRIVATE_SITE_ROOT_NOT_FOR_EXPORT"',['PRIVATE_SITE_ROOT_NOT_FOR_EXPORT']),/Private value/);
+});
+
+test('published API user routes are not private filesystem paths', () => {
+  assert.doesNotThrow(() => assertPublicOutputSafe('GET /auth/users/{id}; POST /auth/users/local; /auth/users/me'));
 });

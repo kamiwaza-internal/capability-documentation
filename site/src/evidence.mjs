@@ -1,4 +1,4 @@
-import {currentCapabilityView, joinReleaseStamps, stampsApply} from './catalog.mjs';
+import {currentCapabilityView, descriptionOnly, joinReleaseStamps, stampsApply} from './catalog.mjs';
 
 // Per-version evidence downloads: one self-contained document per version, derived at build
 // time from the published records and never stored. The page and the build share this module
@@ -6,6 +6,11 @@ import {currentCapabilityView, joinReleaseStamps, stampsApply} from './catalog.m
 
 const byVersionDesc = (a, b) => b.localeCompare(a, undefined, {numeric: true});
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
+// The newest revision that carries evidence; a later description-only declaration never drives an entry.
+const driverOf = (releases, publication) => {
+  const describing = descriptionOnly(publication), newest = [...releases].sort(byRevisionDesc);
+  return newest.find(release => !describing.has(release.id)) ?? newest[0];
+};
 
 export const evidencePath = version => '/evidence/' + version + '/kamiwaza-capabilities-' + version;
 export const summaryPath = version => '/evidence/' + version + '/kamiwaza-' + version + '-summary';
@@ -41,7 +46,7 @@ export function evidenceVersions(publication, releaseStamps) {
   for (const version of versions) {
     if (entries.some(entry => entry.version === version)) continue;
     const revisions = publication.releases.filter(release => release.version === version).sort(byRevisionDesc);
-    const latest = revisions[0];
+    const latest = driverOf(revisions, publication);
     let headline, basis;
     if (latest.baselineKind === 'prerelease-evidence') {
       const rows = currentCapabilityView(publication, version).filter(row => row.lineage.releaseId === latest.id);
@@ -133,7 +138,7 @@ You are answering questions about what the Kamiwaza platform can do, version ${v
    - Never upgrade a status, and never turn mixed results into an overall yes.
 4. **Key**, on one line under the table: "✅ release verified · ⚠️ documented, not release verified · 🚫 no matching record (not the same as unsupported) · ❌ a record says it is not supported".
 5. **Conditions and limits** that matter to the question go in the Note or in one short line under the table.
-6. **Sources**, the last line: each cited or built-on capability id in backticks; this zip's version, publication and source or kit revision (under "About this evidence" in the detailed evidence reference); the relative source document or JSON path; and https://capabilities.kamiwaza.dev/catalog/ for conditions, limits and evidence.
+6. **Sources**, the last line: each cited or built-on capability id in backticks; this zip's version, publication and source or kit revision (under "About this evidence" in the detailed evidence reference); the relative source document or JSON path; and https://capabilities.kamiwaza.dev/catalog/ for conditions, limits and evidence. When a description you used has a "Description source" line, also cite that declaration and its kit revision.
 
 ## Application specs and recipe questions
 
@@ -203,7 +208,12 @@ function describe(row, {publication, version}) {
   if (row.summary && curatedIds(publication, version).has(row.id)) return {summary: row.summary, conditions: row.conditions, limits: row.limits, from: null};
   const older = publication.releases.filter(ofVersion(version)).sort(byRevisionDesc)
     .map(release => ({release, cap: release.capabilities.find(cap => cap.id === row.id && isCurated(cap, release))})).find(found => found.cap);
-  return older ? {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits, from: older.release.id} : null;
+  if (!older) return null;
+  // A declaration published after the evidence to describe it is current, not historical, and is
+  // named so its text can be cited to its own publication and kit revision.
+  const current = descriptionOnly(publication).has(older.release.id);
+  return {summary: older.cap.summary, conditions: older.cap.conditions, limits: older.cap.limits,
+    from: current ? null : older.release.id, declaredIn: current ? older.release : null};
 }
 
 function capabilityBlocks(row, scope, status, extra = []) {
@@ -213,6 +223,7 @@ function capabilityBlocks(row, scope, status, extra = []) {
   if (!description) out.push(li('Description: none published. This does not mean unsupported.'));
   else {
     if (description.from) out.push(li(`Description is historical, from publication ${description.from}; it is not a current curated declaration.`));
+    if (description.declaredIn) out.push(li(`Description source: curated declaration ${description.declaredIn.id}, kit revision ${description.declaredIn.sourceRevision}, published after the pre-release evidence.`));
     out.push(li('What it does:'), ...lines(description.summary).map(text => li(text, 1)));
     if (description.conditions?.length) out.push(li('Conditions:'), ...description.conditions.flatMap(lines).map(text => li(text, 1)));
     if (description.limits?.length) out.push(li('Limits:'), ...description.limits.flatMap(lines).map(text => li(text, 1)));
@@ -307,7 +318,7 @@ function snapshotParts({latest, scope}) {
 export function evidenceDocument(entry, publication, releaseStamps) {
   const view = currentCapabilityView(publication, recordVersion(entry, publication));
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
-  const latest = [...releases].sort(byRevisionDesc)[0];
+  const latest = driverOf(releases, publication);
   const scope = {publication, version: recordVersion(entry, publication)};
   const blocks = [
     h(1, `Kamiwaza platform capabilities, version ${entry.version}`),
@@ -382,7 +393,7 @@ const graded = (row, [rank, label, level]) => ({row, rank, label, level, tone: r
 function summaryRows(entry, publication, releaseStamps) {
   const view = currentCapabilityView(publication, recordVersion(entry, publication));
   if (entry.kind === 'release-stamps') return joinReleaseStamps(view, releaseStamps).rows.map(row => graded(row, stampGrade(row, releaseStamps.targetRelease)));
-  const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
+  const latest = driverOf(publication.releases.filter(release => entry.releaseIds.includes(release.id)), publication);
   if (entry.kind === 'prerelease-evidence') return view.filter(row => row.lineage.releaseId === latest.id).map(row => graded(row, prereleaseGrade(row)));
   if (entry.kind === 'source-declaration') return latest.capabilities.map(cap => graded(cap, [snapshotGrade(cap)[0], 'Documented, not yet tested', 'untested']));
   return latest.capabilities.map(cap => graded(cap, snapshotGrade(cap)));
@@ -478,7 +489,7 @@ const about = (item, descriptions) => (item.curated ? descriptions[item.row.id] 
 
 // A tested build states its publication state, channel, missing release binding and approval.
 function testedNotes(entry, publication) {
-  const latest = publication.releases.filter(release => entry.releaseIds.includes(release.id)).sort(byRevisionDesc)[0];
+  const latest = driverOf(publication.releases.filter(release => entry.releaseIds.includes(release.id)), publication);
   if (!latest.publicationState || latest.baselineKind) return [];
   return [li(`This is a ${latest.publicationState} publication on the ${latest.channel} channel. Binding to the shipped ${entry.version} release is not established, and human release approval is ${latest.approval.status}.`),
     li(`Its kit revision (${latest.sourceRevision}) is the kit commit the records were exported from, not a product source revision.`)];

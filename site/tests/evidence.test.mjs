@@ -16,7 +16,7 @@ test('EVD-1 one bundle per version, newest first, with the published counts', ()
   assert.deepEqual(versions.map(entry => [entry.version, entry.kind]), [['1.3.2', 'release-stamps'], ['1.3.0', 'prerelease-evidence'], ['1.2.1', 'tested']]);
   assert.equal(versions[0].headline, '29 release stamped · 16 source-contract verified · 43 not stamped, of 88 capabilities');
   assert.equal(versions[1].headline, '50 pre-release verified · 5 failed or mixed · 33 not yet verified, of 88 capabilities');
-  assert.deepEqual(versions[1].releaseIds, ['1.3.0-prerelease-r3', '1.3.0-declared-r2', '1.3.0-declared-r1']);
+  assert.deepEqual(versions[1].releaseIds, ['1.3.0-declared-r5', '1.3.0-prerelease-r3', '1.3.0-declared-r2', '1.3.0-declared-r1']);
   assert.equal(versions[2].headline, '0 verified · 6 partial · 2 failed · 0 untested, of 8 capabilities');
   assert.deepEqual(versions[2].releaseIds, ['1.2.1-tested-r4']);
   assert.equal(versions[0].path, '/evidence/1.3.2/kamiwaza-capabilities-1.3.2');
@@ -142,7 +142,7 @@ test('EVD-10 the human summary puts the plain description beside the feature and
   assert.ok(!described.includes('Includes: '), 'every curated capability has a description');
   // Uncurated rows print no text, even when the map offers some for them.
   const uncurated = joinReleaseStamps(currentCapabilityView(publication), releaseStamps).rows.filter(row => !curatedIds(publication, '1.3.0').has(row.id));
-  assert.equal(uncurated.length, 40);
+  assert.equal(uncurated.length, 11);
   assert.equal(described.split('\n').filter(line => line.endsWith(' | No description published yet |')).length, uncurated.length);
   const offered = {...descriptions, [uncurated[0].id]: 'Uncurated text must not print.'};
   assert.ok(!toMarkdown(summaryDocument(entry, publication, releaseStamps, offered)).includes('Uncurated text must not print.'));
@@ -206,7 +206,7 @@ test('EVD-13 a tested build says in plain words when some tests failed, and neve
   const mixed = publication.releases.find(release => release.id === '1.2.1-tested-r4').capabilities
     .filter(cap => cap.status === 'partial' && cap.evidence.some(record => record.outcome === 'failed')).map(cap => cap.id);
   assert.deepEqual(mixed, ['catalog.dataset-registry', 'models.local-deployment']);
-  assert.ok(markdown.includes('| **Dataset registry** | Partly tested; some tests failed | No description published yet |\n'));
+  assert.ok(markdown.includes('| **Register and search datasets and containers in the data catalog** | Partly tested; some tests failed | No description published yet |\n'));
   assert.ok(markdown.includes('| **Local deployment** | Partly tested; some tests failed | No description published yet |\n'));
   // The name is borrowed from 1.3.0-declared-r2; its operation list is not.
   assert.ok(markdown.includes('| **Serve every model behind an OpenAI-compatible inference API** | Failed | No description published yet |\n'));
@@ -275,6 +275,14 @@ test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a stat
   const readme = toMarkdown(evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps));
   assert.ok(readme.includes('If AGENTS.md came with this file') && readme.includes('The reading rules above still hold.'));
   assert.ok(!/[\u{1F300}-\u{1FAFF}\u2705\u274C\u26A0]/u.test(readme), 'README is also the PDF: no emoji');
+});
+
+test('EVD-17 a later description-only declaration is never labelled historical in the digest', () => {
+  for (const entry of evidenceVersions(publication, releaseStamps)) {
+    const md = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
+    assert.ok(!md.includes('historical, from publication 1.3.0-declared-r5'), entry.version);
+    if (entry.version !== '1.2.1') assert.ok(md.includes('Description source: curated declaration 1.3.0-declared-r5, kit revision a53cea518490d887f1d27993a910075dc13b9e21'), entry.version);
+  }
 });
 
 test('EVD-17 portable instructions cover both ZIP layouts and preserve version and proof scope', () => {
