@@ -23,3 +23,7 @@ for (const path of [
 test('rejects an arbitrary snapshot marker independently of known home prefixes', () => {
   assert.throws(()=>assertPublicOutputSafe('siteConfig.privateRoot="PRIVATE_SITE_ROOT_NOT_FOR_EXPORT"',['PRIVATE_SITE_ROOT_NOT_FOR_EXPORT']),/Private value/);
 });
+
+test('published API user routes are not private filesystem paths', () => {
+  assert.doesNotThrow(() => assertPublicOutputSafe('GET /auth/users/{id}; POST /auth/users/local; /auth/users/me'));
+});

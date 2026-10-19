@@ -8,7 +8,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 export function preserveHistory(previous, current) {
   for (const prior of previous.releases) {
     const next = current.releases.find(r => r.id === prior.id);
-    if (!same(prior, next) || previous.schema !== current.schema && !([2, 5].includes(previous.schema) && current.schema === (previous.schema === 2 ? 5 : 6))) {
+    if (!same(prior, next) || previous.schema !== current.schema && !([2, 5, 6].includes(previous.schema) && current.schema === (previous.schema === 2 ? 5 : previous.schema === 5 ? 6 : 8))) {
       throw new Error('Published revision cannot be changed or removed: ' + prior.id);
     }
   }
