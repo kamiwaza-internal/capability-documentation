@@ -115,7 +115,7 @@ Open an issue. This repository grows every release, and a claim that reads wrong
 
 Each published evidence version has a complete Sales Dev Kit in PDF and Markdown.
 It contains the capability evidence, conditions, limits and explicit gaps. The
-Everything ZIP includes six readable documents under `human-readable/` and their
+The ZIP download includes six readable documents under `human-readable/` and their
 published source JSON under `machine-readable/`, plus reading instructions and
 checksums. No plugin or Slack bot is required. Draft usage suggestions,
 illustrative cases and Word output are excluded from this release-facing kit.

@@ -416,8 +416,11 @@ older failure dated to its run.
 ## Home page and per-version evidence downloads
 
 The home page (`src/pages/index.jsx`) is the plain entry point: what the kit is, one row per
-version with Zip, MD and PDF downloads, and what each status means. The detailed record view
-is `/catalog/` (`src/pages/catalog.jsx`).
+version with exactly three downloads (ZIP for AI; complete Sales Dev Kit PDF and Markdown
+for people), and what each status means. Scoped build replay counts and approval limits stay
+inside the corresponding version card. The detailed record view is `/catalog/`
+(`src/pages/catalog.jsx`). Alternate summaries and evidence documents remain at their
+existing URLs and inside the ZIP.
 
 `src/evidence.mjs` derives one self-contained digest per version at build time:
 the newest publication revision of each version, plus a version for each applicable release-stamp

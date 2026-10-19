@@ -15,6 +15,13 @@ const stamps = JSON.parse(readFileSync(join(root, 'site/data/release-stamps-1.3.
 const descriptions = JSON.parse(readFileSync(join(root, 'site/data/descriptions.json'))).descriptions;
 const guidance = JSON.parse(readFileSync(join(root, 'site/data/sales-guidance.json')));
 const streams = JSON.parse(readFileSync(join(root, 'site/data/value-streams.json')));
+const fixtureHome = index => `<section aria-labelledby="releases"><ul class="releaseList">${index.versions.map(entry => {
+  const replay = (publication.releaseStamps ?? []).filter(row => row.version === entry.version)
+    .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
+  return `<li class="releaseRow"><span class="releaseVersion">${entry.version}</span>${replay
+    ? `<span>${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped; Human release sign-off: ${replay.approval.status}</span>`
+    : ''}<nav class="fileGroup" aria-label="For AI, ${entry.version}"><a href="${entry.files.zip.path}" download="">ZIP</a></nav><nav class="fileGroup" aria-label="For people, ${entry.version}"><a href="${entry.files.salesPdf.path}" download="">PDF</a><a href="${entry.files.salesMd.path}" download="">MD</a></nav></li>`;
+}).join('')}</ul></section>`;
 
 test('site workflow runs the consistency check after the production build', () => {
   const workflow = readFileSync(join(root, '.github/workflows/site.yml'), 'utf8');
@@ -41,8 +48,19 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
       readFileSync(join(prior, file.path)), `historical download ${file.path} must retain its bytes`);
   }
   assert.deepEqual(readFileSync(join(out, 'releases/index.json')), readFileSync(join(prior, 'releases/index.json')));
-  writeFileSync(join(out, 'index.html'), Object.values(entry.files).map(file => `<a href="${file.path}">Download</a>`).join(''));
+  const homePath = join(out, 'index.html'), validHome = fixtureHome(index);
+  writeFileSync(homePath, validHome);
   assert.equal(checkReleaseCorpusBuild({out}), 1);
+  for (const [changed, reason] of [
+    [validHome.replace(entry.files.salesPdf.path, entry.files.summaryPdf.path), /three downloads/],
+    [validHome.replace('For AI, 1.3.4', 'For assistants, 1.3.4'), /download group labels/],
+    [validHome.replace('6 failed selections', '0 failed selections'), /failures, gaps and approval/],
+    [validHome + '<h2>Release build verification</h2>', /second release section/],
+  ]) {
+    writeFileSync(homePath, changed);
+    assert.throws(() => checkReleaseCorpusBuild({out}), reason);
+  }
+  writeFileSync(homePath, validHome);
   const members = zipMembers(readFileSync(join(out, entry.files.zip.path)));
   assert.deepEqual(members.get('machine-readable/release-corpus-catalog.json'), readFileSync(join(root, 'corpus/1.3.4/catalog.json')));
   assert.deepEqual(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)), readFileSync(join(out, entry.files.md.path)));
