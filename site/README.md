@@ -205,7 +205,11 @@ whole-claim verified, project pre-release verified and scoped release-stamped
 records while retaining their distinct labels and original basis/date. The
 `failed` filter includes failed-or-mixed records. A missing description is a
 visible documentation gap; older declaration text is labelled historical source
-context, never a current curated claim or broader verified scope.
+context, never a current curated claim or broader verified scope. A source
+declaration published after its version's pre-release evidence
+(`descriptionOnly()`) only supplies descriptions: its text is current, cited as
+"Description source: curated declaration <id>, kit revision <sha>", and it never
+selects status, lineage or omissions.
 
 Automatic supersession requires a later failed test bound to the same version,
 qualified manifest/environment, exact source and full bounded contract (scope,
