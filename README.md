@@ -127,8 +127,10 @@ A future recipe publication needs a freshly generated, reviewed binding. Typed
 recipe links must match one exact source and publication revision, and their
 publication gate remains disabled until a reviewed export is pinned.
 
-`corpus/1.3.4/` is a separate review candidate containing the new release inventory
-and recipe-readiness summary. The website and ZIPs do not consume it. Its four
-scoped SDK proofs and six prerelease capability credits remain separate from the
-30 scoped release stamps. This download change does not publish that corpus,
-award new proof, or grant human release approval.
+`corpus/1.3.4/` contains the separate release inventory and recipe-readiness review
+candidate. The site build prepares it as a clearly labelled PDF, Markdown and ZIP
+with its exact catalog and source manifest. Its four scoped SDK proofs and six
+prerelease capability credits remain separate from the 30 scoped release stamps.
+The source snapshot is unbound and has no human release approval; downloading it
+does not award new proof or approve the release. A build consistency gate checks
+its files, source pins, counts, ZIP members, checksums and homepage links.

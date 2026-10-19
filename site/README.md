@@ -587,8 +587,16 @@ and complete gaps; guidance is not rendered into this release-facing kit and doe
 not compute status. Valid stale guidance is omitted with a warning. Malformed or
 unsafe data still fails validation.
 
-The sanitized 1.3.4 corpus is a review candidate outside `data/publication.json`.
-This consumer change does not publish its native prerelease verdicts or recipe
-membership. New scoped proof publication requires a separate reviewed schema-8
-projection. Prerelease credit, technical release replay and human release approval
-remain independent.
+The sanitized 1.3.4 corpus remains a review candidate outside `data/publication.json`.
+`data/release-corpora.json` pins its catalog and build sources. The site build emits
+its held native prerelease summary and recipe-readiness gaps as review-candidate
+PDF, Markdown and complete ZIP downloads, including the exact catalog and source
+manifest. This does not create an authoritative schema-8 prerelease publication,
+establish recipe release membership or grant human approval. Prerelease credit,
+technical release replay and human release approval remain independent.
+
+After the production build, `npm run check:release-corpus` verifies every catalog
+has an exact manifest entry and checks generated content, source pins, counts,
+download metadata, ZIP members, checksums and homepage links. The workflow runs
+this gate before uploading any Pages artifact. A failed check blocks publication;
+it does not change repository branch-protection settings.
