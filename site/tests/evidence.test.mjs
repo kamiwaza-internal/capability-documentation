@@ -277,6 +277,14 @@ test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a stat
   assert.ok(!/[\u{1F300}-\u{1FAFF}\u2705\u274C\u26A0]/u.test(readme), 'README is also the PDF: no emoji');
 });
 
+test('EVD-17 a later description-only declaration is never labelled historical in the digest', () => {
+  for (const entry of evidenceVersions(publication, releaseStamps)) {
+    const md = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
+    assert.ok(!md.includes('historical, from publication 1.3.0-declared-r5'), entry.version);
+    if (entry.version !== '1.2.1') assert.ok(md.includes('Description source: curated declaration 1.3.0-declared-r5, kit revision a53cea518490d887f1d27993a910075dc13b9e21'), entry.version);
+  }
+});
+
 test('EVD-17 portable instructions cover both ZIP layouts and preserve version and proof scope', () => {
   const text = agentsMd('9.9.9');
   for (const source of ['In older downloads it is the detailed evidence digest', '`human-readable/`', '`machine-readable/`', '`records/`', 'If referenced files were not attached']) {
@@ -291,12 +299,4 @@ test('EVD-17 portable instructions cover both ZIP layouts and preserve version a
     assert.ok(text.includes(scope), scope);
   }
   assert.ok(!text.includes('Kamiwaza can deliver'), 'building blocks never become delivery claims');
-});
-
-test('EVD-17 a later description-only declaration is never labelled historical in the digest', () => {
-  for (const entry of evidenceVersions(publication, releaseStamps)) {
-    const md = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
-    assert.ok(!md.includes('historical, from publication 1.3.0-declared-r5'), entry.version);
-    if (entry.version !== '1.2.1') assert.ok(md.includes('Description source: curated declaration 1.3.0-declared-r5, kit revision a53cea518490d887f1d27993a910075dc13b9e21'), entry.version);
-  }
 });
