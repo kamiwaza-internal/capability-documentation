@@ -41,6 +41,37 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
   assert.equal(index.schema, 'capability-evidence-downloads.v1');
   const expectedEntries = evidenceVersions(publication, stamps, corpora).filter(row => row.kind === 'release-corpus');
   assert.deepEqual(index.versions.filter(row => row.kind === 'release-corpus').map(row => row.version), expectedEntries.map(row => row.version));
+  for (const entry of expectedEntries) {
+    const actual = index.versions.find(row => row.version === entry.version);
+    assert.ok(actual && actual.kind === 'release-corpus', `missing corpus download ${entry.version}`);
+    assert.deepEqual(actual.source, {catalogSha256: entry.corpus.sha256, kitMergeCommit: entry.corpus.kitMergeCommit,
+      productTag: entry.corpus.productTag, productCoreCommit: entry.corpus.productCoreCommit,
+      publicationBinding: null, humanReleaseApproval: 'not-established'}, 'corpus source binding');
+    for (const [key, file] of Object.entries(actual.files)) {
+      const bytes = readFileSync(join(out, file.path));
+      assert.equal(file.sha256, sha256(bytes), `built file digest ${key}`);
+      assert.equal(file.bytes, bytes.length, `built file bytes ${key}`);
+    }
+    const unzipped = zipMembers(readFileSync(join(out, entry.path + '.zip')));
+    assert.deepEqual(unzipped.get('machine-readable/release-corpus-catalog.json'), entry.corpus.bytes, 'ZIP catalog must match reviewed corpus');
+    assert.deepEqual(unzipped.get('machine-readable/release-corpus-manifest.json'), entry.corpus.manifestBytes, 'ZIP manifest must match reviewed corpus');
+    assert.equal(JSON.parse(unzipped.get('machine-readable/release-corpus-manifest.json')).sha256,
+      sha256(unzipped.get('machine-readable/release-corpus-catalog.json')), 'manifest must bind the exact catalog');
+    const readableKeys = ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'];
+    for (const key of readableKeys) {
+      assert.ok(actual.files[key], `corpus kit must include ${key}`);
+      const file = actual.files[key], name = 'human-readable/' + file.path.split('/').at(-1);
+      assert.deepEqual(unzipped.get(name), readFileSync(join(out, file.path)), `ZIP must include standalone ${key}`);
+      assert.equal(file.sha256, sha256(unzipped.get(name)), `standalone digest ${key}`);
+    }
+    for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(unzipped.has(name), `missing ${name}`);
+    assert.equal(unzipped.get('CLAUDE.md').toString(), '@AGENTS.md\n');
+    assert.match(unzipped.get('AGENTS.md').toString(), /machine-readable\//);
+    assert.match(unzipped.get('README.md').toString(), /AGENTS\.md/);
+    const checksums = unzipped.get('SHA256SUMS').toString().trimEnd().split('\n').sort();
+    assert.deepEqual(checksums, [...unzipped].filter(([name]) => name !== 'SHA256SUMS')
+      .map(([name, bytes]) => `${sha256(bytes)}  ${name}`).sort(), 'checksums must cover every other member');
+  }
   // Rebuild the complete kit contract in isolation, so this gate follows the same reviewed
   // packaging as historical downloads and validates every emitted corpus file and ZIP member.
   const expectedOut = mkdtempSync(join(tmpdir(), 'release-corpus-consistency-'));
@@ -63,26 +94,6 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
           assert.ok(home.includes(`href="${file.path}"`), `home page missing ${file.path}`);
         }
       }
-      const unzipped = zipMembers(readFileSync(join(out, entry.path + '.zip')));
-      const expectedMembers = zipMembers(readFileSync(join(expectedOut, entry.path + '.zip')));
-      assert.deepEqual(unzipped, expectedMembers, 'complete ZIP members must match reviewed kit');
-      assert.deepEqual(unzipped.get('machine-readable/release-corpus-catalog.json'), entry.corpus.bytes);
-      assert.deepEqual(unzipped.get('machine-readable/release-corpus-manifest.json'), entry.corpus.manifestBytes);
-      const readableKeys = ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'];
-      for (const key of readableKeys) {
-        assert.ok(actual.files[key], `corpus kit must include ${key}`);
-        const file = actual.files[key], name = 'human-readable/' + file.path.split('/').at(-1);
-        assert.deepEqual(unzipped.get(name), readFileSync(join(out, file.path)), `ZIP must include standalone ${key}`);
-        assert.equal(file.sha256, sha256(unzipped.get(name)), `standalone digest ${key}`);
-      }
-      for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(unzipped.has(name), `missing ${name}`);
-      assert.equal(unzipped.get('CLAUDE.md').toString(), '@AGENTS.md\n');
-      assert.match(unzipped.get('AGENTS.md').toString(), /machine-readable\//);
-      assert.match(unzipped.get('README.md').toString(), /AGENTS\.md/);
-      const checksums = unzipped.get('SHA256SUMS').toString().trimEnd().split('\n').sort();
-      assert.deepEqual(checksums, [...unzipped].filter(([name]) => name !== 'SHA256SUMS')
-        .map(([name, bytes]) => `${sha256(bytes)}  ${name}`).sort(), 'checksums must cover every other member');
-
       console.log(`Checked ${entry.version}: ${entry.corpus.sha256}; complete kit, corpus, manifest, digests and home links`);
     }
   } finally {

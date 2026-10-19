@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {checkReleaseCorpusBuild, zipMembers} from '../scripts/check-release-corpus.mjs';
 import {loadReleaseCorpora, sha256} from '../scripts/release-corpora.mjs';
+import {toZip} from '../scripts/evidence-files.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
@@ -58,6 +59,33 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
     assert.throws(() => checkReleaseCorpusBuild({out}), `stale ${file} must fail`);
     writeFileSync(path, valid);
   }
+  const indexPath = join(out, 'evidence/index.json'), zipPath = join(out, entry.files.zip.path);
+  const validZip = readFileSync(zipPath);
+  for (const [mutate, reason] of [
+    [row => row.source.humanReleaseApproval = 'approved', /corpus source binding/],
+    [row => row.files.zip.sha256 = 'f'.repeat(64), /built file digest zip/],
+    [row => row.files.zip.bytes++, /built file bytes zip/],
+  ]) {
+    const changed = structuredClone(index);
+    mutate(changed.versions.find(row => row.version === entry.version));
+    writeFileSync(indexPath, JSON.stringify(changed));
+    assert.throws(() => checkReleaseCorpusBuild({out}), reason);
+    writeFileSync(indexPath, JSON.stringify(index));
+  }
+  for (const [mutate, reason] of [
+    [files => files.delete('AGENTS.md'), /missing AGENTS.md/],
+    [files => files.set('machine-readable/release-corpus-catalog.json', Buffer.from('{}')), /ZIP catalog must match reviewed corpus/],
+    [files => files.set('SHA256SUMS', Buffer.from('invalid checksums\n')), /checksums must cover every other member/],
+  ]) {
+    const files = new Map(members);
+    mutate(files);
+    const changedZip = toZip([...files].map(([name, data]) => ({name, data})));
+    const changed = structuredClone(index), row = changed.versions.find(row => row.version === entry.version);
+    row.files.zip.sha256 = sha256(changedZip); row.files.zip.bytes = changedZip.length;
+    writeFileSync(zipPath, changedZip); writeFileSync(indexPath, JSON.stringify(changed));
+    assert.throws(() => checkReleaseCorpusBuild({out}), reason);
+    writeFileSync(zipPath, validZip); writeFileSync(indexPath, JSON.stringify(index));
+  }
   assert.equal(checkReleaseCorpusBuild({out}), 1);
 });
 
@@ -109,6 +137,8 @@ test('production validation rejects altered counts, pins and private fields even
   check(corpus => corpus.counts.distinctPrereleaseCredits++, /counts differ from manifest|Expected values to be strictly equal/);
   check(corpus => corpus.pins.productCoreCommit = 'a'.repeat(40), /differs from manifest/);
   check(corpus => corpus.capabilities[0].receiptPath = '/Users/private/receipt', /unexpected fields/);
+  check(corpus => corpus.capabilities[0].title = 'SYNTHETIC_ADMIN_PASSWORD=not-real-secret', /Unsafe decoded public corpus text/);
+  check(corpus => corpus.recipes.find(row => row.scopedSdkProof === 'none').scopedSdkProof = 'established', /Established recipe flags must match proof records/);
   check((corpus, pin) => { pin.corpora[0].counts.technicalReleaseReplay.scopedStamps++; corpus.counts.technicalReleaseReplay.scopedStamps++; },
     /Expected values to be strictly equal|replay totals differ/);
 });

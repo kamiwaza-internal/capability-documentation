@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {existsSync, readFileSync, readdirSync} from 'node:fs';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {unsafePublicText} from './public-output-privacy.mjs';
 
 export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
@@ -91,12 +92,15 @@ export function validatePublicCorpus(corpus, raw) {
   assert.equal(recipes.filter(row => row.definitionKind === 'workbook-source').length, c.workbookRecipes);
   assert.equal(recipes.filter(row => row.definitionKind === 'scoped-programmatic').length, c.scopedProgrammaticRecipes);
   assert.equal(corpus.establishedScopedProofs.length, c.establishedScopedSdkProofs);
+  assert.deepEqual(new Set(recipes.filter(row => row.scopedSdkProof === 'established').map(row => row.id)),
+    new Set(corpus.establishedScopedProofs.map(row => row.recipeId)), 'Established recipe flags must match proof records');
   assert.equal(recipes.filter(row => row.completeUiProof).length, c.freshCompleteUiProofs);
   assert.equal(Object.values(c.technicalReleaseReplay).reduce((sum, value) => sum + value, 0), c.includedCapabilities);
   assert.deepEqual(new Set(corpus.establishedScopedProofs.flatMap(row => row.creditedCapabilityIds)),
     new Set(caps.filter(row => row.prereleaseStatus === 'verified').map(row => row.id)));
   assert.doesNotMatch(raw, /https?:\/\/|\/(?:Users|home|tmp|var)\/|[\w.+-]+@[\w.-]+|localhost|127\.0\.0\.1/i);
   assert.doesNotMatch(raw, /(?:receipt|packet|credential|password|secret)[-_]?(?:path|hash|value|token)/i);
+  assert.equal(unsafePublicText(JSON.stringify(corpus)), null, 'Unsafe decoded public corpus text');
   return corpus;
 }
 
