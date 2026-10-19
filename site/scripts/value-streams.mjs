@@ -35,11 +35,13 @@ export function validateStreams(data, publication) {
   const applies = data.publicationSha256 === publicationDigest(publication);
   shape(data.source, ['sourceKind', 'kitCommit']);
   requireValue(data.source.sourceKind === 'reviewed-private-kit' && /^[a-f0-9]{40}$/.test(data.source.kitCommit), 'Unpinned stream source');
+  let boundRelease = null;
   if (typed) {
     requireValue(typeof data.release === 'string' && /^\d+\.\d+\.\d+$/.test(data.release) &&
       Number.isSafeInteger(data.publicationRevision) && data.publicationRevision > 0, 'Invalid typed projection release binding');
-    requireValue(publication.releases.some(r => r.version === data.release && r.publicationRevision === data.publicationRevision &&
-      r.publicationState === 'published' && r.baselineKind === 'prerelease-evidence' && r.sourceRevision === data.source.kitCommit), 'Typed recipe source and publication revision differ');
+    boundRelease = publication.releases.find(r => r.version === data.release && r.publicationRevision === data.publicationRevision &&
+      r.publicationState === 'published' && r.baselineKind === 'prerelease-evidence' && r.sourceRevision === data.source.kitCommit);
+    requireValue(boundRelease, 'Typed recipe source and publication revision differ');
     requireValue(Array.isArray(data.claimLinks) && data.claimLinks.length <= 5000, 'Invalid typed claim links');
   }
   requireValue(Number.isInteger(data.inventoryCount) && data.inventoryCount > 0 && Number.isInteger(data.historicalMappingCount) && data.historicalMappingCount >= 0, 'Invalid stream migration totals');
@@ -47,7 +49,9 @@ export function validateStreams(data, publication) {
   requireValue(Array.isArray(data.streams) && data.streams.length === data.inventoryCount, 'Incomplete stream inventory');
   const seen = new Set();
   const expectedLinks = new Set();
-  const published = new Set(publication.releases.filter(r => r.publicationState !== 'draft').flatMap(r => r.capabilities.map(c => `${r.version}:${c.id}`)));
+  const boundIds = typed ? new Set(boundRelease.capabilities.map(cap => cap.id)) : null;
+  const published = typed ? null : new Set(publication.releases.filter(r => r.publicationState !== 'draft')
+    .flatMap(r => r.capabilities.map(c => `${r.version}:${c.id}`)));
   for (const item of data.streams) {
     shape(item, ['id', 'title', 'status', 'recipe']);
     prose(item.id); prose(item.title);
@@ -77,7 +81,9 @@ export function validateStreams(data, publication) {
       prose(step.action); prose(step.expected_result);
       requireValue(Array.isArray(step.capability_ids) && step.capability_ids.length > 0 && new Set(step.capability_ids).size === step.capability_ids.length, 'Invalid step capabilities');
       for (const cid of step.capability_ids) {
-        requireValue(id.test(cid) && (!applies || published.has(recipe.source_version + ':' + cid)), 'Step capability outside published source version');
+        requireValue(id.test(cid), 'Invalid step capability identifier');
+        if (typed) requireValue(boundIds.has(cid), 'Step capability outside bound publication revision');
+        else requireValue(!applies || published.has(recipe.source_version + ':' + cid), 'Step capability outside published source version');
         if (typed) expectedLinks.add(JSON.stringify([item.id, recipe.revision, recipe.sha256, step.id, cid]));
       }
       path(step.api); path(step.kaizen_ui);

@@ -1,16 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync, mkdtempSync, writeFileSync} from 'node:fs';
+import {existsSync, readFileSync, mkdtempSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {inflateRawSync} from 'node:zlib';
 import {validateStreams} from '../scripts/value-streams.mjs';
+import {publicationDigest, validateGuidance} from '../scripts/sales-guidance.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {salesKitDocument} from '../src/sales-kit.mjs';
 import {evidenceVersions, toMarkdown} from '../src/evidence.mjs';
+import {reviewedSidecarPublication} from './fixtures/reviewed-sidecar-publication.mjs';
 
 const data = name => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url)));
-const publication = data('publication'), streams = data('value-streams');
+const productionPublication = data('publication'), publication = reviewedSidecarPublication, streams = data('value-streams');
 
 function zipEntry(bytes, wanted) {
   for (let offset = 0; bytes.readUInt32LE(offset) === 0x04034b50;) {
@@ -128,4 +130,56 @@ for (const [name, change, reason] of [
   ['unreviewed whole stream pass', x => x.streams.find(row => row.recipe).status = 'tested', /Whole-stream tested requires/],
 ]) test('typed stream contract rejects ' + name, () => {
   const x = typedFixture(); change(x); assert.throws(() => validateStreams(x, publication), reason);
+});
+
+function syntheticRevisionLink(releaseId, capabilityId) {
+  const revised = structuredClone(publication);
+  revised.releases.find(row => row.id === releaseId).capabilities.push({id: capabilityId});
+  const typed = typedFixture();
+  const stream = typed.streams.find(row => row.recipe);
+  const step = stream.recipe.steps[0];
+  const replaced = step.capability_ids[0];
+  step.capability_ids[0] = capabilityId;
+  typed.claimLinks.find(link => link.streamId === stream.id && link.stepId === step.id && link.capabilityId === replaced).capabilityId = capabilityId;
+  typed.publicationSha256 = publicationDigest(revised);
+  return {typed, revised};
+}
+test('typed recipe rejects a synthetic older-only capability absent from its bound revision', () => {
+  const {typed, revised} = syntheticRevisionLink('1.3.0-declared-r2', 'synthetic.older-only');
+  assert.throws(() => validateStreams(typed, revised), /outside bound publication revision/);
+});
+test('typed recipe accepts a synthetic capability present in its exact bound revision while publication remains disabled', () => {
+  const {typed, revised} = syntheticRevisionLink('1.3.0-prerelease-r3', 'synthetic.bound-only');
+  assert.equal(validateStreams(typed, revised), null);
+});
+
+test('a combined-stack publication mismatch omits stale optional sidecars but keeps core evidence downloads', () => {
+  const stale = publicationDigest(productionPublication) === streams.publicationSha256
+    ? structuredClone(productionPublication) : productionPublication;
+  if (stale !== productionPublication) stale.releases[0].build += ' updated';
+  assert.notEqual(publicationDigest(stale), streams.publicationSha256);
+  assert.equal(validateStreams(streams, stale), null);
+  const guidance = data('sales-guidance');
+  assert.equal(validateGuidance(guidance, stale), null);
+  const out = mkdtempSync(join(tmpdir(), 'stale-combined-sidecars-'));
+  emitBundles(stale, out);
+  const stamps = data('release-stamps-1.3.2');
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), JSON.stringify(stamps));
+  emitEvidence(stale, stamps, out, data('descriptions').descriptions, guidance, streams);
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  assert.ok(index.versions.length > 0);
+  assert.equal(existsSync(join(out, 'examples/connector-builder-import-test-generate.py')), false);
+  for (const entry of index.versions) {
+    assert.equal(Object.hasOwn(entry.files, 'streamsJson'), false);
+    assert.equal(existsSync(join(out, 'evidence', entry.version, 'value-stream-recipes.json')), false);
+    assert.ok(readFileSync(join(out, entry.files.md.path)).length > 0);
+    assert.ok(readFileSync(join(out, entry.files.salesMd.path)).length > 0);
+    const zip = readFileSync(join(out, entry.files.zip.path));
+    assert.throws(() => zipEntry(zip, 'machine-readable/value-stream-recipes.json'), /Missing ZIP entry/);
+    assert.throws(() => zipEntry(zip, 'examples/connector-builder-import-test-generate.py'), /Missing ZIP entry/);
+    for (const id of entry.releaseIds) {
+      assert.deepEqual(zipEntry(zip, 'machine-readable/' + id + '.bundle.json'),
+        readFileSync(join(out, 'releases', id, 'bundle.json')));
+    }
+  }
 });
