@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
@@ -24,16 +25,18 @@ function PrereleaseSummary({release}) {
   const {counts, evidenceWindow} = release;
   const gaps = release.capabilities.filter(cap => cap.status !== 'prerelease-verified');
   return <>
-    <p>Project pre-release baseline scored by the capability kit: historical scenario evidence from development builds plus accepted local-contract developer assessments. The combined count does not mean live runtime passes. It is not release verification, not whole-capability certification and not release approval. Binding to a shipped {release.version} release is not established. {release.omittedCapabilities.length} other kit capabilities are outside this scope; their status is not inferred.</p>
+    <p>Project pre-release baseline scored by the capability kit: historical scenario evidence from development builds, accepted local-contract developer assessments and, when present, scoped proof outcomes for reviewed recipe journeys. Only an established proof selected by the native scorer earns credit. The combined count does not mean live runtime passes. It is not release verification, not whole-capability certification and not release approval. Binding to a shipped {release.version} release is not established. {release.omittedCapabilities.length} other kit capabilities are outside this scope; their status is not inferred.</p>
     <dl className="dateAxes">
-      <dt>Test runs finished</dt><dd><time dateTime={evidenceWindow.earliestRunFinishedAt}>{evidenceWindow.earliestRunFinishedAt}</time> to <time dateTime={evidenceWindow.latestRunFinishedAt}>{evidenceWindow.latestRunFinishedAt}</time>. Each record below carries its own run date.</dd>
-      <dt>Evidence ingested</dt><dd>Each record shows when it entered the kit. Kit revision committed <time dateTime={release.sourceCommittedAt}>{release.sourceCommittedAt}</time>.</dd>
-      <dt>Developer assessments</dt><dd><time dateTime={release.assessmentWindow.earliestAssessedAt}>{release.assessmentWindow.earliestAssessedAt}</time> to <time dateTime={release.assessmentWindow.latestAssessedAt}>{release.assessmentWindow.latestAssessedAt}</time>. Local contracts; no live scenario execution.</dd>
+      {evidenceWindow && <><dt>Test runs finished</dt><dd><time dateTime={evidenceWindow.earliestRunFinishedAt}>{evidenceWindow.earliestRunFinishedAt}</time> to <time dateTime={evidenceWindow.latestRunFinishedAt}>{evidenceWindow.latestRunFinishedAt}</time>. Each record below carries its own run date.</dd>
+      <dt>Evidence ingested</dt><dd>Each scenario record shows when it entered the kit.</dd></>}
+      {release.assessmentWindow && <><dt>Developer assessments</dt><dd><time dateTime={release.assessmentWindow.earliestAssessedAt}>{release.assessmentWindow.earliestAssessedAt}</time> to <time dateTime={release.assessmentWindow.latestAssessedAt}>{release.assessmentWindow.latestAssessedAt}</time>. Local contracts; no live scenario execution.</dd></>}
+      {release.proofWindow && <><dt>Scoped proofs observed</dt><dd><time dateTime={release.proofWindow.earliestObservedAt}>{release.proofWindow.earliestObservedAt}</time> to <time dateTime={release.proofWindow.latestObservedAt}>{release.proofWindow.latestObservedAt}</time>. Each record below carries its own scope and limits.</dd></>}
+      <dt>Kit revision committed</dt><dd><time dateTime={release.sourceCommittedAt}>{release.sourceCommittedAt}</time>. This is not a new test date.</dd>
       <dt>Draft generated</dt><dd><time dateTime={release.generatedAt}>{release.generatedAt}</time>. Draft preparation, not publication or a test date.</dd>
       <dt>Publication review opened</dt><dd>{release.publishedAt ? <><time dateTime={release.publishedAt}>{release.publishedAt}</time>. When the publication review PR was opened, not the site deployment time.</> : 'Pending; no publication timestamp recorded.'}</dd>
-      <dt>Tested builds</dt><dd>{release.testedBuilds.map(build => <code key={build}>{build} </code>)}</dd>
+      <dt>Scenario tested builds</dt><dd>{release.testedBuilds.length ? release.testedBuilds.map(build => <code key={build}>{build} </code>) : 'None in this revision; scoped proof build fingerprints appear with their proof records.'}</dd>
     </dl>
-    <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
+    <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed{counts.scopedProofVerified ? '; ' + counts.scopedProofVerified + ' effective scoped proof' : ''}) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
     <details className="gaps"><summary>Historical baseline gaps: {counts.failedOrMixed} failed or mixed, {counts.notYetVerified} not yet verified</summary>
       <p>A gap means no clean pre-release evidence is published here. It does not mean unsupported.</p>
       <p>Deferred capabilities (included in the unverified count): {release.deferredCapabilities.map(cid => <code key={cid}>{cid} </code>)}</p>
@@ -73,8 +76,8 @@ function ScopedObservations({observation}) {
 // Full inventory decision and individually scoped replay stamps are separate axes.
 function ReleaseStamps({snapshot}) {
   const {counts: c, source, approval: decision} = snapshot;
-  return <section className="release" id={snapshot.id}>
-    <h2>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</h2>
+  return <section className="release">
+    <Heading as="h2" id={snapshot.id}>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</Heading>
     <aside className="evidenceNotice">Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification. Full inventory release approval is {decision.status}.</aside>
     <p>Exact source <code>{source.ref}@{source.sourceRevision}</code> · qualified running manifest <code>{snapshot.manifestId}</code>.</p>
     <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>
@@ -102,7 +105,7 @@ function PrimaryCapabilities({capabilities, query, status, tag}) {
   return <section className="release" id="current-capabilities">
     <h2>Current capability view · accepted verification first</h2>
     <p>{verified.length} retained accepted verifications across the versioned records below. This presentation count combines no evidence runs or denominators and grants no new release credit. {capabilities.length} versioned public capability rows are shown; this is not a new product verification denominator. Original snapshots and separate scoped observations remain available below.</p>
-    <p>Accepted verification remains primary unless a later test establishes failure of the same version, qualified environment and claim scope. Missing descriptions, untested sources and unrelated scoped observations do not remove verification.</p>
+    <p>The latest native-scored pre-release revision for a version controls its effective verdict; older proof and scenario records remain in history. A later release-stamp failure requires the same qualified environment and claim scope. Missing descriptions, untested sources and unrelated scoped observations do not remove verification.</p>
     {filterCapabilities(capabilities, query, status).length === 0 && <p role="status">No matching capability records.</p>}
     {filterCapabilities(capabilities, query, status).map(cap => <article className="capability" id={'current--' + cap.version + '--' + cap.id} key={cap.version + ':' + cap.id}>
       <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? cap.status}</span>}</h3>
@@ -111,10 +114,11 @@ function PrimaryCapabilities({capabilities, query, status, tag}) {
       {cap.includedInBaseline === false && <p>Outside the included historical verification scope. Exclusion is not an unsupported-feature or failure verdict.</p>}
       {cap.deferred && <p>Deferred; retained inside the historical included denominator. No verification credit is inferred.</p>}
       {cap.retainedCapability.scope && <><p>Original verified scope: {cap.retainedCapability.scope}</p><TextList title="Verification assumptions" items={cap.retainedCapability.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.limits}/></>}
+      {cap.retainedCapability.proof && <p>Scoped proof {cap.retainedCapability.proof.state}: reviewed recipe <code>{cap.retainedCapability.proof.recipeId}</code> revision {cap.retainedCapability.proof.recipeRevision}, observed <time dateTime={cap.retainedCapability.proof.observedAt}>{cap.retainedCapability.proof.observedAt}</time>. {cap.retainedCapability.proof.scope} {cap.retainedCapability.proof.limits.join(' ')} This is not whole-capability or release verification.</p>}
       {cap.retainedCapability.verificationBasis === 'developer-assessment' && <p>Accepted local-contract developer assessment; no live scenario execution. {cap.retainedCapability.assessment.scope}</p>}
       {cap.retainedCapability.assessment && <><TextList title="Verification assumptions" items={cap.retainedCapability.assessment.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.assessment.limits}/></>}
       {cap.retainedCapability.evidence.length > 0 && <p>Original scenario scope: {cap.retainedCapability.evidence.map(record => <React.Fragment key={record.scenario ?? record.summary}><code>{record.scenario ?? record.summary}</code> · {record.outcome} on <code>{record.build}</code>; </React.Fragment>)}. These original scoped records do not establish a fresh release replay.</p>}
-      {cap.failures.length > 0 && <aside className="evidenceNotice"><strong>Retained failure or release hold.</strong><ul>{cap.failures.map((failure, index) => <li key={index}><a href={'#' + failure.snapshotId}>{failure.snapshotId}</a> · {failure.at ?? 'failure date not established'} · {failure.superseded ? 'Earlier matching failure; a later matching pass is primary.' : failure.supersedes ? 'Applicable later failure supersedes the earlier verification.' : failure.ambiguous ? 'Same-bound failure; ordering relative to acceptance is not established. Hold remains explicit.' : failure.reason}</li>)}</ul></aside>}
+      {cap.failures.length > 0 && <aside className="evidenceNotice"><strong>Retained failure or release hold.</strong><ul>{cap.failures.map((failure, index) => <li key={index}><a href={'#' + failure.snapshotId}>{failure.snapshotId}</a> · {failure.at ?? 'failure date not established'} · {failure.superseded ? failure.axis === 'scoped-proof' ? 'Historical proof failure; a later established native-scored proof is current.' : 'Earlier matching failure; a later matching pass is primary.' : failure.supersedes ? failure.axis === 'scoped-proof' ? 'Latest failed proof withdrew earlier effective proof credit.' : 'Applicable later failure supersedes the earlier verification.' : failure.ambiguous ? 'Same-bound failure; ordering relative to acceptance is not established. Hold remains explicit.' : failure.reason}</li>)}</ul></aside>}
       {cap.description ? <>
         {cap.description.historical && <p><strong>Current description gap.</strong> The text below is historical {cap.description.basis === 'public-snapshot-prose' ? 'public snapshot prose' : 'source context'} from <a href={'#' + cap.description.snapshotId}>{cap.description.snapshotId}</a>; it is not a current curated declaration or a larger verified claim.</p>}
         {cap.description.basis === 'public-snapshot-prose' && !cap.description.historical && <p>Published public snapshot prose from <a href={'#' + cap.description.snapshotId}>{cap.description.snapshotId}</a>; source curation is not inferred.</p>}
@@ -178,7 +182,7 @@ export default function Catalog() {
             <p>{Object.entries(countStatuses(release.capabilities)).map(([label, count]) => `${count} ${label}`).join(' · ')}. Counts cover the full snapshot, not search results.</p>}
           {filterCapabilities(release.capabilities, query, status).length === 0 && <p role="status">No matching capabilities in this snapshot. This does not mean unsupported.</p>}
           {filterCapabilities(release.capabilities, query, status).map(cap => <article className="capability" id={release.id + '--' + cap.id} key={cap.id}>
-            <h3>{cap.title ?? cap.id} <span className="status">{cap.verificationBasis === 'developer-assessment' ? 'Local-contract developer-assessed · no live runtime pass' : prereleaseLabels[cap.status] ?? (cap.declaration ? 'Tier 1 declared · runtime untested' : cap.status)}</span>{cap.releaseStatus === 'failed' && <> <span className="status">Release check failed</span></>}</h3>
+            <h3>{cap.title ?? cap.id} <span className="status">{cap.verificationBasis === 'developer-assessment' ? 'Local-contract developer-assessed · no live runtime pass' : cap.verificationBasis === 'value-stream' ? 'Established scoped proof · not release verified' : prereleaseLabels[cap.status] ?? (cap.declaration ? 'Tier 1 declared · runtime untested' : cap.status)}</span>{cap.releaseStatus === 'failed' && <> <span className="status">Release check failed</span></>}</h3>
             <p><code>{cap.id}</code></p>
             {cap.summary === null ? <p>No curated declaration text is published for this capability in this revision. This does not mean unsupported.</p> : <>
               <p>{cap.summary}</p>
@@ -197,8 +201,9 @@ export default function Catalog() {
               <TextList title="Assessment assumptions" items={cap.assessment.assumptions}/>
               <TextList title="Assessment limits" items={cap.assessment.limits}/>
             </section>}
+            {cap.proof && <section><h4>Scoped proof record</h4><p>{cap.proof.state} · reviewed recipe <code>{cap.proof.recipeId}</code> revision {cap.proof.recipeRevision} · observed <time dateTime={cap.proof.observedAt}>{cap.proof.observedAt}</time> on build fingerprint <code>{cap.proof.buildFingerprint}</code>. {cap.proof.scope} This does not establish whole-capability or release verification.</p><TextList title="Proof limits" items={cap.proof.limits}/></section>}
             <h4>Evidence summary</h4>
-            {cap.evidence.length ? <ul>{cap.evidence.map((e, i) => <li key={i}><strong>{e.scenario ? outcomeLabels[e.outcome] : e.outcome}</strong> — {e.scenario ? <><code>{e.scenario}</code> on <code>{e.build}</code> · test run finished <time dateTime={e.runFinishedAt}>{e.runFinishedAt}</time> · ingested <time dateTime={e.ingestedAt}>{e.ingestedAt}</time></> : e.summary}</li>)}</ul> : <p>{cap.assessment ? 'No scenario runtime evidence in this snapshot; basis is the developer assessment above.' : 'No evidence in this snapshot.'}</p>}
+            {cap.evidence.length ? <ul>{cap.evidence.map((e, i) => <li key={i}><strong>{e.scenario ? outcomeLabels[e.outcome] : e.outcome}</strong> — {e.scenario ? <><code>{e.scenario}</code> on <code>{e.build}</code> · test run finished <time dateTime={e.runFinishedAt}>{e.runFinishedAt}</time> · ingested <time dateTime={e.ingestedAt}>{e.ingestedAt}</time></> : e.summary}</li>)}</ul> : <p>{cap.assessment ? 'No scenario runtime evidence in this snapshot; basis is the developer assessment above.' : cap.proof ? 'No historical scenario record in this snapshot; scoped proof is shown above.' : 'No evidence in this snapshot.'}</p>}
             {!cap.wholeClaim && <p>Whole-claim verification is not established.</p>}
           </article>)}
         </section>)}
