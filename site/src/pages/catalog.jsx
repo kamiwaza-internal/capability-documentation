@@ -5,7 +5,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
-import {filterCapabilities, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
+import {descriptionOnly, filterCapabilities, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
 import {revisionLabel} from '../evidence.mjs';
 import CurrentView from '../CurrentView';
 
@@ -121,6 +121,7 @@ function PrimaryCapabilities({capabilities, query, status, tag}) {
       {cap.failures.length > 0 && <aside className="evidenceNotice"><strong>Retained failure or release hold.</strong><ul>{cap.failures.map((failure, index) => <li key={index}><a href={'#' + failure.snapshotId}>{failure.snapshotId}</a> · {failure.at ?? 'failure date not established'} · {failure.superseded ? failure.axis === 'scoped-proof' ? 'Historical proof failure; a later established native-scored proof is current.' : 'Earlier matching failure; a later matching pass is primary.' : failure.supersedes ? failure.axis === 'scoped-proof' ? 'Latest failed proof withdrew earlier effective proof credit.' : 'Applicable later failure supersedes the earlier verification.' : failure.ambiguous ? 'Same-bound failure; ordering relative to acceptance is not established. Hold remains explicit.' : failure.reason}</li>)}</ul></aside>}
       {cap.description ? <>
         {cap.description.historical && <p><strong>Current description gap.</strong> The text below is historical {cap.description.basis === 'public-snapshot-prose' ? 'public snapshot prose' : 'source context'} from <a href={'#' + cap.description.snapshotId}>{cap.description.snapshotId}</a>; it is not a current curated declaration or a larger verified claim.</p>}
+        {cap.description.basis === 'curated-source-declaration' && !cap.description.historical && cap.description.snapshotId !== cap.snapshotId && <p>Description from curated declaration <a href={'#' + cap.description.snapshotId}>{cap.description.snapshotId}</a>, published after the pre-release evidence.</p>}
         {cap.description.basis === 'public-snapshot-prose' && !cap.description.historical && <p>Published public snapshot prose from <a href={'#' + cap.description.snapshotId}>{cap.description.snapshotId}</a>; source curation is not inferred.</p>}
         <p>{cap.description.capability.summary}</p>
         <TextList title={cap.description.basis === 'public-snapshot-prose' ? cap.description.historical ? 'Historical published prerequisites' : 'Published prerequisites' : cap.description.historical ? 'Historical source prerequisites' : 'Source prerequisites'} items={cap.conditions}/>
@@ -175,6 +176,7 @@ export default function Catalog() {
           <p>Publication revision {release.publicationRevision} · {release.publishedAt ? <><time dateTime={release.publishedAt}>{release.publishedAt}</time> (publication metadata, not a test date)</> : 'Draft candidate; publication pending'}</p>
           <p>{release.baselineKind === 'prerelease-evidence' ? 'Project pre-release baseline (historical scenarios and local contracts)' : release.baselineKind ? 'Source baseline (not a tested build)' : 'Tested build'}: <code>{release.build}</code></p>
           <p><a href={'/releases/' + release.id + '/bundle.json'}>Download evidence bundle (JSON)</a> · <a href={'/releases/' + release.id + '/bundle.md'}>Plain-text bundle</a></p>
+          {descriptionOnly(publication).has(release.id) && <p>Published after the {release.version} pre-release evidence: this declaration only supplies descriptions. Status, lineage and omissions still come from the pre-release evidence.</p>}
           {release.baselineKind === 'source-declaration' && <p>Tier 1: declared in the cited development sources. Binding to a shipped 1.3.0 release is not established. Tier 2: runtime verification pending. {release.omittedCapabilities.length} other kit capabilities are not included; their status is not inferred.</p>}
           <p>{revisionLabel(release)}: <code>{release.sourceRevision}</code> · {release.reviewReference ? <a href={release.reviewReference}>Publication review</a> : 'Publication review pending'}</p>
           <p>{release.capabilities.length} capabilities in this public snapshot. This is not a complete platform inventory.</p>

@@ -1,0 +1,24 @@
+{
+  "schema": "public-release-corpora.v1",
+  "corpora": [
+    {
+      "version": "1.3.4",
+      "sha256": "ae05c6f8df8af4c459909c22e35cde0741bcd021e2bac9849b95386aabc7d026",
+      "kitMergeCommit": "3678acc067afbe6ea84811eb7fcab18afbb7ad13",
+      "productTag": "v1.3.4",
+      "productCoreCommit": "5f5f64656802eb497167f6eae6021093cfcdccf2",
+      "counts": {
+        "capabilityDefinitions": 107,
+        "includedCapabilities": 88,
+        "excludedCapabilities": 19,
+        "distinctPrereleaseCredits": 6,
+        "establishedScopedSdkProofs": 4,
+        "freshCompleteUiProofs": 0,
+        "technicalReleaseReplay": {"scopedStamps": 30, "failedSelections": 6, "unstamped": 52},
+        "recipeDefinitions": 32,
+        "workbookRecipes": 25,
+        "scopedProgrammaticRecipes": 7
+      }
+    }
+  ]
+}
