@@ -110,3 +110,27 @@ This documentation is generated from Kamiwaza's internal capability-tracking pro
 ## Something wrong or missing?
 
 Open an issue. This repository grows every release, and a claim that reads wrong is worth reporting.
+
+## Portable Sales Dev Kit
+
+Each published evidence version has a complete Sales Dev Kit in PDF and Markdown.
+It contains the capability evidence, conditions, limits and explicit gaps. The
+Everything ZIP includes six readable documents under `human-readable/` and their
+published source JSON under `machine-readable/`, plus reading instructions and
+checksums. No plugin or Slack bot is required. Draft usage suggestions,
+illustrative cases and Word output are excluded from this release-facing kit.
+
+Recipe content is optional and bound to the exact reviewed publication. The
+older 1.3.0 Connector Builder pilot is retained as a historical source projection;
+it is omitted from current downloads because its publication binding is stale.
+A future recipe publication needs a freshly generated, reviewed binding. Typed
+recipe links must match one exact source and publication revision, and their
+publication gate remains disabled until a reviewed export is pinned.
+
+`corpus/1.3.4/` contains the separate release inventory and recipe-readiness review
+candidate. The site build prepares it as a clearly labelled PDF, Markdown and ZIP
+with its exact catalog and source manifest. Its four scoped SDK proofs and six
+prerelease capability credits remain separate from the 30 scoped release stamps.
+The source snapshot is unbound and has no human release approval; downloading it
+does not award new proof or approve the release. A build consistency gate checks
+its files, source pins, counts, ZIP members, checksums and homepage links.

@@ -423,8 +423,13 @@ is `/catalog/` (`src/pages/catalog.jsx`).
 the newest publication revision of each version, plus a version for each applicable release-stamp
 file. Each digest opens with its own reading rules and status key, then lists every capability in
 scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
-renders it to PDF and packs a zip (digest, `AGENTS.md` with the answer format, a `CLAUDE.md`
-that imports it, PDF, the JSON records it was derived from and `SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
+renders it to PDF with no new dependencies. `scripts/published-bundles.mjs` packs a complete ZIP:
+`human-readable/` holds all six standalone document downloads (complete Sales Dev Kit PDF/MD,
+summary PDF/MD, detailed evidence PDF/MD), while `machine-readable/` holds the source publication
+JSON and applicable release-stamp JSON. Root `README.md` identifies the audiences and entry points. `AGENTS.md` gives assistant
+answering instructions and `CLAUDE.md` imports it;
+`SHA256SUMS` checks every file except itself. Archived documents reuse the exact standalone bytes,
+and output is deterministic. Files land at
 `/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their
 SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
 nothing is written back to `data/`.
@@ -544,3 +549,54 @@ python3 scripts/export_release_publication.py --kit . --revision <full kit commi
 `--previous` splices the object in after the last release and keeps every existing byte. Run it
 against the publication without that revision; a revision already present is refused. Then
 regenerate `data/descriptions.json`, since newly published ids gain a description.
+
+## Complete Sales Dev Kit downloads
+
+`src/sales-kit.mjs` adds reviewed stream paths and explicit gaps to the complete
+published capability evidence. `scripts/published-bundles.mjs` emits matching
+Markdown and PDF under `/evidence/<version>/kamiwaza-sales-dev-kit-<version>.*`,
+indexed and hashed in `/evidence/index.json`. Draft usage suggestions, illustrative
+cases and Word output are excluded. Historical publication bundles are unchanged.
+
+`data/value-streams.json` retains the reviewed historical 1.3.0 projection: 25 source
+sections, 65 historical candidate mappings in aggregate, one Connector Builder
+pilot and 24 recipe gaps. Its whole-stream status is `untested`; passing API
+components do not establish deployment or a complete UI journey. This is not the
+new 32-recipe 1.3.4 inventory in `../corpus/1.3.4/`.
+
+The consumer validates the complete projection digest and the publication content
+hash. A stale optional projection is omitted with a build warning; capability
+evidence downloads remain available and explicitly report the missing recipe
+projection. The current publication has changed since the historical projection,
+so neither its recipe JSON nor its example is emitted in production. A matching
+projection includes `machine-readable/value-stream-recipes.json` in the applicable
+version's ZIP and indexes `/evidence/<version>/value-stream-recipes.json` with a
+checksum. Older recipes never prove a newer build.
+
+A fresh projection must be generated from an immutable private kit source and
+reviewed for public prose, exact version/revision scope and privacy before changing
+its publication binding or reviewed digest. Never update a hash merely to force an
+old projection onto a newer publication. The v3 typed consumer additionally requires
+one exact matching prerelease revision, its source commit and recipe digests, and
+complete `uses`/`verifies` step links. `reviewedTypedSha256` remains null: no typed
+projection is served until a separate publication review pins the export.
+
+`data/sales-guidance.json` retains an empty reviewed guidance projection with
+explicit gaps. Its validator checks source/version, publication binding, privacy
+and complete gaps; guidance is not rendered into this release-facing kit and does
+not compute status. Valid stale guidance is omitted with a warning. Malformed or
+unsafe data still fails validation.
+
+The sanitized 1.3.4 corpus remains a review candidate outside `data/publication.json`.
+`data/release-corpora.json` pins its catalog and build sources. The site build emits
+its held native prerelease summary and recipe-readiness gaps as review-candidate
+PDF, Markdown and complete ZIP downloads, including the exact catalog and source
+manifest. This does not create an authoritative schema-8 prerelease publication,
+establish recipe release membership or grant human approval. Prerelease credit,
+technical release replay and human release approval remain independent.
+
+After the production build, `npm run check:release-corpus` verifies every catalog
+has an exact manifest entry and checks generated content, source pins, counts,
+download metadata, ZIP members, checksums and homepage links. The workflow runs
+this gate before uploading any Pages artifact. A failed check blocks publication;
+it does not change repository branch-protection settings.

@@ -72,7 +72,7 @@ function publicShape(document) {
   stringList(document.gaps, 'global gaps');
 }
 
-test('1.3.4 review corpus remains a non-published, sanitized snapshot', () => {
+test('1.3.4 review corpus is a sanitized download without release approval', () => {
   publicShape(corpus);
   assert.equal(corpus.schema, 'sanitized-release-corpus.v1');
   assert.equal(corpus.release, '1.3.4');
