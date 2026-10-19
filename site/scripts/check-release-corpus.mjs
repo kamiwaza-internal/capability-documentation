@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {inflateRawSync} from 'node:zlib';
-import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
-import {toPdf, toZip} from './evidence-files.mjs';
+import {tmpdir} from 'node:os';
+import {validateDescriptions} from './project-descriptions.mjs';
+import {loadReleaseSidecars} from './release-sidecars.mjs';
+import {emitBundles, emitEvidence} from './published-bundles.mjs';
 import {loadReleaseCorpora, sha256} from './release-corpora.mjs';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 
@@ -30,60 +32,86 @@ export function zipMembers(bytes) {
   return members;
 }
 
+const bytesAt = (out, path) => readFileSync(join(out, path));
+const assertFile = (out, expected, path) => assert.deepEqual(bytesAt(out, path), bytesAt(expected, path), `missing or stale ${path}`);
+
+// Recreate every release download from the checked-in sources, then compare actual build bytes.
+// This catches a missing version as well as missing or stale MD, PDF, ZIP, indexes and bundle refs.
 export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/build')} = {}) {
   const publication = JSON.parse(readFileSync(join(repo, 'site/data/publication.json')));
-  const stamps = JSON.parse(readFileSync(join(repo, 'site/data/release-stamps-1.3.2.json')));
+  const sidecars = loadReleaseSidecars({repo, publication});
+  const stamps = sidecars[0]?.data ?? null;
+  const descriptions = validateDescriptions(JSON.parse(readFileSync(join(repo, 'site/data/descriptions.json'))), publication)?.descriptions;
   const corpora = loadReleaseCorpora({root: repo, publication});
-  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
-  const home = readFileSync(join(out, 'index.html'), 'utf8');
-  assert.equal(index.schema, 'capability-evidence-downloads.v1');
-  const expectedEntries = evidenceVersions(publication, stamps, corpora).filter(row => row.kind === 'release-corpus');
-  assert.deepEqual(index.versions.filter(row => row.kind === 'release-corpus').map(row => row.version), expectedEntries.map(row => row.version));
-  for (const entry of expectedEntries) {
-    const meta = entry.corpus, actual = index.versions.find(row => row.version === entry.version);
-    assert.ok(actual, `missing corpus download ${entry.version}`);
-    assert.equal(actual.kind, 'release-corpus');
-    assert.deepEqual(actual.releaseIds, []);
-    assert.equal(actual.headline, entry.headline);
-    assert.equal(actual.basis, entry.basis);
-    assert.deepEqual(actual.source, {catalogSha256: meta.sha256, kitMergeCommit: meta.kitMergeCommit,
-      productTag: meta.productTag, productCoreCommit: meta.productCoreCommit,
-      publicationBinding: null, humanReleaseApproval: 'not-established'});
-    const name = `kamiwaza-capabilities-${entry.version}`;
-    const markdown = Buffer.from(toMarkdown(evidenceDocument(entry, publication, stamps)));
-    const pdf = toPdf(evidenceDocument(entry, publication, stamps), {title: `Kamiwaza platform capabilities, version ${entry.version}`,
-      footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
-    const summary = summaryDocument(entry, publication, stamps);
-    const summaryMd = Buffer.from(toMarkdown(summary));
-    const summaryPdf = toPdf(summary, {title: `Kamiwaza ${entry.version}: features at a glance`,
-      footer: `Kamiwaza ${entry.version} · capabilities.kamiwaza.dev · Not a release sign-off unless stated`,
-      cover: {eyebrow: 'KAMIWAZA · CAPABILITY SUMMARY'}});
-    const members = [
-      {name: 'README.md', data: markdown}, {name: `${name}.pdf`, data: pdf},
-      {name: 'records/release-corpus-catalog.json', data: meta.bytes},
-      {name: 'records/release-corpus-manifest.json', data: meta.manifestBytes},
-    ];
-    members.push({name: 'SHA256SUMS', data: members.map(file => `${sha256(file.data)}  ${file.name}\n`).join('')});
-    const zip = toZip(members);
-    const files = {
-      zip: [entry.path + '.zip', zip, 'machine'], md: [entry.path + '.md', markdown, 'machine'],
-      pdf: [entry.path + '.pdf', pdf, 'machine'], summaryMd: [entry.summaryPath + '.md', summaryMd, 'human'],
-      summaryPdf: [entry.summaryPath + '.pdf', summaryPdf, 'human'],
-    };
-    assert.deepEqual(Object.keys(actual.files).sort(), Object.keys(files).sort());
-    for (const [key, [path, expected, audience]] of Object.entries(files)) {
-      const item = actual.files[key];
-      assert.deepEqual(item, {path, audience, sha256: sha256(expected), bytes: expected.length}, `index metadata ${entry.version}/${key}`);
-      const built = readFileSync(join(out, path));
-      assert.deepEqual(built, expected, `missing or stale ${entry.version}/${key}`);
-      if (['zip', 'summaryMd', 'summaryPdf'].includes(key)) assert.ok(home.includes(`href="${path}"`), `home page missing ${path}`);
+  const expected = mkdtempSync(join(tmpdir(), 'release-download-check-'));
+  try {
+    emitBundles(publication, expected);
+    for (const sidecar of sidecars) writeFileSync(join(expected, sidecar.file), sidecar.bytes);
+    emitEvidence(publication, stamps, expected, descriptions, corpora);
+    const wanted = JSON.parse(bytesAt(expected, 'evidence/index.json'));
+    const actual = JSON.parse(bytesAt(out, 'evidence/index.json'));
+    assert.deepEqual(actual, wanted, 'evidence index must match every current source version and digest');
+    const sourceVersions = new Set([...publication.releases.map(row => row.version),
+      ...(publication.releaseStamps ?? []).map(row => row.version), ...corpora.map(row => row.version),
+      ...(stamps ? [stamps.targetRelease] : [])]);
+    assert.deepEqual(new Set(actual.versions.map(row => row.version)), sourceVersions, 'every source version needs one download');
+    const home = bytesAt(out, 'index.html').toString('utf8');
+    for (const entry of wanted.versions) {
+      for (const [key, file] of Object.entries(entry.files)) {
+        const built = bytesAt(out, file.path);
+        assertFile(out, expected, file.path);
+        assert.equal(sha256(built), file.sha256, `${entry.version}/${key} index digest`);
+        assert.equal(built.length, file.bytes, `${entry.version}/${key} index size`);
+        if (['zip', 'summaryMd', 'summaryPdf'].includes(key))
+          assert.ok(home.includes(`href="${file.path}"`), `home page missing ${file.path}`);
+      }
+      const actualZip = zipMembers(bytesAt(out, entry.files.zip.path));
+      const expectedZip = zipMembers(bytesAt(expected, entry.files.zip.path));
+      assert.deepEqual(actualZip, expectedZip, `${entry.version} ZIP members`);
+      const sums = [...actualZip].filter(([name]) => name !== 'SHA256SUMS')
+        .map(([name, bytes]) => `${sha256(bytes)}  ${name}\n`).join('');
+      assert.equal(actualZip.get('SHA256SUMS')?.toString(), sums, `${entry.version} ZIP member digests`);
     }
-    const unzipped = zipMembers(readFileSync(join(out, entry.path + '.zip')));
-    assert.deepEqual([...unzipped.keys()], members.map(file => file.name), 'ZIP members must match reviewed manifest');
-    for (const member of members) assert.deepEqual(unzipped.get(member.name), Buffer.from(member.data), `ZIP member ${member.name}`);
-    console.log(`Checked ${entry.version}: ${meta.sha256}; MD, PDF, ZIP, summaries, manifest, digests and home links`);
-  }
-  return expectedEntries.length;
+    const releaseIndex = JSON.parse(bytesAt(out, 'releases/index.json'));
+    assert.deepEqual(releaseIndex, JSON.parse(bytesAt(expected, 'releases/index.json')), 'release index and corpus references');
+    for (const row of [...releaseIndex.releases, ...(releaseIndex.corpora ?? []), ...(releaseIndex.releaseReplays ?? [])]) {
+      assertFile(out, expected, row.bundle);
+      assert.equal(sha256(bytesAt(out, row.bundle)), row.sha256, `${row.id} bundle digest`);
+      if (releaseIndex.releases.includes(row)) assertFile(out, expected, row.bundle.replace(/\.json$/, '.md'));
+    }
+    assert.equal((releaseIndex.corpora ?? []).length, corpora.length, 'each corpus needs a release-index bundle');
+    assert.deepEqual(new Set((releaseIndex.releaseReplays ?? []).map(row => row.version)),
+      new Set(actual.versions.filter(row => row.kind === 'release-replay').map(row => row.version)),
+      'every replay-only version needs a release-index reference');
+    for (const row of releaseIndex.corpora ?? []) {
+      const bundle = JSON.parse(bytesAt(out, row.bundle));
+      const corpus = corpora.find(item => item.version === row.version);
+      const entry = actual.versions.find(item => item.version === row.version);
+      assert.equal(bundle.schema, 'capability-release-corpus-bundle.v1');
+      assert.equal(bundle.state, 'review-candidate');
+      assert.equal(bundle.publicationBinding, null);
+      assert.equal(bundle.humanReleaseApproval, 'not-established');
+      assert.equal(bundle.catalog.sha256, corpus.sha256);
+      assert.equal(bundle.manifest.sha256, sha256(corpus.manifestBytes));
+      assert.deepEqual(bundle.downloads, entry.files);
+      if (bundle.releaseReplay) {
+        assertFile(out, expected, bundle.releaseReplay.bundle);
+        assert.equal(sha256(bytesAt(out, bundle.releaseReplay.bundle)), bundle.releaseReplay.sha256);
+      }
+    }
+    for (const sidecar of sidecars) assertFile(out, expected, sidecar.file);
+    if (existsSync(join(expected, 'release-stamps/index.json'))) {
+      assertFile(out, expected, 'release-stamps/index.json');
+      const replays = JSON.parse(bytesAt(out, 'release-stamps/index.json'));
+      for (const row of replays.snapshots) {
+        assertFile(out, expected, row.bundle);
+        assert.equal(sha256(bytesAt(out, row.bundle)), row.sha256, `${row.id} replay bundle digest`);
+        assertFile(out, expected, row.bundle.replace(/\.json$/, '.md'));
+      }
+    }
+    console.log(`Checked ${wanted.versions.length} release downloads, ${corpora.length} corpus bundles and all replay/publication refs`);
+    return wanted.versions.length;
+  } finally { rmSync(expected, {recursive: true, force: true}); }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

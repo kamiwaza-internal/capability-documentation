@@ -98,7 +98,7 @@ export default function Home() {
         </details>
         <details className="faq">
           <summary>Does a missing capability mean Kamiwaza can&rsquo;t do it?</summary>
-          <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only an explicit exclusion means &ldquo;not supported&rdquo;.</p>
+          <p>No. It means <strong>not established</strong>: this evidence cannot back the claim for that version. A capability excluded from a review corpus is outside its included inventory; that is not a product verdict of &ldquo;not supported&rdquo;.</p>
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>

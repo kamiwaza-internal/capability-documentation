@@ -3,7 +3,7 @@ import {appendFileSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {TESTED_BUNDLE_SCHEMA, validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
-import {validateReleaseStamps} from './release-stamps.mjs';
+import {loadReleaseSidecars} from './release-sidecars.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
 import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
@@ -24,6 +24,8 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, corp
       {name: 'records/release-corpus-catalog.json', data: entry.corpus.bytes},
       {name: 'records/release-corpus-manifest.json', data: entry.corpus.manifestBytes},
     ] : entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
+    if (entry.releaseReplay) records.push({name: `records/${entry.releaseReplay.id}.bundle.json`,
+      data: readFileSync(join(out, 'release-stamps', entry.releaseReplay.id, 'bundle.json'))});
     if (entry.kind === 'release-stamps') records.push({name: `records/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
     const contents = [{name: 'README.md', data: markdown}, {name: name + '.pdf', data: pdf}, ...records];
     contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
@@ -48,8 +50,45 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, corp
       files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
-    note: 'Published-release downloads derive from publication records. Release-corpus downloads derive from sanitized review candidates and do not imply release approval. Cite the exact source record and digest.', versions: index}, null, 2) + '\n');
+    note: 'Downloads derive from publication records, scoped release replays, or sanitized review-candidate corpora. None of these alone implies human release approval. Cite the exact source record and digest.', versions: index}, null, 2) + '\n');
+  {
+    const releaseIndex = JSON.parse(readFileSync(join(out, 'releases/index.json')));
+    const covered = new Set([...releaseIndex.releases.map(row => row.version), ...corpora.map(row => row.version)]);
+    const newestReplays = new Map();
+    for (const replay of publication.releaseStamps ?? []) {
+      const previous = newestReplays.get(replay.version);
+      if (!previous || previous.publicationRevision < replay.publicationRevision) newestReplays.set(replay.version, replay);
+    }
+    releaseIndex.releaseReplays = [...newestReplays.values()].filter(replay => !covered.has(replay.version)).map(replay => {
+      const bundle = `/release-stamps/${replay.id}/bundle.json`;
+      return {id: replay.id, version: replay.version, approval: replay.approval.status,
+        bundle, sha256: sha256(readFileSync(join(out, bundle)))};
+    });
+    if (corpora.length) {
+    releaseIndex.corpora = index.filter(entry => entry.kind === 'release-corpus').map(entry => {
+      const corpus = corpora.find(row => row.version === entry.version);
+      const replay = (publication.releaseStamps ?? []).filter(row => row.version === entry.version)
+        .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
+      const replayPath = replay ? `/release-stamps/${replay.id}/bundle.json` : null;
+      const bundle = {schema: 'capability-release-corpus-bundle.v1', id: `corpus-${entry.version}`,
+        version: entry.version, state: 'review-candidate', publicationBinding: null, humanReleaseApproval: 'not-established',
+        source: entry.source, catalog: {zipMember: 'records/release-corpus-catalog.json', sha256: corpus.sha256},
+        manifest: {zipMember: 'records/release-corpus-manifest.json', sha256: sha256(corpus.manifestBytes)},
+        downloads: entry.files,
+        releaseReplay: replay ? {id: replay.id, bundle: replayPath,
+          sha256: sha256(readFileSync(join(out, replayPath)))} : null};
+      const bytes = Buffer.from(JSON.stringify(bundle, null, 2) + '\n');
+      const path = `/releases/${bundle.id}/bundle.json`;
+      mkdirSync(join(out, 'releases', bundle.id), {recursive: true});
+      writeFileSync(join(out, path), bytes);
+      return {id: bundle.id, version: entry.version, state: bundle.state, bundle: path, sha256: sha256(bytes)};
+    });
+    }
+    writeFileSync(join(out, 'releases/index.json'), JSON.stringify(releaseIndex, null, 2) + '\n');
+  }
   appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists per-version Markdown, PDF and zip downloads and their SHA-256 digests. A release-corpus entry is a sanitized review candidate, not a bound or approved release publication. Use its separate status axes as written.\n');
+  if (corpora.length) appendFileSync(join(out, 'llms.txt'), '/releases/index.json also lists review-candidate corpora separately from approved publication records; each corpus bundle links the exact Markdown, PDF, ZIP, manifest digest and applicable public release replay.\n');
+  appendFileSync(join(out, 'llms.txt'), '/releases/index.json lists replay-only versions in releaseReplays, separately from publication releases and review-candidate corpora. Each entry links the latest public scoped replay bundle, not human release approval.\n');
 }
 
 // Historical pre-release evidence is labelled schema 4, proof revisions schema 8,
@@ -127,17 +166,15 @@ export default function bundlePlugin() {
       writeFileSync(join(outDir, 'local-stamps.json'), stamps);
       appendFileSync(join(outDir, 'llms.txt'), '/local-stamps.json holds local scoped stamps for listed scenarios on one recorded local build: not release stamps, not release verification, not sign-off, and they change no status.\n');
     }
-    // v1.3.2 release stamps and source-contract stamps: likewise a separate file.
-    const release = readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url));
-    const releaseStamps = validateReleaseStamps(JSON.parse(release), data) === null ? null : JSON.parse(release);
-    if (releaseStamps === null) console.warn('release-stamps-1.3.2.json is not applicable to this publication: not shown, not emitted');
-    else {
-      writeFileSync(join(outDir, 'release-stamps-1.3.2.json'), release);
+    // Registered release sidecars are required source inputs, separate from publication records.
+    const sidecars = loadReleaseSidecars({publication: data});
+    for (const sidecar of sidecars) {
+      writeFileSync(join(outDir, sidecar.file), sidecar.bytes);
       appendFileSync(join(outDir, 'llms.txt'), '/release-stamps-1.3.2.json holds v1.3.2 release stamps (the kit seal for a fresh passing run of a capability\'s registered test on a local cluster; source commit operator-asserted; not human release sign-off, not every operation) and source-contract stamps (tests on source with mocks; not runtime evidence, never release stamps). A release stamp is the v1.3.2 release status of its capability; it does not rewrite any 1.3.0 record.\n');
     }
     // Plain-language descriptions for the human summaries: validated, and unused for another publication.
     const descriptions = validateDescriptions(JSON.parse(readFileSync(new URL('../data/descriptions.json', import.meta.url), 'utf8')), data);
     const corpora = loadReleaseCorpora({publication: data});
-    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, corpora);
+    emitEvidence(data, sidecars[0]?.data ?? null, outDir, descriptions?.descriptions, corpora);
   }};
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "test:integration": "node --test tests/site-build.integration.mjs",
-    "check:release-corpus": "node scripts/check-release-corpus.mjs",
+    "check:release-bundles": "node scripts/check-release-corpus.mjs",
+    "check:release-corpus": "npm run check:release-bundles",
     "build": "docusaurus build",
     "start": "docusaurus start",
     "serve": "docusaurus serve"

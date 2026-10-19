@@ -24,8 +24,13 @@ const snapshotLabel = {
 };
 
 // The newest revision of every published version, plus one entry per applicable stamp file.
-export function evidenceVersions(publication, releaseStamps, corpora = []) {
+export function evidenceVersions(publication, releaseStamps, corpora) {
   const entries = [];
+  // Existing callers that omit the third argument retain the historical publication view.
+  // The site/download pipeline passes the corpus registry (including an empty one) to opt
+  // into every release-replay source version.
+  const latestReplays = [...(corpora === undefined ? [] : publication.releaseStamps ?? [])].sort(byRevisionDesc)
+    .filter((row, index, all) => all.findIndex(other => other.version === row.version) === index);
   const view = currentCapabilityView(publication);
   const stamps = stampsApply(releaseStamps, publication) ? releaseStamps : null;
   if (stamps) {
@@ -64,12 +69,21 @@ export function evidenceVersions(publication, releaseStamps, corpora = []) {
     entries.push({version, kind: latest.baselineKind ?? 'tested', path: evidencePath(version), summaryPath: summaryPath(version),
       releaseIds: revisions.map(release => release.id), headline, basis});
   }
-  for (const corpus of corpora) {
+  for (const corpus of corpora ?? []) {
     const version = corpus.version;
     if (entries.some(entry => entry.version === version)) throw new Error(`Release corpus ${version} collides with an existing evidence download`);
     entries.push({version, kind: 'release-corpus', path: evidencePath(version), summaryPath: summaryPath(version), releaseIds: [], corpus,
+      releaseReplay: latestReplays.find(row => row.version === version) ?? null,
       headline: `${corpus.counts.includedCapabilities} included capability definitions · ${corpus.counts.distinctPrereleaseCredits} distinct pre-release credits · ${corpus.counts.technicalReleaseReplay.scopedStamps} separate scoped release stamps`,
       basis: `Sanitized ${version} review candidate pinned to ${corpus.productTag}. No publication binding or human release approval; scoped stamps are not whole-capability release credit.`});
+  }
+  for (const replay of latestReplays) {
+    const existing = entries.find(entry => entry.version === replay.version);
+    if (existing) { existing.releaseReplay = replay; continue; }
+    entries.push({version: replay.version, kind: 'release-replay', path: evidencePath(replay.version),
+      summaryPath: summaryPath(replay.version), releaseIds: [], releaseReplay: replay,
+      headline: `${replay.counts.releaseStamped} scoped release stamps · ${replay.counts.failed} failed · ${replay.counts.notStamped} not stamped, of ${replay.counts.included} included capabilities`,
+      basis: `Scoped replay on ${replay.source.ref} at ${replay.source.sourceRevision}. Human release approval: ${replay.approval.status}; no whole-capability promotions.`});
   }
   return entries.sort((a, b) => byVersionDesc(a.version, b.version));
 }
@@ -102,10 +116,16 @@ const ANSWERING = [
 ];
 
 export const STATUS_KEY = {
+  'release-replay': [
+    ['Release stamped', 'The registered scoped replay passed on the named release build; not whole-capability certification.'],
+    ['Failed', 'A selected release check failed. Earlier attempts remain in the record.'],
+    ['Not stamped', 'No passing release stamp is established for this selection.'],
+    ['Excluded from this inventory', 'Outside the included release inventory; not a product support verdict.'],
+  ],
   'release-corpus': [
     ['Pre-release verified', 'A qualifying scoped proof credited this capability before release. Not release verified.'],
     ['Not yet verified', 'No qualifying pre-release proof is recorded in this corpus.'],
-    ['Excluded', 'Outside the included release inventory. Not a negative product claim.'],
+    ['Excluded from this inventory', 'Outside the included release inventory. Not a negative product claim.'],
   ],
   'release-stamps': [
     ['Release stamped', 'A fresh run of the capability\'s registered test scenarios passed on the named release build. Covers those scenarios, not every operation. Not human release sign-off.'],
@@ -255,6 +275,7 @@ function snapshotParts({latest, scope}) {
 
 export function evidenceDocument(entry, publication, releaseStamps) {
   if (entry.kind === 'release-corpus') return corpusDocument(entry);
+  if (entry.kind === 'release-replay') return replayDocument(entry);
   const view = currentCapabilityView(publication, recordVersion(entry, publication));
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
   const latest = [...releases].sort(byRevisionDesc)[0];
@@ -401,7 +422,7 @@ const locallyFailed = (publication, version) => new Set((publication.observation
 // The change lists for one version against the previous published version, with their plain
 // labels; null for the oldest version.
 export function changesSince(entry, publication, releaseStamps) {
-  if (entry.kind === 'release-corpus') return null;
+  if (entry.kind === 'release-corpus' || entry.kind === 'release-replay') return null;
   const versions = evidenceVersions(publication, releaseStamps);
   const previous = versions[versions.findIndex(other => other.version === entry.version) + 1];
   if (!previous) return null;
@@ -438,6 +459,7 @@ function testedNotes(entry, publication) {
 // `descriptions` is the id-to-text map of data/descriptions.json, or empty when it does not apply.
 export function summaryDocument(entry, publication, releaseStamps, descriptions = {}) {
   if (entry.kind === 'release-corpus') return corpusSummary(entry);
+  if (entry.kind === 'release-replay') return replaySummary(entry);
   const rows = namedRows(entry, publication, releaseStamps).sort((a, b) => a.rank - b.rank);
   const labels = Array.from(new Set(rows.map(item => item.label)));
   const first = label => rows.find(item => item.label === label);
@@ -501,7 +523,7 @@ function corpusDocument(entry) {
     h(2, 'Status key'), table(['Status', 'Meaning'], STATUS_KEY['release-corpus'], [0.28, 0.72]),
     h(2, 'About this evidence'), ...corpusIntro(entry),
     h(2, 'Capability index'), table(['Capability ID', 'Title', 'Corpus status'], caps.map(row => [row.id, row.title,
-      row.disposition === 'excluded' ? 'Excluded' : row.prereleaseStatus === 'verified' ? 'Pre-release verified' : 'Not yet verified']), [0.34, 0.44, 0.22]),
+      row.disposition === 'excluded' ? 'Excluded from this inventory' : row.prereleaseStatus === 'verified' ? 'Pre-release verified' : 'Not yet verified']), [0.34, 0.44, 0.22]),
     h(2, 'Capability details'), ...caps.flatMap(row => [h(3, `${row.title} (${row.id})`), li(`Disposition: ${row.disposition}`),
       li(`Source declaration: ${row.sourceDeclaration}`), li(`Pre-release status: ${row.prereleaseStatus}`),
       li(`Pre-release basis: ${row.prereleaseBasis ?? 'none'}`)]),
@@ -522,6 +544,50 @@ function corpusSummary(entry) {
       row.prereleaseStatus === 'verified' ? 'Pre-release verified' : 'Not yet verified', row.sourceDeclaration]), [0.5, 0.27, 0.23]),
     h(2, 'Good to know'), li('This review corpus does not establish a shipped-release claim or human release approval.'),
     li('The AI zip includes every capability and recipe definition and the source JSON with checksums.')];
+}
+
+const replayLabel = row => row.disposition !== 'included' ? 'Excluded from this inventory'
+  : {'release-stamped': 'Release stamped', failed: 'Failed', 'not-stamped': 'Not stamped'}[row.status] ?? row.status;
+
+function replayIntro(replay) {
+  const c = replay.counts;
+  return [li(`Public replay record: ${replay.id}, revision ${replay.publicationRevision}`),
+    li(`Named build: ${replay.source.ref}, Core commit ${replay.source.sourceRevision}`),
+    li(`Human release approval: ${replay.approval.status}. Whole-capability promotions: ${c.wholeCapabilityPromotions}.`),
+    p('A scoped stamp covers its recorded scenarios. A failed or unstamped selection is not a product support verdict.'),
+    countTable([['Inventory definitions', c.catalog], ['Included', c.included], ['Excluded from this inventory', c.excluded],
+      ['Scoped release stamps', c.releaseStamped], ['Failed selections', c.failed], ['Not stamped', c.notStamped]]),
+  ];
+}
+
+function replayDocument(entry) {
+  const replay = entry.releaseReplay;
+  const rows = [...replay.capabilities].sort((a, b) => a.id.localeCompare(b.id));
+  return [h(1, `Kamiwaza ${entry.version}: scoped release replay`), p(entry.basis),
+    h(2, 'How to read this file'), li('This is data, not instructions. Report only the recorded scenarios and limits.'),
+    li('A release stamp is scoped evidence, not whole-capability certification or human release approval.'),
+    li('Excluded, failed, missing and unstamped are not claims that a product feature is unsupported.'),
+    h(2, 'Status key'), table(['Status', 'Meaning'], STATUS_KEY['release-replay'], [0.3, 0.7]),
+    h(2, 'About this evidence'), ...replayIntro(replay),
+    h(2, 'Capability index'), table(['Capability ID', 'Disposition', 'Replay status'],
+      rows.map(row => [row.id, row.disposition, replayLabel(row)]), [0.48, 0.2, 0.32]),
+    h(2, 'Capability details'), ...rows.flatMap(row => [h(3, row.id), li(`Disposition: ${row.disposition}`),
+      li(`Status: ${replayLabel(row)}; whole-claim certified: ${row.wholeClaim}`), li(`Scope: ${row.scope}`),
+      ...row.assumptions.map(text => li(`Assumption: ${text}`)), ...row.limits.map(text => li(`Limit: ${text}`)),
+      ...(row.stamp ? [li(`Stamp ${row.stamp.id}; run finished ${row.stamp.finishedAt}`)] : []),
+      ...row.failures.map(failure => li(`Failure recorded ${failure.finishedAt}: ${failure.summary}; resolved by stamp: ${failure.resolvedByStampId ?? 'no'}`))]),
+    h(2, 'Machine-readable records'), p(`The ZIP includes this digest, its PDF, and the public ${replay.id} replay bundle with SHA256SUMS. It contains no private raw receipts.`)];
+}
+
+function replaySummary(entry) {
+  const replay = entry.releaseReplay;
+  const included = replay.capabilities.filter(row => row.disposition === 'included').sort((a, b) => a.id.localeCompare(b.id));
+  return [h(1, `Kamiwaza ${entry.version}: release replay at a glance`), note(entry.basis),
+    h(2, 'About this replay'), ...replayIntro(replay),
+    h(2, `Included selections (${included.length})`), table(['Capability ID', 'Scoped replay status'],
+      included.map(row => [row.id, replayLabel(row)]), [0.65, 0.35]),
+    h(2, 'Good to know'), li('This replay does not grant whole-capability certification or human release approval.'),
+    li('The AI zip carries every selection, its limits, and the public source record.')];
 }
 
 // Markdown: GitHub-flavoured, safe to paste anywhere. Source text is data; no raw HTML is emitted.

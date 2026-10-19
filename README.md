@@ -5,17 +5,18 @@ evidence behind each claim. Published at
 [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/).
 
 This repository is for developers building on Kamiwaza and for partners who need to
-answer "does the platform do X?" accurately. Every claim states its conditions and
-limits, and says whether it is only documented or also verified.
+answer "does the platform do X?" accurately. Published capability claims state their
+conditions and limits, and say whether they are only documented or also verified.
+Review-candidate corpora separately show inventory definitions and scoped proof status.
 
 ## Three ways to use it
 
 | You want to | Do this |
 |---|---|
 | Read or share a release's evidence | Open [capabilities.kamiwaza.dev](https://capabilities.kamiwaza.dev/) and download that release's Zip, MD or PDF. Each starts with its own reading rules, so you can paste it into any AI assistant with no skill installed. |
-| Browse every record | Open the [full catalog](https://capabilities.kamiwaza.dev/catalog/). |
+| Browse published capability records | Open the [full catalog](https://capabilities.kamiwaza.dev/catalog/). Review-candidate corpora have separate entries in the release index. |
 | Ask an AI assistant, or check an RFP or project plan | Install the `capability-grounding` skill (below). It answers from these records only and cites them. |
-| Read the data yourself | Fetch [`/releases/index.json`](https://capabilities.kamiwaza.dev/releases/index.json), then the versioned bundle it points to. [`/llms.txt`](https://capabilities.kamiwaza.dev/llms.txt) states the reading rules. |
+| Read the data yourself | Fetch [`/releases/index.json`](https://capabilities.kamiwaza.dev/releases/index.json), then a published `releases` bundle, a separately labelled review-candidate `corpora` bundle, or a scoped `releaseReplays` bundle. [`/llms.txt`](https://capabilities.kamiwaza.dev/llms.txt) states the reading rules. |
 
 ## Ask an AI assistant
 
@@ -94,7 +95,7 @@ If a release does not say approved, treat it as pending.
 
 | Path | Contents |
 |---|---|
-| `site/` | The published site and its data. `site/data/publication.json` is the reviewed catalog the site and the bundles are built from. See [the site contract](site/README.md). |
+| `site/` | The public site and its data. `site/data/publication.json` supplies published claims; versioned review-corpus downloads also use `corpus/<version>/catalog.json` and `site/data/release-corpora.json`. See [the site contract](site/README.md). |
 | `plugins/capability-grounding/` | The assistant skill described above. |
 | `capabilities/` | One Markdown file per capability — what it does, its conditions, its limits |
 | `evidence/` | Records proving each tested claim — which test, which release, when |

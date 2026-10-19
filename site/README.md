@@ -23,9 +23,10 @@ and `2026-09-25T00:00:00Z` as publication metadata timestamp. That timestamp is
 not a test execution date or deployment attestation. Review/merge is approval;
 the URL by itself does not prove approval. Full byte regeneration is the check.
 
-Deployment is now automatic after main's build succeeds. PR review is the human
-gate; there is no separate environment approval (user decision 2026-09-24).
-The environment allows main only and CAPABILITY_SITE_PUBLISH_ENABLED is true.
+The deployment workflow runs after main's build succeeds only when
+`CAPABILITY_SITE_PUBLISH_ENABLED=true`. PR review is the human gate; there is
+no separate environment approval (user decision 2026-09-24). The environment
+must allow main only. The publication gate is currently disabled.
 Keep old publication objects unchanged; corrections use a new revision/ID.
 
 The original scaffold notes below describe schema 1; schema 2 additionally
@@ -53,7 +54,7 @@ The integration test requires Linux and a populated npm cache from `npm ci`. It 
 
 ## Public projection contract
 
-`data/publication.json` is the only catalog input. Schema 1 contains `releases`. Each snapshot names its version, `development` or `released` channel, exact tested build, full source revision, positive publication revision, UTC publication time, public review PR and capabilities. Each capability contains plain-text title/summary, prerequisites, limits, public distribution, the upstream status, whole-claim assessment and sanitized evidence summaries. See the synthetic unit fixture for the exact shape; never copy its fake evidence into production.
+`data/publication.json` supplies published catalog claims. Review-candidate downloads also use `../corpus/<version>/catalog.json` and the pinned `data/release-corpora.json` manifest. Required historical release-stamp sidecars are pinned by `data/release-sidecars.json`; a sidecar that stops applying fails the build until the registry is reviewed. Schema 1 contains `releases`. Each snapshot names its version, `development` or `released` channel, exact tested build, full source revision, positive publication revision, UTC publication time, public review PR and capabilities. Each capability contains plain-text title/summary, prerequisites, limits, public distribution, the upstream status, whole-claim assessment and sanitized evidence summaries. See the synthetic unit fixture for the exact shape; never copy its fake evidence into production.
 
 Validation rejects unknown fields, internal distribution, duplicate IDs, cross-build evidence and a verified label without complete clean evidence. It does not compute canonical kit verdicts, verify the reviewer's identity, or prove that prose contains no confidential information. Review metadata is provenance, not an authorization mechanism. Human Customer Delivery review and protected GitHub settings are required before actual publication. A passing node must never be relabeled whole-claim verified here.
 
@@ -415,20 +416,30 @@ The home page (`src/pages/index.jsx`) is the plain entry point: what the kit is,
 version with Zip, MD and PDF downloads, and what each status means. The detailed record view
 is `/catalog/` (`src/pages/catalog.jsx`).
 
-`src/evidence.mjs` derives one self-contained digest per version at build time:
-the newest publication revision of each version, plus a version for each applicable release-stamp
-file. Each digest opens with its own reading rules and status key, then lists every capability in
-scope once under its status, with conditions, limits and evidence. `scripts/evidence-files.mjs`
+`src/evidence.mjs` derives one self-contained digest per version at build time from
+the newest publication revision, an applicable release-stamp file, each latest public
+release replay, or a sanitized review-candidate corpus. When a corpus and replay share
+a version, their records remain distinct inside one ZIP. Each digest opens with its own reading
+rules and status key. Published evidence digests list each capability in scope with
+its conditions, limits and evidence; review-corpus digests list inventory definitions
+and aggregate proof status at the narrower source scope. `scripts/evidence-files.mjs`
 renders it to PDF and packs a zip (digest, PDF, the JSON records it was derived from and
 `SHA256SUMS`) with no new dependencies; output is deterministic. Files land at
 `/evidence/<version>/kamiwaza-capabilities-<version>.{md,pdf,zip}` and are listed with their
-SHA-256 in `/evidence/index.json`. They are digests of published records, not new evidence, and
-nothing is written back to `data/`.
+SHA-256 in `/evidence/index.json`. They are projections of published records or explicitly
+labelled review-candidate corpora, not new evidence. `/releases/index.json` retains its
+historical `releases` entries and lists candidate `corpora` separately, with a bundle that
+binds the catalog digest, version-specific manifest, applicable replay and MD/PDF/ZIP hashes.
+Replay-only versions appear in `releaseReplays` with the latest public replay bundle
+and digest; that link is not human release approval.
+`npm run check:release-bundles` regenerates and compares every version and ZIP member after
+the site build; a missing or stale download blocks the workflow. These artifacts grant no
+release binding or human sign-off. Nothing is written back to `data/`.
 
 The summary for people (`/evidence/<version>/kamiwaza-<version>-summary.{md,pdf}`) lists each
 feature once with one plain label: an "At a glance" table of the labels, then one table per area
 (Feature, Status, What it does). Its basis line (the version's `basis`) is printed under the title
-in the Markdown and in the cover band of the PDF. Every version but the oldest also carries a "What
+in the Markdown and in the cover band of the PDF. Published-record versions other than the oldest also carry a "What
 changed since <previous version>" section, and the home page shows the same lists collapsed under
 each release: newly recorded, now tested (recorded before but not tested), tested earlier but not
 yet re-tested, tested earlier with failing scenarios in a published local run of this version, and

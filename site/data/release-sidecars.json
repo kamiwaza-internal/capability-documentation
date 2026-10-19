@@ -1,0 +1,9 @@
+{
+  "schema": "public-release-sidecars.v1",
+  "sidecars": [
+    {
+      "file": "release-stamps-1.3.2.json",
+      "sha256": "3ce89de46d6ece129783f2022565b94a1d7188e301664d7b4eaa14195e374ce0"
+    }
+  ]
+}
