@@ -15,8 +15,8 @@ const stamps = JSON.parse(readFileSync(join(root, 'site/data/release-stamps-1.3.
 const descriptions = JSON.parse(readFileSync(join(root, 'site/data/descriptions.json'))).descriptions;
 const guidance = JSON.parse(readFileSync(join(root, 'site/data/sales-guidance.json')));
 const streams = JSON.parse(readFileSync(join(root, 'site/data/value-streams.json')));
-const fixtureHome = index => `<section aria-labelledby="releases"><ul class="releaseList">${index.versions.map(entry => {
-  const replay = (publication.releaseStamps ?? []).filter(row => row.version === entry.version)
+const fixtureHome = (index, source = publication) => `<section aria-labelledby="releases"><ul class="releaseList">${index.versions.map(entry => {
+  const replay = (source.releaseStamps ?? []).filter(row => row.version === entry.version)
     .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
   return `<li class="releaseRow"><span class="releaseVersion">${entry.version}</span>${replay
     ? `<span>${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped; Human release sign-off: ${replay.approval.status}</span>`
@@ -50,7 +50,7 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   assert.deepEqual(readFileSync(join(out, 'releases/index.json')), readFileSync(join(prior, 'releases/index.json')));
   const homePath = join(out, 'index.html'), validHome = fixtureHome(index);
   writeFileSync(homePath, validHome);
-  assert.equal(checkReleaseCorpusBuild({out}), 1);
+  assert.equal(checkReleaseCorpusBuild({out}), index.versions.length);
   for (const [changed, reason] of [
     [validHome.replace(entry.files.salesPdf.path, entry.files.summaryPdf.path), /three downloads/],
     [validHome.replace('For AI, 1.3.4', 'For assistants, 1.3.4'), /download group labels/],
@@ -67,22 +67,25 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Distinct pre-release credits \| 6/);
   assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Scoped release stamps \| 30/);
   assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Human release approval: not established/);
-  for (const file of ['md', 'pdf', 'zip']) {
-    const path = join(out, entry.files[file].path);
-    const valid = readFileSync(path);
-    rmSync(path);
-    assert.throws(() => checkReleaseCorpusBuild({out}), `missing ${file} must fail`);
-    writeFileSync(path, valid);
-    const corrupt = Buffer.from(valid); corrupt[0] ^= 1; writeFileSync(path, corrupt);
-    assert.throws(() => checkReleaseCorpusBuild({out}), `stale ${file} must fail`);
-    writeFileSync(path, valid);
+  for (const version of ['1.3.4', '1.3.0']) {
+    const download = index.versions.find(row => row.version === version);
+    for (const file of ['md', 'pdf', 'zip']) {
+      const path = join(out, download.files[file].path);
+      const valid = readFileSync(path);
+      rmSync(path);
+      assert.throws(() => checkReleaseCorpusBuild({out}), `missing ${version}/${file} must fail`);
+      writeFileSync(path, valid);
+      const corrupt = Buffer.from(valid); corrupt[0] ^= 1; writeFileSync(path, corrupt);
+      assert.throws(() => checkReleaseCorpusBuild({out}), `stale ${version}/${file} must fail`);
+      writeFileSync(path, valid);
+    }
   }
   const indexPath = join(out, 'evidence/index.json'), zipPath = join(out, entry.files.zip.path);
   const validZip = readFileSync(zipPath);
   for (const [mutate, reason] of [
-    [row => row.source.humanReleaseApproval = 'approved', /corpus source binding/],
-    [row => row.files.zip.sha256 = 'f'.repeat(64), /built file digest zip/],
-    [row => row.files.zip.bytes++, /built file bytes zip/],
+    [row => row.source.humanReleaseApproval = 'approved', /evidence index must match/],
+    [row => row.files.zip.sha256 = 'f'.repeat(64), /evidence index must match/],
+    [row => row.files.zip.bytes++, /evidence index must match/],
   ]) {
     const changed = structuredClone(index);
     mutate(changed.versions.find(row => row.version === entry.version));
@@ -91,9 +94,9 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
     writeFileSync(indexPath, JSON.stringify(index));
   }
   for (const [mutate, reason] of [
-    [files => files.delete('AGENTS.md'), /missing AGENTS.md/],
-    [files => files.set('machine-readable/release-corpus-catalog.json', Buffer.from('{}')), /ZIP catalog must match reviewed corpus/],
-    [files => files.set('SHA256SUMS', Buffer.from('invalid checksums\n')), /checksums must cover every other member/],
+    [files => files.delete('AGENTS.md'), /evidence index must match/],
+    [files => files.set('machine-readable/release-corpus-catalog.json', Buffer.from('{}')), /evidence index must match/],
+    [files => files.set('SHA256SUMS', Buffer.from('invalid checksums\n')), /evidence index must match/],
   ]) {
     const files = new Map(members);
     mutate(files);
@@ -104,7 +107,59 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
     assert.throws(() => checkReleaseCorpusBuild({out}), reason);
     writeFileSync(zipPath, validZip); writeFileSync(indexPath, JSON.stringify(index));
   }
-  assert.equal(checkReleaseCorpusBuild({out}), 1);
+  assert.equal(checkReleaseCorpusBuild({out}), index.versions.length);
+});
+
+test('a replay-only release gets a complete kit and cannot be omitted from the gate', () => {
+  const repo = mkdtempSync(join(tmpdir(), 'replay-only-release-'));
+  mkdirSync(join(repo, 'site/data'), {recursive: true});
+  cpSync(join(root, 'corpus'), join(repo, 'corpus'), {recursive: true});
+  for (const name of ['release-stamps-1.3.2.json', 'descriptions.json', 'sales-guidance.json', 'value-streams.json', 'release-corpora.json'])
+    cpSync(join(root, 'site/data', name), join(repo, 'site/data', name));
+  const extended = structuredClone(publication);
+  const replay = structuredClone(extended.releaseStamps.at(-1));
+  replay.id = 'synthetic-135-replay-r1'; replay.version = '1.3.5'; replay.publicationRevision = 1;
+  replay.source.ref = 'v1.3.5';
+  for (const row of replay.capabilities) if (row.stamp) {
+    const oldId = row.stamp.id;
+    row.stamp.id = sha256(Buffer.from(`${replay.id}:${row.id}`));
+    row.stamp.targetRelease = replay.version;
+    row.stamp.releaseSource.ref = replay.source.ref;
+    for (const failure of row.failures) if (failure.resolvedByStampId === oldId) failure.resolvedByStampId = row.stamp.id;
+  }
+  extended.releaseStamps.push(replay);
+  writeFileSync(join(repo, 'site/data/publication.json'), JSON.stringify(extended));
+  const out = join(repo, 'build');
+  emitBundles(extended, out);
+  writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
+  emitEvidence(extended, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({root: repo, publication: extended}));
+  const indexPath = join(out, 'evidence/index.json');
+  const index = JSON.parse(readFileSync(indexPath));
+  const entry = index.versions.find(row => row.version === '1.3.5');
+  assert.equal(entry.kind, 'release-replay');
+  assert.deepEqual(entry.source, {snapshotId: replay.id, publicationRevision: 1,
+    releaseSource: replay.source, humanReleaseApproval: 'pending'});
+  const homePath = join(out, 'index.html');
+  writeFileSync(homePath, fixtureHome(index, extended));
+  assert.equal(checkReleaseCorpusBuild({repo, out}), index.versions.length);
+  const members = zipMembers(readFileSync(join(out, entry.files.zip.path)));
+  assert.deepEqual(members.get(`machine-readable/${replay.id}.bundle.json`),
+    readFileSync(join(out, 'release-stamps', replay.id, 'bundle.json')));
+  const omitted = structuredClone(index); omitted.versions = omitted.versions.filter(row => row.version !== replay.version);
+  writeFileSync(indexPath, JSON.stringify(omitted));
+  writeFileSync(homePath, fixtureHome(omitted, extended));
+  assert.throws(() => checkReleaseCorpusBuild({repo, out}), /every source release version needs one complete download/);
+  writeFileSync(indexPath, JSON.stringify(index));
+  writeFileSync(homePath, fixtureHome(index, extended));
+  for (const key of ['md', 'pdf', 'zip']) {
+    const path = join(out, entry.files[key].path), valid = readFileSync(path);
+    rmSync(path);
+    assert.throws(() => checkReleaseCorpusBuild({repo, out}), `missing replay ${key}`);
+    writeFileSync(path, valid);
+    const stale = Buffer.from(valid); stale[0] ^= 1; writeFileSync(path, stale);
+    assert.throws(() => checkReleaseCorpusBuild({repo, out}), `stale replay ${key}`);
+    writeFileSync(path, valid);
+  }
 });
 
 test('source discovery and pinning refuse incomplete, changed or extra corpora', () => {

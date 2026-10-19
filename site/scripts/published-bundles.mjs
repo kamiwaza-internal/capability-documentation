@@ -40,6 +40,8 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     const records = entry.kind === 'release-corpus' ? [
       {name: 'machine-readable/release-corpus-catalog.json', data: entry.corpus.bytes},
       {name: 'machine-readable/release-corpus-manifest.json', data: entry.corpus.manifestBytes},
+    ] : entry.kind === 'release-replay' ? [
+      {name: `machine-readable/${entry.replay.id}.bundle.json`, data: readFileSync(join(out, 'release-stamps', entry.replay.id, 'bundle.json'))},
     ] : sourceIds.map(id => ({name: `machine-readable/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
     if (entry.kind === 'release-stamps') records.push({name: `machine-readable/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
     if (scopedStreams && scopedStreams.streams.some(row => row.id === 'Analyst:VS2-5' && row.recipe)) {
@@ -83,6 +85,9 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
       ...(entry.kind === 'release-corpus' ? {source: {catalogSha256: entry.corpus.sha256, kitMergeCommit: entry.corpus.kitMergeCommit,
         productTag: entry.corpus.productTag, productCoreCommit: entry.corpus.productCoreCommit,
         publicationBinding: null, humanReleaseApproval: 'not-established'}} : {}),
+      ...(entry.kind === 'release-replay' ? {source: {snapshotId: entry.replay.id,
+        publicationRevision: entry.replay.publicationRevision, releaseSource: entry.replay.source,
+        humanReleaseApproval: entry.replay.approval.status}} : {}),
       files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',

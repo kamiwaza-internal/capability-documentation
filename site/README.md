@@ -598,8 +598,10 @@ manifest. This does not create an authoritative schema-8 prerelease publication,
 establish recipe release membership or grant human approval. Prerelease credit,
 technical release replay and human release approval remain independent.
 
-After the production build, `npm run check:release-corpus` verifies every catalog
-has an exact manifest entry and checks generated content, source pins, counts,
-download metadata, ZIP members, checksums and homepage links. The workflow runs
+After the production build, `npm run check:release-corpus` regenerates and checks
+the Markdown, PDF and ZIP downloads for every source release version, including a
+version represented only by a public replay snapshot. It checks the evidence and
+publication indexes, source pins, corpus manifests, file bytes, ZIP members,
+checksums and the three homepage download links per version. The workflow runs
 this gate before uploading any Pages artifact. A failed check blocks publication;
 it does not change repository branch-protection settings.

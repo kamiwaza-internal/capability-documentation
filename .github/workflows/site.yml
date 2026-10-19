@@ -39,7 +39,7 @@ jobs:
         run: node scripts/preserve-history.mjs
       - run: npm run test:integration
       - run: npm run build
-      - name: Enforce release corpus/download consistency
+      - name: Enforce every release download bundle
         run: npm run check:release-corpus
       - name: Stage approved public site only
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.CAPABILITY_SITE_PUBLISH_ENABLED == 'true'
