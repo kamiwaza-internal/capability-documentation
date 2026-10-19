@@ -53,15 +53,15 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
       assert.equal(file.bytes, bytes.length, `built file bytes ${key}`);
     }
     const unzipped = zipMembers(readFileSync(join(out, entry.path + '.zip')));
-    assert.deepEqual(unzipped.get('machine-readable/release-corpus-catalog.json'), entry.corpus.bytes, 'ZIP catalog must match reviewed corpus');
-    assert.deepEqual(unzipped.get('machine-readable/release-corpus-manifest.json'), entry.corpus.manifestBytes, 'ZIP manifest must match reviewed corpus');
+    assert.ok(unzipped.get('machine-readable/release-corpus-catalog.json')?.equals(entry.corpus.bytes), 'ZIP catalog must match reviewed corpus');
+    assert.ok(unzipped.get('machine-readable/release-corpus-manifest.json')?.equals(entry.corpus.manifestBytes), 'ZIP manifest must match reviewed corpus');
     assert.equal(JSON.parse(unzipped.get('machine-readable/release-corpus-manifest.json')).sha256,
       sha256(unzipped.get('machine-readable/release-corpus-catalog.json')), 'manifest must bind the exact catalog');
     const readableKeys = ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'];
     for (const key of readableKeys) {
       assert.ok(actual.files[key], `corpus kit must include ${key}`);
       const file = actual.files[key], name = 'human-readable/' + file.path.split('/').at(-1);
-      assert.deepEqual(unzipped.get(name), readFileSync(join(out, file.path)), `ZIP must include standalone ${key}`);
+      assert.ok(unzipped.get(name)?.equals(readFileSync(join(out, file.path))), `ZIP must include standalone ${key}`);
       assert.equal(file.sha256, sha256(unzipped.get(name)), `standalone digest ${key}`);
     }
     for (const name of ['README.md', 'AGENTS.md', 'CLAUDE.md', 'SHA256SUMS']) assert.ok(unzipped.has(name), `missing ${name}`);
@@ -88,7 +88,7 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
       const expected = expectedIndex.versions.find(row => row.version === entry.version);
       assert.deepEqual(actual, expected, `corpus download metadata ${entry.version}`);
       for (const [key, file] of Object.entries(expected.files)) {
-        assert.deepEqual(readFileSync(join(out, file.path)), readFileSync(join(expectedOut, file.path)),
+        assert.ok(readFileSync(join(out, file.path)).equals(readFileSync(join(expectedOut, file.path))),
           `missing or stale ${entry.version}/${key}`);
         if (['zip', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf'].includes(key)) {
           assert.ok(home.includes(`href="${file.path}"`), `home page missing ${file.path}`);
