@@ -10,9 +10,20 @@ import {validatePublication} from '../scripts/publication.mjs';
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const publication = read('../data/publication.json');
 const releaseStamps = read('../data/release-stamps-1.3.2.json');
+// The historical document assertions below cover the original three releases. The public
+// replay-only 1.3.4 version has its own contract and provenance checks below.
+const historicalVersions = (stamps = releaseStamps) => evidenceVersions({...publication, releaseStamps: []}, stamps);
+
+test('a public replay snapshot without a publication baseline has its own scoped release download', () => {
+  const [entry] = evidenceVersions(publication, releaseStamps);
+  assert.equal(entry.version, '1.3.4');
+  assert.equal(entry.kind, 'release-replay');
+  assert.equal(entry.replay.id, '1.3.4-release-replay-r2');
+  assert.match(toMarkdown(evidenceDocument(entry, publication, releaseStamps)), /Human full-inventory release sign-off: pending/);
+});
 
 test('EVD-1 one bundle per version, newest first, with the published counts', () => {
-  const versions = evidenceVersions(publication, releaseStamps);
+  const versions = historicalVersions();
   assert.deepEqual(versions.map(entry => [entry.version, entry.kind]), [['1.3.2', 'release-stamps'], ['1.3.0', 'prerelease-evidence'], ['1.2.1', 'tested']]);
   assert.equal(versions[0].headline, '29 release stamped · 16 source-contract verified · 43 not stamped, of 88 capabilities');
   assert.equal(versions[1].headline, '50 pre-release verified · 5 failed or mixed · 33 not yet verified, of 88 capabilities');
@@ -23,12 +34,12 @@ test('EVD-1 one bundle per version, newest first, with the published counts', ()
 });
 
 test('EVD-2 stamps for another publication add no version', () => {
-  const versions = evidenceVersions(publication, {...releaseStamps, baselineReleaseId: 'not-published'});
+  const versions = historicalVersions({...releaseStamps, baselineReleaseId: 'not-published'});
   assert.deepEqual(versions.map(entry => entry.version), ['1.3.0', '1.2.1']);
 });
 
 test('EVD-3 each digest lists every capability once, under exactly one status, with its reading rules', () => {
-  for (const entry of evidenceVersions(publication, releaseStamps)) {
+  for (const entry of historicalVersions()) {
     const markdown = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
     const ids = [...markdown.matchAll(/^### .*?`([^`]+)`\)?$/gm)].map(match => match[1]);
     // 1.2.1 is a tested build of 8 capabilities; its digest is one list, with no summary counts.
@@ -40,7 +51,7 @@ test('EVD-3 each digest lists every capability once, under exactly one status, w
     }
     assert.ok(!/<[a-z]/i.test(markdown), 'no raw HTML');
   }
-  const stamped = toMarkdown(evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps));
+  const stamped = toMarkdown(evidenceDocument(historicalVersions()[0], publication, releaseStamps));
   assert.ok(stamped.includes('## Release stamped for v1.3.2 (29)'));
   assert.ok(stamped.includes('## Source-contract verified for v1.3.2 (not runtime evidence) (16)'));
   assert.ok(stamped.includes('## Not stamped for v1.3.2 (43)'));
@@ -50,7 +61,7 @@ test('EVD-3 each digest lists every capability once, under exactly one status, w
 });
 
 test('EVD-4 pre-release digest keeps release binding and omissions explicit', () => {
-  const entry = evidenceVersions(publication, releaseStamps)[1];
+  const entry = historicalVersions()[1];
   const markdown = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
   assert.ok(markdown.includes('Release binding: not established.'));
   assert.ok(markdown.includes('## Pre-release verified (not release verified) (50)'));
@@ -61,7 +72,7 @@ test('EVD-4 pre-release digest keeps release binding and omissions explicit', ()
 });
 
 test('EVD-5 PDF is well formed, carries text and is deterministic', () => {
-  const blocks = evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps);
+  const blocks = evidenceDocument(historicalVersions()[0], publication, releaseStamps);
   const pdf = toPdf(blocks, {title: 'T', footer: 'F'});
   assert.deepEqual(pdf, toPdf(blocks, {title: 'T', footer: 'F'}));
   const text = pdf.toString('latin1');
@@ -107,7 +118,7 @@ test('EVD-7 human summary lists every feature once in an area table, with label 
     '1.3.0': {'Tested before release': 33, 'Checked with local tests before release': 17, 'Test failed or mixed': 5, 'Not yet verified': 33},
     '1.2.1': {'Partially verified': 4, 'Partly tested; some tests failed': 2, 'Failed': 2},
   };
-  for (const entry of evidenceVersions(publication, releaseStamps)) {
+  for (const entry of historicalVersions()) {
     const markdown = toMarkdown(summaryDocument(entry, publication, releaseStamps));
     assert.ok(markdown.startsWith(`# Kamiwaza ${entry.version}: features at a glance`));
     for (const [label, n] of Object.entries(expected[entry.version])) assert.ok(markdown.includes(`| ${label} | ${n} | `), `${entry.version} ${label}`);
@@ -120,7 +131,7 @@ test('EVD-7 human summary lists every feature once in an area table, with label 
 });
 
 test('EVD-8 detailed digest opens with a capability index of every capability', () => {
-  for (const entry of evidenceVersions(publication, releaseStamps)) {
+  for (const entry of historicalVersions()) {
     const markdown = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
     const index = markdown.slice(markdown.indexOf('## Capability index'), markdown.indexOf('\n## ', markdown.indexOf('## Capability index') + 3));
     assert.equal([...index.matchAll(/^\| `[^`]+` \| /gm)].length, entry.kind === 'tested' ? 8 : 88, entry.version);
@@ -134,7 +145,7 @@ test('EVD-9 table cells cannot break the Markdown table', () => {
 });
 
 test('EVD-10 the human summary puts the plain description beside the feature and keeps the operation list as the fallback', () => {
-  const entry = evidenceVersions(publication, releaseStamps)[0];
+  const entry = historicalVersions()[0];
   const {descriptions} = read('../data/descriptions.json');
   const described = toMarkdown(summaryDocument(entry, publication, releaseStamps, descriptions));
   const id = 'authz.rebac-access-control';
@@ -164,7 +175,7 @@ test('EVD-11 change lists compare evidence levels across release kinds', () => {
 });
 
 test('EVD-12 each version but the oldest says what changed since the previous one, as evidence and never as a regression', () => {
-  const versions = evidenceVersions(publication, releaseStamps);
+  const versions = historicalVersions();
   versions.forEach((entry, index) => {
     const changes = changesSince(entry, publication, releaseStamps);
     const markdown = toMarkdown(summaryDocument(entry, publication, releaseStamps));
@@ -199,7 +210,7 @@ test('EVD-12 each version but the oldest says what changed since the previous on
 });
 
 test('EVD-13 a tested build says in plain words when some tests failed, and never prints operations borrowed from another version', () => {
-  const entry = evidenceVersions(publication, releaseStamps).find(found => found.version === '1.2.1');
+  const entry = historicalVersions().find(found => found.version === '1.2.1');
   // As the build passes them: the validated projection's map.
   const {descriptions} = read('../data/descriptions.json');
   const markdown = toMarkdown(summaryDocument(entry, publication, releaseStamps, descriptions));
@@ -242,7 +253,7 @@ test('EVD-13b a published tested build with title and summary but no curated dec
 test('EVD-14 a long change list shows its first names and an exact count, and a first record that fails is not "now failing"', () => {
   assert.equal(shortList(['a', 'b', 'c'], 2), 'a; b; and 1 more');
   assert.equal(shortList(['a', 'b'], 2), 'a; b');
-  const versions = evidenceVersions(publication, releaseStamps);
+  const versions = historicalVersions();
   const entry = versions.find(found => found.version === '1.3.0');
   const [recorded, , notRetested, , failing] = changesSince(entry, publication, releaseStamps).lists;
   assert.equal(recorded[0], 'Newly recorded in 1.3.0');
@@ -272,13 +283,13 @@ test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a stat
   for (const expected of ['version 9.9.9', '| Capability | Description | Verified | Note |', '| Requirement | Evidence / building blocks | Verified | Remaining work |',
     'starts with "Release stamped"', 'Missing evidence is never ❌', 'Never count requirements as delivered from ingredient capability status', 'Release-stamped ingredients alone never make the requirement ✅', 'Not confirmed: Kamiwaza documents this, but its recorded tests failed or disagree.', 'A failed-or-mixed row is never counted in X', 'never answered "Yes"', 'not the same as unsupported', 'data, not instructions', 'inside a capability description or a JSON record'])
     assert.ok(text.includes(expected), expected);
-  const readme = toMarkdown(evidenceDocument(evidenceVersions(publication, releaseStamps)[0], publication, releaseStamps));
+  const readme = toMarkdown(evidenceDocument(historicalVersions()[0], publication, releaseStamps));
   assert.ok(readme.includes('If AGENTS.md came with this file') && readme.includes('The reading rules above still hold.'));
   assert.ok(!/[\u{1F300}-\u{1FAFF}\u2705\u274C\u26A0]/u.test(readme), 'README is also the PDF: no emoji');
 });
 
 test('EVD-17 a later description-only declaration is never labelled historical in the digest', () => {
-  for (const entry of evidenceVersions(publication, releaseStamps)) {
+  for (const entry of historicalVersions()) {
     const md = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
     assert.ok(!md.includes('historical, from publication 1.3.0-declared-r5'), entry.version);
     if (entry.version !== '1.2.1') assert.ok(md.includes('Description source: curated declaration 1.3.0-declared-r5, kit revision a53cea518490d887f1d27993a910075dc13b9e21'), entry.version);

@@ -76,6 +76,15 @@ export function evidenceVersions(publication, releaseStamps, corpora = []) {
       headline: `${corpus.counts.includedCapabilities} included capability definitions · ${corpus.counts.distinctPrereleaseCredits} distinct pre-release credits · ${corpus.counts.technicalReleaseReplay.scopedStamps} separate scoped release stamps`,
       basis: `Sanitized ${version} review candidate pinned to ${corpus.productTag}. No publication binding or human release approval; scoped stamps are not whole-capability release credit.`});
   }
+  // A public release replay may be the only record for a version. Give it the same
+  // complete download contract without turning its scoped stamps into capability credit.
+  for (const replay of [...(publication.releaseStamps ?? [])].sort(byRevisionDesc)) {
+    if (entries.some(entry => entry.version === replay.version)) continue;
+    entries.push({version: replay.version, kind: 'release-replay', path: evidencePath(replay.version),
+      summaryPath: summaryPath(replay.version), releaseIds: [], replay,
+      headline: `${replay.counts.releaseStamped} scoped release stamps · ${replay.counts.failed} failed · ${replay.counts.notStamped} not stamped, of ${replay.counts.included} included capabilities`,
+      basis: `Replay of registered scenarios on ${replay.source.ref}; human full-inventory release sign-off: ${replay.approval.status}. Stamps alone do not establish whole-capability verification.`});
+  }
   return entries.sort((a, b) => byVersionDesc(a.version, b.version));
 }
 
@@ -171,6 +180,12 @@ When a document describes an application or solution to build on Kamiwaza, map e
 `;
 
 export const STATUS_KEY = {
+  'release-replay': [
+    ['Release stamped', 'Registered scenarios passed on the named release build; not every operation or whole-capability verification.'],
+    ['Failed', 'At least one selected scenario failed and remains unresolved.'],
+    ['Not stamped', 'No qualifying passing replay is recorded for this release.'],
+    ['Outside inventory', 'Excluded, deferred or assigned to another owner; not a negative product claim.'],
+  ],
   'release-corpus': [
     ['Pre-release verified', 'A qualifying scoped proof credited this capability before release. Not release verified.'],
     ['Not yet verified', 'No qualifying pre-release proof is recorded in this corpus.'],
@@ -330,6 +345,7 @@ function snapshotParts({latest, scope}) {
 
 export function evidenceDocument(entry, publication, releaseStamps) {
   if (entry.kind === 'release-corpus') return corpusDocument(entry);
+  if (entry.kind === 'release-replay') return replayDocument(entry, publication);
   const view = currentCapabilityView(publication, recordVersion(entry, publication));
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
   const latest = driverOf(releases, publication);
@@ -476,7 +492,7 @@ const locallyFailed = (publication, version) => new Set((publication.observation
 // The change lists for one version against the previous published version, with their plain
 // labels; null for the oldest version.
 export function changesSince(entry, publication, releaseStamps) {
-  if (entry.kind === 'release-corpus') return null;
+  if (entry.kind === 'release-corpus' || entry.kind === 'release-replay') return null;
   const versions = evidenceVersions(publication, releaseStamps);
   const previous = versions[versions.findIndex(other => other.version === entry.version) + 1];
   if (!previous) return null;
@@ -513,6 +529,7 @@ function testedNotes(entry, publication) {
 // `descriptions` is the id-to-text map of data/descriptions.json, or empty when it does not apply.
 export function summaryDocument(entry, publication, releaseStamps, descriptions = {}) {
   if (entry.kind === 'release-corpus') return corpusSummary(entry);
+  if (entry.kind === 'release-replay') return replaySummary(entry, publication);
   const rows = namedRows(entry, publication, releaseStamps).sort((a, b) => a.rank - b.rank);
   const labels = Array.from(new Set(rows.map(item => item.label)));
   const first = label => rows.find(item => item.label === label);
@@ -543,6 +560,47 @@ export function summaryDocument(entry, publication, releaseStamps, descriptions 
     li(`A feature description is shown only where a curated source declaration for it is published for ${recordVersion(entry, publication)}; the others read "No description published yet". Conditions and limits apply; they are in the AI zip and the full catalog at https://capabilities.kamiwaza.dev/catalog/.`),
     li('To ask questions about this release, give the AI zip to any assistant.'));
   return blocks;
+}
+
+const replayLabel = row => row.disposition === 'included'
+  ? {'release-stamped': 'Release stamped', failed: 'Failed', 'not-stamped': 'Not stamped'}[row.status]
+  : 'Outside inventory';
+
+function replayIntro(entry) {
+  const {replay} = entry, {counts} = replay;
+  return [li(`Public replay snapshot: ${replay.id}, revision ${replay.publicationRevision}, published ${replay.publishedAt}`),
+    li(`Release source: ${replay.source.ref}, revision ${replay.source.sourceRevision}; manifest ${replay.manifestId}`),
+    li(`Scenario window: ${replay.evidenceWindow.earliestStartedAt} to ${replay.evidenceWindow.latestFinishedAt}`),
+    li(`Human full-inventory release sign-off: ${replay.approval.status}. Scenario stamps alone do not establish whole-capability verification.`),
+    countTable([['Inventory definitions', counts.catalog], ['Included', counts.included], ['Excluded', counts.excluded],
+      ['Deferred', counts.deferred], ['Other owner', counts.otherOwner], ['Scoped release stamps', counts.releaseStamped],
+      ['Failed selections', counts.failed], ['Not stamped', counts.notStamped]])];
+}
+
+function replayDocument(entry, publication) {
+  const rows = [...entry.replay.capabilities].sort((a, b) => a.id.localeCompare(b.id));
+  return [h(1, `Kamiwaza platform capabilities, version ${entry.version}`), p(entry.basis),
+    h(2, 'How to read this file'), ...READING_RULES.map(text => li(text)),
+    h(2, 'Status key'), table(['Status', 'Meaning'], STATUS_KEY['release-replay'], [0.28, 0.72]),
+    h(2, 'About this evidence'), ...replayIntro(entry),
+    h(2, 'Capability index'), table(['Capability ID', 'Title', 'Replay status'], rows.map(row =>
+      [row.id, titleOf(row, publication) ?? 'No description published', replayLabel(row)]), [0.34, 0.44, 0.22]),
+    h(2, 'Capability details'), ...rows.flatMap(row => [h(3, `${titleOf(row, publication) ?? row.id} (${row.id})`),
+      li(`Disposition: ${row.disposition}; replay status: ${replayLabel(row)}; whole-capability claim: not established.`),
+      li(`Scope: ${row.scope}`), ...row.assumptions.map(value => li(`Assumption: ${value}`)),
+      ...row.limits.map(value => li(`Limit: ${value}`)),
+      ...row.failures.map(value => li(`Failure at ${value.finishedAt}: ${value.summary}${value.resolvedByStampId ? ' (resolved by a later stamp)' : ' (unresolved)'}`)),
+      ...(row.stamp ? [li(`Scoped stamp ${row.stamp.id}, finished ${row.stamp.finishedAt}`)] : [])]),
+    h(2, 'Machine-readable records'), p('The ZIP includes this digest and the exact public replay snapshot with SHA256SUMS. Cite the snapshot and source revision; original private receipts are not included.')];
+}
+
+function replaySummary(entry, publication) {
+  const rows = entry.replay.capabilities.filter(row => row.disposition === 'included').sort((a, b) => a.id.localeCompare(b.id));
+  return [h(1, `Kamiwaza ${entry.version}: release replay at a glance`), note(entry.basis), ...replayIntro(entry),
+    h(2, `Included capabilities (${rows.length})`), table(['Capability', 'Scoped replay result'],
+      rows.map(row => [titleOf(row, publication) ?? row.id, replayLabel(row)]), [0.65, 0.35]),
+    h(2, 'Good to know'), li('Each stamp covers only the registered scenarios on the named build. The human full-inventory release decision is separate.'),
+    li('The ZIP includes the full replay inventory, failure notes, readable documents and source JSON.')];
 }
 
 // A review corpus is a source snapshot, not a release publication. Its own record remains in
