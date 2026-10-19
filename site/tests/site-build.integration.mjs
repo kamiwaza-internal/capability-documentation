@@ -1,7 +1,7 @@
 // Disposable offline build: never writes to the production publication input.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync, cpSync, writeFileSync, readFileSync, existsSync, readdirSync} from 'node:fs';
+import {mkdtempSync, cpSync, writeFileSync, readFileSync, existsSync, readdirSync, mkdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -55,9 +55,12 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-integration-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
+  // Unreviewed static files must stay private even when the reviewed icon is published.
+  mkdirSync(join(site, 'static/examples'), {recursive: true});
+  writeFileSync(join(site, 'static/examples/connector-builder-import-test-generate.py'), 'PRIVATE_CANARY_NOT_FOR_EXPORT');
   // A shared node_modules symlink can resolve Docusaurus back to the original site.
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
@@ -80,6 +83,9 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   const result = build();
   assert.equal(result.status, 0, result.stdout + result.stderr);
   checkBuiltFiles(join(site, 'build'));
+  assert.deepEqual(readFileSync(join(site, 'build/favicon.svg')), readFileSync(join(site, 'static/favicon.svg')));
+  assert.match(readFileSync(join(site, 'build/index.html'), 'utf8'), /rel="(?:shortcut )?icon"[^>]*href="\/favicon.svg"/);
+  assert.equal(existsSync(join(site, 'build/examples/connector-builder-import-test-generate.py')), false);
   const html = readFileSync(join(site, 'build/catalog/index.html'), 'utf8');
   assert.ok(html.includes('&lt;script&gt;NOT_EXECUTABLE&lt;/script&gt;'));
   assert.ok(!html.includes('<script>NOT_EXECUTABLE</script>'));
@@ -115,7 +121,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-prerelease-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],

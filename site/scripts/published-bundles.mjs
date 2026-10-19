@@ -155,6 +155,8 @@ export function emitBundles(publication, out) {
 
 export default function bundlePlugin() {
   return {name: 'published-evidence-bundles', async postBuild({outDir}) {
+    // Keep staticDirectories disabled; copy only the reviewed site icon.
+    writeFileSync(join(outDir, 'favicon.svg'), readFileSync(new URL('../static/favicon.svg', import.meta.url)));
     const data = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
     emitBundles(data, outDir);
     // Local scoped stamps: a separate file, never merged into a release bundle or the release index.

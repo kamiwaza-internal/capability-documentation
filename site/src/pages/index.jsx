@@ -80,7 +80,14 @@ export default function Home() {
 
       <section aria-labelledby="instructions" className="panel panelTint">
         <h2 id="instructions">Instructions</h2>
-        <p>Choose the release version, then read its PDF or Markdown kit. The ZIP includes those files, the published source records and AGENTS.md reading instructions for your assistant. If it cannot open a ZIP, attach AGENTS.md, README.md and the evidence documents and source records that README.md lists. Keep each status, condition and limit with any answer you share.</p>
+        <p><span className="betaBadge">Beta</span> To ask what Kamiwaza can do, choose the release version, download its ZIP from <a href="#releases">Releases</a>, attach it to a new chat with any AI assistant and ask. No skill or plugin is needed. The ZIP includes the PDF and Markdown kit, source records and <code>AGENTS.md</code> reading instructions. If your assistant cannot open a ZIP, attach <code>AGENTS.md</code>, <code>README.md</code> and the evidence documents and source records that <code>README.md</code> lists. Keep each status, condition and limit with any answer you share.</p>
+        <details className="faq">
+          <summary><span className="betaBadge">Dev only</span> Claude Code plugin</summary>
+          <p>Add the plugin:</p>
+          <pre><code>{'claude plugin marketplace add kamiwaza-internal/capability-documentation\nclaude plugin install capability-grounding@kamiwaza-capabilities'}</code></pre>
+          <p>Then ask a question, or paste in an RFP:</p>
+          <pre><code>/capability-grounding:capability-grounding Can Kamiwaza deploy and manage MCP tool servers for our agents?</code></pre>
+        </details>
       </section>
 
       <section aria-labelledby="faqs" className="panel">
@@ -96,6 +103,10 @@ export default function Home() {
         <details className="faq">
           <summary>Does a missing capability mean Kamiwaza can&rsquo;t do it?</summary>
           <p>No. It means <strong>not established</strong>: the evidence cannot back the claim for that release. Only a source record explicitly ruling out the requested behavior establishes &ldquo;not supported&rdquo;. Inventory exclusion means outside this publication.</p>
+        </details>
+        <details className="faq">
+          <summary>What are recipes and value streams?</summary>
+          <p>A <strong>value stream</strong> is an end-to-end job a customer persona does with Kamiwaza, such as an analyst taking in a mission and managing its projects, written as ordered steps from start to outcome. A <strong>recipe</strong> is the reviewed, step-by-step definition of one value stream that can be run against a named build. A complete recorded run can establish a <strong>scoped proof</strong> when its reviewed checks pass and the published verdict accepts it. That proof covers only the named operations, modality and build; linked building blocks do not automatically receive capability credit. A recipe on its own is a plan, not a result. Prerelease proof, release verification and human release approval remain separate.</p>
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>
