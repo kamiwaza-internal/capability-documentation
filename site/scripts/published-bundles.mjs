@@ -7,19 +7,23 @@ import {validateReleaseStamps} from './release-stamps.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
 import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {toPdf, toZip} from './evidence-files.mjs';
+import {loadReleaseCorpora} from './release-corpora.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 
 // Per-version downloads for people and for assistants with no skill: a self-contained Markdown
 // digest, the same text as PDF, and a zip of both with the JSON records they were derived from.
-export function emitEvidence(publication, releaseStamps, out, descriptions) {
+export function emitEvidence(publication, releaseStamps, out, descriptions, corpora = []) {
   const index = [];
-  for (const entry of evidenceVersions(publication, releaseStamps)) {
+  for (const entry of evidenceVersions(publication, releaseStamps, corpora)) {
     const blocks = evidenceDocument(entry, publication, releaseStamps);
     const name = 'kamiwaza-capabilities-' + entry.version;
     const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
-    const records = entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
+    const records = entry.kind === 'release-corpus' ? [
+      {name: 'records/release-corpus-catalog.json', data: entry.corpus.bytes},
+      {name: 'records/release-corpus-manifest.json', data: entry.corpus.manifestBytes},
+    ] : entry.releaseIds.map(id => ({name: `records/${id}.bundle.json`, data: readFileSync(join(out, 'releases', id, 'bundle.json'))}));
     if (entry.kind === 'release-stamps') records.push({name: `records/release-stamps-${entry.version}.json`, data: readFileSync(join(out, `release-stamps-${entry.version}.json`))});
     const contents = [{name: 'README.md', data: markdown}, {name: name + '.pdf', data: pdf}, ...records];
     contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
@@ -38,11 +42,14 @@ export function emitEvidence(publication, releaseStamps, out, descriptions) {
     };
     for (const file of Object.values(files)) writeFileSync(join(out, file.path), file.bytes);
     index.push({version: entry.version, kind: entry.kind, headline: entry.headline, basis: entry.basis, releaseIds: entry.releaseIds,
+      ...(entry.kind === 'release-corpus' ? {source: {catalogSha256: entry.corpus.sha256, kitMergeCommit: entry.corpus.kitMergeCommit,
+        productTag: entry.corpus.productTag, productCoreCommit: entry.corpus.productCoreCommit,
+        publicationBinding: null, humanReleaseApproval: 'not-established'}} : {}),
       files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
-    note: 'Each download is a digest derived from the published records at build time. Cite the publication records it names.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, machine-readable files (a zip with the detailed digest and the JSON records, and the same digest as Markdown and PDF; each starts with its own reading rules and needs no skill) and a short human-readable summary (Markdown and PDF). All are derived from the records above, not new evidence. Answer from the machine-readable files.\n');
+    note: 'Published-release downloads derive from publication records. Release-corpus downloads derive from sanitized review candidates and do not imply release approval. Cite the exact source record and digest.', versions: index}, null, 2) + '\n');
+  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists per-version Markdown, PDF and zip downloads and their SHA-256 digests. A release-corpus entry is a sanitized review candidate, not a bound or approved release publication. Use its separate status axes as written.\n');
 }
 
 // Historical pre-release evidence is labelled schema 4, proof revisions schema 8,
@@ -130,6 +137,7 @@ export default function bundlePlugin() {
     }
     // Plain-language descriptions for the human summaries: validated, and unused for another publication.
     const descriptions = validateDescriptions(JSON.parse(readFileSync(new URL('../data/descriptions.json', import.meta.url), 'utf8')), data);
-    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions);
+    const corpora = loadReleaseCorpora({publication: data});
+    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, corpora);
   }};
 }

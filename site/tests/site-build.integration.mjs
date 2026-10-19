@@ -61,6 +61,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
       status: 'partial', wholeClaim: false, evidence: []}],
   };
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify({schema: 1, releases: [release]}));
+  writeFileSync(join(site, 'data/release-corpora.json'), JSON.stringify({schema: 'public-release-corpora.v1', corpora: []}));
   const build = () => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
   const result = build();
@@ -102,6 +103,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   writeFileSync(join(root, 'private-canary.md'), 'PRIVATE_CANARY_NOT_FOR_EXPORT');
   const input = observationsFixture();
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify(input));
+  writeFileSync(join(site, 'data/release-corpora.json'), JSON.stringify({schema: 'public-release-corpora.v1', corpora: []}));
   const build = revision => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024, env: {...process.env, GITHUB_SHA: revision}});
   const result = build('f'.repeat(40));

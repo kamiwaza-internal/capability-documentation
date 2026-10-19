@@ -3,6 +3,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
+import releaseCorpora from '../../data/release-corpora.json';
 import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY} from '../evidence.mjs';
 
 function Changes({entry}) {
@@ -16,7 +17,7 @@ function Changes({entry}) {
 }
 
 export default function Home() {
-  const versions = evidenceVersions(publication, releaseStamps);
+  const versions = evidenceVersions(publication, releaseStamps, releaseCorpora.corpora);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
   const currentReplays = (publication.releaseStamps ?? []).filter(snapshot =>
     !publication.releaseStamps.some(other => other.version === snapshot.version && other.publicationRevision > snapshot.publicationRevision));
@@ -28,7 +29,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
-        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each release below has a short summary for people and a zip for AI assistants. Every record is in the <Link to="/catalog/">full catalog</Link>.</p>
+        <p>The Sales Dev Kit records what each Kamiwaza release can do and whether it was tested. Each entry below has a short summary for people and a zip for AI assistants. Published release records are in the <Link to="/catalog/">full catalog</Link>; a review-candidate corpus is labelled separately in its download.</p>
       </section>
 
       {(publication.releaseStamps ?? []).length > 0 && <section aria-labelledby="release-replays">
