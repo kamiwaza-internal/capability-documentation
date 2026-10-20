@@ -1,7 +1,9 @@
 // Named for the data file: tests/release-stamps.test.mjs already covers publication.json schema 6 snapshots.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {existsSync, readFileSync} from 'node:fs';
+import {existsSync, readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {validateReleaseStamps} from '../scripts/release-stamps.mjs';
 import {projectReleaseStamps, serialize} from '../scripts/project-release-stamps.mjs';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
@@ -171,5 +173,41 @@ test('scoped stamp keeps its claim and limits in the catalog; incomplete scope i
   assert.equal(joined.rows[0].releaseStamp.scope, data.releaseStamps[0].scope);
   assert.deepEqual(joined.rows[0].releaseStamp.limits, ['No browser claim']);
   delete data.releaseStamps[0].limits;
+  assert.throws(() => validateReleaseStamps(data));
+});
+
+
+test('scoped projection preserves native journey limits and rejects silent loss', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'scope-projection-'));
+  try {
+    mkdirSync(join(dir, 'batch'));
+    mkdirSync(join(dir, 'source-contract'));
+    writeFileSync(join(dir, 'source-contract', 'source-contract-stamps.json'), JSON.stringify({schema: 'capability-source-contract-stamp-set.v1', target_release: '1.3.2', release_verified: false, stamps: [], not_stamped: []}));
+    const stamp = {schema: 'capability-release-stamp.v1', basis: 'fresh-release-replay', target_release: '1.3.2', capability: stamps.releaseStamps[0].capability, id: 'a'.repeat(64), finished_at: '2026-01-01T00:00:00Z', manifest_id: 'sha256:' + 'b'.repeat(64), release_source: {ref: 'v1.3.2', source_commit: 'c'.repeat(40), source_commit_basis: 'operator-asserted'}, replayed_kits: ['sdk:sample-journey'], assumptions: [], limits: ['Verified journey: Create and read a sample', 'No browser claim']};
+    const project = () => {
+      writeFileSync(join(dir, 'batch', 'release-stamps.json'), JSON.stringify([stamp]));
+      return projectReleaseStamps(dir, published).releaseStamps[0];
+    };
+    assert.equal(project().scope, 'Create and read a sample');
+    assert.deepEqual(project().limits, ['No browser claim']);
+    stamp.limits = ['Verified journey: ', 'No browser claim'];
+    assert.throws(project, /Empty verified journey/);
+    stamp.limits = ['Verified journey: Create and read a sample'];
+    assert.throws(project, /journey and limits/);
+    stamp.limits = ['No browser claim'];
+    assert.throws(project, /journey and limits/);
+    stamp.limits = [];
+    assert.equal(Object.hasOwn(project(), 'scope'), false);
+    stamp.assumptions = ['A required service is configured'];
+    assert.throws(project, /assumptions/);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('scope requires nonempty limits and limits cannot stand alone', () => {
+  const data = fixture();
+  Object.assign(data.releaseStamps[0], {scope: 'Read a sample', limits: []});
+  assert.throws(() => validateReleaseStamps(data), /limits/);
+  delete data.releaseStamps[0].scope;
+  data.releaseStamps[0].limits = ['No browser claim'];
   assert.throws(() => validateReleaseStamps(data));
 });

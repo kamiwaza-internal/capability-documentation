@@ -37,6 +37,7 @@ export function validateReleaseStamps(data, publication) {
     if (Object.hasOwn(stamp, 'scope')) {
       text(stamp.scope);
       list(stamp.limits, 30).forEach(text);
+      requireValue(stamp.limits.length > 0, 'Scoped stamp limits are required');
     }
     capability(stamp.capability);
     requireValue(hex64.test(stamp.stampId), 'Invalid stamp identifier');
