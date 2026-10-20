@@ -547,7 +547,7 @@ export function summaryDocument(entry, publication, releaseStamps, descriptions 
   for (const area of Array.from(new Set(rows.map(item => item.area))).sort()) {
     const inArea = rows.filter(item => item.area === area).sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name));
     blocks.push(h(2, `${area} (${inArea.length})`), table(['Feature', 'Status', 'What it does'],
-      inArea.map(item => [`**${item.name}**`, {text: item.label, dot: item.tone}, about(item, descriptions)]), [0.26, 0.22, 0.52]));
+      inArea.map(item => [`**${item.name}**`, {text: item.label, dot: item.tone}, [about(item, descriptions), ...(item.row.releaseStamp?.scope ? [`Verified journey: ${item.row.releaseStamp.scope}`, ...item.row.releaseStamp.limits.map(limit => `Limit: ${limit}`)] : [])].join(' ')]), [0.26, 0.22, 0.52]));
   }
   blocks.push(h(2, 'Good to know'));
   if (entry.kind === 'release-stamps') blocks.push(

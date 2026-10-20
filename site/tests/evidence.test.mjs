@@ -321,4 +321,7 @@ test('release download retains scoped journey, limits and earlier prerelease con
   assert.match(markdown, /Verified journey: Read the synthetic sample/);
   assert.match(markdown, /Browser behavior is not verified/);
   assert.match(markdown, /Earlier .* pre-release status, for context only/);
+  const summary = toMarkdown(summaryDocument(entry, publication, scoped));
+  assert.match(summary, /Verified journey: Read the synthetic sample/);
+  assert.match(summary, /Limit: Browser behavior is not verified/);
 });
