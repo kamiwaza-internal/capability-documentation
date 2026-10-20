@@ -144,6 +144,14 @@ Where a stamp supplies `scope` and `limits`, the catalog and downloadable eviden
 show those alongside its status. The absence of those fields does not establish
 whole-capability coverage; existing scenario and global limits still apply.
 
+The private GitHub capability-kit corpus remains canonical for original evidence.
+Keep prerelease verification visible independently of release stamps, including
+its original version, provenance, scope and limits. A smaller fresh-release count
+must never replace the prerelease inventory. Public projections retain reviewed
+historical evidence and links; later failures affect current credit without
+erasing earlier observations. Count distinct capability IDs per axis and never
+sum overlapping prerelease and release counts.
+
 The producer policy is [capability-kit's weekly verification contract](https://github.com/kamiwaza-internal/capability-kit/blob/main/docs/weekly-verification.md).
 It reuses one stable runtime capture pair for a batch, preserves independent
 results, and permits accountable deferred cleanup only for reviewed harmless
