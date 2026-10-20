@@ -297,7 +297,8 @@ function stampParts({view, releaseStamps, scope}) {
       const stamp = stampedOf(row.id);
       return capabilityBlocks(row, scope, `Release stamped · ${releaseStamps.releaseTag}`, [
         `Stamp ${stamp.stampId}: ${stamp.lane.toUpperCase()} lane, run finished ${stamp.finishedAt}`,
-        'Scenarios covered: ' + stamp.scenarios.join(', '), prior(row)]);
+        'Scenarios covered: ' + stamp.scenarios.join(', '),
+        ...(stamp.scope ? ['Verified journey: ' + stamp.scope, ...stamp.limits] : []), prior(row)]);
     }],
     [`Source-contract verified for ${releaseStamps.releaseTag} (not runtime evidence)`, rows.filter(row => !row.releaseStamp && row.sourceContractStamp), row =>
       capabilityBlocks(row, scope, `Source-contract verified · ${releaseStamps.releaseTag} · not runtime evidence`, [

@@ -281,3 +281,18 @@ The answer names the publication used and its limits, gives a one-row table for
 record's conditions and limits, and cites the publication, bundle hash and capability
 ID. If the publication omitted that capability, the answer says so and reports Not
 established.
+
+
+## Scoped weekly verification
+
+A release stamp may carry an explicit `scope` and per-stamp `limits`. State that
+journey and those limits alongside the release status. Combine them with the
+projection's global limits. A scoped API journey does not prove a browser flow,
+permission matrix, outage behavior or every declared operation. Do not infer
+whole-capability coverage from the presence of a stamp or from a capability count.
+
+Count newly stamped capability IDs separately from additional journeys and
+refreshed evidence. Source checks and developer assessments remain preliminary,
+not fresh runtime release verification. Preserve known failures and corrective
+replay lineage. Deferred harmless-data cleanup is a disclosed obligation, never
+"cleanup passed"; do not publish private fixture identifiers or operator details.

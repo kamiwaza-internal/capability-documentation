@@ -161,3 +161,15 @@ test('RS-8 projection regenerates data/release-stamps-1.3.2.json byte for byte f
   {skip: existsSync(kitDir + '/source-contract/source-contract-stamps.json') ? false : 'kit release replay report not present (expected in CI); set KIT_RELEASE_REPLAY to its directory to run'}, () => {
     assert.equal(serialize(projectReleaseStamps(kitDir, published)), raw);
   });
+
+
+test('scoped stamp keeps its claim and limits in the catalog; incomplete scope is refused', () => {
+  const data = fixture();
+  Object.assign(data.releaseStamps[0], {scope: 'Create and read a synthetic sample', limits: ['No browser claim']});
+  validateReleaseStamps(data);
+  const joined = joinReleaseStamps([{id: 'synthetic.one'}], data);
+  assert.equal(joined.rows[0].releaseStamp.scope, data.releaseStamps[0].scope);
+  assert.deepEqual(joined.rows[0].releaseStamp.limits, ['No browser claim']);
+  delete data.releaseStamps[0].limits;
+  assert.throws(() => validateReleaseStamps(data));
+});

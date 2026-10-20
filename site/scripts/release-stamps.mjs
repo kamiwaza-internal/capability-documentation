@@ -33,7 +33,11 @@ export function validateReleaseStamps(data, publication) {
 
   const lanes = {api: 0, sdk: 0};
   const released = list(data.releaseStamps, 1000).map(stamp => {
-    shape(stamp, ['capability', 'stampId', 'lane', 'finishedAt', 'scenarios', 'supersededKit', ...(Object.hasOwn(stamp, 'selectionBasis') ? ['selectionBasis'] : [])]);
+    shape(stamp, ['capability', 'stampId', 'lane', 'finishedAt', 'scenarios', 'supersededKit', ...(Object.hasOwn(stamp, 'selectionBasis') ? ['selectionBasis'] : []), ...(Object.hasOwn(stamp, 'scope') ? ['scope', 'limits'] : [])]);
+    if (Object.hasOwn(stamp, 'scope')) {
+      text(stamp.scope);
+      list(stamp.limits, 30).forEach(text);
+    }
     capability(stamp.capability);
     requireValue(hex64.test(stamp.stampId), 'Invalid stamp identifier');
     requireValue(Object.hasOwn(lanes, stamp.lane), 'Invalid lane');
