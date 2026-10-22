@@ -1,4 +1,4 @@
-import {currentCapabilityView, descriptionOnly, joinReleaseStamps, stampsApply} from './catalog.mjs';
+import {activeCapabilities, currentCapabilityView, descriptionOnly, joinReleaseStamps, stampsApply} from './catalog.mjs';
 
 // Per-version evidence downloads: one self-contained document per version, derived at build
 // time from the published records and never stored. The page and the build share this module
@@ -348,7 +348,8 @@ function snapshotParts({latest, scope}) {
 function historicalEvidenceDocument(entry, publication, releaseStamps) {
   if (entry.kind === 'release-corpus') return corpusDocument(entry);
   if (entry.kind === 'release-replay') return replayDocument(entry, publication);
-  const view = currentCapabilityView(publication, recordVersion(entry, publication));
+  const historical = currentCapabilityView(publication, recordVersion(entry, publication));
+  const view = entry.kind === "release-stamps" ? activeCapabilities(historical) : historical;
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
   const latest = driverOf(releases, publication);
   const scope = {publication, version: recordVersion(entry, publication)};
@@ -423,7 +424,8 @@ const TONE = {tested: 'green', 'code-checked': 'amber', failed: 'red', untested:
 const graded = (row, [rank, label, level]) => ({row, rank, label, level, tone: row.status === 'partial' ? 'amber' : TONE[level]});
 
 function summaryRows(entry, publication, releaseStamps) {
-  const view = currentCapabilityView(publication, recordVersion(entry, publication));
+  const historical = currentCapabilityView(publication, recordVersion(entry, publication));
+  const view = entry.kind === "release-stamps" ? activeCapabilities(historical) : historical;
   if (entry.kind === 'release-stamps') return joinReleaseStamps(view, releaseStamps).rows.map(row => graded(row, stampGrade(row, releaseStamps.targetRelease)));
   const latest = driverOf(publication.releases.filter(release => entry.releaseIds.includes(release.id)), publication);
   if (entry.kind === 'prerelease-evidence') return view.filter(row => row.lineage.releaseId === latest.id).map(row => graded(row, prereleaseGrade(row)));

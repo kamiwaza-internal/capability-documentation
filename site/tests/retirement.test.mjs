@@ -23,7 +23,7 @@ test('retirement removes only the unsupported target and preserves every accepte
 
 test('current views and downloads exclude retirement without changing explicit historical views', async () => {
  const {currentCapabilityView, primaryCapabilities}=await import('../src/catalog.mjs');
- const {evidenceVersions, agentsMd}=await import('../src/evidence.mjs');
+ const {evidenceVersions, agentsMd, namedRows, evidenceDocument, toMarkdown}=await import('../src/evidence.mjs');
  const publication=JSON.parse(read('../data/publication.json'));
  const stamps=JSON.parse(read('../data/release-stamps-1.3.2.json'));
  const original=JSON.stringify(publication);
@@ -31,6 +31,11 @@ test('current views and downloads exclude retirement without changing explicit h
  assert.ok(!primaryCapabilities(publication).some(r=>r.id==='models.two-node-serving'));
  assert.ok(currentCapabilityView(publication,'1.3.0').some(r=>r.id==='models.two-node-serving'));
  assert.match(evidenceVersions(publication,stamps).find(r=>r.version==='1.3.2').headline,/of 87 capabilities/);
+ const entry=evidenceVersions(publication,stamps).find(r=>r.version==='1.3.2');
+ assert.equal(namedRows(entry,publication,stamps).length,87);
+ assert.ok(!namedRows(entry,publication,stamps).some(r=>r.id==='models.two-node-serving'));
+ const detailed=toMarkdown(evidenceDocument(entry,publication,stamps));
+ assert.ok(!detailed.includes('### models.two-node-serving'));
  assert.match(agentsMd('1.3.4'),/models.two-node-serving.*unsupported/);
  assert.equal(JSON.stringify(publication),original);
 });
