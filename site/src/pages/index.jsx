@@ -36,6 +36,16 @@ export default function Home() {
         <p>The Sales Dev Kit records published evidence, conditions and gaps for each version. Download the PDF, Markdown or ZIP to read or share it. Published release records are in the <Link to="/catalog/">full catalog</Link>; review-candidate corpora retain their source and approval limits in the download.</p>
       </section>
 
+      <section className="panel panelTint" aria-labelledby="verification-results-134">
+        <h2 id="verification-results-134">1.3.4 verification results - October 21 update</h2>
+        <p><strong>64 of 88 capabilities have accepted scoped release evidence.</strong> The 58 historical prerelease entries overlap and remain separate. This cumulative report covers multiple replay configurations; it is not whole-release approval. The downloads below retain earlier publication snapshots.</p>
+        <nav aria-label="Full 1.3.4 verification results downloads">
+          <a href="/verification-results/1.3.4-2026-10-21/results.pdf" download>Full results PDF</a>{' · '}
+          <a href="/verification-results/1.3.4-2026-10-21/results.md" download>Markdown</a>{' · '}
+          <a href="/verification-results/1.3.4-2026-10-21/kit.zip" download>Complete evidence kit ZIP</a>
+        </nav>
+      </section>
+
       <section aria-labelledby="releases">
         <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
