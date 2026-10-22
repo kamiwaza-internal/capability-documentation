@@ -29,7 +29,7 @@ test('new 1.3.4 rows preserve every older version row and the original 50 accept
   assert.deepEqual(allRows.filter(row => row.version !== '1.3.4'), originalRows);
   assert.equal(originalRows.filter(row => row.status === 'prerelease-verified').length, 50);
   const releaseRows = allRows.filter(row => row.version === '1.3.4');
-  assert.equal(releaseRows.length, 88);
+  assert.equal(releaseRows.length, 87);
   assert.equal(releaseRows.filter(row => row.status === 'release-stamped').length, 30);
   assert.ok(releaseRows.every(row => row.status !== 'prerelease-verified'));
   const cap = 'kaizen.conversation-event-streaming';

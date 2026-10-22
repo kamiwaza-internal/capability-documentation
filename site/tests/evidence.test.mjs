@@ -25,7 +25,7 @@ test('a public replay snapshot without a publication baseline has its own scoped
 test('EVD-1 one bundle per version, newest first, with the published counts', () => {
   const versions = historicalVersions();
   assert.deepEqual(versions.map(entry => [entry.version, entry.kind]), [['1.3.2', 'release-stamps'], ['1.3.0', 'prerelease-evidence'], ['1.2.1', 'tested']]);
-  assert.equal(versions[0].headline, '29 release stamped · 16 source-contract verified · 43 not stamped, of 88 capabilities');
+  assert.equal(versions[0].headline, '29 release stamped · 16 source-contract verified · 42 not stamped, of 87 capabilities');
   assert.equal(versions[1].headline, '50 pre-release verified · 5 failed or mixed · 33 not yet verified, of 88 capabilities');
   assert.deepEqual(versions[1].releaseIds, ['1.3.0-declared-r5', '1.3.0-prerelease-r3', '1.3.0-declared-r2', '1.3.0-declared-r1']);
   assert.equal(versions[2].headline, '0 verified · 6 partial · 2 failed · 0 untested, of 8 capabilities');

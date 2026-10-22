@@ -123,11 +123,11 @@ test('CUR-F published data: 50 verifications retained, 4 later non-applicable fa
   const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
   const rows = currentCapabilityView(deepFreeze(published));
   assert.deepEqual(summarizeCurrentView(rows), {
-    capabilities: 88, verified: 50, scenarioBacked: 33, developerAssessed: 17, scopedProofVerified: 0, superseded: 0, laterNonApplicableFailure: 4,
-    documentationGap: 4, failedOrMixed: 5, notYetVerified: 33, releaseVerified: 0, releaseCheckFailed: 1,
+    capabilities: 87, verified: 50, scenarioBacked: 33, developerAssessed: 17, scopedProofVerified: 0, superseded: 0, laterNonApplicableFailure: 4,
+    documentationGap: 4, failedOrMixed: 5, notYetVerified: 32, releaseVerified: 0, releaseCheckFailed: 1,
   });
-  assert.equal(new Set(rows.map(row => row.id)).size, 88);
-  assert.equal(rows.filter(row => row.describedIn === '1.3.0-declared-r5').length, 71);
+  assert.equal(new Set(rows.map(row => row.id)).size, 87);
+  assert.equal(rows.filter(row => row.describedIn === '1.3.0-declared-r5').length, 70);
   assert.ok(rows.slice(0, 50).every(row => row.status === 'verified'), 'verified rows come first');
   assert.deepEqual(rows.filter(row => row.laterNonApplicableFailure).map(row => row.id).sort(),
     ['catalog.writable-datasets', 'connectors.connector-builder', 'kaizen.notifications-inbox', 'kaizen.product-identity']);
@@ -198,7 +198,7 @@ test('CUR-G rendered page: stamp badges, counts and paragraphs appear only for t
   const ids = html => [...html.matchAll(/href="#current--1\.3\.0--([^"]+)"/g)].map(match => match[1]);
   const stamped = list => new Set(list.map(stamp => stamp.capability));
   const released = stamped(releaseStamps.releaseStamps), contracts = stamped(releaseStamps.sourceContractStamps);
-  const baseOrder = currentCapabilityView(published).filter(row => row.id !== 'models.two-node-serving').map(row => row.id);
+  const baseOrder = currentCapabilityView(published).map(row => row.id);
   assert.deepEqual(ids(real), [...baseOrder.filter(id => released.has(id)), ...baseOrder.filter(id => contracts.has(id)), ...baseOrder.filter(id => !released.has(id) && !contracts.has(id))]);
   assert.ok(released.has(ids(real)[0]));
   for (const heading of ['Release stamped for v1.3.2 (29)', 'Source-contract verified for v1.3.2 (16)', 'Not stamped for v1.3.2 (42)']) assert.equal(occurrences(real, '<th colSpan="5" scope="colgroup">' + heading + '</th>'), 1, heading);
