@@ -156,3 +156,7 @@ Earlier scope-corrected results: [Markdown](reports/1.3.4-2026-10-21-retirement/
 ## October 22 verification update
 
 Accepted scoped coverage is 65/87 after Kit #186 adds the Copilot journey. All 58 historical prerelease entries and previous report bytes remain preserved. Current full results: [PDF](reports/1.3.4-2026-10-22/results.pdf), [Markdown](reports/1.3.4-2026-10-22/results.md), [JSON](reports/1.3.4-2026-10-22/results.json), [evidence kit](reports/1.3.4-2026-10-22/kit.zip). Scope and cleanup are detailed in the report; this is not whole-release approval.
+
+## October 22 OAuth verification update
+
+Accepted scoped coverage is 66/87 after merged Kit #188. All 58 historical prerelease entries and earlier report bytes remain preserved. Full results: [PDF](reports/1.3.4-2026-10-22-oauth/results.pdf), [Markdown](reports/1.3.4-2026-10-22-oauth/results.md), [JSON](reports/1.3.4-2026-10-22-oauth/results.json), [kit](reports/1.3.4-2026-10-22-oauth/kit.zip). Scope and retained fixtures are detailed in the report.

@@ -1,0 +1,45 @@
+{
+  "finished_at": "2026-10-22T03:02:46.537228+00:00",
+  "deployment_id": "30593c59-baff-4ea7-a6ba-0923b1f9d619",
+  "deployment_status": "STOPPED",
+  "model_id": "2b0f323a-f499-4fdd-9a80-963e44bb5608",
+  "model_absent": true,
+  "owned_provider_credentials_absent": true,
+  "owned_processes_terminated": {
+    "collector": 44936,
+    "fixture": 44934
+  },
+  "configuration_restoration": "passed",
+  "retained_data": "Terminal copilot run/action/result records and owned preference remain under product retention semantics.",
+  "verified_at": "2026-10-22T03:04:42.337053+00:00",
+  "deployments": [
+    {
+      "name": "core-raycluster-head",
+      "uid": "4fcc3db5-eb38-4f1a-bbb7-8af9f34b96b3",
+      "replicas": 1,
+      "ready": 1,
+      "exact_template_restored": true
+    },
+    {
+      "name": "core-raycluster-worker",
+      "uid": "b7706127-d504-4949-9496-22d67209de84",
+      "replicas": 0,
+      "ready": 0,
+      "exact_template_restored": true
+    },
+    {
+      "name": "core-scheduler",
+      "uid": "7173488a-d8d2-413b-8a54-3d0dd85c2858",
+      "replicas": 1,
+      "ready": 1,
+      "exact_template_restored": true
+    }
+  ],
+  "original_trust_restored": true,
+  "core_metadata": {
+    "component": "core",
+    "version": "1.3.4",
+    "commit_sha": "5f5f64656802eb497167f6eae6021093cfcdccf2",
+    "built_at": "2026-10-15T22:58:16Z"
+  }
+}
