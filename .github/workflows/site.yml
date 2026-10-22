@@ -32,6 +32,11 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci --ignore-scripts
       - run: npm test
+      - name: Keep report submissions separate from site changes
+        if: github.event_name == 'pull_request'
+        env:
+          PUBLICATION_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/check-report-submission.mjs
       - name: Preserve published revision history
         if: github.event_name == 'pull_request' || github.event_name == 'push'
         env:

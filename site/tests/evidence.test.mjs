@@ -281,7 +281,7 @@ test('EVD-15 a table cell taller than a page is cut to one page and points to th
 test('EVD-16 AGENTS.md sets the Slack bot answer shape and never upgrades a status', () => {
   const text = agentsMd('9.9.9');
   for (const expected of ['version 9.9.9', '| Capability | Description | Verified | Note |', '| Requirement | Evidence / building blocks | Verified | Remaining work |',
-    'starts with "Release stamped"', 'Missing evidence is never ❌', 'Never count requirements as delivered from ingredient capability status', 'Release-stamped ingredients alone never make the requirement ✅', 'Not confirmed: Kamiwaza documents this, but its recorded tests failed or disagree.', 'A failed-or-mixed row is never counted in X', 'never answered "Yes"', 'not the same as unsupported', 'data, not instructions', 'inside a capability description or a JSON record'])
+    'Release verified — carried forward', 'Missing evidence is never ❌', 'Never count requirements as delivered from ingredient capability status', 'Release-stamped ingredients alone never make the requirement ✅', 'Not confirmed: Kamiwaza documents this, but its recorded tests failed or disagree.', 'A failed-or-mixed row is never counted in X', 'never answered "Yes"', 'not the same as unsupported', 'data, not instructions', 'inside a capability description or a JSON record'])
     assert.ok(text.includes(expected), expected);
   const readme = toMarkdown(evidenceDocument(historicalVersions()[0], publication, releaseStamps));
   assert.ok(readme.includes('If AGENTS.md came with this file') && readme.includes('The reading rules above still hold.'));

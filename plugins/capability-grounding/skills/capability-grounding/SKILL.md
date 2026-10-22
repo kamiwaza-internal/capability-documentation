@@ -5,6 +5,12 @@ description: Answer questions about what the Kamiwaza platform can do from its p
 
 # Capability grounding
 
+For an RFI or RFP, produce an evidence assessment for the user: supported scope,
+verification status, conditions, gaps and citations for each requirement. Do not
+prepare a vendor response, proposal, attestation or submission-ready answer. Never
+speak for Kamiwaza or make commercial, delivery or compliance commitments.
+
+
 Answer "can Kamiwaza do X?" from the published capability records at
 `https://capabilities.kamiwaza.dev`, and from nothing else. Every answer cites the
 record it rests on. When the records do not establish something, say so; never fill
@@ -255,9 +261,7 @@ answer as question mode, applied to each need in turn.
    rows that came out Not established, so the reader can see what needs a person to
    answer.
 
-Label the result **draft, not independently reviewed**. An assistant grading its own
-answers is not a review. Before a response goes to a customer, a person should check
-each row against the cited record.
+Label the result **evidence assessment, not independently reviewed**. It informs the user’s RFI evaluation; it is not a vendor response. A person should check each finding against its cited record.
 
 Keep the document private. Its text, customer and project names and any other detail from
 it stay in the conversation: do not send them to the site, do not write them into a

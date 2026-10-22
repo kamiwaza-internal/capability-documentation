@@ -7,6 +7,7 @@ import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {descriptionOnly, filterCapabilities, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
 import {revisionLabel} from '../evidence.mjs';
+import {verificationLabel} from '../verification-guide.mjs';
 import CurrentView from '../CurrentView';
 
 function TextList({title, items}) {
@@ -140,7 +141,8 @@ export default function Catalog() {
   const [status, setStatus] = useState('all');
   const releases = [...publication.releases].sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || b.publicationRevision - a.publicationRevision); // newest version, then revision, first
   // Same additive join as the status table, by capability id within the stamped version; statuses and order are untouched.
-  const primary = joinPrimaryStamps(primaryCapabilities(publication), releaseStamps, publication);
+  const reports = siteConfig.customFields.currentVerification ?? [];
+  const primary = joinPrimaryStamps(primaryCapabilities(publication), releaseStamps, publication).filter(row => !reports.some(report => report.version === row.version));
   return <Layout title="Full catalog" description="Every published Kamiwaza capability record, with conditions, evidence and exact-build verification status.">
 <p className="evidenceNotice">Legacy Docker/SSH paired-node serving (models.two-node-serving) is retired and unsupported. It is removed from current claims. Historical publication sections retain their original evidence and counts.</p>
     <header className="catalogHero"><div className="container">
@@ -158,6 +160,22 @@ export default function Catalog() {
             {['verified', 'release-stamped', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{value}</option>)}
           </select></label>
         </div>
+      {reports.map(report => <section className="release" key={report.version}>
+        <h2>Kamiwaza {report.version}: current capability status</h2>
+        <p><strong>{report.counts.acceptedScoped} of {report.counts.included} release verified for recorded scenarios</strong>; {report.counts.remaining} awaiting release verification. {report.counts.historicalPrerelease} historical prerelease verifications are retained separately, not added to the release total.</p>
+        <p>Evidence through {report.asOf}. Results cover multiple configurations, not one jointly tested deployment or whole-release approval. <a href={report.sourcePath}>Detailed evidence</a></p>
+        {report.capabilities.filter(row => (!query || (row.title + ' ' + row.id).toLowerCase().includes(query.toLowerCase())) &&
+          (status === 'all' || (status === 'release-stamped' && row.status === 'accepted-scoped-release') ||
+          (['verified', 'prerelease-verified'].includes(status) && row.historicalPrerelease) ||
+          (['untested', 'not-yet-verified'].includes(status) && row.status !== 'accepted-scoped-release'))).map(row => <article className="capability" key={row.id}>
+          <h3>{row.title} <span className="status">{verificationLabel(row)}</span></h3>
+          <p><code>{row.id}</code> · Historical prerelease: {row.historicalPrerelease ? 'verified' : 'not recorded'}</p>
+          {row.gap && <p>Remaining work: {row.gap}</p>}
+          {row.scopeNote && <p>{row.scopeNote}</p>}
+          {row.limits?.length > 0 && <details><summary>Retained evidence notes and limits</summary><p>These include earlier assessments. Historical missing-proof statements do not override the current status; current scope and exclusions still apply.</p><TextList title="Evidence notes" items={row.limits}/></details>}
+          {row.assumptions?.length > 0 && <TextList title="Assumptions" items={row.assumptions}/>}
+        </article>)}
+      </section>)}
       <PrimaryCapabilities capabilities={primary} query={query} status={status} tag={releaseStamps.releaseTag}/>
       <details className="gaps"><summary>Original immutable snapshots and separate scoped observations</summary>
       {(publication.releaseStamps ?? []).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}

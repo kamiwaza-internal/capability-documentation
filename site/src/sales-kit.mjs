@@ -1,9 +1,11 @@
+import {recipeGuide} from './verification-guide.mjs';
 import {evidenceDocument} from './evidence.mjs';
 
 export const salesKitPath = version => '/evidence/' + version + '/kamiwaza-sales-dev-kit-' + version;
 
 // The complete evidence appendix is reused unchanged. No new status computation lives here.
 export function salesKitDocument(entry, publication, releaseStamps, guidance, streams) {
+  if (entry.corpus?.currentVerification) return recipeGuide(entry.corpus.currentVerification);
   const h = (level, text) => ({type: 'h', level, text});
   const p = text => ({type: 'p', text});
   const li = text => ({type: 'li', level: 0, text});
