@@ -86,7 +86,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-integration-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'static/verification-results/1.3.4-2026-10-22-oauth', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   // Unreviewed static files must stay private even when the reviewed icon is published.
@@ -115,7 +115,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   assert.equal(result.status, 0, result.stdout + result.stderr);
   checkBuiltFiles(join(site, 'build'));
   assert.deepEqual(readFileSync(join(site, 'build/favicon.svg')), readFileSync(join(site, 'static/favicon.svg')));
-  for (const snapshot of ['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22']) {
+  for (const snapshot of ['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22', '1.3.4-2026-10-22-oauth']) {
     const dir = join('verification-results', snapshot);
     for (const name of readdirSync(join(site, 'static', dir))) {
       assert.deepEqual(readFileSync(join(site, 'build', dir, name)), readFileSync(join(site, 'static', dir, name)));
@@ -158,7 +158,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-prerelease-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'static/verification-results/1.3.4-2026-10-22-oauth', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
@@ -226,7 +226,7 @@ test('BUILD-3 production homepage has one three-download card per version and re
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-release-cards-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'docusaurus.config.js', 'package.json', 'package-lock.json'])
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'static/verification-results/1.3.4-2026-10-22-oauth', 'docusaurus.config.js', 'package.json', 'package-lock.json'])
     cpSync(join(source, path), join(site, path), {recursive: true});
   cpSync(join(source, '../corpus'), join(root, 'corpus'), {recursive: true});
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
