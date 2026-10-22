@@ -20,7 +20,7 @@ const fixtureHome = (index, source = publication) => `<section aria-labelledby="
     .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
   return `<li class="releaseRow"><span class="releaseVersion">${entry.version}</span>${replay
     ? `<span>${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped; Human release sign-off: ${replay.approval.status}</span>`
-    : ''}<nav class="fileGroup" aria-label="For AI, ${entry.version}"><a href="${entry.files.zip.path}" download="">ZIP</a></nav><nav class="fileGroup" aria-label="For people, ${entry.version}"><a href="${entry.files.salesPdf.path}" download="">PDF</a><a href="${entry.files.salesMd.path}" download="">MD</a></nav></li>`;
+    : ''}<nav class="fileGroup" aria-label="For AI, ${entry.version}"><a href="${entry.files.zip.path}" download="">ZIP</a></nav><nav class="fileGroup" aria-label="For people, ${entry.version}"><a href="${entry.files.salesPdf.path}" download="">PDF</a><a href="${entry.files.salesMd.path}" download="">MD</a></nav>${entry.version === '1.3.4' ? '<nav class="fileGroup" aria-label="1.3.4 verification report downloads"><a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download="">PDF</a><a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download="">MD</a><a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download="">ZIP</a></nav>' : ''}</li>`;
 }).join('')}</ul></section>`;
 
 test('site workflow runs the consistency check after the production build', () => {
@@ -34,6 +34,7 @@ test('site workflow runs the consistency check after the production build', () =
 test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digests and home links', () => {
   const out = mkdtempSync(join(tmpdir(), 'release-corpus-bundle-'));
   emitBundles(publication, out);
+  cpSync(join(root, 'site/static/verification-results/1.3.4-2026-10-22-markings'), join(out, 'verification-results/1.3.4-2026-10-22-markings'), {recursive: true});
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
   emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}));
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
@@ -52,7 +53,8 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   writeFileSync(homePath, validHome);
   assert.equal(checkReleaseCorpusBuild({out}), index.versions.length);
   for (const [changed, reason] of [
-    [validHome.replace(entry.files.salesPdf.path, entry.files.summaryPdf.path), /three downloads/],
+    [validHome.replace(entry.files.salesPdf.path, entry.files.summaryPdf.path), /complete kit and verification report downloads/],
+    [validHome.replace('/verification-results/1.3.4-2026-10-22-markings/results.pdf', '/wrong-report.pdf'), /complete kit and verification report downloads/],
     [validHome.replace('For AI, 1.3.4', 'For assistants, 1.3.4'), /download group labels/],
     [validHome.replace('6 failed selections', '0 failed selections'), /failures, gaps and approval/],
     [validHome + '<h2>Release build verification</h2>', /second release section/],
@@ -131,6 +133,7 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   writeFileSync(join(repo, 'site/data/publication.json'), JSON.stringify(extended));
   const out = join(repo, 'build');
   emitBundles(extended, out);
+  cpSync(join(root, 'site/static/verification-results/1.3.4-2026-10-22-markings'), join(out, 'verification-results/1.3.4-2026-10-22-markings'), {recursive: true});
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
   emitEvidence(extended, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({root: repo, publication: extended}));
   const indexPath = join(out, 'evidence/index.json');

@@ -109,6 +109,7 @@ function PrimaryCapabilities({capabilities, query, status, tag}) {
     {filterCapabilities(capabilities, query, status).length === 0 && <p role="status">No matching capability records.</p>}
     {filterCapabilities(capabilities, query, status).map(cap => <article className="capability" id={'current--' + cap.version + '--' + cap.id} key={cap.version + ':' + cap.id}>
       <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? cap.status}</span>}</h3>
+      {cap.releaseStamp?.scope && <><p>Verified release journey: {cap.releaseStamp.scope}</p><TextList title="Release verification limits" items={cap.releaseStamp.limits}/></>}
       <p><code>{cap.id}</code> · version {cap.version} · <a href={'#' + cap.snapshotId}>{['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'Retained verification snapshot' : 'Published record'}</a> · {cap.verifiedAt ? <>evidence date <time dateTime={cap.verifiedAt}>{cap.verifiedAt}</time></> : 'execution date not established'}</p>
       {cap.omissionSnapshotId && <p>Latest scope omission: <a href={'#' + cap.omissionSnapshotId}>{cap.omissionSnapshotId}</a>. Earlier status and evidence remain retained separately.</p>}
       {cap.includedInBaseline === false && <p>Outside the included historical verification scope. Exclusion is not an unsupported-feature or failure verdict.</p>}

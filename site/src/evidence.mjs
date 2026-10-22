@@ -299,7 +299,8 @@ function stampParts({view, releaseStamps, scope}) {
       const stamp = stampedOf(row.id);
       return capabilityBlocks(row, scope, `Release stamped · ${releaseStamps.releaseTag}`, [
         `Stamp ${stamp.stampId}: ${stamp.lane.toUpperCase()} lane, run finished ${stamp.finishedAt}`,
-        'Scenarios covered: ' + stamp.scenarios.join(', '), prior(row)]);
+        'Scenarios covered: ' + stamp.scenarios.join(', '),
+        ...(stamp.scope ? ['Verified journey: ' + stamp.scope, ...stamp.limits] : []), prior(row)]);
     }],
     [`Source-contract verified for ${releaseStamps.releaseTag} (not runtime evidence)`, rows.filter(row => !row.releaseStamp && row.sourceContractStamp), row =>
       capabilityBlocks(row, scope, `Source-contract verified · ${releaseStamps.releaseTag} · not runtime evidence`, [
@@ -550,7 +551,7 @@ function historicalSummaryDocument(entry, publication, releaseStamps, descriptio
   for (const area of Array.from(new Set(rows.map(item => item.area))).sort()) {
     const inArea = rows.filter(item => item.area === area).sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name));
     blocks.push(h(2, `${area} (${inArea.length})`), table(['Feature', 'Status', 'What it does'],
-      inArea.map(item => [`**${item.name}**`, {text: item.label, dot: item.tone}, about(item, descriptions)]), [0.26, 0.22, 0.52]));
+      inArea.map(item => [`**${item.name}**`, {text: item.label, dot: item.tone}, [about(item, descriptions), ...(item.row.releaseStamp?.scope ? [`Verified journey: ${item.row.releaseStamp.scope}`, ...item.row.releaseStamp.limits.map(limit => `Limit: ${limit}`)] : [])].join(' ')]), [0.26, 0.22, 0.52]));
   }
   blocks.push(h(2, 'Good to know'));
   if (entry.kind === 'release-stamps') blocks.push(

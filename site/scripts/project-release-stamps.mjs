@@ -32,7 +32,8 @@ export function projectReleaseStamps(dir, publication) {
   for (const stamp of kit) {
     need(stamp.schema === 'capability-release-stamp.v1' && stamp.basis === 'fresh-release-replay' && stamp.target_release === TARGET, 'Not a fresh ' + TARGET + ' release stamp');
     // Nothing per-stamp is dropped silently: publish these before a stamp may carry them.
-    need(stamp.limits.length === 0 && stamp.assumptions.length === 0, 'Stamp carries limits or assumptions this projection does not publish: ' + stamp.capability);
+    need(Array.isArray(stamp.assumptions) && stamp.assumptions.length === 0, 'Stamp carries assumptions this projection does not publish: ' + stamp.capability);
+    need(Array.isArray(stamp.limits) && stamp.limits.every(value => typeof value === 'string'), 'Invalid stamp limits');
   }
   const sourceBasis = one(kit.map(s => s.release_source.source_commit_basis), 'source commit basis');
   need(sourceBasis === 'operator-asserted', 'Unexpected source commit basis');
@@ -42,9 +43,15 @@ export function projectReleaseStamps(dir, publication) {
 
   const releaseStamps = kit.map(stamp => {
     const lane = one(stamp.replayed_kits.map(k => k.split(':')[0]), 'lane for ' + stamp.capability);
+    const claims = stamp.limits.filter(value => value.startsWith('Verified journey: '));
+    const limits = stamp.limits.filter(value => !value.startsWith('Verified journey: '));
+    need(!stamp.limits.length || (claims.length && limits.length), 'Scoped stamp requires explicit journey and limits: ' + stamp.capability);
+    need(claims.every(value => value.slice('Verified journey: '.length).trim()), 'Empty verified journey');
+    const scope = claims.map(value => value.slice('Verified journey: '.length)).join('; ');
     return {capability: stamp.capability, stampId: stamp.id, lane, finishedAt: utc(stamp.finished_at),
       scenarios: stamp.replayed_kits.map(k => k.slice(lane.length + 1)),
       ...(stamp.selection_basis ? {selectionBasis: stamp.selection_basis} : {}),
+      ...(claims.length ? {scope, limits} : {}),
       supersededKit: (stamp.superseded_kits ?? []).length > 0};
   }).sort(byCapability);
   const sourceContractStamps = contracts.stamps.map(stamp => ({capability: stamp.capability, stampId: stamp.id,

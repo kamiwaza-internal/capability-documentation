@@ -261,7 +261,7 @@ export function joinReleaseStamps(rows, data) {
   const joined = rows.map(row => {
     const stamp = released.get(row.id), contract = contracts.get(row.id);
     return {...row,
-      releaseStamp: stamp ? {lane: stamp.lane, scenarios: stamp.scenarios.length, finishedAt: stamp.finishedAt} : null,
+      releaseStamp: stamp ? {lane: stamp.lane, scenarios: stamp.scenarios.length, finishedAt: stamp.finishedAt, ...(stamp.scope ? {scope: stamp.scope, limits: stamp.limits} : {})} : null,
       sourceContractStamp: contract ? {kits: contract.kits.length, passed: contract.kits.reduce((n, kit) => n + kit.tests.passed, 0)} : null};
   });
   const count = test => joined.filter(test).length;

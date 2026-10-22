@@ -3,6 +3,7 @@
 // release sign-off. A source-contract stamp is a test on source with mocks and is never a release stamp.
 import {count, id, instant, kitPullRequestPattern, list, requireValue, shape, text, unique} from './local-stamps.mjs';
 import {stampsApply} from '../src/catalog.mjs';
+import {unsafePublicText} from './public-output-privacy.mjs';
 
 const hex64 = /^[a-f0-9]{64}$/;
 const slug = /^[a-z0-9][a-z0-9-]{0,159}$/;
@@ -33,7 +34,15 @@ export function validateReleaseStamps(data, publication) {
 
   const lanes = {api: 0, sdk: 0};
   const released = list(data.releaseStamps, 1000).map(stamp => {
-    shape(stamp, ['capability', 'stampId', 'lane', 'finishedAt', 'scenarios', 'supersededKit', ...(Object.hasOwn(stamp, 'selectionBasis') ? ['selectionBasis'] : [])]);
+    shape(stamp, ['capability', 'stampId', 'lane', 'finishedAt', 'scenarios', 'supersededKit', ...(Object.hasOwn(stamp, 'selectionBasis') ? ['selectionBasis'] : []), ...(Object.hasOwn(stamp, 'scope') ? ['scope', 'limits'] : [])]);
+    if (Object.hasOwn(stamp, 'scope')) {
+      text(stamp.scope);
+      list(stamp.limits, 30).forEach(text);
+      for (const value of [stamp.scope, ...stamp.limits]) {
+        requireValue(!unsafePublicText(value), 'Private detail in scoped release evidence');
+      }
+      requireValue(stamp.limits.length > 0, 'Scoped stamp limits are required');
+    }
     capability(stamp.capability);
     requireValue(hex64.test(stamp.stampId), 'Invalid stamp identifier');
     requireValue(Object.hasOwn(lanes, stamp.lane), 'Invalid lane');

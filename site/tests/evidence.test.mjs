@@ -311,3 +311,17 @@ test('EVD-17 portable instructions cover both ZIP layouts and preserve version a
   }
   assert.ok(!text.includes('Kamiwaza can deliver'), 'building blocks never become delivery claims');
 });
+
+
+test('release download retains scoped journey, limits and earlier prerelease context', () => {
+  const scoped = structuredClone(releaseStamps);
+  Object.assign(scoped.releaseStamps[0], {scope: 'Read the synthetic sample', limits: ['Browser behavior is not verified']});
+  const entry = historicalVersions(scoped)[0];
+  const markdown = toMarkdown(evidenceDocument(entry, publication, scoped));
+  assert.match(markdown, /Verified journey: Read the synthetic sample/);
+  assert.match(markdown, /Browser behavior is not verified/);
+  assert.match(markdown, /Earlier .* pre-release status, for context only/);
+  const summary = toMarkdown(summaryDocument(entry, publication, scoped));
+  assert.match(summary, /Verified journey: Read the synthetic sample/);
+  assert.match(summary, /Limit: Browser behavior is not verified/);
+});

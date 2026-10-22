@@ -155,6 +155,35 @@ The source snapshot is unbound and has no human release approval; downloading it
 does not award new proof or approve the release. A build consistency gate checks
 its files, source pins, counts, ZIP members, checksums and homepage links.
 
+## Weekly scoped verification
+
+A verified capability count means unique capability IDs with passing registered
+journeys on the named release, not exhaustive coverage of every operation. New
+journeys for an already verified ID and refreshed runs are reported separately.
+Where a stamp supplies `scope` and `limits`, the catalog and downloadable evidence
+show those alongside its status. The absence of those fields does not establish
+whole-capability coverage; existing scenario and global limits still apply.
+
+The private GitHub capability-kit corpus remains canonical for original evidence.
+Keep prerelease verification visible independently of release stamps, including
+its original version, provenance, scope and limits. A smaller fresh-release count
+must never replace the prerelease inventory. Public projections retain reviewed
+historical evidence and links; later failures affect current credit without
+erasing earlier observations. Count distinct capability IDs per axis and never
+sum overlapping prerelease and release counts.
+
+The producer policy is [capability-kit's weekly verification contract](https://github.com/kamiwaza-internal/capability-kit/blob/main/docs/weekly-verification.md).
+It reuses one stable runtime capture pair for a batch, preserves independent
+results, and permits accountable deferred cleanup only for reviewed harmless
+synthetic data. Accounts, permissions, secrets, deployments and costly resources
+still require prompt cleanup. Public projections must retain the meaning of scope
+and cleanup obligations while excluding private fixture and operator details.
+
+Routine test and documentation changes should use one competent review and
+required CI; evidence-acceptance or security-sensitive changes need independent
+reviewers. Existing repository protection and approval workflows still apply.
+This change does not alter historical releases or publish new 1.3.4 counts.
+
 ## October 21, 2026 verification update
 
 [Full 1.3.4 results](reports/1.3.4-2026-10-21/results.md),

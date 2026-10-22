@@ -83,6 +83,7 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
           <th scope="row"><a href={'#current--' + row.lineage.version + '--' + row.id}><code>{row.id}</code></a><br/>{row.title ?? 'No curated title or description published in this revision'}</th>
           <td>{!release ? statusLabels[row.status] : stampStatus(row, tag) ? <>
             <span className="status">{stampStatus(row, tag)}</span>{row.releaseStamp && <> {row.releaseStamp.lane.toUpperCase()} lane · {row.releaseStamp.scenarios} {row.releaseStamp.scenarios === 1 ? 'scenario' : 'scenarios'}</>}
+            {row.releaseStamp?.scope && <><br/>Verified journey: {row.releaseStamp.scope}{row.releaseStamp.limits.map((limit, i) => <div key={i}>{limit}</div>)}</>}
             <br/>{version} pre-release: {statusLabels[row.status]}
           </> : <>{statusLabels[row.status]}<br/>No {tag} stamp</>}</td>
           <td>{basisLabels[row.lineage.verificationBasis] ?? 'none'}</td>

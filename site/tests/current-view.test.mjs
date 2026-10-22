@@ -4,7 +4,7 @@ import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {countStatuses, currentCapabilityView, summarizeCurrentView} from '../src/catalog.mjs';
+import {countStatuses, currentCapabilityView, summarizeCurrentView, primaryCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
 
 const deepFreeze = value => {
   if (value && typeof value === 'object') Object.values(value).forEach(deepFreeze);
@@ -235,4 +235,31 @@ test('a later description declaration cannot fill another version’s documentat
   assert.equal(newer.describedIn, null);
   assert.equal(newer.documentationGap, true);
   assert.equal(newer.olderDescriptionIn, null);
+});
+
+
+test('primary catalog cards retain release journey limits alongside prerelease evidence', async () => {
+  const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
+  const stamps = JSON.parse(readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url), 'utf8'));
+  Object.assign(stamps.releaseStamps[0], {scope: 'Read the synthetic sample', limits: ['Browser behavior is not verified']});
+  const {default: babel} = await import('@babel/core');
+  const {createElement} = await import('react');
+  const {renderToStaticMarkup} = await import('react-dom/server');
+  // Render the real card function; omit page-only framework/data imports unused by it.
+  const source = readFileSync(new URL('../src/pages/catalog.jsx', import.meta.url), 'utf8')
+    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'")).join('\n')
+    + '\nexport {PrimaryCapabilities};';
+  const {code} = babel.transformSync(source,
+    {babelrc: false, configFile: false, presets: [fileURLToPath(import.meta.resolve('@babel/preset-react'))]});
+  const file = join(mkdtempSync(join(tmpdir(), 'catalog-cards-')), 'catalog.mjs');
+  writeFileSync(file, code.replace("'../catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href))
+    .replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react'))));
+  const html = renderToStaticMarkup(createElement((await import(file)).PrimaryCapabilities, {
+    capabilities: joinPrimaryStamps(primaryCapabilities(published), stamps, published), query: '', status: 'all', tag: stamps.releaseTag,
+  }));
+  assert.match(html, /Verified release journey: Read the synthetic sample/);
+  assert.match(html, /Release verification limits/);
+  assert.match(html, /Browser behavior is not verified/);
+  assert.match(html, /pre-release:/);
+  assert.match(html, /Retained status and claim scope history/);
 });
