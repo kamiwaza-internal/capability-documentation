@@ -15,6 +15,9 @@ test('OAuth publication adds exactly one accepted capability and preserves histo
  const oauth=current.capabilities.find(r=>r.id==='connectors.user-oauth-authorization');
  assert.equal(oauth.stampId,'c32a8e36e5ba04c8b1ddb7bb42372f1ad02b68b37029bc4045fcbfcfd075cfda');
  assert.equal(oauth.status,'accepted-scoped-release');
+ assert.match(oauth.scopeNote, /earlier prerelease assessment/);
+ assert.match(oauth.scopeNote, /Other OAuth controls remain unverified/);
+ assert.match(oauth.cleanupNote, /trust remain explicitly retained/);
  assert.match(read('../../reports/1.3.4-2026-10-22-oauth/results.md').toString(), /Scope note: inherited assumptions/);
  assert.match(read('../../reports/1.3.4-2026-10-22-oauth/results.md').toString(), /provider, connector deployment and clone-only trust remain explicitly retained/);
  for(const line of read('../../reports/1.3.4-2026-10-22-oauth/SHA256SUMS').toString().trim().split('\n')){

@@ -413,7 +413,9 @@
       ],
       "retainedStampIds": [
         "c32a8e36e5ba04c8b1ddb7bb42372f1ad02b68b37029bc4045fcbfcfd075cfda"
-      ]
+      ],
+      "scopeNote": "Inherited assumptions and limits about mocked tests and missing UI describe the earlier prerelease assessment. Fresh Chrome evidence proves only owned authorization-code-provider consent and identity, two-user own-content hashes, cross-user denial, disconnect refusal and other-user continuity. Other OAuth controls remain unverified.",
+      "cleanupNote": "Both connections, disposable users and workroom are cleaned up; owned provider, connector deployment and clone-only trust remain explicitly retained. See oauth-user-cleanup.json."
     },
     {
       "id": "context.dataset-indexing",
