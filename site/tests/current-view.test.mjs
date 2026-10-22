@@ -190,19 +190,19 @@ test('CUR-G rendered page: stamp badges, counts and paragraphs appear only for t
   assert.doesNotMatch(text, /absent later results and missing descriptive text never remove it/);
   const at = needle => { const index = text.indexOf(needle); assert.notEqual(index, -1, needle); return index; };
   const lead = text.slice(at('Current capability status'), at('Earlier: 1.3.0 pre-release baseline'));
-  assert.ok(lead.startsWith('Current capability status45 of 88 capabilities stamped for v1.3.2: 29 release stamped (live run on the v1.3.2 build) · 16 source-contract verified (tests on v1.3.2 source, not runtime evidence) · 43 not stampedNot human release sign-off.'), lead.slice(0, 300));
+  assert.ok(lead.startsWith('Current capability status45 of 87 capabilities stamped for v1.3.2: 29 release stamped (live run on the v1.3.2 build) · 16 source-contract verified (tests on v1.3.2 source, not runtime evidence) · 42 not stampedNot human release sign-off.'), lead.slice(0, 300));
   for (const limit of ["registered test scenarios, not every operation", 'operator-asserted from a CI image-digest match', 'local cluster', 'the capability kit pull request']) assert.ok(lead.includes(limit), limit);
   assert.ok(!lead.includes('release verified') && !/certified/i.test(real));
-  assert.ok(at('0 of 88 release verified') > at('Earlier: 1.3.0 pre-release baseline'));
+  assert.ok(at('0 of 87 release verified') > at('Earlier: 1.3.0 pre-release baseline'));
   // Rows: release stamped, then source-contract, then the rest, each in the unstamped order; history stays on a second line.
   const ids = html => [...html.matchAll(/href="#current--1\.3\.0--([^"]+)"/g)].map(match => match[1]);
   const stamped = list => new Set(list.map(stamp => stamp.capability));
   const released = stamped(releaseStamps.releaseStamps), contracts = stamped(releaseStamps.sourceContractStamps);
-  const baseOrder = currentCapabilityView(published).map(row => row.id);
+  const baseOrder = currentCapabilityView(published).filter(row => row.id !== 'models.two-node-serving').map(row => row.id);
   assert.deepEqual(ids(real), [...baseOrder.filter(id => released.has(id)), ...baseOrder.filter(id => contracts.has(id)), ...baseOrder.filter(id => !released.has(id) && !contracts.has(id))]);
   assert.ok(released.has(ids(real)[0]));
-  for (const heading of ['Release stamped for v1.3.2 (29)', 'Source-contract verified for v1.3.2 (16)', 'Not stamped for v1.3.2 (43)']) assert.equal(occurrences(real, '<th colSpan="5" scope="colgroup">' + heading + '</th>'), 1, heading);
-  assert.deepEqual([occurrences(real, '<br/>1.3.0 pre-release: '), occurrences(real, '<br/>No v1.3.2 stamp</td>')], [45, 43]);
+  for (const heading of ['Release stamped for v1.3.2 (29)', 'Source-contract verified for v1.3.2 (16)', 'Not stamped for v1.3.2 (42)']) assert.equal(occurrences(real, '<th colSpan="5" scope="colgroup">' + heading + '</th>'), 1, heading);
+  assert.deepEqual([occurrences(real, '<br/>1.3.0 pre-release: '), occurrences(real, '<br/>No v1.3.2 stamp</td>')], [45, 42]);
 
   // Same rows under another baseline id: every stamped capability is still on the page, and none is badged.
   const other = structuredClone(published);

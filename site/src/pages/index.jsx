@@ -38,11 +38,11 @@ export default function Home() {
 
       <section className="panel panelTint" aria-labelledby="verification-results-134">
         <h2 id="verification-results-134">1.3.4 verification results - October 21 update</h2>
-        <p><strong>64 of 88 capabilities have accepted scoped release evidence.</strong> The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The downloads below retain earlier publication snapshots.</p>
+        <p><strong>64 of 87 capabilities have accepted scoped release evidence.</strong> The retired Docker/SSH paired-node workflow is excluded; this scope correction adds no verification credit. The previous 64/88 report remains historical. The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The downloads below retain earlier publication snapshots.</p>
         <nav aria-label="Full 1.3.4 verification results downloads">
-          <a href="/verification-results/1.3.4-2026-10-21/results.pdf" download>Full results PDF</a>{' · '}
-          <a href="/verification-results/1.3.4-2026-10-21/results.md" download>Markdown</a>{' · '}
-          <a href="/verification-results/1.3.4-2026-10-21/kit.zip" download>Complete evidence kit ZIP</a>
+          <a href="/verification-results/1.3.4-2026-10-21-retirement/results.pdf" download>Full results PDF</a>{' · '}
+          <a href="/verification-results/1.3.4-2026-10-21-retirement/results.md" download>Markdown</a>{' · '}
+          <a href="/verification-results/1.3.4-2026-10-21-retirement/kit.zip" download>Complete evidence kit ZIP</a>
         </nav>
       </section>
 
