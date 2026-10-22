@@ -45,7 +45,7 @@ The owned fixture is now retired. Original clone deployment templates and trust 
 ## Findings and unfinished work
 
 - Catalog lifecycle correction passed isolated candidate qualification, but normal merge is blocked. It receives no accepted release credit.
-- Ingestion polling correction passed combined real-source, owner/DDE and cross-process candidate qualification; normal merge remains policy-blocked. The candidate is not the frozen release and receives no accepted release credit.
+- Ingestion polling correction passed combined real-source, owner/DDE and cross-process candidate qualification; normal merge remains policy-blocked. The candidate is not the frozen release and receives no accepted release credit. Qualification and approval: https://github.com/kamiwaza-internal/kamiwaza/pull/3410.
 - Delegation quota correction is deferred at operator request; no merge-policy bypass.
 - Agent package authoring and routing retain known failures. Source corrections do not replace the full browser replay.
 - GPU, tenant, federation, airgap, mesh and rollout-dependent capabilities need their actual supported prerequisites. Refusal checks and skipped tests are not full journeys.
