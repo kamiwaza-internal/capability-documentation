@@ -211,3 +211,15 @@ test('scope requires nonempty limits and limits cannot stand alone', () => {
   data.releaseStamps[0].limits = ['No browser claim'];
   assert.throws(() => validateReleaseStamps(data));
 });
+
+
+test('scoped public evidence rejects private details in either new prose field', () => {
+  for (const privateText of ['Connect to 192.168.5.2', 'Set SANDBOX_WORKER_TOKEN', 'Read localhost']) {
+    for (const field of ['scope', 'limits']) {
+      const data = fixture();
+      Object.assign(data.releaseStamps[0], {scope: 'Read a synthetic sample', limits: ['No browser claim']});
+      data.releaseStamps[0][field] = field === 'scope' ? privateText : [privateText];
+      assert.throws(() => validateReleaseStamps(data), /Private detail/);
+    }
+  }
+});
