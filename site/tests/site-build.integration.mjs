@@ -37,14 +37,20 @@ function assertReleaseCards(site) {
     const matches = cards.filter(card => card.includes(`<span class="releaseVersion">${entry.version}</span>`));
     assert.equal(matches.length, 1, `${entry.version} renders exactly once`);
     const groups = [...matches[0].matchAll(/<nav class="fileGroup" aria-label="([^"]+)">([\s\S]*?)<\/nav>/g)];
-    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`]);
+    const report = entry.version === '1.3.4';
+    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`, ...(report ? ['1.3.4 verification report downloads'] : [])]);
     const actions = groups.flatMap(group => [...group[2].matchAll(/<a href="([^"]+)"[^>]*download[^>]*>([^<]+)<\/a>/g)]
       .map(match => ({label: match[2], path: match[1]})));
     assert.deepEqual(actions, [
       {label: 'ZIP', path: entry.files.zip.path},
       {label: 'PDF', path: entry.files.salesPdf.path},
       {label: 'MD', path: entry.files.salesMd.path},
-    ], `${entry.version} has exactly three version-matched downloads`);
+      ...(report ? [
+        {label: 'PDF', path: '/verification-results/1.3.4-2026-10-22-markings/results.pdf'},
+        {label: 'MD', path: '/verification-results/1.3.4-2026-10-22-markings/results.md'},
+        {label: 'ZIP', path: '/verification-results/1.3.4-2026-10-22-markings/kit.zip'},
+      ] : []),
+    ], `${entry.version} has its version-matched downloads`);
     const zip = zipMembers(readFileSync(join(site, 'build', entry.files.zip.path)));
     for (const key of ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf']) {
       const file = entry.files[key];
@@ -222,7 +228,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   console.log(`Offline pre-release build evidence: ${root}`);
 });
 
-test('BUILD-3 production homepage has one three-download card per version and retains all ZIP documents', () => {
+test('BUILD-3 production homepage groups downloads per version and retains all ZIP documents', () => {
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-release-cards-'));
   const site = join(root, 'site');
