@@ -38,7 +38,7 @@ export default function Home() {
 
       <section className="panel panelTint" aria-labelledby="verification-results-134">
         <h2 id="verification-results-134">1.3.4 verification results - October 21 update</h2>
-        <p><strong>64 of 88 capabilities have accepted scoped release evidence.</strong> The 58 historical prerelease entries overlap and remain separate. This cumulative report covers multiple replay configurations; it is not whole-release approval. The downloads below retain earlier publication snapshots.</p>
+        <p><strong>64 of 88 capabilities have accepted scoped release evidence.</strong> The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The downloads below retain earlier publication snapshots.</p>
         <nav aria-label="Full 1.3.4 verification results downloads">
           <a href="/verification-results/1.3.4-2026-10-21/results.pdf" download>Full results PDF</a>{' · '}
           <a href="/verification-results/1.3.4-2026-10-21/results.md" download>Markdown</a>{' · '}

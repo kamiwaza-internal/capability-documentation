@@ -4,7 +4,7 @@ Evidence cutoff: October 21, 2026. Publication review pending; human release app
 
 ## Read this first
 
-**64 of 88 included capabilities have accepted scoped release evidence.** This is +34 from the earlier 30-stamp publication. The remaining 24 are not release verified. **58 historical prerelease verifications are preserved separately and overlap with this set; do not add the counts.**
+**64 of 88 included capabilities have accepted scoped release evidence.** This is +34 from the earlier 30-stamp publication. The remaining 24 are not release verified. **58 historical prerelease verifications are preserved separately: 52 overlap this 88-capability inventory (46 accepted and 6 remaining), while 6 lie outside its scope. Do not add these counts.**
 
 This is a cumulative evidence report across multiple captured runtime configurations and test generations, all citing Core v1.3.4 source 5f5f64656802eb497167f6eae6021093cfcdccf2. It is not proof that all 64 passed together on one immutable deployment, every operation works, or a human approved the release. Core source attribution is operator-asserted where stated in each stamp.
 

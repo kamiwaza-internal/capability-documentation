@@ -140,8 +140,8 @@ its files, source pins, counts, ZIP members, checksums and homepage links.
 [Full 1.3.4 results](reports/1.3.4-2026-10-21/results.md),
 [PDF](reports/1.3.4-2026-10-21/results.pdf) and
 [portable evidence kit](reports/1.3.4-2026-10-21/kit.zip) record all 88 outcomes:
-64 accepted scoped release capabilities, 24 remaining, and 58 overlapping historical
-prerelease entries retained separately. This cumulative report is based on multiple
+64 accepted scoped release capabilities, 24 remaining, and 58 historical
+prerelease entries retained separately (52 in scope: 46 accepted and 6 remaining; 6 outside scope). This cumulative report is based on multiple
 captured configurations, not one jointly tested runtime or human release sign-off.
 The prior corpus and publication revisions remain historical snapshots; their
 30-stamp totals are not the current cumulative count. The ZIP includes machine-readable

@@ -10,7 +10,10 @@
     "included": 88,
     "acceptedScoped": 64,
     "remaining": 24,
-    "historicalPrerelease": 58
+    "historicalPrerelease": 58,
+    "historicalInScope": 52,
+    "historicalOutsideScope": 6,
+    "historicalAlsoReleaseAccepted": 46
   },
   "historicalLedgerSha256": "222f9fa2f1d6482959a623cb9df73b0deb8bf71b14c5cff6271217cacca0d919",
   "capabilities": [
