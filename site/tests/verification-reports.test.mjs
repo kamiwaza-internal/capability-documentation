@@ -18,6 +18,9 @@ test('a two-file submission is validated and packaged without changing the page'
   writeFileSync(join(dir, 'results.md'), md);
   assert.throws(() => loadVerificationReports(root), /submit only/);
   writeFileSync(join(dir, 'results.pdf'), '%PDF-1.4\nfixture');
+  writeFileSync(join(dir, 'results.md'), md.replace('Explicit scoped finding.', 'Runtime capture: /Users/synthetic/private-fixture.txt'));
+  assert.throws(() => loadVerificationReports(root), /Private absolute filesystem path/);
+  writeFileSync(join(dir, 'results.md'), md);
   const reports = loadVerificationReports(root);
   const out = join(root, 'build');
   const publication = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));

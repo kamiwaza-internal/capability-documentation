@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readdirSync, readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 
 export const reportRoot = fileURLToPath(new URL('../static/verification-results', import.meta.url));
 // Immutable historical publications keep their original files and URLs.
@@ -18,6 +19,7 @@ export function loadVerificationReports(root = reportRoot) {
     if (!legacy.has(dir.name)) {
       assert.deepEqual(files.map(file => file.name), ['results.md', 'results.pdf'], `${dir.name}: submit only results.md and results.pdf`);
       const md = readFileSync(join(root, dir.name, 'results.md'), 'utf8');
+      assertPublicOutputSafe(md);
       assert.ok(md.startsWith(`# Kamiwaza ${match[1]} verification report\n`), `${dir.name}: version title must match directory`);
       assert.ok(md.includes(`\nEvidence date: ${match[2]}\n`), `${dir.name}: evidence date must match directory`);
       assert.deepEqual([...md.matchAll(/^## (.+)$/gm)].map(row => row[1]), reportSections, `${dir.name}: use the standard report sections`);
