@@ -50,6 +50,8 @@ export function verificationDocument(report, concise = false) {
     blocks.push(h(3, row.title), p(`${row.id} · ${verificationLabel(row)}`),
       p(row.historicalPrerelease ? 'Historical prerelease verification is also retained.' : 'No historical prerelease verification is recorded for this capability.'));
     if (row.gap) blocks.push(p(`Remaining work: ${row.gap}`));
+    if (row.scopeNote) blocks.push(p(`Current versus historical scope: ${row.scopeNote}`));
+    if (row.limits?.length) blocks.push(p('Retained evidence notes include earlier assessments. Historical statements about missing release proof do not override the current status above; current scope and exclusions still apply.'));
     for (const limit of row.limits ?? []) blocks.push(li(limit));
     for (const assumption of row.assumptions ?? []) blocks.push(li(`Assumption: ${assumption}`));
     if (row.stampId) blocks.push(p(`Evidence: ${row.stampId}; recorded ${row.finishedAt}.`));

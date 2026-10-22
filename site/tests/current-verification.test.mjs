@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {loadCurrentVerification} from '../scripts/current-verification.mjs';
-import {recipeGuide, verificationLabel} from '../src/verification-guide.mjs';
+import {recipeGuide, verificationLabel, verificationDocument} from '../src/verification-guide.mjs';
 import {agentsMd} from '../src/evidence.mjs';
 const source = JSON.parse(readFileSync(new URL('../static/verification-results/1.3.4-2026-10-22-markings/results.json', import.meta.url)));
 
@@ -40,4 +40,12 @@ test('human guide links each recipe ingredient to current scoped status without 
   assert.ok(text.includes('67 of 87'));
   const agent = agentsMd('1.3.4');
   for (const phrase of ['Do not generate a vendor response', 'Release verified — carried forward', 'current-verification.json']) assert.ok(agent.includes(phrase));
+});
+
+
+test('detailed report preserves the explanation separating current OAuth proof from inherited limitations', () => {
+  const row = source.capabilities.find(row => row.id === 'connectors.user-oauth-authorization');
+  const text = verificationDocument(source).map(b => b.text).join('\n');
+  assert.ok(text.includes(row.scopeNote));
+  assert.ok(text.includes('Historical statements about missing release proof do not override'));
 });

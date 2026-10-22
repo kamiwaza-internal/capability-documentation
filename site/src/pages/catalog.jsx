@@ -171,7 +171,8 @@ export default function Catalog() {
           <h3>{row.title} <span className="status">{verificationLabel(row)}</span></h3>
           <p><code>{row.id}</code> · Historical prerelease: {row.historicalPrerelease ? 'verified' : 'not recorded'}</p>
           {row.gap && <p>Remaining work: {row.gap}</p>}
-          {row.limits?.length > 0 && <TextList title="Verified scope and limits" items={row.limits}/>}
+          {row.scopeNote && <p>{row.scopeNote}</p>}
+          {row.limits?.length > 0 && <details><summary>Retained evidence notes and limits</summary><p>These include earlier assessments. Historical missing-proof statements do not override the current status; current scope and exclusions still apply.</p><TextList title="Evidence notes" items={row.limits}/></details>}
           {row.assumptions?.length > 0 && <TextList title="Assumptions" items={row.assumptions}/>}
         </article>)}
       </section>)}
