@@ -79,7 +79,11 @@ answer:
   - A capability listed in `sourceContractStamps[]` is not release verified. Its
     release cell stays `Not release verified`, and the last column says it is
     source-contract verified for that version, which is not runtime evidence.
-  - A capability in neither list is `Not release verified`.
+  - Absence from these fresh-stamp lists is not sufficient to report an unverified
+    capability. Check the canonical target-release ledger for an accepted
+    carry-forward decision. Use **Release verified — carried forward** when that
+    decision applies; otherwise report **Release verification pending** and retain
+    any separate prerelease status.
   - `targetRelease` can be newer than the publication you chose from the index (stamps
     for 1.3.2 beside a 1.3.0 publication). The release column names `targetRelease`;
     the pre-release column keeps the publication's version. Say both once above the
@@ -186,7 +190,7 @@ this table, with exactly these columns:
 ```markdown
 | Capability | Documented | Pre-release status | Release status | Conditions and evidence |
 |---|---|---|---|---|
-| <marker> <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, a tested-build phrase from section 3, or None published for <version>> | <Release verified for <version>, Not release verified, or Release failed> | <conditions, limits, gaps and citations> |
+| <marker> <what was asked, as asked> | <Documented: `capability.id`, Not established, or Not supported> | <Pre-release verified for <version>, Pre-release failed for <version>, a tested-build phrase from section 3, or None published for <version>> | <Release verified — tested this release, Release verified — carried forward, Release verification pending, or Release failed; name the version> | <conditions, limits, gaps and citations> |
 ```
 
 - One row per question or requirement, in the order asked. A single question still
