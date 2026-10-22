@@ -139,8 +139,9 @@ export default function Catalog() {
   const [status, setStatus] = useState('all');
   const releases = [...publication.releases].sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || b.publicationRevision - a.publicationRevision); // newest version, then revision, first
   // Same additive join as the status table, by capability id within the stamped version; statuses and order are untouched.
-  const primary = joinPrimaryStamps(primaryCapabilities(publication), releaseStamps, publication);
+  const primary = joinPrimaryStamps(primaryCapabilities(publication).filter(cap => cap.id !== 'models.two-node-serving'), releaseStamps, publication);
   return <Layout title="Full catalog" description="Every published Kamiwaza capability record, with conditions, evidence and exact-build verification status.">
+<p className="evidenceNotice">Legacy Docker/SSH paired-node serving (models.two-node-serving) is retired and unsupported. It is removed from current claims. Historical publication sections retain their original evidence and counts.</p>
     <header className="catalogHero"><div className="container">
       <p className="eyebrow">THE KAMIWAZA CAPABILITY CATALOG</p>
       <h1>Kamiwaza capability records</h1>

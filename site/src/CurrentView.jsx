@@ -15,13 +15,14 @@ const basisLabels = {
 const Time = ({value}) => <time dateTime={value}>{value}</time>;
 
 // Derived at render from the published records; nothing here is stored or re-scored.
+// Retirement filters only the active display; historical evaluation stays reproducible.
 export default function CurrentView({publication, localStamps, releaseStamps}) {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
   const [stampedOnly, setStampedOnly] = useState(false);
   const [releaseOnly, setReleaseOnly] = useState(false);
   const [contractOnly, setContractOnly] = useState(false);
-  const base = currentCapabilityView(publication);
+  const base = currentCapabilityView(publication).filter(cap => cap.id !== 'models.two-node-serving');
   if (base.length === 0) return null;
   // Additive: the join attaches a badge and never changes a row's status.
   // Stamps projected against other published records do not apply to this publication.

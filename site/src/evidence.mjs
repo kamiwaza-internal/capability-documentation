@@ -343,7 +343,7 @@ function snapshotParts({latest, scope}) {
   return {about, sections};
 }
 
-export function evidenceDocument(entry, publication, releaseStamps) {
+function historicalEvidenceDocument(entry, publication, releaseStamps) {
   if (entry.kind === 'release-corpus') return corpusDocument(entry);
   if (entry.kind === 'release-replay') return replayDocument(entry, publication);
   const view = currentCapabilityView(publication, recordVersion(entry, publication));
@@ -527,7 +527,7 @@ function testedNotes(entry, publication) {
 }
 
 // `descriptions` is the id-to-text map of data/descriptions.json, or empty when it does not apply.
-export function summaryDocument(entry, publication, releaseStamps, descriptions = {}) {
+function historicalSummaryDocument(entry, publication, releaseStamps, descriptions = {}) {
   if (entry.kind === 'release-corpus') return corpusSummary(entry);
   if (entry.kind === 'release-replay') return replaySummary(entry, publication);
   const rows = namedRows(entry, publication, releaseStamps).sort((a, b) => a.rank - b.rank);
@@ -672,4 +672,17 @@ export function toMarkdown(blocks) {
     previous = block.type;
   }
   return out.trimEnd() + '\n';
+}
+
+// Historical source bytes remain unchanged; generated downloads make retirement explicit.
+const retirementNotice = "Retired workflow: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current capability claims and verification targets. Product docs PR #233 removed its installation guide on September 2, 2026 (ENG-2761); Alex confirmed retirement in ENG-14154 and Drew authorized scope removal on October 21. Historical records below retain their original evidence and counts; they do not establish current support. Single-node tensor parallel serving and GPU placement are unaffected.";
+export function evidenceDocument(...args) {
+  const blocks = historicalEvidenceDocument(...args);
+  blocks.splice(1, 0, {type: "p", text: retirementNotice});
+  return blocks;
+}
+export function summaryDocument(...args) {
+  const blocks = historicalSummaryDocument(...args);
+  blocks.splice(1, 0, {type: "p", text: retirementNotice});
+  return blocks;
 }
