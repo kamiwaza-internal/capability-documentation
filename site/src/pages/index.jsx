@@ -33,23 +33,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
-        <p>The Sales Dev Kit records published evidence, conditions and gaps for each version. Download the PDF, Markdown or ZIP to read or share it. Published release records are in the <Link to="/catalog/">full catalog</Link>; review-candidate corpora retain their source and approval limits in the download.</p>
-      </section>
-
-      <section className="panel panelTint" aria-labelledby="verification-results-134">
-        <h2 id="verification-results-134">1.3.4 verification results - October 22 update</h2>
-        <p><strong>67 of 87 capabilities have accepted scoped release evidence.</strong> The retired Docker/SSH paired-node workflow is excluded; the new commercial-markings proof adds one distinct capability. The previous 64/88 report remains historical. The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The full-results links below use the October 22 snapshot; earlier publication downloads remain available.</p>
-        <nav aria-label="Full 1.3.4 verification results downloads">
-          <a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download>Full results PDF</a>{' · '}
-          <a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download>Markdown</a>{' · '}
-          <a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download>Complete evidence kit ZIP</a>
-        </nav>
-      </section>
-
-      <section className="panel" aria-labelledby="evidence-carry">
-        <h2 id="evidence-carry">Evidence across releases</h2>
-        <p>Prior evidence keeps its original version, date, scope and limits. Unchanged capabilities can carry evidence forward after reviewed change-impact checks; carried coverage is labeled separately from fresh tests and does not count as new coverage. New capabilities and changes affecting a capability or its dependencies need retesting. Any image, configuration or environment change blocks automatic carry and requires review; unresolved impact requires fresh testing. Unmapped changes and known failures cannot silently inherit a pass.</p>
-        <p>As of October 22, 2026, the reviewed change-impact mapping covers three capabilities and CI-side release-ledger compilation remains deferred. The 67 scoped 1.3.4 results do not automatically verify future releases. Broader delta-based verification requires expanding that mapping and automation. Retired capabilities remain excluded from current claims while their historical evidence is preserved.</p>
+        <p>Explore Kamiwaza capabilities by release in the <Link to="/catalog/">catalog</Link>, or download a release’s PDF, Markdown or ZIP. Each download includes the supporting evidence and known limits.</p>
       </section>
 
       <section aria-labelledby="releases">
@@ -75,6 +59,12 @@ export default function Home() {
                 <a href={salesKitPath(entry.version) + '.pdf'} title="Complete Sales Dev Kit PDF" download>PDF</a>
                 <a href={salesKitPath(entry.version) + '.md'} title="Complete Sales Dev Kit Markdown" download>MD</a>
               </nav>
+              {entry.version === '1.3.4' && <nav className="fileGroup" aria-label="1.3.4 verification report downloads">
+                <span className="fileGroupLabel">Verification report</span>
+                <a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download>PDF</a>
+                <a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download>MD</a>
+                <a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download>ZIP</a>
+              </nav>}
             </div>
           </li>;})}</ul>}
         <p className="machineLinks">Each ZIP includes all documents in a human-readable folder and source JSON in a machine-readable folder, with a README and checksums. Reviewed value-stream recipes are included as JSON when available, with untested paths and gaps explicit. For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>.</p>
