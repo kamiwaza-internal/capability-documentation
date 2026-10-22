@@ -20,3 +20,17 @@ test('retirement removes only the unsupported target and preserves every accepte
   assert.deepEqual(source,read('../static/verification-results/1.3.4-2026-10-21-retirement/'+name));
  }
 });
+
+test('current views and downloads exclude retirement without changing explicit historical views', async () => {
+ const {currentCapabilityView, primaryCapabilities}=await import('../src/catalog.mjs');
+ const {evidenceVersions, agentsMd}=await import('../src/evidence.mjs');
+ const publication=JSON.parse(read('../data/publication.json'));
+ const stamps=JSON.parse(read('../data/release-stamps-1.3.2.json'));
+ const original=JSON.stringify(publication);
+ assert.ok(!currentCapabilityView(publication).some(r=>r.id==='models.two-node-serving'));
+ assert.ok(!primaryCapabilities(publication).some(r=>r.id==='models.two-node-serving'));
+ assert.ok(currentCapabilityView(publication,'1.3.0').some(r=>r.id==='models.two-node-serving'));
+ assert.match(evidenceVersions(publication,stamps).find(r=>r.version==='1.3.2').headline,/of 87 capabilities/);
+ assert.match(agentsMd('1.3.4'),/models.two-node-serving.*unsupported/);
+ assert.equal(JSON.stringify(publication),original);
+});

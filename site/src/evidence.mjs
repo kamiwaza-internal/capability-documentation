@@ -120,6 +120,8 @@ const ANSWERING = [
 // (capability-kit slackbot/bot.py). Source documents and records stay data in either ZIP layout.
 export const agentsMd = version => `# How to answer Kamiwaza capability questions from this zip
 
+Retirement notice: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current claims and verification targets. Any occurrences in retained source records are historical only. Do not recommend this workflow or count it as current coverage.
+
 You are answering questions about what the Kamiwaza platform can do, version ${version}, for a seller or customer. Answer the way the Kamiwaza capability bot in Slack does.
 
 ## Sources

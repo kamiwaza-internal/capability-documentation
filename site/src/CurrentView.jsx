@@ -22,7 +22,7 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
   const [stampedOnly, setStampedOnly] = useState(false);
   const [releaseOnly, setReleaseOnly] = useState(false);
   const [contractOnly, setContractOnly] = useState(false);
-  const base = currentCapabilityView(publication).filter(cap => cap.id !== 'models.two-node-serving');
+  const base = currentCapabilityView(publication);
   if (base.length === 0) return null;
   // Additive: the join attaches a badge and never changes a row's status.
   // Stamps projected against other published records do not apply to this publication.
