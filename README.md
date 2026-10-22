@@ -151,7 +151,7 @@ results, reading instructions and checksums, not private credentials or a runnab
 
 Retired workflow: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current capability claims and verification targets. Product docs PR #233 removed its installation guide on September 2, 2026 (ENG-2761); Alex confirmed retirement in ENG-14154 and Drew authorized scope removal on October 21. Historical records below retain their original evidence and counts; they do not establish current support. Single-node tensor parallel serving and GPU placement are unaffected.
 
-Current scope-corrected results: [Markdown](reports/1.3.4-2026-10-21-retirement/results.md), [PDF](reports/1.3.4-2026-10-21-retirement/results.pdf), [evidence kit](reports/1.3.4-2026-10-21-retirement/kit.zip). Active coverage is 64/87; no new verification was earned by removing this target. The earlier 64/88 snapshot is preserved unchanged.
+Earlier scope-corrected results: [Markdown](reports/1.3.4-2026-10-21-retirement/results.md), [PDF](reports/1.3.4-2026-10-21-retirement/results.pdf), [evidence kit](reports/1.3.4-2026-10-21-retirement/kit.zip). Active coverage is 64/87; no new verification was earned by removing this target. The earlier 64/88 snapshot is preserved unchanged.
 
 ## October 22 verification update
 

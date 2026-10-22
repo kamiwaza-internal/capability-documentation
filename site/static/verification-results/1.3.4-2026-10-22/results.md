@@ -1245,6 +1245,10 @@ Recorded completion: 2026-10-22T02:51:18.197419+00:00. Source basis: operator-as
 
 Stamp: d192198d5820e623fedb5fe16175a60afd6d6d87b0b8b479685a5d734f236cfb
 
+Scope note: the recorded lists below preserve inherited prerelease observations alongside the fresh replay scope. Statements about fakes, no model contact, and release/1.3.0 describe the earlier assessment, not the October 22 live replay. Only the explicitly listed live operations receive new credit.
+
+Cleanup follow-up: copilot-restoration.json records completed fixture retirement and exact clone configuration/trust restoration after this replay; retained product records are described there.
+
 Registered scope: sdk:copilot-audited-protocol134.
 
 Recorded assumptions:

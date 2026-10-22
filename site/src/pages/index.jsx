@@ -37,8 +37,8 @@ export default function Home() {
       </section>
 
       <section className="panel panelTint" aria-labelledby="verification-results-134">
-        <h2 id="verification-results-134">1.3.4 verification results - October 21 update</h2>
-        <p><strong>65 of 87 capabilities have accepted scoped release evidence.</strong> The retired Docker/SSH paired-node workflow is excluded; the new Copilot proof adds one distinct capability. The previous 64/88 report remains historical. The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The downloads below retain earlier publication snapshots.</p>
+        <h2 id="verification-results-134">1.3.4 verification results - October 22 update</h2>
+        <p><strong>65 of 87 capabilities have accepted scoped release evidence.</strong> The retired Docker/SSH paired-node workflow is excluded; the new Copilot proof adds one distinct capability. The previous 64/88 report remains historical. The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The full-results links below use the October 22 snapshot; earlier publication downloads remain available.</p>
         <nav aria-label="Full 1.3.4 verification results downloads">
           <a href="/verification-results/1.3.4-2026-10-22/results.pdf" download>Full results PDF</a>{' · '}
           <a href="/verification-results/1.3.4-2026-10-22/results.md" download>Markdown</a>{' · '}
