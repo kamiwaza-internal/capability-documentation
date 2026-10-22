@@ -296,3 +296,19 @@ refreshed evidence. Source checks and developer assessments remain preliminary,
 not fresh runtime release verification. Preserve known failures and corrective
 replay lineage. Deferred harmless-data cleanup is a disclosed obligation, never
 "cleanup passed"; do not publish private fixture identifiers or operator details.
+
+## Release verification labels and reuse
+
+Use **Release verified — tested this release** for accepted fresh execution and
+**Release verified — carried forward** for accepted earlier release evidence with a
+recorded change-impact decision for the requested release. Both count toward that
+release's coverage, deduplicated by capability ID. Carry-forward is not a new test
+or newly discovered capability. Preserve original dates, scope and limitations.
+
+Keep **Prerelease verified** separate until explicit release-baseline acceptance.
+Do not report an accepted carried capability as unverified because it lacks a fresh
+run. Do not infer carry-forward from version numbers, missing changes or absent
+tests. Relevant changes, applicable failures and unresolved impact need targeted
+verification. Use “release verified,” not “release certified”; neither label grants
+whole-release approval. See the repository's VERIFICATION-STATUS.md for the full
+counting and publication contract.
