@@ -46,6 +46,12 @@ export default function Home() {
         </nav>
       </section>
 
+      <section className="panel" aria-labelledby="evidence-carry">
+        <h2 id="evidence-carry">Evidence across releases</h2>
+        <p>Prior evidence keeps its original version, date, scope and limits. Unchanged capabilities can carry evidence forward after reviewed change-impact checks; carried coverage is labeled separately from fresh tests and does not count as new coverage. New capabilities and affected dependencies, images, configuration or environments need retesting. Unmapped changes and known failures cannot silently inherit a pass.</p>
+        <p>As of October 22, 2026, the reviewed change-impact mapping covers three capabilities and automatic release-ledger compilation remains deferred. The 66 scoped 1.3.4 results do not automatically verify future releases. Broader delta-based verification requires expanding that mapping and automation. Retired capabilities remain excluded from current claims while their historical evidence is preserved.</p>
+      </section>
+
       <section aria-labelledby="releases">
         <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
