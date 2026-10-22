@@ -43,22 +43,16 @@ function checkHomeDownloadCards(home, index, publication, out) {
     assert.equal(cardsForVersion.length, 1, `exactly one release card for ${entry.version}`);
     const card = cardsForVersion[0];
     const groups = [...card.matchAll(/<nav class="fileGroup" aria-label="([^"]+)">([\s\S]*?)<\/nav>/g)];
-    const report = entry.version === '1.3.4';
-    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`, ...(report ? ['1.3.4 verification report downloads'] : [])],
+    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`],
       `${entry.version} download group labels`);
     const links = groups.flatMap(group => [...group[2].matchAll(/<a href="([^"]+)"[^>]*\sdownload(?:="")?[^>]*>([^<]+)<\/a>/g)]
       .map(match => [match[2], match[1]]));
-    const reportLinks = report ? [
-      ['PDF', '/verification-results/1.3.4-2026-10-22-markings/results.pdf'],
-      ['MD', '/verification-results/1.3.4-2026-10-22-markings/results.md'],
-      ['ZIP', '/verification-results/1.3.4-2026-10-22-markings/kit.zip'],
-    ] : [];
-    assert.deepEqual(links, [['ZIP', entry.files.zip.path], ['PDF', entry.files.salesPdf.path], ['MD', entry.files.salesMd.path], ...reportLinks],
-      `${entry.version} must show its complete kit and verification report downloads`);
+    assert.deepEqual(links, [['ZIP', entry.files.zip.path], ['PDF', entry.files.salesPdf.path], ['MD', entry.files.salesMd.path]],
+      `${entry.version} must show its exactly one ZIP, PDF and MD download`);
     for (const [, path] of links) readFileSync(join(out, path));
     const replay = (publication.releaseStamps ?? []).filter(row => row.version === entry.version)
       .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
-    if (replay) {
+    if (replay && !entry.source?.currentVerification) {
       const visible = card.replaceAll('<!-- -->', '');
       assert.ok(visible.includes(`${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities`),
         `${entry.version} scoped replay totals must remain in its release card`);
@@ -120,6 +114,7 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
         const corpus = corpora.find(row => row.version === entry.version);
         assert.deepEqual(entry.source, {catalogSha256: corpus.sha256, kitMergeCommit: corpus.kitMergeCommit,
           productTag: corpus.productTag, productCoreCommit: corpus.productCoreCommit,
+          ...(corpus.currentVerification ? {currentVerification: {path: corpus.currentVerification.sourcePath, sha256: corpus.currentVerification.sourceSha256, counts: corpus.currentVerification.counts}} : {}),
           publicationBinding: null, humanReleaseApproval: 'not-established'}, 'corpus source binding');
         assert.ok(unzipped.get('machine-readable/release-corpus-catalog.json')?.equals(corpus.bytes), 'ZIP catalog must match reviewed corpus');
         assert.ok(unzipped.get('machine-readable/release-corpus-manifest.json')?.equals(corpus.manifestBytes), 'ZIP manifest must match reviewed corpus');

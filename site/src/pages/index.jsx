@@ -1,4 +1,5 @@
 import React from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import publication from '../../data/publication.json';
@@ -18,7 +19,8 @@ function Changes({entry}) {
 }
 
 export default function Home() {
-  const versions = evidenceVersions(publication, releaseStamps, releaseCorpora.corpora);
+  const {siteConfig} = useDocusaurusContext();
+  const versions = evidenceVersions(publication, releaseStamps, releaseCorpora.corpora, siteConfig.customFields.currentVerification);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
   const currentReplays = new Map();
   for (const snapshot of publication.releaseStamps ?? []) {
@@ -40,7 +42,7 @@ export default function Home() {
         <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
           <ul className="releaseList">{versions.map(entry => {
-            const replay = currentReplays.get(entry.version);
+            const replay = entry.corpus?.currentVerification ? null : currentReplays.get(entry.version);
             return <li key={entry.version} className="releaseRow">
             <div className="releaseText">
               <span className="releaseVersion">{entry.version}</span>
@@ -59,12 +61,7 @@ export default function Home() {
                 <a href={salesKitPath(entry.version) + '.pdf'} title="Complete Sales Dev Kit PDF" download>PDF</a>
                 <a href={salesKitPath(entry.version) + '.md'} title="Complete Sales Dev Kit Markdown" download>MD</a>
               </nav>
-              {entry.version === '1.3.4' && <nav className="fileGroup" aria-label="1.3.4 verification report downloads">
-                <span className="fileGroupLabel">Verification report</span>
-                <a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download>PDF</a>
-                <a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download>MD</a>
-                <a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download>ZIP</a>
-              </nav>}
+
             </div>
           </li>;})}</ul>}
         <p className="machineLinks">Each ZIP includes all documents in a human-readable folder and source JSON in a machine-readable folder, with a README and checksums. Reviewed value-stream recipes are included as JSON when available, with untested paths and gaps explicit. For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>.</p>

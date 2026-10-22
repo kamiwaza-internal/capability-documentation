@@ -20,7 +20,7 @@ const fixtureHome = (index, source = publication) => `<section aria-labelledby="
     .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
   return `<li class="releaseRow"><span class="releaseVersion">${entry.version}</span>${replay
     ? `<span>${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped; Human release sign-off: ${replay.approval.status}</span>`
-    : ''}<nav class="fileGroup" aria-label="For AI, ${entry.version}"><a href="${entry.files.zip.path}" download="">ZIP</a></nav><nav class="fileGroup" aria-label="For people, ${entry.version}"><a href="${entry.files.salesPdf.path}" download="">PDF</a><a href="${entry.files.salesMd.path}" download="">MD</a></nav>${entry.version === '1.3.4' ? '<nav class="fileGroup" aria-label="1.3.4 verification report downloads"><a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download="">PDF</a><a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download="">MD</a><a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download="">ZIP</a></nav>' : ''}</li>`;
+    : ''}<nav class="fileGroup" aria-label="For AI, ${entry.version}"><a href="${entry.files.zip.path}" download="">ZIP</a></nav><nav class="fileGroup" aria-label="For people, ${entry.version}"><a href="${entry.files.salesPdf.path}" download="">PDF</a><a href="${entry.files.salesMd.path}" download="">MD</a></nav></li>`;
 }).join('')}</ul></section>`;
 
 test('site workflow runs the consistency check after the production build', () => {
@@ -34,7 +34,6 @@ test('site workflow runs the consistency check after the production build', () =
 test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digests and home links', () => {
   const out = mkdtempSync(join(tmpdir(), 'release-corpus-bundle-'));
   emitBundles(publication, out);
-  cpSync(join(root, 'site/static/verification-results/1.3.4-2026-10-22-markings'), join(out, 'verification-results/1.3.4-2026-10-22-markings'), {recursive: true});
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
   emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}));
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
@@ -53,10 +52,8 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   writeFileSync(homePath, validHome);
   assert.equal(checkReleaseCorpusBuild({out}), index.versions.length);
   for (const [changed, reason] of [
-    [validHome.replace(entry.files.salesPdf.path, entry.files.summaryPdf.path), /complete kit and verification report downloads/],
-    [validHome.replace('/verification-results/1.3.4-2026-10-22-markings/results.pdf', '/wrong-report.pdf'), /complete kit and verification report downloads/],
+    [validHome.replace(entry.files.salesPdf.path, entry.files.summaryPdf.path), /exactly one ZIP, PDF and MD download/],
     [validHome.replace('For AI, 1.3.4', 'For assistants, 1.3.4'), /download group labels/],
-    [validHome.replace('6 failed selections', '0 failed selections'), /failures, gaps and approval/],
     [validHome + '<h2>Release build verification</h2>', /second release section/],
   ]) {
     writeFileSync(homePath, changed);
@@ -64,11 +61,15 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   }
   writeFileSync(homePath, validHome);
   const members = zipMembers(readFileSync(join(out, entry.files.zip.path)));
+  for (const name of ['results.md', 'results.pdf', 'kit.zip', 'results.json']) {
+    const path = 'verification-results/1.3.4-2026-10-22-markings/' + name;
+    assert.deepEqual(members.get(path), readFileSync(join(root, 'site/static', path)), 'historical report bytes retained in standard ZIP');
+  }
   assert.deepEqual(members.get('machine-readable/release-corpus-catalog.json'), readFileSync(join(root, 'corpus/1.3.4/catalog.json')));
   assert.deepEqual(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)), readFileSync(join(out, entry.files.md.path)));
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Distinct pre-release credits \| 6/);
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Scoped release stamps \| 30/);
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /Human release approval: not established/);
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /58 historical prerelease/);
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /67 of 87 capabilities/);
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /whole-release approval/);
   for (const version of ['1.3.4', '1.3.0']) {
     const download = index.versions.find(row => row.version === version);
     for (const file of ['md', 'pdf', 'zip']) {
@@ -116,6 +117,7 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   const repo = mkdtempSync(join(tmpdir(), 'replay-only-release-'));
   mkdirSync(join(repo, 'site/data'), {recursive: true});
   cpSync(join(root, 'corpus'), join(repo, 'corpus'), {recursive: true});
+  cpSync(join(root, 'site/static/verification-results'), join(repo, 'site/static/verification-results'), {recursive: true});
   for (const name of ['release-stamps-1.3.2.json', 'descriptions.json', 'sales-guidance.json', 'value-streams.json', 'release-corpora.json'])
     cpSync(join(root, 'site/data', name), join(repo, 'site/data', name));
   const extended = structuredClone(publication);
@@ -133,7 +135,6 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   writeFileSync(join(repo, 'site/data/publication.json'), JSON.stringify(extended));
   const out = join(repo, 'build');
   emitBundles(extended, out);
-  cpSync(join(root, 'site/static/verification-results/1.3.4-2026-10-22-markings'), join(out, 'verification-results/1.3.4-2026-10-22-markings'), {recursive: true});
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
   emitEvidence(extended, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({root: repo, publication: extended}));
   const indexPath = join(out, 'evidence/index.json');
@@ -171,6 +172,7 @@ test('source discovery and pinning refuse incomplete, changed or extra corpora',
   mkdirSync(join(temporary, 'corpus/1.3.4'), {recursive: true});
   cpSync(join(root, 'site/data/release-corpora.json'), join(temporary, 'site/data/release-corpora.json'));
   cpSync(join(root, 'corpus/1.3.4/catalog.json'), join(temporary, 'corpus/1.3.4/catalog.json'));
+  cpSync(join(root, 'site/static/verification-results'), join(temporary, 'site/static/verification-results'), {recursive: true});
   const source = join(temporary, 'corpus/1.3.4/catalog.json');
   assert.equal(loadReleaseCorpora({root: temporary, publication}).length, 1);
   const original = readFileSync(source);
@@ -188,7 +190,9 @@ test('source discovery and pinning refuse incomplete, changed or extra corpora',
   const futureBytes = Buffer.from(JSON.stringify(future) + '\n');
   writeFileSync(join(temporary, 'corpus/1.3.5/catalog.json'), futureBytes);
   const registry = JSON.parse(readFileSync(join(temporary, 'site/data/release-corpora.json')));
-  registry.corpora.push({...registry.corpora[0], version: '1.3.5', productTag: 'v1.3.5', sha256: sha256(futureBytes)});
+  const futureMeta = {...registry.corpora[0]};
+  delete futureMeta.currentVerification;
+  registry.corpora.push({...futureMeta, version: '1.3.5', productTag: 'v1.3.5', sha256: sha256(futureBytes)});
   writeFileSync(join(temporary, 'site/data/release-corpora.json'), JSON.stringify(registry));
   const withFuture = loadReleaseCorpora({root: temporary, publication});
   assert.equal(withFuture.length, 2);

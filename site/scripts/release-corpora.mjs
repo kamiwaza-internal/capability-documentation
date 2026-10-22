@@ -1,3 +1,4 @@
+import {loadCurrentVerification} from './current-verification.mjs';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {existsSync, readFileSync, readdirSync} from 'node:fs';
@@ -115,7 +116,7 @@ export function loadReleaseCorpora({root = repoRoot, publication} = {}) {
   unique(versions, 'corpus manifest versions');
   assert.deepEqual(directories, versions, 'every corpus directory must have one manifest entry and vice versa');
   return manifest.corpora.map(meta => {
-    keys(meta, ['version', 'sha256', 'kitMergeCommit', 'productTag', 'productCoreCommit', 'counts'], 'corpus manifest entry');
+    keys(meta, ['version', 'sha256', 'kitMergeCommit', 'productTag', 'productCoreCommit', 'counts', ...(meta.currentVerification ? ['currentVerification'] : [])], 'corpus manifest entry');
     assert.match(meta.version, /^\d+\.\d+\.\d+$/);
     assert.match(meta.sha256, /^[0-9a-f]{64}$/);
     const raw = readFileSync(join(folder, meta.version, 'catalog.json'));
@@ -140,6 +141,11 @@ export function loadReleaseCorpora({root = repoRoot, publication} = {}) {
     }
     // Embed only this version's binding. Appending a later corpus must not rewrite an older ZIP.
     const manifestBytes = Buffer.from(JSON.stringify({schema: 'public-release-corpus-manifest.v1', ...meta}, null, 2) + '\n');
-    return {...meta, catalog, bytes: raw, manifestBytes};
+    const currentVerification = meta.currentVerification ? loadCurrentVerification(root, meta.currentVerification) : null;
+    if (currentVerification) {
+      assert.equal(currentVerification.version, meta.version);
+      assert.equal(currentVerification.sourceCoreCommit, meta.productCoreCommit);
+    }
+    return {...meta, currentVerification, catalog, bytes: raw, manifestBytes};
   });
 }

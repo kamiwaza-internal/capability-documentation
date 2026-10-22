@@ -37,19 +37,14 @@ function assertReleaseCards(site) {
     const matches = cards.filter(card => card.includes(`<span class="releaseVersion">${entry.version}</span>`));
     assert.equal(matches.length, 1, `${entry.version} renders exactly once`);
     const groups = [...matches[0].matchAll(/<nav class="fileGroup" aria-label="([^"]+)">([\s\S]*?)<\/nav>/g)];
-    const report = entry.version === '1.3.4';
-    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`, ...(report ? ['1.3.4 verification report downloads'] : [])]);
+    assert.deepEqual(groups.map(group => group[1]), [`For AI, ${entry.version}`, `For people, ${entry.version}`]);
     const actions = groups.flatMap(group => [...group[2].matchAll(/<a href="([^"]+)"[^>]*download[^>]*>([^<]+)<\/a>/g)]
       .map(match => ({label: match[2], path: match[1]})));
     assert.deepEqual(actions, [
       {label: 'ZIP', path: entry.files.zip.path},
       {label: 'PDF', path: entry.files.salesPdf.path},
       {label: 'MD', path: entry.files.salesMd.path},
-      ...(report ? [
-        {label: 'PDF', path: '/verification-results/1.3.4-2026-10-22-markings/results.pdf'},
-        {label: 'MD', path: '/verification-results/1.3.4-2026-10-22-markings/results.md'},
-        {label: 'ZIP', path: '/verification-results/1.3.4-2026-10-22-markings/kit.zip'},
-      ] : []),
+
     ], `${entry.version} has its version-matched downloads`);
     const zip = zipMembers(readFileSync(join(site, 'build', entry.files.zip.path)));
     for (const key of ['md', 'pdf', 'summaryMd', 'summaryPdf', 'salesMd', 'salesPdf']) {
@@ -92,7 +87,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-integration-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'static/verification-results/1.3.4-2026-10-22-oauth', 'static/verification-results/1.3.4-2026-10-22-markings', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   // Unreviewed static files must stay private even when the reviewed icon is published.
@@ -164,7 +159,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-prerelease-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'static/verification-results/1.3.4-2026-10-22-oauth', 'static/verification-results/1.3.4-2026-10-22-markings', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results', 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
@@ -232,7 +227,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-release-cards-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results/1.3.4-2026-10-21', 'static/verification-results/1.3.4-2026-10-21-retirement', 'static/verification-results/1.3.4-2026-10-22', 'static/verification-results/1.3.4-2026-10-22-oauth', 'static/verification-results/1.3.4-2026-10-22-markings', 'docusaurus.config.js', 'package.json', 'package-lock.json'])
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results', 'docusaurus.config.js', 'package.json', 'package-lock.json'])
     cpSync(join(source, path), join(site, path), {recursive: true});
   cpSync(join(source, '../corpus'), join(root, 'corpus'), {recursive: true});
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
@@ -245,10 +240,18 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
   assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
-  for (const expected of ['6 distinct pre-release credits', '30 of 88 included capabilities',
-    '6 failed selections', '52 not stamped', 'Scenario stamps alone do not establish whole-release approval',
-    'Human release sign-off: pending',
-    'No publication binding or human release approval']) assert.ok(corpusCard.includes(expected), expected);
-  assert.ok(!corpusCard.includes('This is not whole-release approval'), 'do not negate a future approved inventory decision');
+  for (const expected of ['67 of 87 capabilities verified for 1.3.4', '20 awaiting release verification',
+    'not whole-release sign-off']) assert.ok(corpusCard.includes(expected), expected);
+  assert.ok(!corpusCard.includes('30 of 88'), 'historical snapshot must not override current status');
+  const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
+  const current = JSON.parse(archive.get('machine-readable/current-verification.json'));
+  assert.equal(current.counts.acceptedScoped, 67);
+  assert.equal(current.historicalPrerelease.length, 58);
+  const human = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
+  assert.ok(human.includes('## Recipes') && human.includes('## Ingredient glossary'));
+  assert.ok(human.includes('67 of 87'));
+  const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  assert.ok(catalog.includes('67 of 87 release verified for recorded scenarios'));
+  assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
   console.log(`Offline release-card build evidence: ${root}`);
 });

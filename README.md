@@ -59,8 +59,7 @@ platform, one row each, with the same citations:
   what the project relies on the platform to do, so you can correct its reading, then
   answers each item.
 
-It ends with the rows the records do not establish. The result is a draft: have a
-person check each row against its cited record before it goes to a customer.
+It ends with the rows the records do not establish. The result is an evidence assessment for the user, not a vendor response or proposal. A person should check each finding against its cited record.
 
 ### Other assistants
 
@@ -206,3 +205,9 @@ Accepted scoped coverage is 66/87 after merged Kit #188. All 58 historical prere
 ## October 22 commercial-markings verification update
 
 Accepted scoped coverage is 67/87 after merged Kit #189. All 58 historical prerelease entries and earlier report bytes remain preserved. Full results: [PDF](reports/1.3.4-2026-10-22-markings/results.pdf), [Markdown](reports/1.3.4-2026-10-22-markings/results.md), [JSON](reports/1.3.4-2026-10-22-markings/results.json), [kit](reports/1.3.4-2026-10-22-markings/kit.zip). The report preserves provider scope and retained configuration.
+
+### Submit verification updates
+
+Follow [Verification report submissions](REPORT-SUBMISSIONS.md): routine updates add
+one PDF and one Markdown file using the fixed template. The build includes them in
+the version ZIP automatically. Do not change the capabilities homepage for report updates.
