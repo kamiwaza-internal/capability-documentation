@@ -2750,15 +2750,13 @@
     "kitPR": 189
   },
   "cleanup": {
-    "prior": {
-      "copilot": {
-        "receipt": "copilot-restoration.json",
-        "status": "Original clone templates and trust restored; fixture processes stopped; model and owned provider credentials absent. Terminal records and owned preference remain under product retention."
-      },
-      "oauth": {
-        "receipt": "oauth-user-cleanup.json",
-        "status": "Both connections disconnected, both disposable users and workroom deleted; both logins refused401. Owned provider, connector and clone-only trust retained under private ownership journals."
-      }
+    "copilot": {
+      "receipt": "copilot-restoration.json",
+      "status": "Original clone templates and trust restored; fixture processes stopped; model and owned provider credentials absent. Terminal records and owned preference remain under product retention."
+    },
+    "oauth": {
+      "receipt": "oauth-user-cleanup.json",
+      "status": "Both connections disconnected, both disposable users and workroom deleted; both logins refused401. Owned provider, connector and clone-only trust retained under private ownership journals."
     },
     "markings": {
       "receipt": "markings-profile-retention.json",
