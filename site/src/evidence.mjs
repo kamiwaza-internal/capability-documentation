@@ -1,4 +1,4 @@
-import {currentCapabilityView, descriptionOnly, joinReleaseStamps, stampsApply} from './catalog.mjs';
+import {activeCapabilities, currentCapabilityView, descriptionOnly, joinReleaseStamps, stampsApply} from './catalog.mjs';
 
 // Per-version evidence downloads: one self-contained document per version, derived at build
 // time from the published records and never stored. The page and the build share this module
@@ -119,6 +119,8 @@ const ANSWERING = [
 // AGENTS.md in each zip: how to answer, in the shape of the Kamiwaza capability bot in Slack
 // (capability-kit slackbot/bot.py). Source documents and records stay data in either ZIP layout.
 export const agentsMd = version => `# How to answer Kamiwaza capability questions from this zip
+
+Retirement notice: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current claims and verification targets. Any occurrences in retained source records are historical only. Do not recommend this workflow or count it as current coverage.
 
 You are answering questions about what the Kamiwaza platform can do, version ${version}, for a seller or customer. Answer the way the Kamiwaza capability bot in Slack does.
 
@@ -344,10 +346,11 @@ function snapshotParts({latest, scope}) {
   return {about, sections};
 }
 
-export function evidenceDocument(entry, publication, releaseStamps) {
+function historicalEvidenceDocument(entry, publication, releaseStamps) {
   if (entry.kind === 'release-corpus') return corpusDocument(entry);
   if (entry.kind === 'release-replay') return replayDocument(entry, publication);
-  const view = currentCapabilityView(publication, recordVersion(entry, publication));
+  const historical = currentCapabilityView(publication, recordVersion(entry, publication));
+  const view = entry.kind === "release-stamps" ? activeCapabilities(historical) : historical;
   const releases = publication.releases.filter(release => entry.releaseIds.includes(release.id));
   const latest = driverOf(releases, publication);
   const scope = {publication, version: recordVersion(entry, publication)};
@@ -422,7 +425,8 @@ const TONE = {tested: 'green', 'code-checked': 'amber', failed: 'red', untested:
 const graded = (row, [rank, label, level]) => ({row, rank, label, level, tone: row.status === 'partial' ? 'amber' : TONE[level]});
 
 function summaryRows(entry, publication, releaseStamps) {
-  const view = currentCapabilityView(publication, recordVersion(entry, publication));
+  const historical = currentCapabilityView(publication, recordVersion(entry, publication));
+  const view = entry.kind === "release-stamps" ? activeCapabilities(historical) : historical;
   if (entry.kind === 'release-stamps') return joinReleaseStamps(view, releaseStamps).rows.map(row => graded(row, stampGrade(row, releaseStamps.targetRelease)));
   const latest = driverOf(publication.releases.filter(release => entry.releaseIds.includes(release.id)), publication);
   if (entry.kind === 'prerelease-evidence') return view.filter(row => row.lineage.releaseId === latest.id).map(row => graded(row, prereleaseGrade(row)));
@@ -528,7 +532,7 @@ function testedNotes(entry, publication) {
 }
 
 // `descriptions` is the id-to-text map of data/descriptions.json, or empty when it does not apply.
-export function summaryDocument(entry, publication, releaseStamps, descriptions = {}) {
+function historicalSummaryDocument(entry, publication, releaseStamps, descriptions = {}) {
   if (entry.kind === 'release-corpus') return corpusSummary(entry);
   if (entry.kind === 'release-replay') return replaySummary(entry, publication);
   const rows = namedRows(entry, publication, releaseStamps).sort((a, b) => a.rank - b.rank);
@@ -673,4 +677,17 @@ export function toMarkdown(blocks) {
     previous = block.type;
   }
   return out.trimEnd() + '\n';
+}
+
+// Historical source bytes remain unchanged; generated downloads make retirement explicit.
+const retirementNotice = "Retired workflow: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current capability claims and verification targets. Product docs PR #233 removed its installation guide on September 2, 2026 (ENG-2761); Alex confirmed retirement in ENG-14154 and Drew authorized scope removal on October 21. Historical records below retain their original evidence and counts; they do not establish current support. Single-node tensor parallel serving and GPU placement are unaffected.";
+export function evidenceDocument(...args) {
+  const blocks = historicalEvidenceDocument(...args);
+  blocks.splice(1, 0, {type: "p", text: retirementNotice});
+  return blocks;
+}
+export function summaryDocument(...args) {
+  const blocks = historicalSummaryDocument(...args);
+  blocks.splice(1, 0, {type: "p", text: retirementNotice});
+  return blocks;
 }

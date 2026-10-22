@@ -15,6 +15,7 @@ const basisLabels = {
 const Time = ({value}) => <time dateTime={value}>{value}</time>;
 
 // Derived at render from the published records; nothing here is stored or re-scored.
+// Retirement filters only the active display; historical evaluation stays reproducible.
 export default function CurrentView({publication, localStamps, releaseStamps}) {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');

@@ -92,7 +92,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
   }
   writeFileSync(join(out, 'evidence/index.json'), JSON.stringify({schema: 'capability-evidence-downloads.v1',
     note: 'Published-release downloads derive from publication records. Release-corpus downloads derive from sanitized review candidates and do not imply release approval. Cite the exact source record and digest.', versions: index}, null, 2) + '\n');
-  appendFileSync(join(out, 'llms.txt'), '/evidence/index.json lists, per version, a Sales Dev Kit in Markdown and PDF, machine-readable evidence files and a short human summary. Each ZIP includes AGENTS.md for answering instructions, CLAUDE.md importing it, the standalone documents, source JSON and reviewed value-stream recipes when available, a README directory index and SHA256SUMS. Stream and component statuses are separate; a recipe never changes capability credit or proves a newer build. Draft usage suggestions and illustrative cases are excluded from the release-facing kit.\n');
+  appendFileSync(join(out, 'llms.txt'), 'Retirement notice: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current claims and verification targets; retained source records are historical only. /evidence/index.json lists, per version, a Sales Dev Kit in Markdown and PDF, machine-readable evidence files and a short human summary. Each ZIP includes AGENTS.md for answering instructions, CLAUDE.md importing it, the standalone documents, source JSON and reviewed value-stream recipes when available, a README directory index and SHA256SUMS. Stream and component statuses are separate; a recipe never changes capability credit or proves a newer build. Draft usage suggestions and illustrative cases are excluded from the release-facing kit.\n');
 }
 
 // Historical pre-release evidence is labelled schema 4, proof revisions schema 8,
@@ -187,5 +187,14 @@ export default function bundlePlugin() {
     if (guidance === null) console.warn('sales-guidance.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     if (streams === null) console.warn('value-streams.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance, streams, loadReleaseCorpora({publication: data}));
+    // Explicit allowlist: staticDirectories stays disabled to prevent accidental publication.
+    for (const resultsPath of ['verification-results/1.3.4-2026-10-21', 'verification-results/1.3.4-2026-10-21-retirement', 'verification-results/1.3.4-2026-10-22', 'verification-results/1.3.4-2026-10-22-oauth', 'verification-results/1.3.4-2026-10-22-markings']) {
+    mkdirSync(join(outDir, resultsPath), {recursive: true});
+    for (const name of ['results.pdf', 'results.md', 'results.json', 'kit.zip', 'SHA256SUMS', 'README.md', 'AGENTS.md', ...(resultsPath.includes('2026-10-22') ? ['copilot-restoration.json'] : []), ...((resultsPath.endsWith('-oauth') || resultsPath.endsWith('-markings')) ? ['oauth-user-cleanup.json'] : []), ...(resultsPath.endsWith('-markings') ? ['markings-profile-retention.json'] : [])]) {
+      writeFileSync(join(outDir, resultsPath, name),
+        readFileSync(new URL('../static/' + resultsPath + '/' + name, import.meta.url)));
+    }
+    }
+
   }};
 }

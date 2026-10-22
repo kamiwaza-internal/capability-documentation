@@ -25,7 +25,7 @@ test('a public replay snapshot without a publication baseline has its own scoped
 test('EVD-1 one bundle per version, newest first, with the published counts', () => {
   const versions = historicalVersions();
   assert.deepEqual(versions.map(entry => [entry.version, entry.kind]), [['1.3.2', 'release-stamps'], ['1.3.0', 'prerelease-evidence'], ['1.2.1', 'tested']]);
-  assert.equal(versions[0].headline, '29 release stamped · 16 source-contract verified · 43 not stamped, of 88 capabilities');
+  assert.equal(versions[0].headline, '29 release stamped · 16 source-contract verified · 42 not stamped, of 87 capabilities');
   assert.equal(versions[1].headline, '50 pre-release verified · 5 failed or mixed · 33 not yet verified, of 88 capabilities');
   assert.deepEqual(versions[1].releaseIds, ['1.3.0-declared-r5', '1.3.0-prerelease-r3', '1.3.0-declared-r2', '1.3.0-declared-r1']);
   assert.equal(versions[2].headline, '0 verified · 6 partial · 2 failed · 0 untested, of 8 capabilities');
@@ -43,7 +43,7 @@ test('EVD-3 each digest lists every capability once, under exactly one status, w
     const markdown = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
     const ids = [...markdown.matchAll(/^### .*?`([^`]+)`\)?$/gm)].map(match => match[1]);
     // 1.2.1 is a tested build of 8 capabilities; its digest is one list, with no summary counts.
-    const expected = entry.kind === 'tested' ? 8 : 88;
+    const expected = entry.kind === 'tested' ? 8 : entry.kind === 'release-stamps' ? 87 : 88;
     assert.equal(ids.length, expected, entry.version);
     assert.equal(new Set(ids).size, expected, entry.version);
     for (const heading of ['## How to read this file', '## How to answer a capability question from this file', '## Status key', '## About this evidence', entry.kind === 'tested' ? '## Capabilities (8)' : '## Summary']) {
@@ -54,7 +54,7 @@ test('EVD-3 each digest lists every capability once, under exactly one status, w
   const stamped = toMarkdown(evidenceDocument(historicalVersions()[0], publication, releaseStamps));
   assert.ok(stamped.includes('## Release stamped for v1.3.2 (29)'));
   assert.ok(stamped.includes('## Source-contract verified for v1.3.2 (not runtime evidence) (16)'));
-  assert.ok(stamped.includes('## Not stamped for v1.3.2 (43)'));
+  assert.ok(stamped.includes('## Not stamped for v1.3.2 (42)'));
   assert.ok(stamped.includes('Human release sign-off: no'));
   for (const limit of releaseStamps.limits) assert.ok(stamped.includes(limit), limit);
   assert.ok(stamped.includes('Source-contract tests did not pass: 5 of 16 commands did not meet their expectation'));
@@ -114,7 +114,7 @@ test('EVD-6 zip entries round-trip with matching CRC and sizes', () => {
 
 test('EVD-7 human summary lists every feature once in an area table, with label counts that add up', () => {
   const expected = {
-    '1.3.2': {'Tested on 1.3.2': 29, 'Code tests passed for 1.3.2 (not on a running system)': 16, 'Not yet tested on 1.3.2': 43},
+    '1.3.2': {'Tested on 1.3.2': 29, 'Code tests passed for 1.3.2 (not on a running system)': 16, 'Not yet tested on 1.3.2': 42},
     '1.3.0': {'Tested before release': 33, 'Checked with local tests before release': 17, 'Test failed or mixed': 5, 'Not yet verified': 33},
     '1.2.1': {'Partially verified': 4, 'Partly tested; some tests failed': 2, 'Failed': 2},
   };
@@ -134,7 +134,7 @@ test('EVD-8 detailed digest opens with a capability index of every capability', 
   for (const entry of historicalVersions()) {
     const markdown = toMarkdown(evidenceDocument(entry, publication, releaseStamps));
     const index = markdown.slice(markdown.indexOf('## Capability index'), markdown.indexOf('\n## ', markdown.indexOf('## Capability index') + 3));
-    assert.equal([...index.matchAll(/^\| `[^`]+` \| /gm)].length, entry.kind === 'tested' ? 8 : 88, entry.version);
+    assert.equal([...index.matchAll(/^\| `[^`]+` \| /gm)].length, entry.kind === 'tested' ? 8 : entry.kind === 'release-stamps' ? 87 : 88, entry.version);
     assert.ok(markdown.indexOf('## Capability index') < markdown.indexOf('\n### '), 'index precedes the detail');
   }
 });

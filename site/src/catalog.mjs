@@ -1,3 +1,6 @@
+// Apply retirement only to current displays; explicit historical versions retain their evidence.
+export const activeCapabilities = rows => rows.filter(row => row.id !== "models.two-node-serving");
+
 export function filterCapabilities(capabilities, query, status) {
   const needle = query.trim().toLowerCase();
   return capabilities.filter(cap => (status === 'all' || cap.status === status || status === 'verified' && ['prerelease-verified', 'release-stamped'].includes(cap.status) || status === 'failed' && cap.status === 'failed-or-mixed') &&
@@ -39,7 +42,7 @@ export function currentCapabilityView(publication, version) {
   const finished = o => Date.parse(o.evidenceWindow.latestFinishedAt);
   const observations = [...(publication.observations ?? [])].sort((a, b) => finished(a) - finished(b));
 
-  return baseline.capabilities.map(cap => {
+  return (version ? baseline.capabilities : activeCapabilities(baseline.capabilities)).map(cap => {
     const isAccepted = cap.status === 'prerelease-verified';
     const acceptedAt = !isAccepted ? null : cap.verificationBasis === 'value-stream' ? cap.proof.observedAt : cap.evidence.map(e => e.runFinishedAt)
       .reduce((a, b) => (a && Date.parse(a) >= Date.parse(b) ? a : b), null) ?? cap.assessment?.assessedAt ?? null;
@@ -216,7 +219,7 @@ export function primaryCapabilities(publication) {
       history: ordered.map(row => ({snapshotId: row.release.id, status: row.cap.status, at: row.at, omitted: row.omitted ?? false, scope: row.omitted ? 'Explicit omitted ID; no capability evidence record published.' : row.cap.scope ?? row.cap.assessment?.scope ?? row.cap.proof?.scope ?? (row.cap.wholeClaim ? 'Whole-claim assessment' : row.cap.evidence.map(record => record.scenario ?? record.summary).join('; ') || 'Source declaration only')})),
     });
   }
-  return current.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || Number(accepted.has(b.status)) - Number(accepted.has(a.status)) || a.id.localeCompare(b.id));
+  return activeCapabilities(current).sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || Number(accepted.has(b.status)) - Number(accepted.has(a.status)) || a.id.localeCompare(b.id));
 }
 
 // A stamp projection names the published records it was joined against (`baselineReleaseId`

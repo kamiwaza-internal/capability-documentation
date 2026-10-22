@@ -17,6 +17,26 @@ limits, and says whether it is only documented or also verified.
 | Ask an AI assistant, or check an RFP or project plan | Install the `capability-grounding` skill (below). It answers from these records only and cites them. |
 | Read the data yourself | Fetch [`/releases/index.json`](https://capabilities.kamiwaza.dev/releases/index.json), then the versioned bundle it points to. [`/llms.txt`](https://capabilities.kamiwaza.dev/llms.txt) states the reading rules. |
 
+## Evidence across releases
+
+Existing evidence is retained with its original version, date, scope and limits.
+A new release does not erase prior verification. Unchanged capabilities can carry
+release evidence forward through a reviewed change-impact assessment; carried
+coverage is labeled separately from fresh execution and is not new coverage.
+
+Retest new capabilities and changes affecting a capability or its dependencies.
+Any image, configuration or environment change blocks automatic carry and requires
+review; unresolved impact requires fresh testing. Unmapped changes and known
+failures cannot silently inherit a pass. A new version number alone is not
+proof of compatibility. Retired capabilities stay excluded from current claims;
+their historical records remain available.
+
+As of October 22, 2026, the Kit supports this carry mechanism, but its reviewed
+surface-map pilot covers only three capabilities and CI-side release-ledger
+compilation is deferred. The 66 scoped 1.3.4 results do not automatically verify
+future releases. Expanding reviewed dependency
+coverage and automation is required for broad delta-based weekly verification.
+
 ## Ask an AI assistant
 
 The `capability-grounding` skill makes an assistant answer capability questions from
@@ -163,3 +183,33 @@ Routine test and documentation changes should use one competent review and
 required CI; evidence-acceptance or security-sensitive changes need independent
 reviewers. Existing repository protection and approval workflows still apply.
 This change does not alter historical releases or publish new 1.3.4 counts.
+
+## October 21, 2026 verification update
+
+[Full 1.3.4 results](reports/1.3.4-2026-10-21/results.md),
+[PDF](reports/1.3.4-2026-10-21/results.pdf) and
+[portable evidence kit](reports/1.3.4-2026-10-21/kit.zip) record all 88 outcomes:
+64 accepted scoped release capabilities, 24 remaining, and 58 historical
+prerelease entries retained separately (52 in scope: 46 accepted and 6 remaining; 6 outside scope). This cumulative report is based on multiple
+captured configurations, not one jointly tested runtime or human release sign-off.
+The prior corpus and publication revisions remain historical snapshots; their
+30-stamp totals are not the current cumulative count. The ZIP includes machine-readable
+results, reading instructions and checksums, not private credentials or a runnable test harness.
+
+## Retired paired-node workflow
+
+Retired workflow: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current capability claims and verification targets. Product docs PR #233 removed its installation guide on September 2, 2026 (ENG-2761); Alex confirmed retirement in ENG-14154 and Drew authorized scope removal on October 21. Historical records below retain their original evidence and counts; they do not establish current support. Single-node tensor parallel serving and GPU placement are unaffected.
+
+Earlier scope-corrected results: [Markdown](reports/1.3.4-2026-10-21-retirement/results.md), [PDF](reports/1.3.4-2026-10-21-retirement/results.pdf), [evidence kit](reports/1.3.4-2026-10-21-retirement/kit.zip). Active coverage is 64/87; no new verification was earned by removing this target. The earlier 64/88 snapshot is preserved unchanged.
+
+## October 22 verification update
+
+Accepted scoped coverage is 65/87 after Kit #186 adds the Copilot journey. All 58 historical prerelease entries and previous report bytes remain preserved. Current full results: [PDF](reports/1.3.4-2026-10-22/results.pdf), [Markdown](reports/1.3.4-2026-10-22/results.md), [JSON](reports/1.3.4-2026-10-22/results.json), [evidence kit](reports/1.3.4-2026-10-22/kit.zip). Scope and cleanup are detailed in the report; this is not whole-release approval.
+
+## October 22 OAuth verification update
+
+Accepted scoped coverage is 66/87 after merged Kit #188. All 58 historical prerelease entries and earlier report bytes remain preserved. Full results: [PDF](reports/1.3.4-2026-10-22-oauth/results.pdf), [Markdown](reports/1.3.4-2026-10-22-oauth/results.md), [JSON](reports/1.3.4-2026-10-22-oauth/results.json), [kit](reports/1.3.4-2026-10-22-oauth/kit.zip). Scope and retained fixtures are detailed in the report.
+
+## October 22 commercial-markings verification update
+
+Accepted scoped coverage is 67/87 after merged Kit #189. All 58 historical prerelease entries and earlier report bytes remain preserved. Full results: [PDF](reports/1.3.4-2026-10-22-markings/results.pdf), [Markdown](reports/1.3.4-2026-10-22-markings/results.md), [JSON](reports/1.3.4-2026-10-22-markings/results.json), [kit](reports/1.3.4-2026-10-22-markings/kit.zip). The report preserves provider scope and retained configuration.

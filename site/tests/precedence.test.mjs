@@ -19,7 +19,7 @@ function timeline(finish = '2026-10-01T11:00:00.000003Z') {
 test('actual primary view retains 50 accepted proofs, explicit gaps, exclusions and News release hold', () => {
   const p = actual(), before = JSON.stringify(p), rows = primaryCapabilities(p).filter(row => ['1.2.1', '1.3.0'].includes(row.version));
   const verified = filterCapabilities(rows, '', 'verified');
-  assert.equal(rows.length,115); assert.equal(verified.length,50);
+  assert.equal(rows.length,114); assert.equal(verified.length,50);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='historical-scenario').length,33);
   assert.equal(verified.filter(cap=>cap.verificationBasis==='developer-assessment').length,17);
   assert.equal(verified.filter(cap=>cap.description?.historical).length,3);

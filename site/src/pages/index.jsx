@@ -33,7 +33,7 @@ export default function Home() {
     <main className="container kitMain">
       <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
-        <p>The Sales Dev Kit records published evidence, conditions and gaps for each version. Download the PDF, Markdown or ZIP to read or share it. Published release records are in the <Link to="/catalog/">full catalog</Link>; review-candidate corpora retain their source and approval limits in the download.</p>
+        <p>Explore Kamiwaza capabilities by release in the <Link to="/catalog/">catalog</Link>, or download a release’s PDF, Markdown or ZIP. Each download includes the supporting evidence and known limits.</p>
       </section>
 
       <section aria-labelledby="releases">
@@ -59,6 +59,12 @@ export default function Home() {
                 <a href={salesKitPath(entry.version) + '.pdf'} title="Complete Sales Dev Kit PDF" download>PDF</a>
                 <a href={salesKitPath(entry.version) + '.md'} title="Complete Sales Dev Kit Markdown" download>MD</a>
               </nav>
+              {entry.version === '1.3.4' && <nav className="fileGroup" aria-label="1.3.4 verification report downloads">
+                <span className="fileGroupLabel">Verification report</span>
+                <a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download>PDF</a>
+                <a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download>MD</a>
+                <a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download>ZIP</a>
+              </nav>}
             </div>
           </li>;})}</ul>}
         <p className="machineLinks">Each ZIP includes all documents in a human-readable folder and source JSON in a machine-readable folder, with a README and checksums. Reviewed value-stream recipes are included as JSON when available, with untested paths and gaps explicit. For tools: <a href="/evidence/index.json">evidence/index.json</a> · <a href="/releases/index.json">releases/index.json</a> · <a href="/llms.txt">llms.txt</a>.</p>
