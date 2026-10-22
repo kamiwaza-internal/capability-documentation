@@ -115,6 +115,12 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   assert.equal(result.status, 0, result.stdout + result.stderr);
   checkBuiltFiles(join(site, 'build'));
   assert.deepEqual(readFileSync(join(site, 'build/favicon.svg')), readFileSync(join(site, 'static/favicon.svg')));
+  for (const snapshot of ['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22']) {
+    const dir = join('verification-results', snapshot);
+    for (const name of readdirSync(join(site, 'static', dir))) {
+      assert.deepEqual(readFileSync(join(site, 'build', dir, name)), readFileSync(join(site, 'static', dir, name)));
+    }
+  }
   assert.match(readFileSync(join(site, 'build/index.html'), 'utf8'), /rel="(?:shortcut )?icon"[^>]*href="\/favicon.svg"/);
   assert.equal(existsSync(join(site, 'build/examples/connector-builder-import-test-generate.py')), false);
   const html = readFileSync(join(site, 'build/catalog/index.html'), 'utf8');

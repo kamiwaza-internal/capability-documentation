@@ -190,7 +190,7 @@ export default function bundlePlugin() {
     // Explicit allowlist: staticDirectories stays disabled to prevent accidental publication.
     for (const resultsPath of ['verification-results/1.3.4-2026-10-21', 'verification-results/1.3.4-2026-10-21-retirement', 'verification-results/1.3.4-2026-10-22']) {
     mkdirSync(join(outDir, resultsPath), {recursive: true});
-    for (const name of ['results.pdf', 'results.md', 'results.json', 'kit.zip', 'SHA256SUMS', 'README.md', 'AGENTS.md']) {
+    for (const name of ['results.pdf', 'results.md', 'results.json', 'kit.zip', 'SHA256SUMS', 'README.md', 'AGENTS.md', ...(resultsPath.endsWith('2026-10-22') ? ['copilot-restoration.json'] : [])]) {
       writeFileSync(join(outDir, resultsPath, name),
         readFileSync(new URL('../static/' + resultsPath + '/' + name, import.meta.url)));
     }
