@@ -24,16 +24,17 @@ A new release does not erase prior verification. Unchanged capabilities can carr
 release evidence forward through a reviewed change-impact assessment; carried
 coverage is labeled separately from fresh execution and is not new coverage.
 
-Retest new capabilities and changes affecting a capability or its dependencies,
-images, configuration or environment. Unmapped changes, unresolved impact and
-known failures cannot silently inherit a pass. A new version number alone is not
+Retest new capabilities and changes affecting a capability or its dependencies.
+Any image, configuration or environment change blocks automatic carry and requires
+review; unresolved impact requires fresh testing. Unmapped changes and known
+failures cannot silently inherit a pass. A new version number alone is not
 proof of compatibility. Retired capabilities stay excluded from current claims;
 their historical records remain available.
 
 As of October 22, 2026, the Kit supports this carry mechanism, but its reviewed
-surface-map pilot covers only three capabilities and automatic release-ledger
-compilation is deferred. All 66 scoped 1.3.4 results therefore do **not** automatically
-become verified results for every future release. Expanding reviewed dependency
+surface-map pilot covers only three capabilities and CI-side release-ledger
+compilation is deferred. The 66 scoped 1.3.4 results do not automatically verify
+future releases. Expanding reviewed dependency
 coverage and automation is required for broad delta-based weekly verification.
 
 ## Ask an AI assistant
