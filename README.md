@@ -19,23 +19,16 @@ limits, and says whether it is only documented or also verified.
 
 ## Evidence across releases
 
-Existing evidence is retained with its original version, date, scope and limits.
-A new release does not erase prior verification. Unchanged capabilities can carry
-release evidence forward through a reviewed change-impact assessment; carried
-coverage is labeled separately from fresh execution and is not new coverage.
+Use **Release verified — tested this release**, **Release verified — carried forward**,
+and **Prerelease verified** as defined in [Release verification and carry-forward](VERIFICATION-STATUS.md).
+Both accepted fresh and carried evidence count toward release coverage, deduplicated
+by capability ID. Historical prerelease evidence stays visible separately.
 
-Retest new capabilities and changes affecting a capability or its dependencies.
-Any image, configuration or environment change blocks automatic carry and requires
-review; unresolved impact requires fresh testing. Unmapped changes and known
-failures cannot silently inherit a pass. A new version number alone is not
-proof of compatibility. Retired capabilities stay excluded from current claims;
-their historical records remain available.
-
-As of October 22, 2026, the Kit supports this carry mechanism, but its reviewed
-surface-map pilot covers only three capabilities and CI-side release-ledger
-compilation is deferred. The 66 scoped 1.3.4 results do not automatically verify
-future releases. Expanding reviewed dependency
-coverage and automation is required for broad delta-based weekly verification.
+Test the release delta: new or affected behavior and unresolved impact. Unchanged
+capabilities do not require full replay after an applicable change-impact review.
+Carry-forward preserves the original test date, scope and limitations; it is not a
+new test or new capability. This policy does not automatically promote existing
+results or change any published count.
 
 ## Ask an AI assistant
 
