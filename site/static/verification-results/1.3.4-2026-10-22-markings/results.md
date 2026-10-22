@@ -653,6 +653,7 @@ Fresh proof covers only the commercial reference provider and DDE document API. 
 
 Recorded assumptions:
 
+None recorded in the accepted stamp.
 
 Recorded limits:
 
