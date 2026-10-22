@@ -180,3 +180,7 @@ Accepted scoped coverage is 65/87 after Kit #186 adds the Copilot journey. All 5
 ## October 22 OAuth verification update
 
 Accepted scoped coverage is 66/87 after merged Kit #188. All 58 historical prerelease entries and earlier report bytes remain preserved. Full results: [PDF](reports/1.3.4-2026-10-22-oauth/results.pdf), [Markdown](reports/1.3.4-2026-10-22-oauth/results.md), [JSON](reports/1.3.4-2026-10-22-oauth/results.json), [kit](reports/1.3.4-2026-10-22-oauth/kit.zip). Scope and retained fixtures are detailed in the report.
+
+## October 22 commercial-markings verification update
+
+Accepted scoped coverage is 67/87 after merged Kit #189. All 58 historical prerelease entries and earlier report bytes remain preserved. Full results: [PDF](reports/1.3.4-2026-10-22-markings/results.pdf), [Markdown](reports/1.3.4-2026-10-22-markings/results.md), [JSON](reports/1.3.4-2026-10-22-markings/results.json), [kit](reports/1.3.4-2026-10-22-markings/kit.zip). The report preserves provider scope and retained configuration.

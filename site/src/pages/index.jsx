@@ -38,18 +38,18 @@ export default function Home() {
 
       <section className="panel panelTint" aria-labelledby="verification-results-134">
         <h2 id="verification-results-134">1.3.4 verification results - October 22 update</h2>
-        <p><strong>66 of 87 capabilities have accepted scoped release evidence.</strong> The retired Docker/SSH paired-node workflow is excluded; the new OAuth proof adds one distinct capability. The previous 64/88 report remains historical. The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The full-results links below use the October 22 snapshot; earlier publication downloads remain available.</p>
+        <p><strong>67 of 87 capabilities have accepted scoped release evidence.</strong> The retired Docker/SSH paired-node workflow is excluded; the new commercial-markings proof adds one distinct capability. The previous 64/88 report remains historical. The 58 historical prerelease entries remain separate: 52 overlap this inventory and 6 are outside it. This cumulative report covers multiple replay configurations; it is not whole-release approval. The full-results links below use the October 22 snapshot; earlier publication downloads remain available.</p>
         <nav aria-label="Full 1.3.4 verification results downloads">
-          <a href="/verification-results/1.3.4-2026-10-22-oauth/results.pdf" download>Full results PDF</a>{' · '}
-          <a href="/verification-results/1.3.4-2026-10-22-oauth/results.md" download>Markdown</a>{' · '}
-          <a href="/verification-results/1.3.4-2026-10-22-oauth/kit.zip" download>Complete evidence kit ZIP</a>
+          <a href="/verification-results/1.3.4-2026-10-22-markings/results.pdf" download>Full results PDF</a>{' · '}
+          <a href="/verification-results/1.3.4-2026-10-22-markings/results.md" download>Markdown</a>{' · '}
+          <a href="/verification-results/1.3.4-2026-10-22-markings/kit.zip" download>Complete evidence kit ZIP</a>
         </nav>
       </section>
 
       <section className="panel" aria-labelledby="evidence-carry">
         <h2 id="evidence-carry">Evidence across releases</h2>
         <p>Prior evidence keeps its original version, date, scope and limits. Unchanged capabilities can carry evidence forward after reviewed change-impact checks; carried coverage is labeled separately from fresh tests and does not count as new coverage. New capabilities and changes affecting a capability or its dependencies need retesting. Any image, configuration or environment change blocks automatic carry and requires review; unresolved impact requires fresh testing. Unmapped changes and known failures cannot silently inherit a pass.</p>
-        <p>As of October 22, 2026, the reviewed change-impact mapping covers three capabilities and CI-side release-ledger compilation remains deferred. The 66 scoped 1.3.4 results do not automatically verify future releases. Broader delta-based verification requires expanding that mapping and automation. Retired capabilities remain excluded from current claims while their historical evidence is preserved.</p>
+        <p>As of October 22, 2026, the reviewed change-impact mapping covers three capabilities and CI-side release-ledger compilation remains deferred. The 67 scoped 1.3.4 results do not automatically verify future releases. Broader delta-based verification requires expanding that mapping and automation. Retired capabilities remain excluded from current claims while their historical evidence is preserved.</p>
       </section>
 
       <section aria-labelledby="releases">

@@ -188,9 +188,9 @@ export default function bundlePlugin() {
     if (streams === null) console.warn('value-streams.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance, streams, loadReleaseCorpora({publication: data}));
     // Explicit allowlist: staticDirectories stays disabled to prevent accidental publication.
-    for (const resultsPath of ['verification-results/1.3.4-2026-10-21', 'verification-results/1.3.4-2026-10-21-retirement', 'verification-results/1.3.4-2026-10-22', 'verification-results/1.3.4-2026-10-22-oauth']) {
+    for (const resultsPath of ['verification-results/1.3.4-2026-10-21', 'verification-results/1.3.4-2026-10-21-retirement', 'verification-results/1.3.4-2026-10-22', 'verification-results/1.3.4-2026-10-22-oauth', 'verification-results/1.3.4-2026-10-22-markings']) {
     mkdirSync(join(outDir, resultsPath), {recursive: true});
-    for (const name of ['results.pdf', 'results.md', 'results.json', 'kit.zip', 'SHA256SUMS', 'README.md', 'AGENTS.md', ...(resultsPath.includes('2026-10-22') ? ['copilot-restoration.json'] : []), ...(resultsPath.endsWith('-oauth') ? ['oauth-user-cleanup.json'] : [])]) {
+    for (const name of ['results.pdf', 'results.md', 'results.json', 'kit.zip', 'SHA256SUMS', 'README.md', 'AGENTS.md', ...(resultsPath.includes('2026-10-22') ? ['copilot-restoration.json'] : []), ...((resultsPath.endsWith('-oauth') || resultsPath.endsWith('-markings')) ? ['oauth-user-cleanup.json'] : []), ...(resultsPath.endsWith('-markings') ? ['markings-profile-retention.json'] : [])]) {
       writeFileSync(join(outDir, resultsPath, name),
         readFileSync(new URL('../static/' + resultsPath + '/' + name, import.meta.url)));
     }

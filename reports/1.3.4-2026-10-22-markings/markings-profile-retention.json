@@ -1,0 +1,10 @@
+{
+  "observed_at": "2026-10-22T06:05:54.197630+00:00",
+  "scope": "owned isolated kit134-config-20261021 clone only",
+  "fixture_cleanup": "Replay source soft-disabled and independently read back; diagnostic sources also soft-disabled. Synthetic metadata remains.",
+  "post_replay_configuration": "Original markings-disabled environment was reapplied after the after-capture. Scheduler startup refused because the database is now bound to the enabled commercial profile.",
+  "observed_refusal": "This database is bound to an enabled marking profile; disabling markings would reinterpret protected state. Restore its profile configuration.",
+  "resolution": "Re-enabled the same commercial profile on all three owned Core deployment templates. Profile binding is retained; no database security state was deleted.",
+  "rollout_status": "Core head and scheduler both ready with one updated replica after re-enabling the same commercial profile.",
+  "release_evidence": "Raw scenario, before/after captures and native stamp are unchanged. Profile disable/restore is outside the claimed API journey."
+}
