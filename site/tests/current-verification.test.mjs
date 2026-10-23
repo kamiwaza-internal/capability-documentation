@@ -33,7 +33,7 @@ test('current release status preserves historical evidence and rejects inconsist
 test('human guide links each recipe ingredient to current scoped status without promoting prerelease', () => {
   const blocks = recipeGuide(source);
   const text = blocks.map(b => b.text).join('\n');
-  for (const heading of ['Recipes', 'Ingredient glossary', 'What was tested', 'Expected result']) assert.ok(text.includes(heading));
+  for (const heading of ['Recipes', 'Ingredient glossary', 'tested scope and limits', 'Expected result']) assert.ok(text.includes(heading));
   for (const row of source.capabilities) assert.ok(text.includes(`Ingredient: ${row.id}`));
   assert.equal(verificationLabel({status:'not-release-verified', historicalPrerelease:true}), 'Prerelease verified — release acceptance pending');
   assert.ok(text.includes('not a completed release UI verification'));
@@ -136,4 +136,24 @@ test('sandbox acceptance adds one ID without changing prior evidence or historic
   const guide = recipeGuide(current).map(row => row.text).join('\n');
   assert.ok(guide.includes('Run disposable workers with ready capacity'));
   assert.ok(guide.includes('standard shared-kernel containers'));
+});
+
+
+test('recipes start on new pages and end with scope, while every glossary status is explicit', () => {
+  const blocks = recipeGuide(source);
+  const starts = blocks.filter(b => b.type === 'h' && /^Recipe \d+:/.test(b.text));
+  assert.ok(starts.length > 0);
+  for (const [index, start] of starts.entries()) {
+    assert.equal(start.pageBreakBefore, true);
+    const end = blocks.findIndex(b => b.text === `End of recipe ${index + 1}: tested scope and limits`);
+    assert.ok(end > blocks.indexOf(start));
+    assert.ok(blocks[end + 1].text.length > 0);
+  }
+  const glossary = blocks.slice(blocks.findIndex(b => b.text === 'Ingredient glossary'));
+  const statuses = glossary.filter(b => b.callout);
+  assert.equal(statuses.length, source.capabilities.length);
+  for (const [index, status] of statuses.entries()) {
+    assert.equal(status.text, `**${verificationLabel(source.capabilities[index])}**`);
+    assert.equal(status.tone, source.capabilities[index].status === 'accepted-scoped-release' ? 'green' : 'amber');
+  }
 });

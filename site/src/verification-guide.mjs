@@ -72,6 +72,10 @@ const scopedIngredientTitles = {
   'kaizen.agent-packages': 'Create and use an approved guidance-only package',
 };
 const ingredientTitle = row => scopedIngredientTitles[row.id] ?? row.title;
+const ingredientStatus = row => ({
+  ...p(`**${verificationLabel(row)}**`), callout: true,
+  tone: row.status === 'accepted-scoped-release' ? 'green' : 'amber',
+});
 
 // Human summaries of the pinned report; the ZIP retains every original note and assumption.
 const scopeSummaries = {
@@ -97,18 +101,20 @@ export function recipeGuide(report) {
     p('Release verified — tested this release means accepted fresh tests. Release verified — carried forward means accepted earlier evidence with a reviewed change-impact decision for this release. Both count toward release coverage, once per capability. Prerelease verified stays separate until release-baseline acceptance. Original scope and test dates remain attached.'),
     p('Verified ingredients do not automatically make a verified recipe. Each recipe below states which path was tested. Your administrator must provide the applications, models, data and permissions it needs.'),
     h(2, 'Recipes')];
-  for (const recipe of recipes) {
-    blocks.push(h(3, recipe.title), p(recipe.outcome), p(`Who this is for: ${recipe.roles}`), h(4, 'You need'), ...recipe.needs.map(li),
+  for (const [index, recipe] of recipes.entries()) {
+    const recipeStart = blocks.length;
+    blocks.push({...h(2, `Recipe ${index + 1}: ${recipe.title}`), pageBreakBefore: true}, p(recipe.outcome), p(`Who this is for: ${recipe.roles}`), h(4, 'You need'), ...recipe.needs.map(li),
       h(4, 'Ingredients'), ...recipe.ingredients.map(id => {
         const row = report.capabilities.find(row => row.id === id);
         if (!row) throw new Error(`Recipe ingredient ${id} is absent from ${report.version}`);
-        return li(`${ingredientTitle(row)} (${id}) — ${verificationLabel(row)}`);
+        return {...ingredientStatus(row), text: `**${ingredientTitle(row)}** (${id})\n**${verificationLabel(row)}**`};
       }), h(4, 'Steps'), ...recipe.steps.map((step, i) => p(`${i + 1}. ${step}`)),
-      h(4, 'Expected result'), p(recipe.result), h(4, 'What was tested'), p(recipe.coverage), p(`Source: ${recipe.source}`));
+      h(4, 'Expected result'), p(recipe.result), h(4, `End of recipe ${index + 1}: tested scope and limits`), p(recipe.coverage), p(`Source: ${recipe.source}`));
+    for (const block of blocks.slice(recipeStart)) block.compact = true;
   }
-  blocks.push(h(2, 'Ingredient glossary'), p('Release verified means accepted tests or applicable carried evidence cover the recorded scenarios on the named release; it does not mean every operation was tested. Prerelease verified identifies retained earlier evidence, not a release pass. Pending means the release proof is missing, not that the feature is unsupported.'));
+  blocks.push({...h(2, 'Ingredient glossary'), pageBreakBefore: true}, p('Release verified means accepted tests or applicable carried evidence cover the recorded scenarios on the named release; it does not mean every operation was tested. Prerelease verified identifies retained earlier evidence, not a release pass. Pending means the release proof is missing, not that the feature is unsupported.'));
   for (const row of report.capabilities) {
-    blocks.push(h(3, ingredientTitle(row)), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
+    blocks.push(h(3, ingredientTitle(row)), ingredientStatus(row), p(`Ingredient: ${row.id}`),
       p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
     if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));
