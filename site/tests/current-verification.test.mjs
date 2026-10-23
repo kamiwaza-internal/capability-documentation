@@ -4,7 +4,7 @@ import {mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'node:
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {loadCurrentVerification, publishCurrentVerification, publishVerificationHistory} from '../scripts/current-verification.mjs';
+import {loadCurrentVerification, publishCurrentVerification, publishVerificationHistory, projectReleaseLineStamp} from '../scripts/current-verification.mjs';
 import {recipeGuide, verificationLabel, verificationDocument} from '../src/verification-guide.mjs';
 import {agentsMd} from '../src/evidence.mjs';
 const source = JSON.parse(readFileSync(new URL('../static/verification-results/1.3.4-2026-10-22-markings/results.json', import.meta.url)));
@@ -123,7 +123,8 @@ test('accepted package publication adds exactly two IDs and retains historical r
 test('sandbox acceptance adds one ID without changing prior evidence or historical entries', () => {
   const root = new URL('../../', import.meta.url).pathname;
   const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
-  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const path = 'current-verification/1.3.4/2026-10-23-sandbox.json';
+  const current = loadCurrentVerification(root, {path, sha256:createHash('sha256').update(readFileSync(join(root, 'site/static', path))).digest('hex')});
   const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-package-delegation.json')));
   assert.equal(current.counts.acceptedScoped, 70);
   assert.equal(current.counts.remaining, 17);
@@ -156,4 +157,85 @@ test('recipes start on new pages and end with scope, while every glossary status
     assert.equal(status.text, `**${verificationLabel(source.capabilities[index])}**`);
     assert.equal(status.tone, source.capabilities[index].status === 'accepted-scoped-release' ? 'green' : 'amber');
   }
+});
+
+test('mixed release-line evidence requires a matching reviewed source and intact stamp', t => {
+  const root = mkdtempSync(join(tmpdir(), 'release-line-'));
+  t.after(() => rmSync(root, {recursive:true, force:true}));
+  const path = 'current-verification/1.3.4/2026-10-23-release-line.json';
+  mkdirSync(join(root, 'site/static/current-verification/1.3.4'), {recursive:true});
+  const report = structuredClone(source), row = report.capabilities.find(row => row.stampId);
+  const hash = value => createHash('sha256').update(JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
+    ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest('hex');
+  row.sourceCommit = '1'.repeat(40);
+  const stamp = {schema:'capability-release-stamp.v1', target_release:report.version, capability:row.id,
+    release_source:{repository:'kamiwaza-internal/kamiwaza', ref:'release/1.3.0', source_commit:row.sourceCommit, source_commit_basis:row.sourceBasis},
+    manifest_id:'sha256:' + row.manifestId, finished_at:row.finishedAt, replayed_kits:row.kits, assumptions:row.assumptions, limits:row.limits};
+  stamp.id = hash(stamp);
+  row.stampId = stamp.id;
+  row.sourceStampSha256 = hash(stamp);
+  row.releaseLine = {ref:'release/1.3.0', sourceKitCommit:report.sourceKitCommit,
+    reviewReference:'https://github.com/kamiwaza-internal/capability-kit/pull/1', stampProjection:projectReleaseLineStamp(stamp)};
+  row.releaseLine.projectionSha256 = hash(row.releaseLine.stampProjection);
+  const load = value => {
+    const bytes = JSON.stringify(value);
+    writeFileSync(join(root, 'site/static', path), bytes);
+    return loadCurrentVerification(root, {path, sha256:createHash('sha256').update(bytes).digest('hex')});
+  };
+  assert.equal(load(report).capabilities.find(item => item.id === row.id).sourceCommit, row.sourceCommit);
+  for (const mutate of [r => delete r.releaseLine, r => delete r.releaseLine.reviewReference,
+    r => r.releaseLine.sourceKitCommit = '2'.repeat(40), r => r.releaseLine.ref = 'main',
+    r => r.sourceCommit = source.sourceCoreCommit, r => r.manifestId = '3'.repeat(64),
+    r => r.limits.push('Unproven claim'), r => r.releaseLine.stampProjection.finished_at = 'changed',
+    r => r.sourceStampSha256 = '4'.repeat(64),
+    r => r.releaseLine.stampProjection.release_source.images = {private:'registry.example/image'},
+    r => r.releaseLine.stampProjection.evidence = [{path:'private-record.json'}]]) {
+    const invalid = structuredClone(report);
+    mutate(invalid.capabilities.find(item => item.id === row.id));
+    assert.throws(() => load(invalid));
+  }
+  for (const ref of ['release/9.9.9', 'release/1.4.0', 'release/1.3.5']) {
+    const invalid = structuredClone(report), changed = invalid.capabilities.find(item => item.id === row.id);
+    changed.releaseLine.ref = ref;
+    changed.releaseLine.stampProjection.release_source.ref = ref;
+    changed.releaseLine.projectionSha256 = hash(changed.releaseLine.stampProjection);
+    assert.throws(() => load(invalid), /Release branch must match/);
+  }
+  assert.equal(load(source).sourceCoreCommit, source.sourceCoreCommit);
+});
+
+
+test('accepted ingestion adds one scoped release-line result while retaining the complete baseline', () => {
+  const root = new URL('../../', import.meta.url).pathname;
+  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
+  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-sandbox.json')));
+  assert.equal(current.counts.acceptedScoped, prior.counts.acceptedScoped + 1);
+  assert.equal(current.counts.remaining, prior.counts.remaining - 1);
+  assert.deepEqual(current.historicalPrerelease, prior.historicalPrerelease);
+  assert.equal(current.sourceCoreCommit, prior.sourceCoreCommit);
+  for (const row of prior.capabilities.filter(row => row.id !== 'ingestion.scheduled-ingest'))
+    assert.deepEqual(current.capabilities.find(item => item.id === row.id), row);
+  const row = current.capabilities.find(row => row.id === 'ingestion.scheduled-ingest');
+  assert.equal(row.stampId, 'ef1462fbcd1d9eeedddf0596b3fc1a9cd392baf420f46a1e5a921a984a923904');
+  assert.equal(row.releaseLine.sourceKitCommit, '8e0326453e206895a7f76227aaec2a9e12d26a5c');
+  assert.notEqual(row.sourceCommit, current.sourceCoreCommit);
+  const guide = recipeGuide(current).map(row => row.text).join('\n');
+  assert.ok(guide.includes('Ingest a source, inspect a registered job, and trigger a managed connector'));
+  assert.ok(guide.includes('Unattended schedule execution, execution durability and cross-tenant isolation were not exercised'));
+  assert.ok(verificationDocument(current).some(block => block.text.includes('release/1.3.0@' + row.sourceCommit)));
+});
+
+
+test('private stamp intake checks the native ID and omits deployment inventory and raw evidence', () => {
+  const hash = value => createHash('sha256').update(JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
+    ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest('hex');
+  const stamp = {schema:'capability-release-stamp.v1', release_source:{repository:'kamiwaza-internal/kamiwaza', ref:'release/1.3.0', source_commit:'1'.repeat(40), source_commit_basis:'operator-asserted', images:{private:'ghcr.io/private/image'}}, evidence:[{path:'private-record.json'}]};
+  stamp.id = hash(stamp);
+  const projection = projectReleaseLineStamp(stamp);
+  assert.equal(projection.sourceStampSha256, hash(stamp));
+  assert.ok(!JSON.stringify(projection).includes('ghcr.io'));
+  assert.ok(!JSON.stringify(projection).includes('private-record'));
+  stamp.evidence[0].path = 'changed';
+  assert.throws(() => projectReleaseLineStamp(stamp), /stamp ID mismatch/);
 });
