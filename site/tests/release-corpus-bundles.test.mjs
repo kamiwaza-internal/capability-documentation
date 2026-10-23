@@ -68,7 +68,7 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   assert.deepEqual(members.get('machine-readable/release-corpus-catalog.json'), readFileSync(join(root, 'corpus/1.3.4/catalog.json')));
   assert.deepEqual(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)), readFileSync(join(out, entry.files.md.path)));
   assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /58 historical prerelease/);
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /70 of 87 capabilities/);
+  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /71 of 87 capabilities/);
   assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /whole-release approval/);
   for (const version of ['1.3.4', '1.3.0']) {
     const download = index.versions.find(row => row.version === version);

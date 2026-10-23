@@ -4,6 +4,40 @@ import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'n
 import {dirname, join} from 'node:path';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 
+// Match the producer's sorted JSON digest; the embedded stamp remains independently inspectable.
+const canonical = value => JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
+  ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item);
+const digest = value => createHash('sha256').update(canonical(value)).digest('hex');
+
+function validateReleaseLine(row, report) {
+  const binding = row.releaseLine;
+  assert.ok(binding, 'Different Core source requires an explicit release-line binding');
+  assert.match(binding.ref ?? '', /^release\/\d+\.\d+\.\d+$/);
+  const branch = binding.ref.slice('release/'.length).split('.').map(Number);
+  const target = report.version.split('.').map(Number);
+  assert.ok(branch[0] === target[0] && branch[1] === target[1] && branch[2] <= target[2],
+    'Release branch must match the target major/minor and not exceed its patch');
+  assert.equal(binding.sourceKitCommit, report.sourceKitCommit);
+  assert.match(binding.reviewReference ?? '', /^https:\/\/github\.com\/kamiwaza-internal\/capability-kit\/pull\/\d+$/);
+  const stamp = binding.stamp;
+  assert.equal(stamp?.schema, 'capability-release-stamp.v1');
+  const {id, ...payload} = stamp;
+  assert.equal(digest(payload), id, 'Release-line stamp ID mismatch');
+  assert.equal(digest(stamp), row.sourceStampSha256, 'Release-line source stamp digest mismatch');
+  assert.equal(id, row.stampId);
+  assert.equal(stamp.target_release, report.version);
+  assert.equal(stamp.capability, row.id);
+  assert.equal(stamp.release_source.repository, 'kamiwaza-internal/kamiwaza');
+  assert.equal(stamp.release_source.ref, binding.ref);
+  assert.equal(stamp.release_source.source_commit, row.sourceCommit);
+  assert.equal(stamp.release_source.source_commit_basis, row.sourceBasis);
+  assert.equal(stamp.manifest_id, 'sha256:' + row.manifestId);
+  assert.equal(stamp.finished_at, row.finishedAt);
+  assert.deepEqual(stamp.replayed_kits, row.kits);
+  assert.deepEqual(stamp.assumptions, row.assumptions);
+  assert.deepEqual(stamp.limits, row.limits);
+}
+
 // A reviewed pointer, not 'newest filename wins'. Historical source bytes stay unchanged.
 export function loadCurrentVerification(root, binding) {
   const pathVersion = binding.path.match(/^(?:verification-results\/(\d+\.\d+\.\d+)-[a-z0-9-]+\/results|current-verification\/(\d+\.\d+\.\d+)\/\d{4}-\d{2}-\d{2}(?:-[a-z0-9]+)+)\.json$/);
@@ -25,7 +59,8 @@ export function loadCurrentVerification(root, binding) {
     assert.equal(row.historicalPrerelease, past.has(row.id));
     if (row.status === 'accepted-scoped-release') {
       for (const key of ['stampId', 'sourceStampSha256', 'manifestId']) assert.match(row[key], /^[a-f0-9]{64}$/);
-      assert.equal(row.sourceCommit, report.sourceCoreCommit);
+      assert.match(row.sourceCommit ?? '', /^[a-f0-9]{40}$/);
+      if (row.releaseLine || row.sourceCommit !== report.sourceCoreCommit) validateReleaseLine(row, report);
       assert.ok(row.kits.length && Array.isArray(row.assumptions) && Array.isArray(row.limits));
     } else assert.ok(row.gap);
   }
