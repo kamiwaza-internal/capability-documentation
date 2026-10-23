@@ -33,7 +33,7 @@ test('current release status preserves historical evidence and rejects inconsist
 test('human guide links each recipe ingredient to current scoped status without promoting prerelease', () => {
   const blocks = recipeGuide(source);
   const text = blocks.map(b => b.text).join('\n');
-  for (const heading of ['Recipes', 'Ingredient glossary', 'tested scope and limits', 'Expected result']) assert.ok(text.includes(heading));
+  for (const heading of ['Recipe 1:', 'Ingredient glossary', 'tested scope and limits', 'Expected result']) assert.ok(text.includes(heading));
   for (const row of source.capabilities) assert.ok(text.includes(`Ingredient: ${row.id}`));
   assert.equal(verificationLabel({status:'not-release-verified', historicalPrerelease:true}), 'Prerelease verified — release acceptance pending');
   assert.ok(text.includes('not a completed release UI verification'));
