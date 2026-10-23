@@ -4,13 +4,13 @@ Evidence date: 2026-10-23
 
 ## Scope
 
-Run a disposable sandbox worker, keep warm capacity ready, and return safely to the default provider. All 19 checks passed on the captured Core 1.3.4 configuration. This is a candidate result awaiting acceptance in capability-kit PR196; it is not yet additional accepted coverage.
+Run a disposable sandbox worker, keep warm capacity ready, and return safely to the default provider. All 19 checks passed on the captured Core 1.3.4 configuration. This scoped result was accepted when capability-kit PR196 merged on October 23, 2026.
 
 This operator/API recipe used Core 5f5f6465, the qualified ARM64 Operator and native controller, pinned upstream Agent Sandbox v0.5.2, and two retained worker image revisions. It did not test a graphical configuration screen. Exact source and image mappings are retained with the evidence.
 
 ## Results
 
-Accepted scoped release coverage remains 69 of 87 capabilities. Acceptance of this candidate would add one distinct capability, apps.sandbox-workload-provider, for a prospective 70 of 87. The 58 historical prerelease entries remain separate and unchanged. Nineteen passing checks are one capability, not nineteen additions.
+Accepted scoped release coverage is now 70 of 87 capabilities, up from 69. This adds one distinct capability: apps.sandbox-workload-provider. The 58 historical prerelease entries remain separate and unchanged. Nineteen passing checks are one capability, not nineteen additions.
 
 ### Recipe: run disposable workers with ready capacity
 
@@ -33,13 +33,13 @@ Expected result: both providers complete the worker lifecycle; access, image, ex
 - Agent Sandbox provider: an optional backend using upstream claims and a pool of ready workers.
 - Warm pool: idle worker capacity prepared before an application requests it. OnReplenish and Recreate control how image changes replace that capacity.
 - Worker-token Secret: the credential presented to a worker. It is distinct from the controller token. Tested workers receive a Secret reference; ConfigMap token sources and foreign-owned mirror collisions are refused.
-- apps.sandbox-workload-provider: the single capability represented here. Status: complete scoped live proof, acceptance pending.
+- apps.sandbox-workload-provider: the single capability represented here. Status: release verified for the tested configuration.
 
 ## Evidence
 
-Candidate canonical source: https://github.com/kamiwaza-internal/capability-kit/tree/6ab54d59550cebb7f61aabb389a524d9115cd885/reports/2026-10-23-sandbox-both-providers
+Accepted canonical source: https://github.com/kamiwaza-internal/capability-kit/tree/d16f17521f8d7ad9a824c99c7e903f0a35938bcb/reports/2026-10-23-sandbox-both-providers
 
-Approval tracking: https://github.com/kamiwaza-internal/capability-kit/pull/196
+Merged approval record: https://github.com/kamiwaza-internal/capability-kit/pull/196
 
 Plan ID: a49bd5df0076fc2a4c1d371e360f848e034e8888172e327a04ea8fd4b569a165
 
@@ -51,8 +51,8 @@ Evidence covers the captured ARM64 configuration and two worker revisions. It pr
 
 Provider rollback removes upstream claims, pool and template while retaining a usable worker-token mirror for legacy workers. The mirror is removed when its usable token configuration is removed; do not expect immediate mirror deletion merely from switching providers.
 
-For an RFI, an assistant should report each requested requirement, the supported scope, its verification status, evidence and remaining gaps. This pending result must stay labeled pending; do not generate a bid response or infer accreditation, procurement advice or untested isolation claims.
+For an RFI, an assistant should report each requested requirement, the supported scope, its verification status, evidence and remaining gaps. Keep the tested scope and remaining gaps explicit; do not generate a bid response or infer accreditation, procurement advice or untested isolation claims.
 
 ## Remaining work
 
-Complete normal review and acceptance of PR196 before increasing the accepted count. Publish accepted source/catalog changes separately if required, then update the report status in a new approved snapshot. This report pair alone does not update canonical credit or the website catalog. Eighteen capabilities remain outside accepted release coverage today; that would become seventeen after this candidate is accepted. Full streaming proof remains a separate outstanding journey and would not add a new capability ID.
+Seventeen capabilities remain outside accepted release coverage. The accepted source snapshot and this report pair must be published together before website downloads reflect 70; this report pair alone does not change the canonical catalog. Full streaming proof remains a separate outstanding journey and would not add a new capability ID.
