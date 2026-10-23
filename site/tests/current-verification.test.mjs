@@ -4,7 +4,7 @@ import {mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'node:
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {loadCurrentVerification} from '../scripts/current-verification.mjs';
+import {loadCurrentVerification, publishCurrentVerification} from '../scripts/current-verification.mjs';
 import {recipeGuide, verificationLabel, verificationDocument} from '../src/verification-guide.mjs';
 import {agentsMd} from '../src/evidence.mjs';
 const source = JSON.parse(readFileSync(new URL('../static/verification-results/1.3.4-2026-10-22-markings/results.json', import.meta.url)));
@@ -48,4 +48,27 @@ test('detailed report preserves the explanation separating current OAuth proof f
   const text = verificationDocument(source).map(b => b.text).join('\n');
   assert.ok(text.includes(row.scopeNote));
   assert.ok(text.includes('Historical statements about missing release proof do not override'));
+});
+
+test('immutable current snapshots publish exact reviewed bytes independently of report pairs', t => {
+  const root = mkdtempSync(join(tmpdir(), 'current-snapshot-'));
+  t.after(() => rmSync(root, {recursive:true, force:true}));
+  const path = 'current-verification/1.3.4/2026-10-23-reviewed.json';
+  const folder = join(root, 'site/static/current-verification/1.3.4');
+  mkdirSync(folder, {recursive:true});
+  const bytes = JSON.stringify(source);
+  writeFileSync(join(root, 'site/static', path), bytes);
+  const binding = {path, sha256:createHash('sha256').update(bytes).digest('hex')};
+  const out = join(root, 'build');
+  assert.equal(loadCurrentVerification(root, binding).counts.acceptedScoped, 67);
+  publishCurrentVerification(root, binding, out);
+  assert.equal(readFileSync(join(out, path), 'utf8'), bytes);
+  for (const path of ['current-verification/1.3.4/../../private.json', '/current-verification/1.3.4/2026-10-23-reviewed.json', 'unreviewed/1.3.4/2026-10-23-reviewed.json']) {
+    assert.throws(() => publishCurrentVerification(root, {...binding, path}, out));
+  }
+  assert.throws(() => publishCurrentVerification(root, {...binding, sha256:'0'.repeat(64)}, out), /digest mismatch/);
+  const wrongVersion = 'current-verification/1.4.0/2026-10-23-reviewed.json';
+  mkdirSync(join(root, 'site/static/current-verification/1.4.0'), {recursive:true});
+  writeFileSync(join(root, 'site/static', wrongVersion), bytes);
+  assert.throws(() => publishCurrentVerification(root, {...binding, path:wrongVersion}, out), /path\/version mismatch/);
 });

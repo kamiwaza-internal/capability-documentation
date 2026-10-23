@@ -3,6 +3,10 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
 export function checkReportSubmission(changes) {
+  for (const [status, path] of changes) {
+    if (path.startsWith('site/static/current-verification/')) assert.equal(status, 'A',
+      'Current verification snapshots are append-only; publish a new binding instead');
+  }
   const prefix = 'site/static/verification-results/';
   if (!changes.some(([, path]) => path.startsWith(prefix))) return;
   for (const [status, path] of changes) {

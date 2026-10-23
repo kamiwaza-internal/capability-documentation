@@ -59,3 +59,10 @@ test('report PRs cannot change layout or overwrite history', () => {
   assert.throws(() => checkReportSubmission([['D', path]]));
   assert.doesNotThrow(() => checkReportSubmission([['M', 'site/src/pages/index.jsx']]));
 });
+
+test('current status snapshots are append-only and remain separate from report pairs', () => {
+  const snapshot = 'site/static/current-verification/1.3.4/2026-10-23-reviewed.json';
+  assert.doesNotThrow(() => checkReportSubmission([['A', snapshot], ['M', 'site/data/release-corpora.json']]));
+  for (const status of ['M', 'D']) assert.throws(() => checkReportSubmission([[status, snapshot]]), /append-only/);
+  assert.throws(() => checkReportSubmission([['A', snapshot], ['A', 'site/static/verification-results/1.3.4-2026-10-23/results.md']]), /PDF and Markdown pair/);
+});
