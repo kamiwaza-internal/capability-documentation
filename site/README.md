@@ -620,6 +620,14 @@ existing `verification-results-report.v1` shape. Preserve prior rows and histori
 entries, replace only evidence-backed outcomes, recompute unique capability counts,
 and retain the actual merged source commit, stamp digests, scopes and exclusions.
 Update `currentVerification.path` and `.sha256` in `site/data/release-corpora.json`.
+The existing history gate compares the new binding with the immutable PR/push
+base. It requires the earlier digest-bound snapshot to remain available, keeps all
+prior capability IDs and preserves every
+historical prerelease row unchanged. New capabilities and evidence-backed refreshes
+are allowed; earlier evidence remains at its original URL. A reviewed regression
+may change a current accepted outcome to not release verified with a nonblank gap
+explanation; its prior accepted snapshot remains unchanged. Counts may decrease
+when current evidence requires it. The gate preserves history, not a minimum count.
 Existing legacy bindings remain supported. Snapshots are append-only; later changes
 need a new dated file and binding, never edits to an earlier snapshot.
 
