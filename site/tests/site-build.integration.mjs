@@ -87,7 +87,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-integration-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', ...['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22', '1.3.4-2026-10-22-oauth', '1.3.4-2026-10-22-markings'].map(name => `static/verification-results/${name}`), 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/current-verification', ...['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22', '1.3.4-2026-10-22-oauth', '1.3.4-2026-10-22-markings'].map(name => `static/verification-results/${name}`), 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   // Unreviewed static files must stay private even when the reviewed icon is published.
@@ -159,7 +159,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   const source = fileURLToPath(new URL('..', import.meta.url));
   const root = mkdtempSync(join(tmpdir(), 'capability-site-prerelease-'));
   const site = join(root, 'site');
-  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', ...['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22', '1.3.4-2026-10-22-oauth', '1.3.4-2026-10-22-markings'].map(name => `static/verification-results/${name}`), 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
+  for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/current-verification', ...['1.3.4-2026-10-21', '1.3.4-2026-10-21-retirement', '1.3.4-2026-10-22', '1.3.4-2026-10-22-oauth', '1.3.4-2026-10-22-markings'].map(name => `static/verification-results/${name}`), 'docusaurus.config.js', 'package.json', 'package-lock.json']) {
     cpSync(join(source, path), join(site, path), {recursive: true});
   }
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
@@ -253,21 +253,21 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
   assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
-  for (const expected of ['67 of 87 capabilities verified for 1.3.4', '20 awaiting release verification',
+  for (const expected of ['69 of 87 capabilities verified for 1.3.4', '18 awaiting release verification',
     'not whole-release sign-off']) assert.ok(corpusCard.includes(expected), expected);
   assert.ok(!corpusCard.includes('30 of 88'), 'historical snapshot must not override current status');
   const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
   const current = JSON.parse(archive.get('machine-readable/current-verification.json'));
-  assert.equal(current.counts.acceptedScoped, 67);
+  assert.equal(current.counts.acceptedScoped, 69);
   assert.deepEqual(readFileSync(join(site, 'build', binding.path)), snapshotBytes);
   assert.deepEqual(readFileSync(join(site, 'build', historicalPath)), snapshotBytes);
   assert.equal(existsSync(join(site, 'build/current-verification/1.3.4/unreviewed.json')), false);
   assert.equal(current.historicalPrerelease.length, 58);
   const human = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
   assert.ok(human.includes('## Recipes') && human.includes('## Ingredient glossary'));
-  assert.ok(human.includes('67 of 87'));
+  assert.ok(human.includes('69 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
-  assert.ok(catalog.includes('67 of 87 release verified for recorded scenarios'));
+  assert.ok(catalog.includes('69 of 87 release verified for recorded scenarios'));
   assert.ok(catalog.includes('Inherited assumptions and limits about mocked tests'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
   console.log(`Offline release-card build evidence: ${root}`);
