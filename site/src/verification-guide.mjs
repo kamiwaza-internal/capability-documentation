@@ -7,6 +7,7 @@ export const verificationLabel = row => row.status === 'accepted-scoped-release'
 
 // User instructions are curated from the cited product journeys, not inferred from stamp counts.
 export const recipes134 = [
+  {title:'Create a reusable skill and delegate a task to its agent',outcome:'Draft a small guidance-only package, have an administrator approve it, and explicitly select its agent to handle a task.',roles:'A member who can use the builder and a separate administrator who can review proposals.',needs:['Primary Kaizen with the package-creator and agent-builder available, a working serving model, and an operator able to review the exact package and agent revisions.','A unique package name, a small Markdown skill, an expected answer that shows the skill was used, and access to your own Kaizen instance. The test used synthetic guidance, not production content.'],ingredients:['kaizen.agent-packages','kaizen.agent-auto-routing'],steps:['Open the package-creator in Kaizen. Ask it to draft a native Pi guidance-only package with your unique name and Markdown skill, and validate that exact draft. Review the validation result before proceeding.','Ask the agent-builder to create an agent that uses that exact package version. If the package is not approved yet, keep the agent as a draft with its dependency recorded.','Have the administrator review and approve the submitted package. Resume the agent draft against the approved package, then submit the agent for administrator approval. This test used authenticated administrative API calls for approval; it did not verify an approval-screen click path.','Open the approved agent and ask a question that requires its skill. Check that the reply uses the expected guidance.','In a general Kaizen chat, open “Add files, agents, connectors, or tools”, then “Sub-agents”. Select the approved agent. Ask Kaizen to delegate the task explicitly to that agent. Check the named sub-agent activity and its answer.','When the exercise is finished, restore your prior sub-agent selection. Ask the operator to remove the disposable agent, package and drafts and archive the exercise chats. Approval audit history is intentionally retained.'],result:'The approved skill is used by the agent, and the explicitly selected child agent appears by name in the delegated run.',coverage:'Accepted scoped release evidence: all six registered browser checkpoints passed, including original-author validation, approval, skill-backed use, member-selected delegation and cleanup. Approval and state/cleanup assertions also used API calls. This does not prove automatic specialist selection, routing-policy pins or exclusions, consult audit, dependency/vulnerability scanning, npm import, grant-ceiling enforcement or unregistered-package refusal. The broad member API suite was not exercised; this is not full PR UAT or release sign-off.',source: 'https://github.com/kamiwaza-internal/capability-kit/tree/6a5e7249ed9a4340bd4c84bcb530e4a4a712650f/reports/2026-10-23-native-package-guidance-unique-fixture'},
   {title: 'Find an application to deploy', outcome: 'See the applications available in your App Garden and choose a suitable template.',
     roles: 'An authenticated platform user; an operator for deployment.',
     needs: ['Access to App Garden and a configured application catalog.'],
@@ -64,6 +65,13 @@ export function verificationDocument(report, concise = false) {
   return blocks;
 }
 
+// Display the tested operation; canonical titles and IDs remain in the evidence.
+const scopedIngredientTitles = {
+  'kaizen.agent-auto-routing': 'Explicitly delegate to a member-selected agent',
+  'kaizen.agent-packages': 'Create and use an approved guidance-only package',
+};
+const ingredientTitle = row => scopedIngredientTitles[row.id] ?? row.title;
+
 // Human summaries of the pinned report; the ZIP retains every original note and assumption.
 const scopeSummaries = {
   'apps.app-garden': 'Browse the App Garden in Chrome. A separate SDK journey deploys, inspects, stops and purges one disposable app. Full browser deployment and every template are not verified.',
@@ -93,16 +101,16 @@ export function recipeGuide(report) {
       h(4, 'Ingredients'), ...recipe.ingredients.map(id => {
         const row = report.capabilities.find(row => row.id === id);
         if (!row) throw new Error(`Recipe ingredient ${id} is absent from ${report.version}`);
-        return li(`${row.title} (${id}) — ${verificationLabel(row)}`);
+        return li(`${ingredientTitle(row)} (${id}) — ${verificationLabel(row)}`);
       }), h(4, 'Steps'), ...recipe.steps.map((step, i) => p(`${i + 1}. ${step}`)),
       h(4, 'Expected result'), p(recipe.result), h(4, 'What was tested'), p(recipe.coverage), p(`Source: ${recipe.source}`));
   }
   blocks.push(h(2, 'Ingredient glossary'), p('Release verified means accepted tests or applicable carried evidence cover the recorded scenarios on the named release; it does not mean every operation was tested. Prerelease verified identifies retained earlier evidence, not a release pass. Pending means the release proof is missing, not that the feature is unsupported.'));
   for (const row of report.capabilities) {
-    blocks.push(h(3, row.title), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
+    blocks.push(h(3, ingredientTitle(row)), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
       p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
-    if (scopeSummaries[row.id]) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id]}`));
+    if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));
     else {
       for (const note of row.limits ?? []) blocks.push(p(note));
       for (const assumption of row.assumptions ?? []) blocks.push(p(`Assumption: ${assumption}`));
