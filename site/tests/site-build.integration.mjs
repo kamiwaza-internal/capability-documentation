@@ -264,7 +264,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.equal(existsSync(join(site, 'build/current-verification/1.3.4/unreviewed.json')), false);
   assert.equal(current.historicalPrerelease.length, 58);
   const human = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
-  assert.ok(human.includes('## Recipes') && human.includes('## Ingredient glossary'));
+  assert.ok(human.includes('## Recipe 1:') && human.includes('## Ingredient glossary'));
   assert.ok(human.includes('70 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
   assert.ok(catalog.includes('70 of 87 release verified for recorded scenarios'));
