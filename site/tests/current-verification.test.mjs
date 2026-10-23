@@ -94,7 +94,8 @@ test('human glossary uses curated current scope while detailed evidence retains 
 test('accepted package publication adds exactly two IDs and retains historical rows and scope', () => {
   const root = new URL('../../', import.meta.url).pathname;
   const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
-  const current = loadCurrentVerification(root, manifest.corpora.find(row => row.version === '1.3.4').currentVerification);
+  const bytes = readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-package-delegation.json'));
+  const current = loadCurrentVerification(root, {path:'current-verification/1.3.4/2026-10-23-package-delegation.json',sha256:createHash('sha256').update(bytes).digest('hex')});
   const prior = new Set(source.capabilities.filter(row => row.status === 'accepted-scoped-release').map(row => row.id));
   const newlyAccepted = current.capabilities.filter(row => row.status === 'accepted-scoped-release' && !prior.has(row.id));
   assert.deepEqual(newlyAccepted.map(row => row.id).sort(), ['kaizen.agent-auto-routing', 'kaizen.agent-packages']);
@@ -116,4 +117,23 @@ test('accepted package publication adds exactly two IDs and retains historical r
   assert.ok(!guide.includes('Automatic specialist help in chat, with member pin and exclude policy'));
   assert.ok(detail.includes('Automatic specialist help in chat, with member pin and exclude policy'));
   assert.ok(guide.includes('authenticated administrative API calls'));
+});
+
+
+test('sandbox acceptance adds one ID without changing prior evidence or historical entries', () => {
+  const root = new URL('../../', import.meta.url).pathname;
+  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
+  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-package-delegation.json')));
+  assert.equal(current.counts.acceptedScoped, 70);
+  assert.equal(current.counts.remaining, 17);
+  assert.deepEqual(current.historicalPrerelease, prior.historicalPrerelease);
+  for (const row of prior.capabilities.filter(row => row.id !== 'apps.sandbox-workload-provider'))
+    assert.deepEqual(current.capabilities.find(item => item.id === row.id), row);
+  const sandbox = current.capabilities.find(row => row.id === 'apps.sandbox-workload-provider');
+  assert.equal(sandbox.status, 'accepted-scoped-release');
+  assert.equal(current.sourceKitCommit, 'd16f17521f8d7ad9a824c99c7e903f0a35938bcb');
+  const guide = recipeGuide(current).map(row => row.text).join('\n');
+  assert.ok(guide.includes('Run disposable workers with ready capacity'));
+  assert.ok(guide.includes('standard shared-kernel containers'));
 });
