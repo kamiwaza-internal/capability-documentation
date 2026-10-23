@@ -37,7 +37,7 @@ Expected result: both providers complete the worker lifecycle; access, image, ex
 
 ## Evidence
 
-Candidate canonical source: https://github.com/kamiwaza-internal/capability-kit/tree/6ee0ff7407345ede20b1361d3aee759af5e1a9c9/reports/2026-10-23-sandbox-both-providers
+Candidate canonical source: https://github.com/kamiwaza-internal/capability-kit/tree/6ab54d59550cebb7f61aabb389a524d9115cd885/reports/2026-10-23-sandbox-both-providers
 
 Approval tracking: https://github.com/kamiwaza-internal/capability-kit/pull/196
 
