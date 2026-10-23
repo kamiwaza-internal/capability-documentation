@@ -16,7 +16,7 @@ The tested Kaizen configuration combined the reviewed package-guidance backend a
 
 Who: a member allowed to use Kaizen builders, plus a separate administrator who can review package and agent proposals.
 
-Ingredients: Kaizen with the package-creator and agent-builder, a working serving model, a unique package name, a small Markdown skill, a question that demonstrates that skill, and access to your own workroom.
+Ingredients: Kaizen with the package-creator and agent-builder, a working serving model, a unique package name, a small Markdown skill, a question that demonstrates that skill, and access to your own Kaizen instance.
 
 - 1. Open the package-creator. Draft a native Pi guidance-only package with your unique name and Markdown skill. Validate the original draft and inspect the result.
 - 2. Ask the agent-builder to use that exact package version. Keep the agent as a draft if its package still needs approval.
