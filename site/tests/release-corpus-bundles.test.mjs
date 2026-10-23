@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -118,6 +118,7 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   mkdirSync(join(repo, 'site/data'), {recursive: true});
   cpSync(join(root, 'corpus'), join(repo, 'corpus'), {recursive: true});
   cpSync(join(root, 'site/static/verification-results'), join(repo, 'site/static/verification-results'), {recursive: true});
+  if (existsSync(join(root, 'site/static/current-verification'))) cpSync(join(root, 'site/static/current-verification'), join(repo, 'site/static/current-verification'), {recursive:true});
   for (const name of ['release-stamps-1.3.2.json', 'descriptions.json', 'sales-guidance.json', 'value-streams.json', 'release-corpora.json'])
     cpSync(join(root, 'site/data', name), join(repo, 'site/data', name));
   const extended = structuredClone(publication);
@@ -173,6 +174,7 @@ test('source discovery and pinning refuse incomplete, changed or extra corpora',
   cpSync(join(root, 'site/data/release-corpora.json'), join(temporary, 'site/data/release-corpora.json'));
   cpSync(join(root, 'corpus/1.3.4/catalog.json'), join(temporary, 'corpus/1.3.4/catalog.json'));
   cpSync(join(root, 'site/static/verification-results'), join(temporary, 'site/static/verification-results'), {recursive: true});
+  if (existsSync(join(root, 'site/static/current-verification'))) cpSync(join(root, 'site/static/current-verification'), join(temporary, 'site/static/current-verification'), {recursive:true});
   const source = join(temporary, 'corpus/1.3.4/catalog.json');
   assert.equal(loadReleaseCorpora({root: temporary, publication}).length, 1);
   const original = readFileSync(source);

@@ -230,6 +230,19 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   for (const path of ['src', 'scripts', 'data', 'static/favicon.svg', 'static/verification-results', 'docusaurus.config.js', 'package.json', 'package-lock.json'])
     cpSync(join(source, path), join(site, path), {recursive: true});
   cpSync(join(source, '../corpus'), join(root, 'corpus'), {recursive: true});
+  if (existsSync(join(source, 'static/current-verification'))) cpSync(join(source, 'static/current-verification'), join(site, 'static/current-verification'), {recursive:true});
+  // Exercise the new source-intake path without changing evidence or production bindings.
+  const manifestPath = join(site, 'data/release-corpora.json');
+  const manifest = JSON.parse(readFileSync(manifestPath));
+  const binding = manifest.corpora[0].currentVerification;
+  const snapshotBytes = readFileSync(join(site, 'static', binding.path));
+  binding.path = 'current-verification/1.3.4/2026-10-23-fixture.json';
+  mkdirSync(join(site, 'static/current-verification/1.3.4'), {recursive:true});
+  writeFileSync(join(site, 'static', binding.path), snapshotBytes);
+  const historicalPath = 'current-verification/1.3.4/2026-10-22-retained.json';
+  writeFileSync(join(site, 'static', historicalPath), snapshotBytes);
+  writeFileSync(join(site, 'static/current-verification/1.3.4/unreviewed.json'), 'PRIVATE_CANARY_NOT_FOR_EXPORT');
+  writeFileSync(manifestPath, JSON.stringify(manifest));
   const install = spawnSync('npm', ['ci', '--offline', '--ignore-scripts', '--no-audit'],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
   assert.equal(install.status, 0, install.stdout + install.stderr);
@@ -246,6 +259,9 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
   const current = JSON.parse(archive.get('machine-readable/current-verification.json'));
   assert.equal(current.counts.acceptedScoped, 67);
+  assert.deepEqual(readFileSync(join(site, 'build', binding.path)), snapshotBytes);
+  assert.deepEqual(readFileSync(join(site, 'build', historicalPath)), snapshotBytes);
+  assert.equal(existsSync(join(site, 'build/current-verification/1.3.4/unreviewed.json')), false);
   assert.equal(current.historicalPrerelease.length, 58);
   const human = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
   assert.ok(human.includes('## Recipes') && human.includes('## Ingredient glossary'));

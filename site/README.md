@@ -605,3 +605,44 @@ publication indexes, source pins, corpus manifests, file bytes, ZIP members,
 checksums and the three homepage download links per version. The workflow runs
 this gate before uploading any Pages artifact. A failed check blocks publication;
 it does not change repository branch-protection settings.
+
+
+### Updating current verification without changing report layout
+
+Dated report submissions remain append-only PDF/Markdown pairs under
+`site/static/verification-results/`. The build automatically includes them in
+the existing ZIP; they do not by themselves change accepted capability status.
+
+After canonical capability-kit evidence is accepted, submit its reviewed public
+status projection separately as
+`site/static/current-verification/<version>/YYYY-MM-DD-<suffix>.json`. Use the
+existing `verification-results-report.v1` shape. Preserve prior rows and historical
+entries, replace only evidence-backed outcomes, recompute unique capability counts,
+and retain the actual merged source commit, stamp digests, scopes and exclusions.
+Update `currentVerification.path` and `.sha256` in `site/data/release-corpora.json`.
+The existing history gate compares the new binding with the immutable PR/push
+base. It requires the earlier digest-bound snapshot to remain available, keeps all
+prior capability IDs and preserves every
+historical prerelease row unchanged. New capabilities and evidence-backed refreshes
+are allowed; earlier evidence remains at its original URL. A reviewed regression
+may change a current accepted outcome to not release verified with a nonblank gap
+explanation; its prior accepted snapshot remains unchanged. Counts may decrease
+when current evidence requires it. The gate preserves history, not a minimum count.
+Existing legacy bindings remain supported. Snapshots are append-only; later changes
+need a new dated file and binding, never edits to an earlier snapshot.
+
+This source-intake PR is separate from the two-file report PR. No homepage, catalog
+component, PDF layout, ZIP implementation or agent-answer instructions need edits.
+The existing build derives the recipe guide, ingredient glossary and agent ZIP from
+the reviewed current snapshot, and publishes the exact digest-bound JSON at its
+source URL. Earlier well-formed snapshots in this public namespace remain published
+so prior download citations keep working. Every dated snapshot is public source
+material requiring review, even if not the current binding; never place private
+fixtures there. A capability pass does not automatically establish a complete recipe.
+
+Run `npm test`, `npm run test:integration`, `npm run build` and
+`npm run check:release-corpus` from `site/`. After committing, run
+`PUBLICATION_BASE_SHA=<base-commit> node scripts/check-report-submission.mjs` and
+`PUBLICATION_BASE_SHA=<base-commit> node scripts/preserve-history.mjs`. Review public
+projection text for private prompts, credentials, local paths and internal runtime
+addresses; do not copy raw execution logs or browser captures into public output.
