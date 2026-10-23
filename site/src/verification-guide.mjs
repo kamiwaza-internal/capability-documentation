@@ -65,6 +65,13 @@ export function verificationDocument(report, concise = false) {
   return blocks;
 }
 
+// Display the tested operation; canonical titles and IDs remain in the evidence.
+const scopedIngredientTitles = {
+  'kaizen.agent-auto-routing': 'Explicitly delegate to a member-selected agent',
+  'kaizen.agent-packages': 'Create and use an approved guidance-only package',
+};
+const ingredientTitle = row => scopedIngredientTitles[row.id] ?? row.title;
+
 // Human summaries of the pinned report; the ZIP retains every original note and assumption.
 const scopeSummaries = {
   'apps.app-garden': 'Browse the App Garden in Chrome. A separate SDK journey deploys, inspects, stops and purges one disposable app. Full browser deployment and every template are not verified.',
@@ -94,13 +101,13 @@ export function recipeGuide(report) {
       h(4, 'Ingredients'), ...recipe.ingredients.map(id => {
         const row = report.capabilities.find(row => row.id === id);
         if (!row) throw new Error(`Recipe ingredient ${id} is absent from ${report.version}`);
-        return li(`${row.title} (${id}) — ${verificationLabel(row)}`);
+        return li(`${ingredientTitle(row)} (${id}) — ${verificationLabel(row)}`);
       }), h(4, 'Steps'), ...recipe.steps.map((step, i) => p(`${i + 1}. ${step}`)),
       h(4, 'Expected result'), p(recipe.result), h(4, 'What was tested'), p(recipe.coverage), p(`Source: ${recipe.source}`));
   }
   blocks.push(h(2, 'Ingredient glossary'), p('Release verified means accepted tests or applicable carried evidence cover the recorded scenarios on the named release; it does not mean every operation was tested. Prerelease verified identifies retained earlier evidence, not a release pass. Pending means the release proof is missing, not that the feature is unsupported.'));
   for (const row of report.capabilities) {
-    blocks.push(h(3, row.title), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
+    blocks.push(h(3, ingredientTitle(row)), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
       p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
     if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));

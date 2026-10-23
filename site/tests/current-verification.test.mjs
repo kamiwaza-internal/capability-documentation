@@ -111,5 +111,9 @@ test('accepted package publication adds exactly two IDs and retains historical r
     for (const assumption of row.assumptions) assert.ok(detail.includes(assumption));
   }
   assert.ok(guide.includes('69 of 87'));
+  assert.ok(guide.includes('Explicitly delegate to a member-selected agent'));
+  assert.ok(guide.includes('Create and use an approved guidance-only package'));
+  assert.ok(!guide.includes('Automatic specialist help in chat, with member pin and exclude policy'));
+  assert.ok(detail.includes('Automatic specialist help in chat, with member pin and exclude policy'));
   assert.ok(guide.includes('authenticated administrative API calls'));
 });
