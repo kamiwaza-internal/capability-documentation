@@ -100,7 +100,7 @@ export function recipeGuide(report) {
     h(2, 'Before you start'),
     p('Release verified — tested this release means accepted fresh tests. Release verified — carried forward means accepted earlier evidence with a reviewed change-impact decision for this release. Both count toward release coverage, once per capability. Prerelease verified stays separate until release-baseline acceptance. Original scope and test dates remain attached.'),
     p('Verified ingredients do not automatically make a verified recipe. Each recipe below states which path was tested. Your administrator must provide the applications, models, data and permissions it needs.'),
-    h(2, 'Recipes')];
+    ];
   for (const [index, recipe] of recipes.entries()) {
     const recipeStart = blocks.length;
     blocks.push({...h(2, `Recipe ${index + 1}: ${recipe.title}`), pageBreakBefore: true}, p(recipe.outcome), p(`Who this is for: ${recipe.roles}`), h(4, 'You need'), ...recipe.needs.map(li),
