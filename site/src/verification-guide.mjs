@@ -102,7 +102,7 @@ export function recipeGuide(report) {
     blocks.push(h(3, row.title), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
       p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
-    if (scopeSummaries[row.id]) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id]}`));
+    if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));
     else {
       for (const note of row.limits ?? []) blocks.push(p(note));
       for (const assumption of row.assumptions ?? []) blocks.push(p(`Assumption: ${assumption}`));

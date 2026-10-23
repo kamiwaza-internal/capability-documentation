@@ -76,3 +76,17 @@ test('immutable current snapshots publish exact reviewed bytes independently of 
   writeFileSync(join(root, 'site/static', wrongVersion), bytes);
   assert.throws(() => publishCurrentVerification(root, {...binding, path:wrongVersion}, out), /path\/version mismatch/);
 });
+
+
+test('human glossary uses curated current scope while detailed evidence retains historical assumptions', () => {
+  const report = structuredClone(source);
+  const row = report.capabilities.find(row => row.id === 'kaizen.agent-packages');
+  row.scopeNote = 'Live package journey passed; generic automatic routing is not verified.';
+  row.assumptions = ['Historical unit tests did not execute a model.'];
+  const human = recipeGuide(report).map(b => b.text).join('\n');
+  assert.ok(human.includes(row.scopeNote));
+  assert.ok(!human.includes(row.assumptions[0]));
+  const detail = verificationDocument(report).map(b => b.text).join('\n');
+  assert.ok(detail.includes(row.scopeNote));
+  assert.ok(detail.includes(row.assumptions[0]));
+});
