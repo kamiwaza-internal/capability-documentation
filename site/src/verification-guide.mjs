@@ -7,6 +7,7 @@ export const verificationLabel = row => row.status === 'accepted-scoped-release'
 
 // User instructions are curated from the cited product journeys, not inferred from stamp counts.
 export const recipes134 = [
+  {"title": "Run disposable workers with ready capacity", "outcome": "Create a sandbox worker, keep warm capacity ready and return safely to the default provider.", "roles": "An operator authorized to configure an extension and dedicated sandbox namespace, plus an application allowed to call the sandbox API.", "needs": ["Qualified ARM64 Operator/native controller and pinned upstream Agent Sandbox v0.5.2 when using that provider.", "Approved worker images, a worker-token Secret and configured network policies. Use disposable resources with recorded ownership."], "ingredients": ["apps.sandbox-workload-provider"], "steps": ["Start with Kubernetes. From the authorized application, create, list, retrieve, health-check and delete a worker; confirm it disappears.", "Opt the extension into Agent Sandbox. Configure the approved image, readiness endpoint, warm-pool size and maximum lifetime; wait for ready capacity.", "Create a worker from the pool, retrieve and call its endpoint, delete its claim and confirm the pool replenishes.", "Change between approved worker revisions using OnReplenish and Recreate. Confirm disallowed images and images inconsistent with the pool are refused.", "Renew a claim; confirm abandoned claims expire and the maximum age also removes actively renewed claims. Return to Kubernetes and verify worker-token delivery uses a Secret reference. Remove disposable resources and confirm owned cleanup."], "result": "Both worker lifecycles succeed; image, access, expiry and token controls hold. All 19 checks passed and all 34 temporary fixture objects were absent after rollback.", "coverage": "Accepted in capability-kit PR196: all 19 operator/API checks passed for both workload providers, worker lifecycle, image refusals, warm capacity, update strategies, expiry, Secret-only token handling, rollback and owned cleanup. This covers the captured ARM64 configuration and two worker revisions. It does not establish a graphical configuration journey or isolation stronger than standard shared-kernel containers. Worker tokens are distinct from controller tokens. ConfigMap token sources and foreign-owned Secret mirror collisions are refused.", "source": "https://github.com/kamiwaza-internal/capability-kit/tree/d16f17521f8d7ad9a824c99c7e903f0a35938bcb/reports/2026-10-23-sandbox-both-providers"},
   {title:'Create a reusable skill and delegate a task to its agent',outcome:'Draft a small guidance-only package, have an administrator approve it, and explicitly select its agent to handle a task.',roles:'A member who can use the builder and a separate administrator who can review proposals.',needs:['Primary Kaizen with the package-creator and agent-builder available, a working serving model, and an operator able to review the exact package and agent revisions.','A unique package name, a small Markdown skill, an expected answer that shows the skill was used, and access to your own Kaizen instance. The test used synthetic guidance, not production content.'],ingredients:['kaizen.agent-packages','kaizen.agent-auto-routing'],steps:['Open the package-creator in Kaizen. Ask it to draft a native Pi guidance-only package with your unique name and Markdown skill, and validate that exact draft. Review the validation result before proceeding.','Ask the agent-builder to create an agent that uses that exact package version. If the package is not approved yet, keep the agent as a draft with its dependency recorded.','Have the administrator review and approve the submitted package. Resume the agent draft against the approved package, then submit the agent for administrator approval. This test used authenticated administrative API calls for approval; it did not verify an approval-screen click path.','Open the approved agent and ask a question that requires its skill. Check that the reply uses the expected guidance.','In a general Kaizen chat, open “Add files, agents, connectors, or tools”, then “Sub-agents”. Select the approved agent. Ask Kaizen to delegate the task explicitly to that agent. Check the named sub-agent activity and its answer.','When the exercise is finished, restore your prior sub-agent selection. Ask the operator to remove the disposable agent, package and drafts and archive the exercise chats. Approval audit history is intentionally retained.'],result:'The approved skill is used by the agent, and the explicitly selected child agent appears by name in the delegated run.',coverage:'Accepted scoped release evidence: all six registered browser checkpoints passed, including original-author validation, approval, skill-backed use, member-selected delegation and cleanup. Approval and state/cleanup assertions also used API calls. This does not prove automatic specialist selection, routing-policy pins or exclusions, consult audit, dependency/vulnerability scanning, npm import, grant-ceiling enforcement or unregistered-package refusal. The broad member API suite was not exercised; this is not full PR UAT or release sign-off.',source: 'https://github.com/kamiwaza-internal/capability-kit/tree/6a5e7249ed9a4340bd4c84bcb530e4a4a712650f/reports/2026-10-23-native-package-guidance-unique-fixture'},
   {title: 'Find an application to deploy', outcome: 'See the applications available in your App Garden and choose a suitable template.',
     roles: 'An authenticated platform user; an operator for deployment.',
@@ -71,6 +72,10 @@ const scopedIngredientTitles = {
   'kaizen.agent-packages': 'Create and use an approved guidance-only package',
 };
 const ingredientTitle = row => scopedIngredientTitles[row.id] ?? row.title;
+const ingredientStatus = row => ({
+  ...p(`**${verificationLabel(row)}**`), callout: true,
+  tone: row.status === 'accepted-scoped-release' ? 'green' : 'amber',
+});
 
 // Human summaries of the pinned report; the ZIP retains every original note and assumption.
 const scopeSummaries = {
@@ -95,19 +100,21 @@ export function recipeGuide(report) {
     h(2, 'Before you start'),
     p('Release verified — tested this release means accepted fresh tests. Release verified — carried forward means accepted earlier evidence with a reviewed change-impact decision for this release. Both count toward release coverage, once per capability. Prerelease verified stays separate until release-baseline acceptance. Original scope and test dates remain attached.'),
     p('Verified ingredients do not automatically make a verified recipe. Each recipe below states which path was tested. Your administrator must provide the applications, models, data and permissions it needs.'),
-    h(2, 'Recipes')];
-  for (const recipe of recipes) {
-    blocks.push(h(3, recipe.title), p(recipe.outcome), p(`Who this is for: ${recipe.roles}`), h(4, 'You need'), ...recipe.needs.map(li),
+    ];
+  for (const [index, recipe] of recipes.entries()) {
+    const recipeStart = blocks.length;
+    blocks.push({...h(2, `Recipe ${index + 1}: ${recipe.title}`), pageBreakBefore: true}, p(recipe.outcome), p(`Who this is for: ${recipe.roles}`), h(4, 'You need'), ...recipe.needs.map(li),
       h(4, 'Ingredients'), ...recipe.ingredients.map(id => {
         const row = report.capabilities.find(row => row.id === id);
         if (!row) throw new Error(`Recipe ingredient ${id} is absent from ${report.version}`);
-        return li(`${ingredientTitle(row)} (${id}) — ${verificationLabel(row)}`);
+        return {...ingredientStatus(row), text: `**${ingredientTitle(row)}** (${id})\n**${verificationLabel(row)}**`};
       }), h(4, 'Steps'), ...recipe.steps.map((step, i) => p(`${i + 1}. ${step}`)),
-      h(4, 'Expected result'), p(recipe.result), h(4, 'What was tested'), p(recipe.coverage), p(`Source: ${recipe.source}`));
+      h(4, 'Expected result'), p(recipe.result), h(4, `End of recipe ${index + 1}: tested scope and limits`), p(recipe.coverage), p(`Source: ${recipe.source}`));
+    for (const block of blocks.slice(recipeStart)) block.compact = true;
   }
-  blocks.push(h(2, 'Ingredient glossary'), p('Release verified means accepted tests or applicable carried evidence cover the recorded scenarios on the named release; it does not mean every operation was tested. Prerelease verified identifies retained earlier evidence, not a release pass. Pending means the release proof is missing, not that the feature is unsupported.'));
+  blocks.push({...h(2, 'Ingredient glossary'), pageBreakBefore: true}, p('Release verified means accepted tests or applicable carried evidence cover the recorded scenarios on the named release; it does not mean every operation was tested. Prerelease verified identifies retained earlier evidence, not a release pass. Pending means the release proof is missing, not that the feature is unsupported.'));
   for (const row of report.capabilities) {
-    blocks.push(h(3, ingredientTitle(row)), p(`Ingredient: ${row.id}`), p(verificationLabel(row)),
+    blocks.push(h(3, ingredientTitle(row)), ingredientStatus(row), p(`Ingredient: ${row.id}`),
       p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
     if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));

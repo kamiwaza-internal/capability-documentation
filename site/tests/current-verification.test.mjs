@@ -33,7 +33,7 @@ test('current release status preserves historical evidence and rejects inconsist
 test('human guide links each recipe ingredient to current scoped status without promoting prerelease', () => {
   const blocks = recipeGuide(source);
   const text = blocks.map(b => b.text).join('\n');
-  for (const heading of ['Recipes', 'Ingredient glossary', 'What was tested', 'Expected result']) assert.ok(text.includes(heading));
+  for (const heading of ['Recipe 1:', 'Ingredient glossary', 'tested scope and limits', 'Expected result']) assert.ok(text.includes(heading));
   for (const row of source.capabilities) assert.ok(text.includes(`Ingredient: ${row.id}`));
   assert.equal(verificationLabel({status:'not-release-verified', historicalPrerelease:true}), 'Prerelease verified — release acceptance pending');
   assert.ok(text.includes('not a completed release UI verification'));
@@ -94,7 +94,8 @@ test('human glossary uses curated current scope while detailed evidence retains 
 test('accepted package publication adds exactly two IDs and retains historical rows and scope', () => {
   const root = new URL('../../', import.meta.url).pathname;
   const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
-  const current = loadCurrentVerification(root, manifest.corpora.find(row => row.version === '1.3.4').currentVerification);
+  const bytes = readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-package-delegation.json'));
+  const current = loadCurrentVerification(root, {path:'current-verification/1.3.4/2026-10-23-package-delegation.json',sha256:createHash('sha256').update(bytes).digest('hex')});
   const prior = new Set(source.capabilities.filter(row => row.status === 'accepted-scoped-release').map(row => row.id));
   const newlyAccepted = current.capabilities.filter(row => row.status === 'accepted-scoped-release' && !prior.has(row.id));
   assert.deepEqual(newlyAccepted.map(row => row.id).sort(), ['kaizen.agent-auto-routing', 'kaizen.agent-packages']);
@@ -116,4 +117,43 @@ test('accepted package publication adds exactly two IDs and retains historical r
   assert.ok(!guide.includes('Automatic specialist help in chat, with member pin and exclude policy'));
   assert.ok(detail.includes('Automatic specialist help in chat, with member pin and exclude policy'));
   assert.ok(guide.includes('authenticated administrative API calls'));
+});
+
+
+test('sandbox acceptance adds one ID without changing prior evidence or historical entries', () => {
+  const root = new URL('../../', import.meta.url).pathname;
+  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
+  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-package-delegation.json')));
+  assert.equal(current.counts.acceptedScoped, 70);
+  assert.equal(current.counts.remaining, 17);
+  assert.deepEqual(current.historicalPrerelease, prior.historicalPrerelease);
+  for (const row of prior.capabilities.filter(row => row.id !== 'apps.sandbox-workload-provider'))
+    assert.deepEqual(current.capabilities.find(item => item.id === row.id), row);
+  const sandbox = current.capabilities.find(row => row.id === 'apps.sandbox-workload-provider');
+  assert.equal(sandbox.status, 'accepted-scoped-release');
+  assert.equal(current.sourceKitCommit, 'd16f17521f8d7ad9a824c99c7e903f0a35938bcb');
+  const guide = recipeGuide(current).map(row => row.text).join('\n');
+  assert.ok(guide.includes('Run disposable workers with ready capacity'));
+  assert.ok(guide.includes('standard shared-kernel containers'));
+});
+
+
+test('recipes start on new pages and end with scope, while every glossary status is explicit', () => {
+  const blocks = recipeGuide(source);
+  const starts = blocks.filter(b => b.type === 'h' && /^Recipe \d+:/.test(b.text));
+  assert.ok(starts.length > 0);
+  for (const [index, start] of starts.entries()) {
+    assert.equal(start.pageBreakBefore, true);
+    const end = blocks.findIndex(b => b.text === `End of recipe ${index + 1}: tested scope and limits`);
+    assert.ok(end > blocks.indexOf(start));
+    assert.ok(blocks[end + 1].text.length > 0);
+  }
+  const glossary = blocks.slice(blocks.findIndex(b => b.text === 'Ingredient glossary'));
+  const statuses = glossary.filter(b => b.callout);
+  assert.equal(statuses.length, source.capabilities.length);
+  for (const [index, status] of statuses.entries()) {
+    assert.equal(status.text, `**${verificationLabel(source.capabilities[index])}**`);
+    assert.equal(status.tone, source.capabilities[index].status === 'accepted-scoped-release' ? 'green' : 'amber');
+  }
 });

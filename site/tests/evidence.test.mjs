@@ -325,3 +325,15 @@ test('release download retains scoped journey, limits and earlier prerelease con
   assert.match(summary, /Verified journey: Read the synthetic sample/);
   assert.match(summary, /Limit: Browser behavior is not verified/);
 });
+
+
+test('PDF page-break metadata starts a recipe on a fresh page without a blank first page', () => {
+  const pdf = toPdf([{type:'h', level:2, text:'Recipe one', pageBreakBefore:true},
+    {type:'p', text:'First recipe body'}, {type:'h', level:2, text:'Recipe two', pageBreakBefore:true}],
+    {title:'Recipe guide', footer:'Fixture'}).toString('latin1');
+  const streams = [...pdf.matchAll(/stream\n([\s\S]*?)\nendstream/g)].map(match => inflateSync(Buffer.from(match[1], 'latin1')).toString('latin1'));
+  assert.equal(streams.length, 2);
+  assert.ok(streams[0].includes('(Recipe one)'));
+  assert.ok(!streams[0].includes('(Recipe two)'));
+  assert.ok(streams[1].includes('(Recipe two)'));
+});

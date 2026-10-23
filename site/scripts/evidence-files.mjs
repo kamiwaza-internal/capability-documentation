@@ -126,7 +126,8 @@ const isLabel = block => block.type === 'li' && /:$/.test(block.text);
 // Keep a heading, or a list label ending in a colon, with what follows: a table's header and first
 // row, or at least two lines of text.
 const keepsNext = block => block.type === 'h' || isLabel(block);
-const keepFor = next => next?.type === 'table' ? tableStart(next) : 30;
+const keepFor = next => next?.type === 'table' ? tableStart(next)
+  : next?.callout ? next.text.split('\n').flatMap(line => wrap(line, MAX - 24, STYLE.p.size, STYLE.p.font)).length * STYLE.p.lead + 26 : 30;
 const styleOf = block => block.type === 'h' ? STYLE['h' + Math.min(block.level, 3)] : STYLE[block.type];
 
 function marker(ctx, block, s, index) {
@@ -139,7 +140,8 @@ function marker(ctx, block, s, index) {
 }
 
 function drawText(ctx, block, next) {
-  const s = styleOf(block);
+  const base = styleOf(block);
+  const s = block.compact ? {...base, before: block.level >= 4 ? 7 : base.before, after: block.type === 'p' ? 4 : base.after} : base;
   const indent = block.type === 'li' ? 14 + block.level * 14 : s.bar ? 11 : 0;
   const lines = wrap(block.text, MAX - indent, s.size, s.font);
   room(ctx, s.before + s.lead * Math.min(lines.length, 2) + (keepsNext(block) ? keepFor(next) : 0));
@@ -155,11 +157,12 @@ function drawText(ctx, block, next) {
 
 // A highlighted paragraph: mint panel with a teal edge.
 function drawCallout(ctx, block) {
-  const s = STYLE.p, pad = 10, lines = wrap(block.text, MAX - 2 * pad - 4, s.size, s.font);
+  const s = STYLE.p, pad = 10, lines = block.text.split("\n").flatMap(line => wrap(line, MAX - 2 * pad - 4, s.size, s.font));
+  const tone = TONES[block.tone];
   const h = lines.length * s.lead + 2 * pad - 2;
   room(ctx, h + 6);
-  ctx.ops.push(`${COLOR.callout} rg ${roundRect({x: M, y: ctx.y - h, w: MAX, h}, 4)}`, `${COLOR.brand} rg ${M} ${f(ctx.y - h)} 3 ${f(h)} re f`);
-  lines.forEach((line, j) => drawLine(ctx.ops, line, M + pad + 4, ctx.y - pad - (j + 1) * s.lead + 3.5, s.size, COLOR.deep));
+  ctx.ops.push(`${tone?.fill ?? COLOR.callout} rg ${roundRect({x: M, y: ctx.y - h, w: MAX, h}, 4)}`, `${COLOR.brand} rg ${M} ${f(ctx.y - h)} 3 ${f(h)} re f`);
+  lines.forEach((line, j) => drawLine(ctx.ops, line, M + pad + 4, ctx.y - pad - (j + 1) * s.lead + 3.5, s.size, tone?.ink ?? COLOR.deep));
   ctx.y -= h + 8;
 }
 
@@ -305,6 +308,7 @@ export function toPdf(blocks, {title, footer, cover}) {
   const ctx = {pages: [], ops: [], y: TOP};
   const flow = cover ? drawCover(ctx, blocks, cover) : blocks;
   flow.forEach((block, i) => {
+    if (block.pageBreakBefore && ctx.y < TOP) newPage(ctx);
     if (block.type === 'table') drawTable(ctx, block);
     else if (block.callout) drawCallout(ctx, block);
     else drawText(ctx, block, flow[i + 1]);
