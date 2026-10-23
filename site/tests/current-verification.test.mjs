@@ -4,7 +4,7 @@ import {mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'node:
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {loadCurrentVerification, publishCurrentVerification, publishVerificationHistory} from '../scripts/current-verification.mjs';
+import {loadCurrentVerification, publishCurrentVerification, publishVerificationHistory, projectReleaseLineStamp} from '../scripts/current-verification.mjs';
 import {recipeGuide, verificationLabel, verificationDocument} from '../src/verification-guide.mjs';
 import {agentsMd} from '../src/evidence.mjs';
 const source = JSON.parse(readFileSync(new URL('../static/verification-results/1.3.4-2026-10-22-markings/results.json', import.meta.url)));
@@ -175,7 +175,8 @@ test('mixed release-line evidence requires a matching reviewed source and intact
   row.stampId = stamp.id;
   row.sourceStampSha256 = hash(stamp);
   row.releaseLine = {ref:'release/1.3.0', sourceKitCommit:report.sourceKitCommit,
-    reviewReference:'https://github.com/kamiwaza-internal/capability-kit/pull/1', stamp};
+    reviewReference:'https://github.com/kamiwaza-internal/capability-kit/pull/1', stampProjection:projectReleaseLineStamp(stamp)};
+  row.releaseLine.projectionSha256 = hash(row.releaseLine.stampProjection);
   const load = value => {
     const bytes = JSON.stringify(value);
     writeFileSync(join(root, 'site/static', path), bytes);
@@ -185,8 +186,10 @@ test('mixed release-line evidence requires a matching reviewed source and intact
   for (const mutate of [r => delete r.releaseLine, r => delete r.releaseLine.reviewReference,
     r => r.releaseLine.sourceKitCommit = '2'.repeat(40), r => r.releaseLine.ref = 'main',
     r => r.sourceCommit = source.sourceCoreCommit, r => r.manifestId = '3'.repeat(64),
-    r => r.limits.push('Unproven claim'), r => r.releaseLine.stamp.finished_at = 'changed',
-    r => r.sourceStampSha256 = '4'.repeat(64)]) {
+    r => r.limits.push('Unproven claim'), r => r.releaseLine.stampProjection.finished_at = 'changed',
+    r => r.sourceStampSha256 = '4'.repeat(64),
+    r => r.releaseLine.stampProjection.release_source.images = {private:'registry.example/image'},
+    r => r.releaseLine.stampProjection.evidence = [{path:'private-record.json'}]]) {
     const invalid = structuredClone(report);
     mutate(invalid.capabilities.find(item => item.id === row.id));
     assert.throws(() => load(invalid));
@@ -194,11 +197,8 @@ test('mixed release-line evidence requires a matching reviewed source and intact
   for (const ref of ['release/9.9.9', 'release/1.4.0', 'release/1.3.5']) {
     const invalid = structuredClone(report), changed = invalid.capabilities.find(item => item.id === row.id);
     changed.releaseLine.ref = ref;
-    changed.releaseLine.stamp.release_source.ref = ref;
-    const {id, ...payload} = changed.releaseLine.stamp;
-    changed.releaseLine.stamp.id = hash(payload);
-    changed.stampId = changed.releaseLine.stamp.id;
-    changed.sourceStampSha256 = hash(changed.releaseLine.stamp);
+    changed.releaseLine.stampProjection.release_source.ref = ref;
+    changed.releaseLine.projectionSha256 = hash(changed.releaseLine.stampProjection);
     assert.throws(() => load(invalid), /Release branch must match/);
   }
   assert.equal(load(source).sourceCoreCommit, source.sourceCoreCommit);
@@ -224,4 +224,18 @@ test('accepted ingestion adds one scoped release-line result while retaining the
   assert.ok(guide.includes('Ingest a source, inspect a registered job, and trigger a managed connector'));
   assert.ok(guide.includes('Unattended schedule execution, execution durability and cross-tenant isolation were not exercised'));
   assert.ok(verificationDocument(current).some(block => block.text.includes('release/1.3.0@' + row.sourceCommit)));
+});
+
+
+test('private stamp intake checks the native ID and omits deployment inventory and raw evidence', () => {
+  const hash = value => createHash('sha256').update(JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
+    ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest('hex');
+  const stamp = {schema:'capability-release-stamp.v1', release_source:{repository:'kamiwaza-internal/kamiwaza', ref:'release/1.3.0', source_commit:'1'.repeat(40), source_commit_basis:'operator-asserted', images:{private:'ghcr.io/private/image'}}, evidence:[{path:'private-record.json'}]};
+  stamp.id = hash(stamp);
+  const projection = projectReleaseLineStamp(stamp);
+  assert.equal(projection.sourceStampSha256, hash(stamp));
+  assert.ok(!JSON.stringify(projection).includes('ghcr.io'));
+  assert.ok(!JSON.stringify(projection).includes('private-record'));
+  stamp.evidence[0].path = 'changed';
+  assert.throws(() => projectReleaseLineStamp(stamp), /stamp ID mismatch/);
 });

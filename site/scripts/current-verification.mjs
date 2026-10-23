@@ -9,6 +9,18 @@ const canonical = value => JSON.stringify(value, (_key, item) => item && typeof 
   ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item);
 const digest = value => createHash('sha256').update(canonical(value)).digest('hex');
 
+// Validate the private original at intake, then expose only reviewed public fields.
+export function projectReleaseLineStamp(stamp) {
+  const {id, ...payload} = stamp;
+  assert.equal(digest(payload), id, 'Release-line stamp ID mismatch');
+  const source = stamp.release_source;
+  return {schema:stamp.schema, id, sourceStampSha256:digest(stamp), target_release:stamp.target_release,
+    capability:stamp.capability, release_source:{repository:source.repository, ref:source.ref,
+      source_commit:source.source_commit, source_commit_basis:source.source_commit_basis},
+    manifest_id:stamp.manifest_id, finished_at:stamp.finished_at, replayed_kits:stamp.replayed_kits,
+    assumptions:stamp.assumptions, limits:stamp.limits};
+}
+
 function validateReleaseLine(row, report) {
   const binding = row.releaseLine;
   assert.ok(binding, 'Different Core source requires an explicit release-line binding');
@@ -19,12 +31,14 @@ function validateReleaseLine(row, report) {
     'Release branch must match the target major/minor and not exceed its patch');
   assert.equal(binding.sourceKitCommit, report.sourceKitCommit);
   assert.match(binding.reviewReference ?? '', /^https:\/\/github\.com\/kamiwaza-internal\/capability-kit\/pull\/\d+$/);
-  const stamp = binding.stamp;
+  const stamp = binding.stampProjection;
+  assert.deepEqual(Object.keys(binding).sort(), ['projectionSha256','ref','reviewReference','sourceKitCommit','stampProjection']);
   assert.equal(stamp?.schema, 'capability-release-stamp.v1');
-  const {id, ...payload} = stamp;
-  assert.equal(digest(payload), id, 'Release-line stamp ID mismatch');
-  assert.equal(digest(stamp), row.sourceStampSha256, 'Release-line source stamp digest mismatch');
-  assert.equal(id, row.stampId);
+  assert.deepEqual(Object.keys(stamp).sort(), ['assumptions','capability','finished_at','id','limits','manifest_id','release_source','replayed_kits','schema','sourceStampSha256','target_release']);
+  assert.deepEqual(Object.keys(stamp.release_source).sort(), ['ref','repository','source_commit','source_commit_basis']);
+  assert.equal(digest(stamp), binding.projectionSha256, 'Release-line public projection digest mismatch');
+  assert.equal(stamp.sourceStampSha256, row.sourceStampSha256, 'Release-line source stamp digest mismatch');
+  assert.equal(stamp.id, row.stampId);
   assert.equal(stamp.target_release, report.version);
   assert.equal(stamp.capability, row.id);
   assert.equal(stamp.release_source.repository, 'kamiwaza-internal/kamiwaza');

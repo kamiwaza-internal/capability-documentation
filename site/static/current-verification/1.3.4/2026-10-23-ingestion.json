@@ -752,71 +752,23 @@
         "ref": "release/1.3.0",
         "sourceKitCommit": "8e0326453e206895a7f76227aaec2a9e12d26a5c",
         "reviewReference": "https://github.com/kamiwaza-internal/capability-kit/pull/213",
-        "stamp": {
+        "stampProjection": {
           "schema": "capability-release-stamp.v1",
+          "id": "ef1462fbcd1d9eeedddf0596b3fc1a9cd392baf420f46a1e5a921a984a923904",
+          "sourceStampSha256": "27110abb0208ab3e3f90b900a0ecb07544775a46003d16b235c2fb6e08a51682",
           "target_release": "1.3.4",
           "capability": "ingestion.scheduled-ingest",
-          "plan_id": "5e2e9bf2d50172b7304a49c3fd910d7874b53c4a1d93444456f210d6c111f692",
-          "manifest_id": "sha256:78fc067ca6788452049c63a0b78d84241514016bcbb2945b066b4b64d502f9bb",
           "release_source": {
             "repository": "kamiwaza-internal/kamiwaza",
             "ref": "release/1.3.0",
             "source_commit": "e301cd3db8b4568605e1b5d9d04eb0fb98f199d5",
-            "source_commit_basis": "operator-asserted",
-            "images": {
-              "core-etcd-/etcd": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/etcd@sha256:4968c054449f421f1cf06d893ccabde388758486166428b91af783a5c7fad1b4",
-              "core-postgres-/postgres": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/postgres@sha256:87a87880f6c5bd60922764551aa2755e6924bc93d1e896eb03ada729b0da6bed",
-              "core-raycluster-head-/merge-ca-bundle": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-raycluster-head-/ray-head": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-raycluster-head-/stage-bundled-embedding-model": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/model-all-minilm-l6-v2@sha256:dd526164aea1e4dbc310eeb764ba4aca7dd78a2b7376b8416f18266b7fb0271b",
-              "core-raycluster-head-/verify-auth-policy": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-retrieval-streamer-/merge-ca-bundle": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-retrieval-streamer-/retrieval-streamer": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-scheduler-/core": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-scheduler-/core-image-skew-gate": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-scheduler-/merge-ca-bundle": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-scheduler-/stage-bundled-embedding-model": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/model-all-minilm-l6-v2@sha256:dd526164aea1e4dbc310eeb764ba4aca7dd78a2b7376b8416f18266b7fb0271b",
-              "core-scheduler-/verify-auth-policy": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-scheduler-/wait-for-db-schema": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "core-spicedb-/spicedb": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/spicedb-fips@sha256:07eabdcfefddf6eccb53f667342251832bbc5718e40469a1317e83d17858ed06",
-              "core-spicedb-/wait-for-datastore-migration": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/kubectl@sha256:ffaf1cf0070947a4c51d84b00bbeb002b1bad39d76a7efbc843f7833830b47d9",
-              "core-spicedb-postgres-/postgres": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/postgres@sha256:87a87880f6c5bd60922764551aa2755e6924bc93d1e896eb03ada729b0da6bed",
-              "frontend-/frontend": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/frontend@sha256:c216496036aae362c5ba0a8edbdbeaa27db3d48ae3f6b7641515425bdcd16503",
-              "kamiwaza-registry-/registry": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/registry@sha256:f95062125ad80e7783b59582c570df656bad358a6441a185313fa14b300da2ce",
-              "keycloak-/keycloak": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/keycloak@sha256:b8a9d5cc077b1dacb023800f8c45007d8595ebd083b47a5d558f207736940d4a",
-              "keycloak-postgres-/postgres": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/postgres@sha256:87a87880f6c5bd60922764551aa2755e6924bc93d1e896eb03ada729b0da6bed",
-              "kit134-ingestion-release130-api-/core-api": "ghcr.io/kamiwaza-internal/kamiwaza/images/core@sha256:4f45bcdb77689283a80d048505be67ec6359d267114fd8a02e7b06dbb6da2ad8",
-              "kit134-ingestion-release130-api-/merge-ca-bundle": "ghcr.io/kamiwaza-internal/kamiwaza/images/core@sha256:4f45bcdb77689283a80d048505be67ec6359d267114fd8a02e7b06dbb6da2ad8",
-              "kit134-ingestion-release130-api-/stage-bundled-embedding-model": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/model-all-minilm-l6-v2@sha256:dd526164aea1e4dbc310eeb764ba4aca7dd78a2b7376b8416f18266b7fb0271b",
-              "kit134-ingestion-release130-api-/verify-auth-policy": "ghcr.io/kamiwaza-internal/kamiwaza/images/core@sha256:4f45bcdb77689283a80d048505be67ec6359d267114fd8a02e7b06dbb6da2ad8",
-              "seaweedfs-/seaweedfs": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/seaweedfs@sha256:8509a255e17a1d8fcb1b514382c9e7389cf71f076ecd6c101d60b5dc947e4478",
-              "init:core-raycluster-head-/ray-head/verify-auth-policy": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-raycluster-head-/ray-head/stage-bundled-embedding-model": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/model-all-minilm-l6-v2@sha256:dd526164aea1e4dbc310eeb764ba4aca7dd78a2b7376b8416f18266b7fb0271b",
-              "init:core-raycluster-head-/ray-head/merge-ca-bundle": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-retrieval-streamer-/retrieval-streamer/merge-ca-bundle": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-scheduler-/core/core-image-skew-gate": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-scheduler-/core/wait-for-db-schema": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-scheduler-/core/verify-auth-policy": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-scheduler-/core/stage-bundled-embedding-model": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/model-all-minilm-l6-v2@sha256:dd526164aea1e4dbc310eeb764ba4aca7dd78a2b7376b8416f18266b7fb0271b",
-              "init:core-scheduler-/core/merge-ca-bundle": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/core@sha256:4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612",
-              "init:core-spicedb-/spicedb/wait-for-datastore-migration": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/kubectl@sha256:ffaf1cf0070947a4c51d84b00bbeb002b1bad39d76a7efbc843f7833830b47d9",
-              "init:kit134-ingestion-release130-api-/core-api/verify-auth-policy": "ghcr.io/kamiwaza-internal/kamiwaza/images/core@sha256:4f45bcdb77689283a80d048505be67ec6359d267114fd8a02e7b06dbb6da2ad8",
-              "init:kit134-ingestion-release130-api-/core-api/stage-bundled-embedding-model": "ghcr.io/kamiwaza-ai/releases/kamiwaza/images/model-all-minilm-l6-v2@sha256:dd526164aea1e4dbc310eeb764ba4aca7dd78a2b7376b8416f18266b7fb0271b",
-              "init:kit134-ingestion-release130-api-/core-api/merge-ca-bundle": "ghcr.io/kamiwaza-internal/kamiwaza/images/core@sha256:4f45bcdb77689283a80d048505be67ec6359d267114fd8a02e7b06dbb6da2ad8"
-            }
+            "source_commit_basis": "operator-asserted"
           },
+          "manifest_id": "sha256:78fc067ca6788452049c63a0b78d84241514016bcbb2945b066b4b64d502f9bb",
+          "finished_at": "2026-10-23T21:30:59.755120+00:00",
           "replayed_kits": [
             "sdk:run-now-ingestion-requester-ownership-pollable-job-and-managed-dde-trigger-r1"
           ],
-          "evidence": [
-            {
-              "kit_id": "sdk:run-now-ingestion-requester-ownership-pollable-job-and-managed-dde-trigger-r1",
-              "capability": "ingestion.scheduled-ingest",
-              "path": "records/ingestion-lifecycle.json",
-              "sha256": "7060d6c70ee6803045b6dfa979e7a9fff07c6710dda612ddc3a8c82679ccb169"
-            }
-          ],
-          "finished_at": "2026-10-23T21:30:59.755120+00:00",
           "assumptions": [],
           "limits": [
             "Verified journey: The documented SDK ingestion journey: run a disposable S3 source, verify requester ownership, register and repeatedly poll a pending job, deny an independently authenticated read-only viewer trigger without mutation, and trigger the managed DDE connector with attributable indexed output.",
@@ -825,29 +777,9 @@
             "Unknown plugin/job/connector, cross-workroom write and undecryptable-configuration error mappings are not exercised by this journey.",
             "No cross-tenant isolation proof or connector-enabled eligibility claim.",
             "Retain exact-owned cleanup receipts and disclose soft-disabled DDE connector/indexed metadata and pending-job TTL residue."
-          ],
-          "basis": "fresh-release-replay",
-          "kit_cleanup": {
-            "sdk:run-now-ingestion-requester-ownership-pollable-job-and-managed-dde-trigger-r1": {
-              "status": "passed"
-            }
-          },
-          "test_identity": [
-            {
-              "basis": "sdk-commit-nodes",
-              "kit_id": "sdk:run-now-ingestion-requester-ownership-pollable-job-and-managed-dde-trigger-r1",
-              "sdk_commit": "d1e32f9ebd47282d946efef2acc2fff0dc2923e6",
-              "nodes": [
-                "tests/integration/test_catalog_ingest_retrieval.py::test_run_now_owner_job_and_dde_trigger"
-              ]
-            }
-          ],
-          "selection_basis": "live-kit",
-          "resolved_release_failure_sha256s": [
-            "aa3915ae09d4572809796be1d1bea451db8cce9433160185032992776958941c"
-          ],
-          "id": "ef1462fbcd1d9eeedddf0596b3fc1a9cd392baf420f46a1e5a921a984a923904"
-        }
+          ]
+        },
+        "projectionSha256": "c18dbffe292a474f53bc8a262d29e907e66a19ca8efa2f9a9e2881afb2cb12e9"
       }
     },
     {
@@ -2896,7 +2828,7 @@
         "Empty DDE index is observed; completeness of a nonempty DDE inventory is not established.",
         "One seeded payload exclusion and a listed-key check do not establish universal secret redaction, arbitrary data portability or audit emission.",
         "Buffered Playwright response followed bounded ZIP validation; no streaming-memory guarantee or physical-purge observation.",
-        "Catalog summary catalog_entries1\u21920 is supporting only, not a separate ingestion-summary capability verdict."
+        "Catalog summary catalog_entries1→0 is supporting only, not a separate ingestion-summary capability verdict."
       ]
     },
     {
