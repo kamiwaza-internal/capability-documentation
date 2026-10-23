@@ -90,3 +90,26 @@ test('human glossary uses curated current scope while detailed evidence retains 
   assert.ok(detail.includes(row.scopeNote));
   assert.ok(detail.includes(row.assumptions[0]));
 });
+
+test('accepted package publication adds exactly two IDs and retains historical rows and scope', () => {
+  const root = new URL('../../', import.meta.url).pathname;
+  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
+  const current = loadCurrentVerification(root, manifest.corpora.find(row => row.version === '1.3.4').currentVerification);
+  const prior = new Set(source.capabilities.filter(row => row.status === 'accepted-scoped-release').map(row => row.id));
+  const newlyAccepted = current.capabilities.filter(row => row.status === 'accepted-scoped-release' && !prior.has(row.id));
+  assert.deepEqual(newlyAccepted.map(row => row.id).sort(), ['kaizen.agent-auto-routing', 'kaizen.agent-packages']);
+  assert.equal(current.counts.acceptedScoped, 69);
+  assert.equal(current.counts.remaining, 18);
+  assert.deepEqual(current.historicalPrerelease, source.historicalPrerelease);
+  for (const row of source.capabilities.filter(row => prior.has(row.id))) {
+    assert.deepEqual(current.capabilities.find(item => item.id === row.id), row);
+  }
+  const guide = recipeGuide(current).map(row => row.text).join('\n');
+  const detail = verificationDocument(current).map(row => row.text).join('\n');
+  for (const row of newlyAccepted) {
+    assert.ok(guide.includes(row.scopeNote));
+    for (const assumption of row.assumptions) assert.ok(detail.includes(assumption));
+  }
+  assert.ok(guide.includes('69 of 87'));
+  assert.ok(guide.includes('authenticated administrative API calls'));
+});
