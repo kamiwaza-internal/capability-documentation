@@ -4,7 +4,7 @@ import {mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'node:
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {loadCurrentVerification, publishCurrentVerification} from '../scripts/current-verification.mjs';
+import {loadCurrentVerification, publishCurrentVerification, publishVerificationHistory} from '../scripts/current-verification.mjs';
 import {recipeGuide, verificationLabel, verificationDocument} from '../src/verification-guide.mjs';
 import {agentsMd} from '../src/evidence.mjs';
 const source = JSON.parse(readFileSync(new URL('../static/verification-results/1.3.4-2026-10-22-markings/results.json', import.meta.url)));
@@ -63,6 +63,10 @@ test('immutable current snapshots publish exact reviewed bytes independently of 
   assert.equal(loadCurrentVerification(root, binding).counts.acceptedScoped, 67);
   publishCurrentVerification(root, binding, out);
   assert.equal(readFileSync(join(out, path), 'utf8'), bytes);
+  const old = 'current-verification/1.3.4/2026-10-22-reviewed.json';
+  writeFileSync(join(root, 'site/static', old), bytes);
+  publishVerificationHistory(root, out);
+  assert.equal(readFileSync(join(out, old), 'utf8'), bytes);
   for (const path of ['current-verification/1.3.4/../../private.json', '/current-verification/1.3.4/2026-10-23-reviewed.json', 'unreviewed/1.3.4/2026-10-23-reviewed.json']) {
     assert.throws(() => publishCurrentVerification(root, {...binding, path}, out));
   }

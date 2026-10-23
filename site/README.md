@@ -627,7 +627,10 @@ This source-intake PR is separate from the two-file report PR. No homepage, cata
 component, PDF layout, ZIP implementation or agent-answer instructions need edits.
 The existing build derives the recipe guide, ingredient glossary and agent ZIP from
 the reviewed current snapshot, and publishes the exact digest-bound JSON at its
-source URL. A capability pass does not automatically establish a complete recipe.
+source URL. Earlier well-formed snapshots in this public namespace remain published
+so prior download citations keep working. Every dated snapshot is public source
+material requiring review, even if not the current binding; never place private
+fixtures there. A capability pass does not automatically establish a complete recipe.
 
 Run `npm test`, `npm run test:integration`, `npm run build` and
 `npm run check:release-corpus` from `site/`. After committing, run

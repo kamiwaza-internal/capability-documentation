@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import {appendFileSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {publishCurrentVerification} from './current-verification.mjs';
+import {publishCurrentVerification, publishVerificationHistory} from './current-verification.mjs';
 import {TESTED_BUNDLE_SCHEMA, validatePublication} from './publication.mjs';
 import {validateLocalStamps} from './local-stamps.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
@@ -195,6 +195,7 @@ export default function bundlePlugin() {
     if (guidance === null) console.warn('sales-guidance.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     if (streams === null) console.warn('value-streams.json does not match this publication: omitted; regenerate and review it. Capability evidence downloads are still current.');
     const corpora = loadReleaseCorpora({publication: data});
+    publishVerificationHistory(fileURLToPath(new URL('../../', import.meta.url)), outDir);
     for (const corpus of corpora) {
       if (corpus.currentVerification) publishCurrentVerification(fileURLToPath(new URL('../../', import.meta.url)),
         {path: corpus.currentVerification.sourcePath.slice(1), sha256: corpus.currentVerification.sourceSha256}, outDir);

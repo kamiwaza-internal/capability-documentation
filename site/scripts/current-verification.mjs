@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {mkdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs';
 import {dirname, join} from 'node:path';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 
@@ -47,4 +47,19 @@ export function publishCurrentVerification(root, binding, out) {
   const destination = join(out, binding.path);
   mkdirSync(dirname(destination), {recursive: true});
   writeFileSync(destination, bytes);
+}
+
+// This append-only public namespace retains earlier reviewed snapshot URLs.
+export function publishVerificationHistory(root, out) {
+  const folder = join(root, 'site/static/current-verification');
+  if (!existsSync(folder)) return;
+  for (const version of readdirSync(folder, {withFileTypes:true})) {
+    if (!version.isDirectory() || !/^\d+\.\d+\.\d+$/.test(version.name)) continue;
+    for (const file of readdirSync(join(folder, version.name), {withFileTypes:true})) {
+      if (!file.isFile() || !/^\d{4}-\d{2}-\d{2}(?:-[a-z0-9]+)+\.json$/.test(file.name)) continue;
+      const path = `current-verification/${version.name}/${file.name}`;
+      const sha256 = createHash('sha256').update(readFileSync(join(root, 'site/static', path))).digest('hex');
+      publishCurrentVerification(root, {path, sha256}, out);
+    }
+  }
 }
