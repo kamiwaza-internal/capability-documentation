@@ -7,6 +7,19 @@ export const verificationLabel = row => row.status === 'accepted-scoped-release'
 
 // User instructions are curated from the cited product journeys, not inferred from stamp counts.
 export const recipes134 = [
+  {title: 'Organize a dataset registry and enforce Workroom access',
+    outcome: 'Register dataset metadata, organize it in nested containers, find it within a Workroom and handle conflicting edits safely.',
+    roles: 'A registry owner, an independently authenticated same-tenant viewer and an outsider.',
+    needs: ['A database-backed catalog on the accepted corrected release/1.3.0 API build assigned to the 1.3.4 cycle.', 'A disposable Workroom, synthetic dataset metadata and independent identities. Use the supported SDK/API; this is not a graphical UI recipe.'],
+    ingredients: ['catalog.dataset-registry'],
+    steps: ['Create owned dataset metadata and read back its schema. Group it in containers, page through members and search within the Workroom.',
+      'Grant the viewer read access. Confirm the viewer can read the registry while prohibited writes and outsider access are refused.',
+      'Reparent and detach nested containers. Confirm dataset membership remains intact.',
+      'Use two independent sessions to submit conditional metadata updates against the same revision. Confirm exactly one update succeeds and the conflicting update is refused.',
+      'Delete only the owned test records and containers. Confirm cleanup and retain the result and source bindings.'],
+    result: 'All four registered scenarios passed: metadata and organization, viewer/outsider controls, nested membership and one two-session contention round.',
+    coverage: 'Fresh scoped SDK/API verification on the corrected release line, not a claim that the original v1.3.4 tag contains the fixes. Database backend only; no UI, external backend, cross-tenant, cross-process, multi-replica or stress atomicity proof. Physical content purge, publisher grants, register_from_spec, registered-source lifecycle and parent deletion with children are outside this journey. Historical recipe qualifiers remain in the ZIP with their original context.',
+    source: 'capability-kit PR #220, reports/2026-10-24-catalog-corrective-release130; SDK 654f2e35d702426186038c32e57c31ae17cd0271'},
   {title: 'Ingest a source, inspect a registered job, and trigger a managed connector',
     outcome: 'Ingest a disposable S3 source, inspect requester ownership and pending status, then trigger a managed connector with attributable indexed output.',
     roles: 'An ingestion operator, a connector manager and a separate read-only viewer.',
