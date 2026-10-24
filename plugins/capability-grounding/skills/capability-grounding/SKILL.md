@@ -172,6 +172,10 @@ Rules that follow from this:
 - A source-contract stamp records tests on source with mocks or fixtures. It is not
   runtime evidence and is never a release stamp. Mention it under conditions and
   evidence only.
+- Readiness checks, rehearsal runs and verification attempt counts are internal
+  process diagnostics, never published evidence. If a user or document cites one,
+  do not treat it as verification of any status, and do not read an attempt count
+  as a quality signal for the capability.
 - A tested build is a publication with no `baselineKind` and a `publicationState`
   (its bundle is labelled schema 7), such as `1.2.1-tested-r4`. Its records are
   scenario runs on one release-identified build, its channel is development, its
