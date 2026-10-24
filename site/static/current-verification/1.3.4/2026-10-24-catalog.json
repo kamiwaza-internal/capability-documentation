@@ -255,7 +255,7 @@
         "API metadata only; no UI, physical content purge, registered-source lifecycle, publisher grants, register_from_spec or parent deletion with children.",
         "Default map residuals and historical failures remain unchanged. Missing metadata ETag and stale-write failure require a fresh corrective replay; prior passing diagnostic nodes are not promoted."
       ],
-      "scopeNote": "Tested through SDK/API on the corrected release line: metadata/schema, grouping, hierarchy, pagination, Workroom search and access controls, nested reparent/detach, and one conflicting-write check. Database backend only. UI, external backends, cross-tenant/process behavior, multi-replica/stress guarantees and physical content deletion are unverified. See Recipe 1 for complete scope and the dated catalog report in the ZIP for historical evidence context.",
+      "scopeNote": "Tested through SDK/API on the corrected release line: metadata/schema, grouping, hierarchy, pagination, Workroom search and access controls, nested reparent/detach, and one conflicting-write check. Database backend only. UI, external backends, cross-tenant/process behavior, multi-replica/stress guarantees and physical content deletion are unverified. See the Organize a dataset registry and enforce Workroom access recipe for complete scope and the dated catalog report in the ZIP for historical evidence context.",
       "releaseLine": {
         "ref": "release/1.3.0",
         "sourceKitCommit": "2768989208ac31964131b62b874103d7cdc7e1a0",
