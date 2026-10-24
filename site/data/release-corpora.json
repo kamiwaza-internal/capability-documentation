@@ -24,8 +24,8 @@
         "scopedProgrammaticRecipes": 7
       },
       "currentVerification": {
-        "path": "current-verification/1.3.4/2026-10-23-ingestion.json",
-        "sha256": "91ef31424d1cc92969d230a3aa9005eff0aebdd25bdbd1c275d9cf5ff94950e6"
+        "path": "current-verification/1.3.4/2026-10-24-catalog.json",
+        "sha256": "9d818d810793a1a87fb79a1dbceb2a24585241f05b0a0596413d0928c3183d0c"
       }
     }
   ]
