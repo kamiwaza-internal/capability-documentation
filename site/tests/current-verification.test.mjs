@@ -332,3 +332,10 @@ test('dated attribution correction preserves all native proofs and historical by
   }
   assert.equal(verificationLabel(current.capabilities.find(r => r.status === 'accepted-scoped-release')), 'Scoped proof — verified on the recorded build');
 });
+
+
+test('catalog summary uses the same cumulative proof wording as the downloads', () => {
+  const catalog = readFileSync(new URL('../src/pages/catalog.jsx', import.meta.url), 'utf8');
+  assert.match(catalog, /capabilities with accepted scoped proofs across recorded builds/);
+  assert.doesNotMatch(catalog, /release verified for recorded scenarios/);
+});
