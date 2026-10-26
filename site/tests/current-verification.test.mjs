@@ -309,7 +309,7 @@ test('cumulative proof summaries do not certify a frozen bill of materials', () 
     assert.match(text, /73 of 87 capabilities have accepted scoped proofs/);
     assert.doesNotMatch(text, /73 of 87 capabilities (?:are release verified|have release verification)/);
   }
-  assert.match(human, /now designated 1\.3\.5 prerelease/);
+  assert.match(human, /now the 1\.3\.5 development line/);
   assert.match(human, /combines corrected API and tagged 1\.3\.4 platform components/);
   assert.match(detail, /tagged Core reference does not establish/);
   assert.match(agentsMd('1.3.4'), /A cumulative accepted-proof count is not a frozen-release count/);
@@ -326,7 +326,7 @@ test('dated attribution correction preserves all native proofs and historical by
   for (const [i, row] of current.capabilities.entries()) {
     if (!corrected.has(row.id)) assert.deepEqual(row, prior.capabilities[i]);
     else {
-      assert.match(row.scopeNote, /^Current designation: 1\.3\.5 prerelease evidence on a mixed corrective build/);
+      assert.match(row.scopeNote, /^Current interpretation: scoped proof on a post-v1\.3\.4 corrective build/);
       assert.deepEqual({...row, scopeNote:prior.capabilities[i].scopeNote}, prior.capabilities[i]);
     }
   }
