@@ -1,0 +1,16 @@
+{
+  "schema": "release-verification-work.v1",
+  "releases": [
+    {
+      "version": "1.3.5",
+      "channel": "prerelease",
+      "sourceBranch": "release/1.3.0",
+      "originalVersion": "1.3.4",
+      "originalReplayId": "1.3.4-release-replay-r2",
+      "retainedVerification": {
+        "path": "current-verification/1.3.4/2026-10-26-version-attribution.json",
+        "sha256": "04f84455e1e3db0b47a3a3e02d4f17809792d68b3b629c114fe2bd6bdaf9e863"
+      }
+    }
+  ]
+}

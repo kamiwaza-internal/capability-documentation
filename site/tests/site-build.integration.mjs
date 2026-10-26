@@ -110,6 +110,7 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   };
   writePublication(site, {schema: 1, releases: [release]});
   writeFileSync(join(site, 'data/release-corpora.json'), JSON.stringify({schema: 'public-release-corpora.v1', corpora: []}));
+  writeFileSync(join(site, 'data/release-work.json'), JSON.stringify({schema:'release-verification-work.v1', releases:[]}));
   const build = () => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
   const result = build();
@@ -169,6 +170,7 @@ test('BUILD-2 pre-release evidence renders separate date axes, gaps and no relea
   const input = observationsFixture();
   writePublication(site, input);
   writeFileSync(join(site, 'data/release-corpora.json'), JSON.stringify({schema: 'public-release-corpora.v1', corpora: []}));
+  writeFileSync(join(site, 'data/release-work.json'), JSON.stringify({schema:'release-verification-work.v1', releases:[]}));
   const build = revision => spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024, env: {...process.env, GITHUB_SHA: revision}});
   const result = build('f'.repeat(40));
@@ -251,13 +253,15 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.equal(build.status, 0, build.stdout + build.stderr);
   const cards = assertReleaseCards(site);
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
-  assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
+  assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.5', '1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
-  for (const expected of ['73 of 87 capabilities with accepted scoped proofs across recorded builds', '14 without accepted scoped proof',
-    'not certification of one frozen bill of materials']) assert.ok(corpusCard.includes(expected), expected);
-  assert.ok(!corpusCard.includes('30 of 88'), 'historical snapshot must not override current status');
+  assert.ok(corpusCard.includes('Original tagged release') && corpusCard.includes('30 of 88'));
+  assert.ok(!corpusCard.includes('73'), 'later cumulative proof count must not relabel the original release');
+  const workCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.5</span>'));
+  assert.ok(workCard.includes('Prerelease') && workCard.includes('73 capabilities with retained scoped evidence'));
   const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
-  const current = JSON.parse(archive.get('machine-readable/current-verification.json'));
+  const current = JSON.parse(archive.get('machine-readable/retained-prior-verification.json'));
+  assert.equal(current.version, '1.3.4');
   assert.equal(current.counts.acceptedScoped, 73);
   assert.deepEqual(readFileSync(join(site, 'build', binding.path)), snapshotBytes);
   assert.deepEqual(readFileSync(join(site, 'build', historicalPath)), snapshotBytes);
@@ -267,7 +271,8 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(human.includes('## Recipe 1:') && human.includes('## Ingredient glossary'));
   assert.ok(human.includes('73 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
-  assert.ok(catalog.includes('73 of 87 capabilities with accepted scoped proofs across recorded builds'));
+  assert.ok(catalog.includes('73 of 87 capabilities with retained scoped evidence available for qualification'));
+  assert.ok(catalog.includes('not fresh 1.3.5 tests or accepted release carry-forward'));
   assert.ok(catalog.includes('Inherited assumptions and limits about mocked tests'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));

@@ -19,6 +19,19 @@ limits, and says whether it is only documented or also verified.
 
 ## Evidence across releases
 
+The **1.3.4** download preserves the original tagged-build replay and its source
+corpus: 30 scoped scenario stamps among 88 original included capabilities. Its
+original failures, exclusions and limits remain attached. Later corrective builds
+are not added to that tagged-release record.
+
+**1.3.5 prerelease** is the current work target on `release/1.3.0`. Its download
+retains the later cumulative scoped-proof history, including all 73 proof-bearing
+capabilities and the 58 historical prerelease entries, with their original tested
+builds and dates. That history is available for qualification; it is not 73 fresh
+1.3.5 tests or accepted release carry-forward. Original JSON snapshots and dated
+report URLs remain unchanged. `site/data/release-work.json` binds this presentation
+to exact prior bytes without changing canonical evidence.
+
 Use **Release verified — tested this release**, **Release verified — carried forward**,
 and **Prerelease verified** as defined in [Release verification and carry-forward](VERIFICATION-STATUS.md).
 Both accepted fresh and carried evidence count toward release coverage, deduplicated

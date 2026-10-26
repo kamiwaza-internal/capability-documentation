@@ -40,3 +40,12 @@ CI rejects report PRs that overwrite reports or also change other files. Layout 
 `site/src`, styles, build scripts or workflows to add links or status panels.
 Adding a new release version still requires the existing catalog publication flow;
 the build rejects reports with no matching release download.
+
+## Choose the actual release target
+
+The original tagged 1.3.4 evidence remains in the 1.3.4 download. New work on
+`release/1.3.0` targets 1.3.5 prerelease. Submit new report pairs under 1.3.5 with
+the actual tested component identities. Do not change earlier stamps, test dates,
+report versions or frozen tags to relabel history. Prior evidence may be included
+as explicitly identified history; target designation alone does not accept release
+carry-forward or establish fresh execution.
