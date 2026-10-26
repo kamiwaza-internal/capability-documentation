@@ -78,6 +78,7 @@ test('original release and current prerelease work remain separate in cards and 
   const nativeOnly = view.capabilities.filter(row => row.prereleaseCarried && !row.historicalPrerelease);
   assert.equal(nativeOnly.length, 7);
   for (const row of nativeOnly) assert.match(prereleaseHistoryText(row), /Prerelease verified through native carry.*not listed in the original/);
+  assert.match(prereleaseHistoryText({...nativeOnly[0], originalVersion:'1.3.5'}), /original 1\.3\.5 historical ledger/);
   assert.deepEqual(newest.work.retained.capabilities, JSON.parse(newest.work.retainedBytes).capabilities);
   assert.match(agentsMd('1.3.5', {targetWork:true}), /do not rename the original stamps, dates or build identities/);
   assert.match(agentsMd('1.3.5', {targetWork:true}), /carry for corrections not listed in prereleaseCarry remains pending/);
@@ -101,6 +102,8 @@ test('new target report pairs and retained historical reports both enter the com
     assert.ok(members.get('README.md').toString().includes(file.name));
     assert.ok(members.get('SHA256SUMS').toString().includes(file.name));
   }
+  assert.match(members.get('README.md').toString(), /mirrors native prerelease carry at the cited Kit revision/);
+  assert.doesNotMatch(members.get('README.md').toString(), /not test execution or carry approval/);
   const original = index.versions.find(row => row.version === '1.3.4');
   const originalMembers = zipMembers(readFileSync(join(out, original.files.zip.path)));
   for (const file of reports.flatMap(report => report.files)) assert.ok(!originalMembers.has(file.name));

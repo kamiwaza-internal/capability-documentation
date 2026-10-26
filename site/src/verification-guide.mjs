@@ -17,7 +17,7 @@ export function releaseWorkView(work) {
   return {...work.retained, version: work.version, originalVersion: work.originalVersion,
     qualificationTarget: work.version, sourceBranch: work.sourceBranch,
     prereleaseCarry:work.prereleaseCarry,
-    capabilities: work.retained.capabilities.map(row => ({...row, qualificationTarget: work.version,
+    capabilities: work.retained.capabilities.map(row => ({...row, qualificationTarget: work.version, originalVersion: work.originalVersion,
       prereleaseCarried:work.prereleaseCarry.capabilityIds.includes(row.id),
       withheldReason:work.prereleaseCarry.withheld.find(cap => cap.id === row.id)?.reason}))};
 }
@@ -25,7 +25,7 @@ export function releaseWorkView(work) {
 export function prereleaseHistoryText(row) {
   if (row.prereleaseCarried) return row.historicalPrerelease
     ? 'Prerelease verified through native carry; an entry in the original historical ledger is also retained.'
-    : 'Prerelease verified through native carry; this capability was not listed in the original 1.3.4 historical ledger. The target-work record cites its native Kit authority.';
+    : `Prerelease verified through native carry; this capability was not listed in the original ${row.originalVersion} historical ledger. The target-work record cites its native Kit authority.`;
   return row.historicalPrerelease
     ? 'Historical prerelease verification is retained separately; it is not current target carry credit.'
     : 'No entry in the original historical prerelease ledger. This does not erase later scoped evidence.';
