@@ -253,8 +253,8 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
   assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
-  for (const expected of ['73 of 87 capabilities verified for 1.3.4', '14 awaiting release verification',
-    'not whole-release sign-off']) assert.ok(corpusCard.includes(expected), expected);
+  for (const expected of ['73 of 87 capabilities with accepted scoped proofs across recorded builds', '14 without accepted scoped proof',
+    'not certification of one frozen bill of materials']) assert.ok(corpusCard.includes(expected), expected);
   assert.ok(!corpusCard.includes('30 of 88'), 'historical snapshot must not override current status');
   const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
   const current = JSON.parse(archive.get('machine-readable/current-verification.json'));
@@ -267,7 +267,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(human.includes('## Recipe 1:') && human.includes('## Ingredient glossary'));
   assert.ok(human.includes('73 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
-  assert.ok(catalog.includes('73 of 87 release verified for recorded scenarios'));
+  assert.ok(catalog.includes('73 of 87 capabilities with accepted scoped proofs across recorded builds'));
   assert.ok(catalog.includes('Inherited assumptions and limits about mocked tests'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));

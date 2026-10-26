@@ -154,7 +154,7 @@ export function recipeGuide(report) {
       h(4, 'Expected result'), p(recipe.result), h(4, `End of recipe ${index + 1}: tested scope and limits`), p(recipe.coverage), p(`Source: ${recipe.source}`));
     for (const block of blocks.slice(recipeStart)) block.compact = true;
   }
-  blocks.push({...h(2, 'Ingredient glossary'), pageBreakBefore: true}, p('Scoped proof covers the recorded scenarios on the exact tested build, not every operation or a full release bill of materials. Read the current designation and component limits below. Prerelease evidence is not final-release certification. Pending proof does not mean the feature is unsupported.'));
+  blocks.push({...h(2, 'Ingredient glossary'), pageBreakBefore: true}, p('Scoped proof covers the recorded scenarios on the exact tested build, not every operation or a full release bill of materials. Read the current interpretation and component limits below. Prerelease evidence is not final-release certification. Pending proof does not mean the feature is unsupported.'));
   for (const row of report.capabilities) {
     blocks.push(h(3, ingredientTitle(row)), ingredientStatus(row), p(`Ingredient: ${row.id}`),
       p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
