@@ -162,7 +162,7 @@ export default function Catalog() {
         </div>
       {reports.map(report => <section className="release" key={report.version}>
         <h2>Kamiwaza {report.version}: current capability status</h2>
-        <p><strong>{report.counts.acceptedScoped} of {report.counts.included} release verified for recorded scenarios</strong>; {report.counts.remaining} awaiting release verification. {report.counts.historicalPrerelease} historical prerelease verifications are retained separately, not added to the release total.</p>
+        <p><strong>{report.counts.acceptedScoped} of {report.counts.included} capabilities with accepted scoped proofs across recorded builds</strong>; {report.counts.remaining} without accepted scoped proof. {report.counts.historicalPrerelease} historical prerelease verifications are retained separately, not added to the cumulative proof count.</p>
         <p>Evidence through {report.asOf}. Results cover multiple configurations, not one jointly tested deployment or whole-release approval. <a href={report.sourcePath}>Detailed evidence</a></p>
         {report.capabilities.filter(row => (!query || (row.title + ' ' + row.id).toLowerCase().includes(query.toLowerCase())) &&
           (status === 'all' || (status === 'release-stamped' && row.status === 'accepted-scoped-release') ||
