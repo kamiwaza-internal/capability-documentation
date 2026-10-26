@@ -302,7 +302,7 @@ test('CPU tenant proof adds one scoped ingredient and preserves all prior eviden
 
 
 test('cumulative proof summaries do not certify a frozen bill of materials', () => {
-  const report = JSON.parse(readFileSync(new URL('../static/current-verification/1.3.4/2026-10-26-tenant-cpu.json', import.meta.url)));
+  const report = JSON.parse(readFileSync(new URL('../static/current-verification/1.3.4/2026-10-26-version-attribution.json', import.meta.url)));
   const human = recipeGuide(report).map(b => b.text).join('\n');
   const detail = verificationDocument(report).map(b => b.text).join('\n');
   for (const text of [human, detail]) {
