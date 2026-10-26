@@ -31,6 +31,10 @@ test('prerelease work preserves exact prior evidence and cannot retarget its sta
     row => row.version = '1.3.4', row => row.channel = 'released',
     row => row.sourceBranch = 'release/1.4.0', row => row.originalReplayId = 'invented',
     row => row.retainedVerification.sha256 = '0'.repeat(64), row => row.releaseVerified = 73,
+    row => row.prereleaseCarry.capabilityIds.push('invented.capability'),
+    row => row.prereleaseCarry.sourceKitCommit = 'invented',
+    row => row.prereleaseCarry.capabilityIds.push(row.prereleaseCarry.capabilityIds[0]),
+    row => row.prereleaseCarry.capabilityIds.push('delegation.run-claims-lifecycle'),
   ]) {
     const data = structuredClone(source); mutate(data.releases[0]);
     assert.throws(() => load(data));
@@ -54,7 +58,13 @@ test('original release and current prerelease work remain separate in cards and 
   assert.match(text, /Prior recorded result/);
   assert.match(text, /not a fresh run on this target/);
   assert.match(text, /Ingredient glossary/);
-  for (const row of view.capabilities) assert.match(verificationLabel(row), /1\.3\.5 qualification pending/);
+  assert.equal(view.capabilities.filter(row => row.prereleaseCarried).length, 58);
+  for (const row of view.capabilities.filter(row => row.prereleaseCarried)) assert.equal(verificationLabel(row), 'Prerelease verified — carried into 1.3.5');
+  const withheld = view.capabilities.find(row => row.id === 'delegation.run-claims-lifecycle');
+  assert.equal(withheld.prereleaseCarried, false);
+  assert.match(verificationLabel(withheld), /current target blocked/);
+  assert.match(text, /Target carry withheld:/);
+  assert.match(text, /These overlapping counts are not additive/);
   assert.deepEqual(newest.work.retained.capabilities, JSON.parse(newest.work.retainedBytes).capabilities);
   assert.match(agentsMd('1.3.5', {targetWork:true}), /do not rename the original stamps, dates or build identities/);
 });

@@ -32,6 +32,12 @@ builds and dates. That history is available for qualification; it is not 73 fres
 report URLs remain unchanged. `site/data/release-work.json` binds this presentation
 to exact prior bytes without changing canonical evidence.
 
+The native 1.3.5 baseline separately carries **58 prerelease verifications**.
+That count overlaps the 73 scoped-proof histories; do not add them. The former
+run-lifecycle assessment is withheld from current carry because its required
+correction remains unmerged. Its original evidence is preserved. Prerelease carry
+does not establish fresh execution or release certification.
+
 Use **Release verified — tested this release**, **Release verified — carried forward**,
 and **Prerelease verified** as defined in [Release verification and carry-forward](VERIFICATION-STATUS.md).
 Both accepted fresh and carried evidence count toward release coverage, deduplicated
