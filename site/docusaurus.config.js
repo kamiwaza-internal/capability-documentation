@@ -9,7 +9,9 @@ module.exports = async function config() {
   validateDescriptions(require('./data/descriptions.json'), require('./data/publication.json'));
   if (process.env.GITHUB_SHA && !/^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA)) throw new Error('Invalid site build revision');
   const {loadReleaseCorpora} = await import('./scripts/release-corpora.mjs');
-  const currentVerification = loadReleaseCorpora().map(row => row.currentVerification).filter(Boolean);
+  const currentVerification = loadReleaseCorpora().filter(row => row.presentation !== 'original-tagged-release').map(row => row.currentVerification).filter(Boolean);
+  const {loadReleaseWork} = await import('./scripts/release-work.mjs');
+  const releaseWork = loadReleaseWork({publication: require('./data/publication.json')}).map(({retainedBytes, ...row}) => row);
   return {
     title: 'Kamiwaza Sales Dev Kit',
     tagline: 'Know what is established. See the conditions. Choose your release.',
@@ -23,7 +25,7 @@ module.exports = async function config() {
     staticDirectories: [],
     favicon: 'favicon.svg',
     // The commit this site was built from, when CI provides it. Not a test or publication date.
-    customFields: {currentVerification, buildRevision: process.env.GITHUB_SHA || null, builtAt: new Date().toISOString()},
+    customFields: {currentVerification, releaseWork, buildRevision: process.env.GITHUB_SHA || null, builtAt: new Date().toISOString()},
     plugins: ['./scripts/published-bundles.mjs'],
     presets: [['classic', {docs: false, blog: false, theme: {customCss: './src/css/custom.css'}}]],
     themeConfig: {

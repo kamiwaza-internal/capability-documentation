@@ -7,6 +7,8 @@ import {inflateRawSync} from 'node:zlib';
 import {emitBundles, emitEvidence} from './published-bundles.mjs';
 import {validateDescriptions} from './project-descriptions.mjs';
 import {loadReleaseCorpora, sha256} from './release-corpora.mjs';
+import {loadReleaseWork} from './release-work.mjs';
+import {loadVerificationReports} from './verification-reports.mjs';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
 
@@ -70,6 +72,7 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
   const candidateStamps = JSON.parse(stampBytes);
   const stamps = validateReleaseStamps(candidateStamps, publication) === null ? null : candidateStamps;
   const corpora = loadReleaseCorpora({root: repo, publication});
+  const releaseWork = loadReleaseWork({repo, publication});
   const expectedOut = mkdtempSync(join(tmpdir(), 'release-download-consistency-'));
   try {
     emitBundles(publication, expectedOut);
@@ -77,13 +80,13 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
     const read = name => JSON.parse(readFileSync(join(repo, 'site/data', name)));
     const descriptions = validateDescriptions(read('descriptions.json'), publication);
     emitEvidence(publication, stamps, expectedOut, descriptions?.descriptions,
-      read('sales-guidance.json'), read('value-streams.json'), corpora);
+      read('sales-guidance.json'), read('value-streams.json'), corpora, loadVerificationReports(join(repo, 'site/static/verification-results')), releaseWork);
     const expectedIndex = JSON.parse(readFileSync(join(expectedOut, 'evidence/index.json')));
     const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
     assert.equal(index.schema, 'capability-evidence-downloads.v1');
     const sourceVersions = new Set([...publication.releases.map(row => row.version),
       ...(publication.releaseStamps ?? []).map(row => row.version), ...corpora.map(row => row.version),
-      ...(stamps ? [stamps.targetRelease] : [])]);
+      ...releaseWork.map(row => row.version), ...(stamps ? [stamps.targetRelease] : [])]);
     assert.deepEqual(new Set(index.versions.map(row => row.version)), sourceVersions,
       'every source release version needs one complete download');
     assert.deepEqual(index, expectedIndex, 'evidence index must match all current source versions and digests');

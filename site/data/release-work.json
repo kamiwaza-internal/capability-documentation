@@ -1,0 +1,86 @@
+{
+  "schema": "release-verification-work.v1",
+  "releases": [
+    {
+      "version": "1.3.5",
+      "channel": "prerelease",
+      "sourceBranch": "release/1.3.0",
+      "originalVersion": "1.3.4",
+      "originalReplayId": "1.3.4-release-replay-r2",
+      "retainedVerification": {
+        "path": "current-verification/1.3.4/2026-10-26-version-attribution.json",
+        "sha256": "04f84455e1e3db0b47a3a3e02d4f17809792d68b3b629c114fe2bd6bdaf9e863"
+      },
+      "prereleaseCarry": {
+        "sourceKitCommit": "4f5e0eaa70a22949c5327a492bb28e8e096e9f5f",
+        "reviewReference": "https://github.com/kamiwaza-internal/capability-kit/pull/227",
+        "capabilityIds": [
+          "apps.app-garden",
+          "apps.deployment-baseline",
+          "apps.release-digest-pinning",
+          "auth.enterprise-sso",
+          "auth.local-user-administration",
+          "auth.personal-access-tokens",
+          "auth.session-revocation",
+          "authz.rebac-access-control",
+          "catalog.dataset-registry",
+          "catalog.registered-sources",
+          "catalog.secrets-management",
+          "catalog.writable-datasets",
+          "connectors.ai-assisted-connector-setup",
+          "connectors.connector-builder",
+          "connectors.managed-data-sources",
+          "connectors.oauth-tool-policies",
+          "connectors.user-oauth-authorization",
+          "context.dataset-indexing",
+          "ingestion.document-translation",
+          "ingestion.parse-from-url",
+          "ingestion.security-markings",
+          "ingestion.structured-document-outputs",
+          "kaizen.admin-settings-console",
+          "kaizen.agent-auto-routing",
+          "kaizen.agent-packages",
+          "kaizen.agent-publication-approval",
+          "kaizen.answer-feedback",
+          "kaizen.artifacts",
+          "kaizen.context-compression",
+          "kaizen.conversation-event-streaming",
+          "kaizen.conversation-search",
+          "kaizen.custom-agents",
+          "kaizen.document-canvas-export",
+          "kaizen.document-collections",
+          "kaizen.metrics-dashboard",
+          "kaizen.multi-agent-orchestration",
+          "kaizen.notifications-inbox",
+          "kaizen.platform-operator-tools",
+          "kaizen.prebuilt-agents",
+          "kaizen.privacy-guard",
+          "kaizen.product-identity",
+          "kaizen.projects",
+          "kaizen.prompt-library-and-chains",
+          "kaizen.recipes",
+          "models.discover-and-download",
+          "models.local-deployment",
+          "models.openai-compatible-inference",
+          "platform.access-requests",
+          "platform.admin-copilot",
+          "platform.api-reference",
+          "platform.licensing-and-eula",
+          "platform.news-feed",
+          "platform.operations-and-notifications",
+          "platform.usage-and-audit",
+          "retrieval.async-retrieval-jobs",
+          "security.consent-and-banners",
+          "skills.skills-library",
+          "tools.mcp-tool-shed"
+        ],
+        "withheld": [
+          {
+            "id": "delegation.run-claims-lifecycle",
+            "reason": "The retained Workroom effect-reservation test failed on the frozen build. Its earlier assessment requires the corrective Core build; that correction is not accepted on the current release branch."
+          }
+        ]
+      }
+    }
+  ]
+}

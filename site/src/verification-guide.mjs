@@ -1,9 +1,42 @@
 const h = (level, text) => ({type: 'h', level, text});
 const p = text => ({type: 'p', text});
 const li = text => ({type: 'li', level: 0, text});
-export const verificationLabel = row => row.status === 'accepted-scoped-release'
+export const verificationLabel = row => row.prereleaseCarried
+  ? `Prerelease verified — carried into ${row.qualificationTarget}`
+  : row.withheldReason ? 'Historical prerelease verified — current target blocked'
+  : row.qualificationTarget
+  ? row.status === 'accepted-scoped-release' ? `Prior scoped proof — ${row.qualificationTarget} qualification pending`
+    : row.historicalPrerelease ? `Historical prerelease proof — ${row.qualificationTarget} qualification pending`
+      : `${row.qualificationTarget} qualification pending`
+  : row.status === 'accepted-scoped-release'
   ? 'Scoped proof — verified on the recorded build' : row.historicalPrerelease
     ? 'Prerelease verified — release acceptance pending' : 'Release verification pending';
+
+// Presentation context only. The original source JSON and its version/stamps remain unchanged.
+export function releaseWorkView(work) {
+  return {...work.retained, version: work.version, originalVersion: work.originalVersion,
+    qualificationTarget: work.version, sourceBranch: work.sourceBranch,
+    prereleaseCarry:work.prereleaseCarry,
+    capabilities: work.retained.capabilities.map(row => ({...row, qualificationTarget: work.version, originalVersion: work.originalVersion,
+      prereleaseCarried:work.prereleaseCarry.capabilityIds.includes(row.id),
+      withheldReason:work.prereleaseCarry.withheld.find(cap => cap.id === row.id)?.reason}))};
+}
+
+export function prereleaseHistoryText(row) {
+  if (row.prereleaseCarried) return row.historicalPrerelease
+    ? 'Prerelease verified through native carry; an entry in the original historical ledger is also retained.'
+    : `Prerelease verified through native carry; this capability was not listed in the original ${row.originalVersion} historical ledger. The target-work record cites its native Kit authority.`;
+  return row.historicalPrerelease
+    ? 'Historical prerelease verification is retained separately; it is not current target carry credit.'
+    : 'No entry in the original historical prerelease ledger. This does not erase later scoped evidence.';
+}
+
+function progressSummary(report) {
+  const c = report.counts;
+  return report.qualificationTarget
+    ? `${report.prereleaseCarry.capabilityIds.length} of ${c.included} capabilities are prerelease verified through native carry into ${report.version}. Separately, ${c.acceptedScoped} of ${c.included} capabilities have retained scoped evidence available for qualification; ${c.remaining} have no accepted scoped proof in that history. These overlapping counts are not additive and are not ${report.version} release certifications. Evidence through ${report.asOf}.`
+    : `${c.acceptedScoped} of ${c.included} capabilities have accepted scoped proofs across the recorded builds. ${c.remaining} have no accepted scoped proof. Evidence through ${report.asOf}.`;
+}
 
 // User instructions are curated from the cited product journeys, not inferred from stamp counts.
 export const recipes134 = [
@@ -82,15 +115,17 @@ export const recipes134 = [
 export function verificationDocument(report, concise = false) {
   const c = report.counts;
   const blocks = [h(1, `Kamiwaza ${report.version}: capability verification`),
-    p(`${c.acceptedScoped} of ${c.included} capabilities have accepted scoped proofs across the recorded builds. ${c.remaining} have no accepted scoped proof. Evidence through ${report.asOf}.`),
+    p(progressSummary(report)),
     p(`${c.historicalPrerelease} historical prerelease verifications are preserved: ${c.historicalInScope} overlap this release inventory and ${c.historicalOutsideScope} sit outside it. These are not additional release passes.`),
     p('Results were collected across multiple configurations and component builds. A tagged Core reference does not establish that every extension or corrected API belongs to that tag. These cumulative proofs do not establish one jointly tested release bill of materials or whole-release approval.')];
   if (concise) return [...blocks, h(2, 'Capability status'), ...report.capabilities.flatMap(row => [h(3, ingredientTitle(row)), p(verificationLabel(row)), ...(row.scopeNote ? [p(row.scopeNote)] : [])])];
-  blocks.push(h(2, 'Current capability results'));
+  if (report.qualificationTarget) blocks.push(p(`Prerelease target: ${report.version}, developed on ${report.sourceBranch}. Original records retain their ${report.originalVersion} intake version and exact tested builds. Target qualification and accepted release carry-forward are pending.`));
+  blocks.push(h(2, report.qualificationTarget ? 'Retained capability evidence for qualification' : 'Current capability results'));
   for (const row of report.capabilities) {
     blocks.push(h(3, row.title), p(`${row.id} · ${verificationLabel(row)}`),
-      p(row.historicalPrerelease ? 'Historical prerelease verification is also retained.' : 'No historical prerelease verification is recorded for this capability.'));
+      p(report.qualificationTarget ? prereleaseHistoryText(row) : row.historicalPrerelease ? 'Historical prerelease verification is also retained.' : 'No historical prerelease verification is recorded for this capability.'));
     if (row.gap) blocks.push(p(`Remaining work: ${row.gap}`));
+    if (row.withheldReason) blocks.push(p(`Target carry withheld: ${row.withheldReason}`));
     if (row.scopeNote) blocks.push(p(`Current versus historical scope: ${row.scopeNote}`));
     if (row.limits?.length) blocks.push(p('Retained evidence notes include earlier assessments. Historical statements about missing release proof do not override the current status above; current scope and exclusions still apply.'));
     for (const limit of row.limits ?? []) blocks.push(li(limit));
@@ -103,6 +138,7 @@ export function verificationDocument(report, concise = false) {
     ...row.limits.map(li), ...row.assumptions.map(value => li(`Assumption: ${value}`)));
   blocks.push(h(2, 'Sources'), p(`Canonical capability-kit commit: ${report.sourceKitCommit}. Original baseline Core source: ${report.sourceCoreCommit}. Any corrected release-line source is identified separately in its capability record.`),
     p(`Full source record: ${report.sourcePath}. Detailed stamps, limits and historical records are retained in the ZIP.`));
+  if (report.prereleaseCarry) blocks.push(p(`Native prerelease carry: capability-kit ${report.prereleaseCarry.sourceKitCommit}; ${report.prereleaseCarry.reviewReference}. This is prerelease evidence reuse, not accepted release carry-forward.`));
   return blocks;
 }
 
@@ -116,7 +152,7 @@ const scopedIngredientTitles = {
 const ingredientTitle = row => scopedIngredientTitles[row.id] ?? row.title;
 const ingredientStatus = row => ({
   ...p(`**${verificationLabel(row)}**`), callout: true,
-  tone: row.status === 'accepted-scoped-release' ? 'green' : 'amber',
+  tone: !row.qualificationTarget && row.status === 'accepted-scoped-release' ? 'green' : 'amber',
 });
 
 // Human summaries of the pinned report; the ZIP retains every original note and assumption.
@@ -135,14 +171,18 @@ const scopeSummaries = {
 
 export function recipeGuide(report) {
   const c = report.counts;
-  const recipes = report.version === '1.3.4' ? recipes134 : [];
+  const recipes = (report.originalVersion ?? report.version) === '1.3.4' ? recipes134 : [];
   const blocks = [h(1, `Kamiwaza ${report.version}: recipes and capability guide`),
     p('Choose a task, check its ingredients, and follow the steps. The glossary identifies recorded scoped proofs, prerelease evidence and remaining gaps.'),
-    p(`${c.acceptedScoped} of ${c.included} capabilities have accepted scoped proofs across recorded builds; ${c.remaining} have no accepted scoped proof. ${c.historicalPrerelease} historical prerelease records are retained separately. Evidence through ${report.asOf}.`),
+    p(progressSummary(report)),
+    p(`${c.historicalPrerelease} historical prerelease records remain attached to their original versions. They are not additional target-release passes.`),
     h(2, 'Before you start'),
-    p('Scoped proof means the recorded scenarios passed on the exact tested build. The cumulative count combines builds and is not a release certification total. Corrective release/1.3.0 API results are candidate evidence for 1.3.5 qualification; native designation or carry remains pending. Other results retain their tagged Core reference and recorded component scope; that reference alone does not establish a stock release bill of materials. Release certification or carried-forward credit requires a reviewed target-build and change-impact decision. Original scope and dates remain attached.'),
+    p(report.qualificationTarget
+      ? 'The recipes retain tests on earlier component builds, including corrective release/1.3.0 builds. Qualification for 1.3.5 must identify applicable changes and record fresh tests or an accepted carry decision. Original scope, dates and build identities remain attached.'
+      : 'Scoped proof means the recorded scenarios passed on the exact tested build. The cumulative count combines builds and is not a release certification total. Corrective release/1.3.0 API results are candidate evidence for 1.3.5 qualification; native designation or carry remains pending. Other results retain their tagged Core reference and recorded component scope; that reference alone does not establish a stock release bill of materials. Release certification or carried-forward credit requires a reviewed target-build and change-impact decision. Original scope and dates remain attached.'),
     p('Verified ingredients do not automatically make a verified recipe. Each recipe below states which path was tested. Your administrator must provide the applications, models, data and permissions it needs.'),
     ];
+  if (report.qualificationTarget) blocks.push(p(`This is the ${report.version} prerelease work guide. The recipes below preserve prior observed results and exact prerequisites; their transfer to this target remains pending. Use the original tagged ${report.originalVersion} download for that release's initial evidence.`));
   for (const [index, recipe] of recipes.entries()) {
     const recipeStart = blocks.length;
     blocks.push({...h(2, `Recipe ${index + 1}: ${recipe.title}`), pageBreakBefore: true}, p(recipe.outcome), p(`Who this is for: ${recipe.roles}`), h(4, 'You need'), ...recipe.needs.map(li),
@@ -151,14 +191,17 @@ export function recipeGuide(report) {
         if (!row) throw new Error(`Recipe ingredient ${id} is absent from ${report.version}`);
         return {...ingredientStatus(row), text: `**${ingredientTitle(row)}** (${id})\n**${verificationLabel(row)}**`};
       }), h(4, 'Steps'), ...recipe.steps.map((step, i) => p(`${i + 1}. ${step}`)),
-      h(4, 'Expected result'), p(recipe.result), h(4, `End of recipe ${index + 1}: tested scope and limits`), p(recipe.coverage), p(`Source: ${recipe.source}`));
+      h(4, report.qualificationTarget ? 'Prior recorded result' : 'Expected result'), p(recipe.result),
+      ...(report.qualificationTarget ? [p(`${report.version} qualification: pending. The result above retains its original tested build; it is not a fresh run on this target.`)] : []),
+      h(4, `End of recipe ${index + 1}: tested scope and limits`), p(recipe.coverage), p(`Source: ${recipe.source}`));
     for (const block of blocks.slice(recipeStart)) block.compact = true;
   }
   blocks.push({...h(2, 'Ingredient glossary'), pageBreakBefore: true}, p('Scoped proof covers the recorded scenarios on the exact tested build, not every operation or a full release bill of materials. Read the current interpretation and component limits below. Prerelease evidence is not final-release certification. Pending proof does not mean the feature is unsupported.'));
   for (const row of report.capabilities) {
     blocks.push(h(3, ingredientTitle(row)), ingredientStatus(row), p(`Ingredient: ${row.id}`),
-      p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
+      p(report.qualificationTarget ? prereleaseHistoryText(row) : `Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
+    if (row.withheldReason) blocks.push(p(`Target carry withheld: ${row.withheldReason}`));
     if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));
     else {
       for (const note of row.limits ?? []) blocks.push(p(note));
@@ -170,5 +213,6 @@ export function recipeGuide(report) {
     p('Glossary entries summarize tested scope. The complete ZIP contains the detailed verification report and source records, including all historical prerelease entries. They preserve the exact test scope, assumptions and stamps behind this glossary.'),
     p(`Canonical source: capability-kit commit ${report.sourceKitCommit}. Report: ${report.sourcePath}.`),
     p('The retired Docker/SSH paired-node workflow is excluded. Counts are cumulative across test configurations and do not constitute whole-release sign-off.'));
+  if (report.prereleaseCarry) blocks.push(p(`Native prerelease carry: capability-kit ${report.prereleaseCarry.sourceKitCommit}; ${report.prereleaseCarry.reviewReference}. This reuses prior evidence and creates no fresh test or release certification.`));
   return blocks;
 }

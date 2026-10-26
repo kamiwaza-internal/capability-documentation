@@ -20,7 +20,7 @@ function Changes({entry}) {
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
-  const versions = evidenceVersions(publication, releaseStamps, releaseCorpora.corpora, siteConfig.customFields.currentVerification);
+  const versions = evidenceVersions(publication, releaseStamps, releaseCorpora.corpora, siteConfig.customFields.currentVerification, siteConfig.customFields.releaseWork);
   const kinds = Array.from(new Set(versions.map(entry => entry.kind)));
   const currentReplays = new Map();
   for (const snapshot of publication.releaseStamps ?? []) {

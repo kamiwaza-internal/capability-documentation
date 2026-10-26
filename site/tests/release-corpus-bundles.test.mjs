@@ -6,6 +6,8 @@ import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {checkReleaseCorpusBuild, zipMembers} from '../scripts/check-release-corpus.mjs';
 import {loadReleaseCorpora, sha256} from '../scripts/release-corpora.mjs';
+import {loadReleaseWork} from '../scripts/release-work.mjs';
+import {loadVerificationReports} from '../scripts/verification-reports.mjs';
 import {toZip} from '../scripts/evidence-files.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 
@@ -35,15 +37,18 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   const out = mkdtempSync(join(tmpdir(), 'release-corpus-bundle-'));
   emitBundles(publication, out);
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
-  emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}));
+  emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}), loadVerificationReports(), loadReleaseWork({publication}));
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
   const entry = index.versions.find(row => row.version === '1.3.4');
-  assert.equal(entry.kind, 'release-corpus');
+  assert.equal(entry.kind, 'release-replay');
+  assert.equal(entry.source.snapshotId, '1.3.4-release-replay-r2');
+  const work = index.versions.find(row => row.version === '1.3.5');
+  assert.equal(work.kind, 'release-work');
   const prior = mkdtempSync(join(tmpdir(), 'release-corpus-historical-'));
   emitBundles(publication, prior);
   writeFileSync(join(prior, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
   emitEvidence(publication, stamps, prior, descriptions, guidance, streams);
-  for (const historical of index.versions.filter(row => row.version !== '1.3.4')) {
+  for (const historical of index.versions.filter(row => !['1.3.4', '1.3.5'].includes(row.version))) {
     for (const file of Object.values(historical.files)) assert.deepEqual(readFileSync(join(out, file.path)),
       readFileSync(join(prior, file.path)), `historical download ${file.path} must retain its bytes`);
   }
@@ -61,15 +66,22 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   }
   writeFileSync(homePath, validHome);
   const members = zipMembers(readFileSync(join(out, entry.files.zip.path)));
+  const workMembers = zipMembers(readFileSync(join(out, work.files.zip.path)));
   for (const name of ['results.md', 'results.pdf', 'kit.zip', 'results.json']) {
     const path = 'verification-results/1.3.4-2026-10-22-markings/' + name;
-    assert.deepEqual(members.get(path), readFileSync(join(root, 'site/static', path)), 'historical report bytes retained in standard ZIP');
+    assert.ok(!members.has(path), 'later reports must not enter the original tagged-release ZIP');
+    assert.deepEqual(workMembers.get(path), readFileSync(join(root, 'site/static', path)), 'historical report bytes retained in prerelease work ZIP');
   }
   assert.deepEqual(members.get('machine-readable/release-corpus-catalog.json'), readFileSync(join(root, 'corpus/1.3.4/catalog.json')));
   assert.deepEqual(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)), readFileSync(join(out, entry.files.md.path)));
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /58 historical prerelease/);
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /73 of 87 capabilities/);
-  assert.match(members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString(), /whole-release approval/);
+  const originalText = members.get('human-readable/' + entry.files.md.path.split('/').at(-1)).toString();
+  assert.match(originalText, /30/);
+  assert.doesNotMatch(originalText, /73 of 87/);
+  const workText = workMembers.get('human-readable/' + work.files.md.path.split('/').at(-1)).toString();
+  assert.match(workText, /58 historical prerelease/);
+  assert.match(workText, /73 of 87 capabilities/);
+  assert.match(workText, /not 1\.3\.5 release certifications/);
+  assert.deepEqual(workMembers.get('machine-readable/retained-prior-verification.json'), readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-26-version-attribution.json')));
   for (const version of ['1.3.4', '1.3.0']) {
     const download = index.versions.find(row => row.version === version);
     for (const file of ['md', 'pdf', 'zip']) {
