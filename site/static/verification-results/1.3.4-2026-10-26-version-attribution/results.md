@@ -10,13 +10,13 @@ This dated interpretation corrects release attribution for the running capabilit
 
 73 of 87 capabilities have accepted scoped proofs across recorded builds; 14 have no accepted scoped proof. All 58 historical prerelease entries remain preserved separately. These are cumulative distinct-capability counts, not 73 passes against one frozen release bill of materials.
 
-The dataset-registry and ingestion-job/managed-connector proofs used corrective release/1.3.0 API builds alongside tagged 1.3.4 platform components. That branch is now designated 1.3.5. These two results are 1.3.5 prerelease evidence, not certification of the original 1.3.4 tag or a final 1.3.5 release.
+The dataset-registry and ingestion-job/managed-connector proofs used corrective release/1.3.0 API builds alongside tagged 1.3.4 platform components. That branch is now the 1.3.5 development line. These two results are scoped proofs on post-v1.3.4 corrective builds and candidate evidence for 1.3.5 qualification. Native designation or carry remains pending; they do not certify the original 1.3.4 tag or a final 1.3.5 release.
 
 The other 71 proofs reference tagged 1.3.4 Core. Their extension, operator, model and configuration identities remain separately qualified by the recorded evidence. A tagged Core reference alone does not prove that the entire deployed component set belongs to the original release.
 
 ## Evidence
 
-The accepted cumulative source remains capability-kit commit f42394c55d5a331c09a1c0e28504a2035223553b. The dated public interpretation is current-verification/1.3.4/2026-10-26-version-attribution.json. It preserves every native proof field and all historical entries; only the two corrective capability scope notes add the current designation.
+The accepted cumulative source remains capability-kit commit f42394c55d5a331c09a1c0e28504a2035223553b. The dated public interpretation is current-verification/1.3.4/2026-10-26-version-attribution.json. It preserves every native proof field and all historical entries; only the two corrective capability scope notes add the current interpretation, preserving the operator-asserted source basis.
 
 Catalog source: c5132d69170a2361e2ae164916fc0a5d3e96b873; corrective API image e2cfdf44f81916ea40f86d6b120be070004905b3f14bacab366d12e72dc0e67c. Ingestion source: e301cd3db8b4568605e1b5d9d04eb0fb98f199d5; corrective API image 4f45bcdb77689283a80d048505be67ec6359d267114fd8a02e7b06dbb6da2ad8. Both retain platform ray/scheduler image 4a0e33707443a07192c517fb475a966518e44944724691e027993506c2c0f612.
 
