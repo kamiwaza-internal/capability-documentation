@@ -80,7 +80,8 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     const readable = Object.entries(files).filter(([key]) => key !== 'streamsJson')
       .map(([, file]) => ({name: 'human-readable/' + file.path.split('/').at(-1), data: file.bytes}));
     if (scopedStreams) records.push({name: 'machine-readable/value-stream-recipes.json', data: files.streamsJson.bytes});
-    const reportFiles = entry.originalCorpus ? [] : reports.filter(report => report.version === (entry.work?.originalVersion ?? entry.version)).flatMap(report => report.files);
+    const reportFiles = entry.originalCorpus ? [] : reports.filter(report =>
+      report.version === entry.version || report.version === entry.work?.originalVersion).flatMap(report => report.files);
     const readme = `# Kamiwaza ${entry.version} complete Sales Dev Kit\n\n` +
       'For assistant answers, follow AGENTS.md and open the evidence documents and source records listed below. Start with the Sales Dev Kit in human-readable/: PDF for reading or sharing, Markdown for text-based assistants. Each contains the same evidence-grounded content and explicit gaps.\n\n' +
       (entry.corpus?.currentVerification ? 'For current capability status use machine-readable/current-verification.json. The release-corpus-catalog.json is a historical recipe-readiness snapshot; its older status must not override the current verification record.\n\n' : '') +
@@ -107,6 +108,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
         humanReleaseApproval: entry.replay.approval.status}} : {}),
       ...(entry.work ? {source: {channel:entry.work.channel, branch:entry.work.sourceBranch,
         retainedVersion:entry.work.originalVersion, retainedVerification:entry.work.retainedVerification,
+        prereleaseCarry:entry.work.prereleaseCarry,
         releaseQualification:'pending', humanReleaseApproval:'not-established'}} : {}),
       files: Object.fromEntries(Object.entries(files).map(([key, file]) => [key, {path: file.path, audience: file.audience, sha256: sha256(file.bytes), bytes: file.bytes.length}]))});
   }

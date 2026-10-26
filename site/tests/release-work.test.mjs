@@ -6,7 +6,9 @@ import {join} from 'node:path';
 import {loadReleaseWork} from '../scripts/release-work.mjs';
 import {loadReleaseCorpora} from '../scripts/release-corpora.mjs';
 import {evidenceVersions, changesSince, agentsMd} from '../src/evidence.mjs';
-import {recipeGuide, releaseWorkView, verificationLabel} from '../src/verification-guide.mjs';
+import {recipeGuide, releaseWorkView, verificationLabel, prereleaseHistoryText} from '../src/verification-guide.mjs';
+import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
+import {zipMembers} from '../scripts/check-release-corpus.mjs';
 
 const publication = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));
 const source = JSON.parse(readFileSync(new URL('../data/release-work.json', import.meta.url)));
@@ -39,6 +41,14 @@ test('prerelease work preserves exact prior evidence and cannot retarget its sta
     const data = structuredClone(source); mutate(data.releases[0]);
     assert.throws(() => load(data));
   }
+  for (const [mutate, error] of [
+    [row => row.originalReplayId = 'invented', /Original release replay must exist/],
+    [row => row.retainedVerification.sha256 = '0'.repeat(64), /Current verification digest mismatch/],
+    [row => row.prereleaseCarry.capabilityIds.push('delegation.run-claims-lifecycle'), /Withheld capability cannot receive carry credit/],
+  ]) {
+    const data = structuredClone(source); mutate(data.releases[0]);
+    assert.throws(() => load(data), error);
+  }
 });
 
 test('original release and current prerelease work remain separate in cards and recipe statuses', () => {
@@ -65,6 +75,33 @@ test('original release and current prerelease work remain separate in cards and 
   assert.match(verificationLabel(withheld), /current target blocked/);
   assert.match(text, /Target carry withheld:/);
   assert.match(text, /These overlapping counts are not additive/);
+  const nativeOnly = view.capabilities.filter(row => row.prereleaseCarried && !row.historicalPrerelease);
+  assert.equal(nativeOnly.length, 7);
+  for (const row of nativeOnly) assert.match(prereleaseHistoryText(row), /Prerelease verified through native carry.*not listed in the original/);
   assert.deepEqual(newest.work.retained.capabilities, JSON.parse(newest.work.retainedBytes).capabilities);
   assert.match(agentsMd('1.3.5', {targetWork:true}), /do not rename the original stamps, dates or build identities/);
+  assert.match(agentsMd('1.3.5', {targetWork:true}), /carry for corrections not listed in prereleaseCarry remains pending/);
+});
+
+test('new target report pairs and retained historical reports both enter the complete work ZIP', t => {
+  const out = mkdtempSync(join(tmpdir(), 'release-work-reports-'));
+  t.after(() => rmSync(out, {recursive:true, force:true}));
+  const reports = ['1.3.4', '1.3.5'].map(version => ({version, files: ['md', 'pdf'].map(extension => ({
+    name:`verification-results/${version}-2026-10-26-synthetic/results.${extension}`,
+    data:Buffer.from(`Synthetic ${version} test report; not product evidence. ${extension}`),
+  }))}));
+  emitBundles(publication, out);
+  emitEvidence(publication, null, out, {}, null, null, loadReleaseCorpora({publication}), reports, loadReleaseWork({publication}));
+  const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
+  const work = index.versions.find(row => row.version === '1.3.5');
+  assert.deepEqual(work.source.prereleaseCarry, source.releases[0].prereleaseCarry);
+  const members = zipMembers(readFileSync(join(out, work.files.zip.path)));
+  for (const file of reports.flatMap(report => report.files)) {
+    assert.deepEqual(members.get(file.name), file.data);
+    assert.ok(members.get('README.md').toString().includes(file.name));
+    assert.ok(members.get('SHA256SUMS').toString().includes(file.name));
+  }
+  const original = index.versions.find(row => row.version === '1.3.4');
+  const originalMembers = zipMembers(readFileSync(join(out, original.files.zip.path)));
+  for (const file of reports.flatMap(report => report.files)) assert.ok(!originalMembers.has(file.name));
 });

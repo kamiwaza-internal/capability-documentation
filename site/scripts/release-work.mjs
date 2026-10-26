@@ -44,7 +44,8 @@ export function loadReleaseWork({repo = root, publication} = {}) {
     assert.equal(new Set(carry.withheld.map(cap => cap.id)).size, carry.withheld.length);
     for (const cap of carry.withheld) {
       keys(cap, ['id', 'reason']);
-      assert.ok(retained.capabilities.some(row => row.id === cap.id) && !carry.capabilityIds.includes(cap.id));
+      assert.ok(retained.capabilities.some(row => row.id === cap.id), 'Withheld capability must exist');
+      assert.ok(!carry.capabilityIds.includes(cap.id), 'Withheld capability cannot receive carry credit');
       assert.ok(typeof cap.reason === 'string' && cap.reason.trim());
     }
     return {...row, retained, retainedBytes:readFileSync(join(repo, 'site/static', row.retainedVerification.path))};

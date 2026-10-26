@@ -37,6 +37,8 @@ That count overlaps the 73 scoped-proof histories; do not add them. The former
 run-lifecycle assessment is withheld from current carry because its required
 correction remains unmerged. Its original evidence is preserved. Prerelease carry
 does not establish fresh execution or release certification.
+The 58 carried capabilities and 58 historical ledger entries are different sets;
+each retains its own source and status.
 
 Use **Release verified — tested this release**, **Release verified — carried forward**,
 and **Prerelease verified** as defined in [Release verification and carry-forward](VERIFICATION-STATUS.md).

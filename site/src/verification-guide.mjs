@@ -22,6 +22,15 @@ export function releaseWorkView(work) {
       withheldReason:work.prereleaseCarry.withheld.find(cap => cap.id === row.id)?.reason}))};
 }
 
+export function prereleaseHistoryText(row) {
+  if (row.prereleaseCarried) return row.historicalPrerelease
+    ? 'Prerelease verified through native carry; an entry in the original historical ledger is also retained.'
+    : 'Prerelease verified through native carry; this capability was not listed in the original 1.3.4 historical ledger. The target-work record cites its native Kit authority.';
+  return row.historicalPrerelease
+    ? 'Historical prerelease verification is retained separately; it is not current target carry credit.'
+    : 'No entry in the original historical prerelease ledger. This does not erase later scoped evidence.';
+}
+
 function progressSummary(report) {
   const c = report.counts;
   return report.qualificationTarget
@@ -114,7 +123,7 @@ export function verificationDocument(report, concise = false) {
   blocks.push(h(2, report.qualificationTarget ? 'Retained capability evidence for qualification' : 'Current capability results'));
   for (const row of report.capabilities) {
     blocks.push(h(3, row.title), p(`${row.id} · ${verificationLabel(row)}`),
-      p(row.historicalPrerelease ? 'Historical prerelease verification is also retained.' : 'No historical prerelease verification is recorded for this capability.'));
+      p(report.qualificationTarget ? prereleaseHistoryText(row) : row.historicalPrerelease ? 'Historical prerelease verification is also retained.' : 'No historical prerelease verification is recorded for this capability.'));
     if (row.gap) blocks.push(p(`Remaining work: ${row.gap}`));
     if (row.withheldReason) blocks.push(p(`Target carry withheld: ${row.withheldReason}`));
     if (row.scopeNote) blocks.push(p(`Current versus historical scope: ${row.scopeNote}`));
@@ -190,7 +199,7 @@ export function recipeGuide(report) {
   blocks.push({...h(2, 'Ingredient glossary'), pageBreakBefore: true}, p('Scoped proof covers the recorded scenarios on the exact tested build, not every operation or a full release bill of materials. Read the current interpretation and component limits below. Prerelease evidence is not final-release certification. Pending proof does not mean the feature is unsupported.'));
   for (const row of report.capabilities) {
     blocks.push(h(3, ingredientTitle(row)), ingredientStatus(row), p(`Ingredient: ${row.id}`),
-      p(`Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
+      p(report.qualificationTarget ? prereleaseHistoryText(row) : `Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
     if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
     if (row.withheldReason) blocks.push(p(`Target carry withheld: ${row.withheldReason}`));
     if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));

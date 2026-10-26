@@ -7,7 +7,7 @@ import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {descriptionOnly, filterCapabilities, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
 import {revisionLabel} from '../evidence.mjs';
-import {verificationLabel, releaseWorkView} from '../verification-guide.mjs';
+import {verificationLabel, releaseWorkView, prereleaseHistoryText} from '../verification-guide.mjs';
 import CurrentView from '../CurrentView';
 
 function TextList({title, items}) {
@@ -171,7 +171,7 @@ export default function Catalog() {
           (['verified', 'prerelease-verified'].includes(status) && (row.qualificationTarget ? row.prereleaseCarried : row.historicalPrerelease)) ||
           (['untested', 'not-yet-verified'].includes(status) && row.status !== 'accepted-scoped-release'))).map(row => <article className="capability" key={row.id}>
           <h3>{row.title} <span className="status">{verificationLabel(row)}</span></h3>
-          <p><code>{row.id}</code> · Historical prerelease: {row.historicalPrerelease ? 'verified' : 'not recorded'}</p>
+          <p><code>{row.id}</code> · {report.qualificationTarget ? prereleaseHistoryText(row) : `Historical prerelease: ${row.historicalPrerelease ? 'verified' : 'not recorded'}`}</p>
           {row.gap && <p>Remaining work: {row.gap}</p>}
           {row.withheldReason && <p>Target carry withheld: {row.withheldReason}</p>}
           {row.scopeNote && <p>{row.scopeNote}</p>}
