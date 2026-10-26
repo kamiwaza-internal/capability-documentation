@@ -208,7 +208,7 @@ test('mixed release-line evidence requires a matching reviewed source and intact
 test('accepted ingestion adds one scoped release-line result while retaining the complete baseline', () => {
   const root = new URL('../../', import.meta.url).pathname;
   const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
-  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const current = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-ingestion.json')));
   const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-sandbox.json')));
   assert.equal(current.counts.acceptedScoped, prior.counts.acceptedScoped + 1);
   assert.equal(current.counts.remaining, prior.counts.remaining - 1);
@@ -238,4 +238,29 @@ test('private stamp intake checks the native ID and omits deployment inventory a
   assert.ok(!JSON.stringify(projection).includes('private-record'));
   stamp.evidence[0].path = 'changed';
   assert.throws(() => projectReleaseLineStamp(stamp), /stamp ID mismatch/);
+});
+
+
+test('catalog adds exactly one result while preserving prior native stamps and historical scope', () => {
+  const root = new URL('../../', import.meta.url).pathname;
+  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
+  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-ingestion.json')));
+  assert.equal(current.counts.acceptedScoped, 72);
+  assert.equal(current.counts.remaining, 15);
+  assert.deepEqual(current.historicalPrerelease, prior.historicalPrerelease);
+  for (const old of prior.capabilities.filter(r => r.id !== 'catalog.dataset-registry')) {
+    const expected = structuredClone(old);
+    if (expected.releaseLine) expected.releaseLine.sourceKitCommit = current.sourceKitCommit;
+    assert.deepEqual(current.capabilities.find(r => r.id === old.id), expected);
+  }
+  const row = current.capabilities.find(r => r.id === 'catalog.dataset-registry');
+  assert.equal(row.stampId, '937d3d1ff215be46ab664b203d37b90ee87635941d0fa33fa2a30e3e48d3d7f7');
+  assert.deepEqual(row.limits, row.releaseLine.stampProjection.limits);
+  assert.ok(row.limits.some(x => x.includes('scheduled-ingest status failure remains unresolved')));
+  assert.ok(row.scopeNote.includes('dated catalog report in the ZIP for historical evidence context'));
+  const guide = recipeGuide(current).map(b => b.text).join('\n');
+  assert.ok(guide.includes('Organize a dataset registry and enforce Workroom access'));
+  assert.ok(guide.includes(row.scopeNote));
+  assert.ok(verificationDocument(current).some(b => b.text.includes(row.scopeNote)));
 });
