@@ -269,8 +269,9 @@ test('catalog adds exactly one result while preserving prior native stamps and h
 
 test('CPU tenant proof adds one scoped ingredient and preserves all prior evidence', () => {
   const root = new URL('../../', import.meta.url).pathname;
-  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
-  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const path = 'current-verification/1.3.4/2026-10-26-tenant-cpu.json';
+  const bytes = readFileSync(join(root, 'site/static', path));
+  const current = loadCurrentVerification(root, {path, sha256:createHash('sha256').update(bytes).digest('hex')});
   const priorBytes = readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-24-catalog.json'));
   assert.equal(createHash('sha256').update(priorBytes).digest('hex'), '9d818d810793a1a87fb79a1dbceb2a24585241f05b0a0596413d0928c3183d0c');
   const prior = JSON.parse(priorBytes);
@@ -297,4 +298,37 @@ test('CPU tenant proof adds one scoped ingredient and preserves all prior eviden
   assert.ok(summary.includes('restricted CPU tenant (ARM64 / llama.cpp)'));
   assert.ok(summary.includes(row.scopeNote));
   assert.ok(!summary.includes('Serve CPU and NVIDIA GPU models on a restricted tenant install'));
+});
+
+
+test('cumulative proof summaries do not certify a frozen bill of materials', () => {
+  const report = JSON.parse(readFileSync(new URL('../static/current-verification/1.3.4/2026-10-26-tenant-cpu.json', import.meta.url)));
+  const human = recipeGuide(report).map(b => b.text).join('\n');
+  const detail = verificationDocument(report).map(b => b.text).join('\n');
+  for (const text of [human, detail]) {
+    assert.match(text, /73 of 87 capabilities have accepted scoped proofs/);
+    assert.doesNotMatch(text, /73 of 87 capabilities (?:are release verified|have release verification)/);
+  }
+  assert.match(human, /now designated 1\.3\.5 prerelease/);
+  assert.match(human, /combines corrected API and tagged 1\.3\.4 platform components/);
+  assert.match(detail, /tagged Core reference does not establish/);
+  assert.match(agentsMd('1.3.4'), /A cumulative accepted-proof count is not a frozen-release count/);
+  assert.equal(report.historicalPrerelease.length, 58);
+});
+
+
+test('dated attribution correction preserves all native proofs and historical bytes', () => {
+  const prior = JSON.parse(readFileSync(new URL('../static/current-verification/1.3.4/2026-10-26-tenant-cpu.json', import.meta.url)));
+  const current = JSON.parse(readFileSync(new URL('../static/current-verification/1.3.4/2026-10-26-version-attribution.json', import.meta.url)));
+  assert.deepEqual(current.counts, prior.counts);
+  assert.deepEqual(current.historicalPrerelease, prior.historicalPrerelease);
+  const corrected = new Set(['catalog.dataset-registry', 'ingestion.scheduled-ingest']);
+  for (const [i, row] of current.capabilities.entries()) {
+    if (!corrected.has(row.id)) assert.deepEqual(row, prior.capabilities[i]);
+    else {
+      assert.match(row.scopeNote, /^Current designation: 1\.3\.5 prerelease evidence on a mixed corrective build/);
+      assert.deepEqual({...row, scopeNote:prior.capabilities[i].scopeNote}, prior.capabilities[i]);
+    }
+  }
+  assert.equal(verificationLabel(current.capabilities.find(r => r.status === 'accepted-scoped-release')), 'Scoped proof — verified on the recorded build');
 });
