@@ -253,22 +253,23 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
   assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
-  for (const expected of ['72 of 87 capabilities verified for 1.3.4', '15 awaiting release verification',
+  for (const expected of ['73 of 87 capabilities verified for 1.3.4', '14 awaiting release verification',
     'not whole-release sign-off']) assert.ok(corpusCard.includes(expected), expected);
   assert.ok(!corpusCard.includes('30 of 88'), 'historical snapshot must not override current status');
   const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
   const current = JSON.parse(archive.get('machine-readable/current-verification.json'));
-  assert.equal(current.counts.acceptedScoped, 72);
+  assert.equal(current.counts.acceptedScoped, 73);
   assert.deepEqual(readFileSync(join(site, 'build', binding.path)), snapshotBytes);
   assert.deepEqual(readFileSync(join(site, 'build', historicalPath)), snapshotBytes);
   assert.equal(existsSync(join(site, 'build/current-verification/1.3.4/unreviewed.json')), false);
   assert.equal(current.historicalPrerelease.length, 58);
   const human = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
   assert.ok(human.includes('## Recipe 1:') && human.includes('## Ingredient glossary'));
-  assert.ok(human.includes('72 of 87'));
+  assert.ok(human.includes('73 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
-  assert.ok(catalog.includes('72 of 87 release verified for recorded scenarios'));
+  assert.ok(catalog.includes('73 of 87 release verified for recorded scenarios'));
   assert.ok(catalog.includes('Inherited assumptions and limits about mocked tests'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
+  assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));
   console.log(`Offline release-card build evidence: ${root}`);
 });
