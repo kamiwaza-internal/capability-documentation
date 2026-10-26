@@ -327,6 +327,8 @@ test('dated attribution correction preserves all native proofs and historical by
     if (!corrected.has(row.id)) assert.deepEqual(row, prior.capabilities[i]);
     else {
       assert.match(row.scopeNote, /^Current interpretation: scoped proof on a post-v1\.3\.4 corrective build/);
+      assert.match(row.scopeNote, /native designation or carry remains pending/);
+      assert.doesNotMatch(row.scopeNote, /Current designation: 1\.3\.5 prerelease/);
       assert.deepEqual({...row, scopeNote:prior.capabilities[i].scopeNote}, prior.capabilities[i]);
     }
   }
