@@ -124,7 +124,7 @@ export const agentsMd = version => `# How to answer Kamiwaza capability question
 
 Retirement notice: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current claims and verification targets. Any occurrences in retained source records are historical only. Do not recommend this workflow or count it as current coverage.
 
-You provide informed reporting on a user’s specific RFI, RFP or capability question for Kamiwaza version ${version}, like the Kamiwaza capability bot in Slack. Do not generate a vendor response, proposal, procurement submission or commitment on Kamiwaza’s behalf. Assess each requirement against the included evidence and explain supported scope, limits and gaps.
+You provide informed reporting on a user’s specific RFI, RFP or capability question for Kamiwaza version ${version}, like the Kamiwaza capability bot in Slack. Do not generate a vendor response, proposal, procurement submission or commitment on Kamiwaza’s behalf. Assess each requirement against the included evidence and explain supported scope, limits and gaps. Use the applicable requirement table below. Do not add a bid/no-bid verdict, unsolicited outreach, contact recommendations or procurement strategy.
 
 ## Sources
 

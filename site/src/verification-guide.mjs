@@ -7,6 +7,19 @@ export const verificationLabel = row => row.status === 'accepted-scoped-release'
 
 // User instructions are curated from the cited product journeys, not inferred from stamp counts.
 export const recipes134 = [
+  {title: 'Serve a model in a restricted CPU tenant',
+    outcome: 'Run a local model and send chat requests from a restricted ARM64 tenant, using an owner-approved CPU profile.',
+    roles: 'An application administrator working with a cluster owner who manages the tenant’s trusted compute profile.',
+    needs: ['The qualified v1.3.4 ARM64 installation with tenant mode enabled, the pinned llama.cpp CPU runtime and Qwen3-0.6B GGUF model.', 'An owner-signed CPU profile, trusted API certificates and approved model storage. Explicit serving uses 2 CPU and 1 GiB; implicit serving selected 100m CPU and 1 GiB in this test.'],
+    ingredients: ['models.tenant-mode-inference'],
+    steps: ['Ask the cluster owner to enable tenant mode and publish a trusted CPU profile for this ARM64 installation. Confirm that the model and qualified llama.cpp runtime are available.',
+      'Sign in through the supported SDK/API as an application administrator. Confirm that your serving identity is limited to its namespace; nonadmin users may inspect the model but cannot deploy it.',
+      'Deploy the model with automatic CPU sizing. Wait until it is ready, send a chat request, and inspect the selected owner profile, runtime image and resource allocation.',
+      'For a controlled resource request, stop the first deployment and deploy with 2 CPU and 1 GiB. Wait for readiness, send another chat request and confirm the allocation matches your request.',
+      'Stop the deployment when finished and remove only your disposable configurations. Keep shared model files and the owner-managed profile available for other authorized users.'],
+    result: 'The complete SDK/API journey passed: nine typed asynchronous refusals with no workload created, dispatch revalidation, recovery, implicit and explicit CPU serving, real chat, authority boundaries and independently audited cleanup.',
+    coverage: 'CPU on ARM64 with the recorded llama.cpp runtime and model only. GPU, tensor parallelism, other architectures or engines, browser UI, automatic hardware detection, key rotation, optional admission webhook, client-visible named request errors, immutable-revision propagation through the download API and a complete implicit-negative matrix remain unverified. This scoped recipe does not certify an entire parent value stream or every tenant-mode configuration.',
+    source: 'capability-kit, reports/2026-10-26-tenant-cpu-release134; SDK 76716b614034b46a523c0c2dc887f4284abc1314'},
   {title: 'Organize a dataset registry and enforce Workroom access',
     outcome: 'Register dataset metadata, organize it in nested containers, find it within a Workroom and handle conflicting edits safely.',
     roles: 'A registry owner, an independently authenticated same-tenant viewer and an outsider.',
@@ -72,7 +85,7 @@ export function verificationDocument(report, concise = false) {
     p(`${c.acceptedScoped} of ${c.included} capabilities are release verified for their recorded scenarios. ${c.remaining} still need release verification. Evidence through ${report.asOf}.`),
     p(`${c.historicalPrerelease} historical prerelease verifications are preserved: ${c.historicalInScope} overlap this release inventory and ${c.historicalOutsideScope} sit outside it. These are not additional release passes.`),
     p('Results were collected across multiple configurations. They do not establish one jointly tested deployment or whole-release approval.')];
-  if (concise) return [...blocks, h(2, 'Capability status'), ...report.capabilities.flatMap(row => [h(3, row.title), p(verificationLabel(row))])];
+  if (concise) return [...blocks, h(2, 'Capability status'), ...report.capabilities.flatMap(row => [h(3, ingredientTitle(row)), p(verificationLabel(row)), ...(row.scopeNote ? [p(row.scopeNote)] : [])])];
   blocks.push(h(2, 'Current capability results'));
   for (const row of report.capabilities) {
     blocks.push(h(3, row.title), p(`${row.id} · ${verificationLabel(row)}`),
@@ -95,6 +108,7 @@ export function verificationDocument(report, concise = false) {
 
 // Display the tested operation; canonical titles and IDs remain in the evidence.
 const scopedIngredientTitles = {
+  'models.tenant-mode-inference': 'Serve a model in a restricted CPU tenant (ARM64 / llama.cpp)',
   'ingestion.scheduled-ingest': 'Ingest a source, inspect a registered job, and trigger a managed connector',
   'kaizen.agent-auto-routing': 'Explicitly delegate to a member-selected agent',
   'kaizen.agent-packages': 'Create and use an approved guidance-only package',

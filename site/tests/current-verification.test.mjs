@@ -244,7 +244,8 @@ test('private stamp intake checks the native ID and omits deployment inventory a
 test('catalog adds exactly one result while preserving prior native stamps and historical scope', () => {
   const root = new URL('../../', import.meta.url).pathname;
   const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
-  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const bytes = readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-24-catalog.json'));
+  const current = loadCurrentVerification(root, {path: 'current-verification/1.3.4/2026-10-24-catalog.json', sha256: '9d818d810793a1a87fb79a1dbceb2a24585241f05b0a0596413d0928c3183d0c'});
   const prior = JSON.parse(readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-23-ingestion.json')));
   assert.equal(current.counts.acceptedScoped, 72);
   assert.equal(current.counts.remaining, 15);
@@ -263,4 +264,37 @@ test('catalog adds exactly one result while preserving prior native stamps and h
   assert.ok(guide.includes('Organize a dataset registry and enforce Workroom access'));
   assert.ok(guide.includes(row.scopeNote));
   assert.ok(verificationDocument(current).some(b => b.text.includes(row.scopeNote)));
+});
+
+
+test('CPU tenant proof adds one scoped ingredient and preserves all prior evidence', () => {
+  const root = new URL('../../', import.meta.url).pathname;
+  const manifest = JSON.parse(readFileSync(join(root, 'site/data/release-corpora.json')));
+  const current = loadCurrentVerification(root, manifest.corpora[0].currentVerification);
+  const priorBytes = readFileSync(join(root, 'site/static/current-verification/1.3.4/2026-10-24-catalog.json'));
+  assert.equal(createHash('sha256').update(priorBytes).digest('hex'), '9d818d810793a1a87fb79a1dbceb2a24585241f05b0a0596413d0928c3183d0c');
+  const prior = JSON.parse(priorBytes);
+  assert.equal(current.counts.acceptedScoped, 73);
+  assert.equal(current.counts.remaining, 14);
+  assert.deepEqual(current.historicalPrerelease, prior.historicalPrerelease);
+  for (const old of prior.capabilities.filter(r => r.id !== 'models.tenant-mode-inference')) {
+    const expected = structuredClone(old);
+    if (expected.releaseLine) expected.releaseLine.sourceKitCommit = current.sourceKitCommit;
+    assert.deepEqual(current.capabilities.find(r => r.id === old.id), expected);
+  }
+  const row = current.capabilities.find(r => r.id === 'models.tenant-mode-inference');
+  assert.equal(row.status, 'accepted-scoped-release');
+  assert.deepEqual(row.kits, ['sdk:tenant-cpu-arm64-async-profile-refusals']);
+  assert.ok(row.limits.some(x => x.includes('CPU/ARM64/llama.cpp only')));
+  assert.ok(row.limits.some(x => x.includes('complete implicit-negative matrix is not claimed')));
+  const guide = recipeGuide(current).map(b => b.text).join('\n');
+  assert.ok(guide.includes('Serve a model in a restricted CPU tenant'));
+  assert.ok(guide.includes(row.scopeNote));
+  assert.ok(guide.includes('2 CPU and 1 GiB'));
+  assert.ok(guide.includes('restricted CPU tenant (ARM64 / llama.cpp)'));
+  assert.ok(!guide.includes('Serve CPU and NVIDIA GPU models on a restricted tenant install'));
+  const summary = verificationDocument(current, true).map(b => b.text).join('\n');
+  assert.ok(summary.includes('restricted CPU tenant (ARM64 / llama.cpp)'));
+  assert.ok(summary.includes(row.scopeNote));
+  assert.ok(!summary.includes('Serve CPU and NVIDIA GPU models on a restricted tenant install'));
 });
