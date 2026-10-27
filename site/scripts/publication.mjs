@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {unsafePublicText} from './public-output-privacy.mjs';
 
 // Consumer validation only. Verdict computation and publication approval stay upstream.
 const sha = /^[a-f0-9]{40}$/;
@@ -94,6 +95,27 @@ function developerAssessment(value, release) {
     requireValue(!/https?:|\/(?:home|tmp|etc|var)\/|PRIVATE|CANARY|KAMIWAZA_|\.env\b|Bearer\s|password|token=|localhost|\b\d{1,3}(?:\.\d{1,3}){3}\b/i.test(item), 'Private assessment content forbidden');
   }
 }
+// Used only by the hash-bound target-work loader, not general publication intake.
+function agentAssessment(value, release) {
+  shape(value, ['basis', 'verdict', 'assessedAt', 'ingestedAt', 'observedSourceRevision', 'sourceBinding', 'targetRelease', 'testedVersion', 'scope', 'operations', 'limits']);
+  requireValue(value.basis === 'agent-verification' && value.sourceBinding === 'scoped-agent-observation', 'Invalid agent basis');
+  requireValue(value.targetRelease === release.version && sha.test(value.observedSourceRevision), 'Agent target or source mismatch');
+  requireValue(['verified', 'partial', 'failed'].includes(value.verdict) && value.ingestedAt === null, 'Invalid native agent verdict');
+  instant(value.assessedAt);
+  requireValue(value.assessedAt <= release.generatedAt, 'Agent assessment postdates projection');
+  requireValue(Array.isArray(value.operations) && value.operations.length > 0 && value.operations.length <= 100, 'Agent operations required');
+  for (const operation of value.operations) {
+    shape(operation, ['operation', 'status']);
+    requireValue(['passed', 'failed', 'incomplete'].includes(operation.status), 'Invalid operation outcome');
+  }
+  strings(value.limits);
+  requireValue(value.limits.length > 0, 'Agent limits required');
+  for (const item of [value.testedVersion, value.scope, ...value.operations.map(row => row.operation), ...value.limits]) {
+    publicText(item); requireValue(!unsafePublicText(item), 'Private agent content forbidden');
+  }
+  const outcomes = value.operations.map(row => row.status);
+  requireValue(value.verdict !== 'verified' || outcomes.every(status => status === 'passed'), 'Verified agent requires complete passing operations');
+}
 function scopedProof(value, release) {
   shape(value, ['state', 'proofSha256', 'recipeId', 'recipeRevision', 'recipeSha256', 'buildFingerprint', 'observedAt', 'scope', 'limits']);
   requireValue(['established', 'failed', 'incomplete'].includes(value.state), 'Invalid scoped proof state');
@@ -106,7 +128,7 @@ function scopedProof(value, release) {
   publicText(value.scope); publicStrings(value.limits);
   requireValue(value.limits.length > 0, 'Scoped proof needs explicit limits');
 }
-function prereleaseCapability(cap, release, proofRevision) {
+function prereleaseCapability(cap, release, proofRevision, agentProjection = false) {
   const keys = ['id', 'title', 'distribution', 'summary', 'conditions', 'limits', 'status', 'wholeClaim', 'evidence', 'declaration', 'releaseStatus', 'verificationBasis', 'assessment'];
   shape(cap, proofRevision ? [...keys, 'proof'] : keys);
   requireValue(typeof cap.id === 'string' && id.test(cap.id), 'Invalid capability identifier');
@@ -125,14 +147,19 @@ function prereleaseCapability(cap, release, proofRevision) {
   requireValue(Array.isArray(cap.evidence) && cap.evidence.length <= 100, 'Invalid evidence list');
   cap.evidence.forEach(record => prereleaseEvidence(record, release));
   unique(cap.evidence.map(record => record.scenario));
-  requireValue(['historical-scenario', 'developer-assessment', 'none', ...(proofRevision ? ['value-stream'] : [])].includes(cap.verificationBasis), 'Invalid verification basis');
+  requireValue(['historical-scenario', 'developer-assessment', 'none', ...(proofRevision ? ['value-stream'] : []), ...(agentProjection ? ['agent-verification', 'historical-carry'] : [])].includes(cap.verificationBasis), 'Invalid verification basis');
   if (proofRevision) {
     if (cap.proof !== null) scopedProof(cap.proof, release);
     if (cap.verificationBasis === 'value-stream') {
       requireValue(cap.status === 'prerelease-verified' && cap.proof?.state === 'established', 'Scoped proof credit requires an established native verdict');
     }
   }
-  if (cap.verificationBasis === 'developer-assessment') {
+  if (cap.verificationBasis === 'historical-carry') requireValue(cap.status === 'prerelease-verified' && cap.evidence.length === 0 && cap.assessment === null, 'Native carry cannot invent execution');
+  if (cap.verificationBasis === 'agent-verification') {
+    agentAssessment(cap.assessment, release);
+    requireValue(cap.status === ({verified:'prerelease-verified', partial:'not-yet-verified', failed:'failed-or-mixed'})[cap.assessment.verdict], 'Agent verdict mismatch');
+    requireValue(cap.status !== 'prerelease-verified' || !cap.evidence.some(row => row.outcome === 'failed'), 'Agent cannot hide known failure');
+  } else if (cap.verificationBasis === 'developer-assessment') {
     requireValue(cap.status === 'prerelease-verified' && cap.evidence.length === 0 && cap.assessment !== null && cap.releaseStatus === 'not-stamped', 'Assessment cannot supply runtime or release evidence');
     developerAssessment(cap.assessment, release);
   } else {
@@ -143,22 +170,25 @@ function prereleaseCapability(cap, release, proofRevision) {
   if (cap.status === 'prerelease-verified' && cap.verificationBasis === 'historical-scenario') requireValue(cap.evidence.length > 0 && failed === 0, 'Pre-release verified requires clean scenario evidence');
   if (cap.status === 'prerelease-verified' && cap.verificationBasis === 'value-stream') requireValue(failed === 0, 'Effective proof credit cannot hide a failing scenario');
   if (cap.proof?.state === 'failed') requireValue(cap.status === 'failed-or-mixed', 'Failed proof cannot grant verification credit');
-  if (cap.status === 'failed-or-mixed') requireValue(failed > 0 || cap.proof?.state === 'failed', 'Failed or mixed requires a failing record or proof');
-  if (cap.status === 'not-yet-verified') requireValue(cap.evidence.length === 0, 'Unverified capability cannot carry evidence');
+  if (cap.status === 'failed-or-mixed') requireValue(failed > 0 || cap.proof?.state === 'failed' || cap.assessment?.verdict === 'failed', 'Failed or mixed requires a failing record or proof');
+  if (cap.status === 'not-yet-verified') requireValue(cap.evidence.length === 0 || cap.assessment?.verdict === 'partial', 'Unverified capability cannot carry evidence');
 }
-function prereleaseRelease(value, containerSchema) {
+function prereleaseRelease(value, containerSchema, agentProjection = false) {
+  const agentRevision = agentProjection && Object.hasOwn(value.counts, 'agentVerified');
+  const carryRevision = agentProjection && Object.hasOwn(value.counts, 'carriedVerified');
   const proofRevision = Object.hasOwn(value.counts, 'scopedProofVerified');
   requireValue(!proofRevision || containerSchema === 8, 'Scoped proof requires publication schema 8');
   requireValue(value.channel === 'development' && value.releaseBinding === 'not-established' && value.approval.status === 'pending', 'Pre-release evidence cannot claim a release binding or approval');
   const legacyBases = 'historical development-build scenarios and local-contract assessments';
-  if (!proofRevision) requireValue(value.build === value.version + '; project pre-release baseline: ' + legacyBases + '; not a released ' + value.version + ' artifact; release unverified', 'Project baseline cannot invent an aggregate tested build');
+  if (agentRevision) requireValue(value.build === `${value.version}; scoped pre-release agent observations and retained historical evidence; tested versions are recorded per assessment; no final release certification`, 'Agent projection cannot invent aggregate build');
+  if (!proofRevision && !agentRevision) requireValue(value.build === value.version + '; project pre-release baseline: ' + legacyBases + '; not a released ' + value.version + ' artifact; release unverified', 'Project baseline cannot invent an aggregate tested build');
   strings(value.omittedCapabilities); unique(value.omittedCapabilities);
   requireValue(value.omittedCapabilities.every(x => id.test(x) && !value.capabilities.some(c => c.id === x)), 'Invalid omitted capability');
   instant(value.sourceCommittedAt);
   requireValue(value.sourceCommittedAt <= value.generatedAt, 'Draft cannot predate its evidence corpus');
-  requireValue(Array.isArray(value.testedBuilds) && (proofRevision || value.testedBuilds.length > 0) && value.testedBuilds.length <= 500 && value.testedBuilds.every(b => typeof b === 'string' && devBuild.test(b)), 'Invalid tested builds');
+  requireValue(Array.isArray(value.testedBuilds) && (proofRevision || agentProjection || value.testedBuilds.length > 0) && value.testedBuilds.length <= 500 && value.testedBuilds.every(b => typeof b === 'string' && devBuild.test(b)), 'Invalid tested builds');
   unique(value.testedBuilds);
-  value.capabilities.forEach(cap => prereleaseCapability(cap, value, proofRevision));
+  value.capabilities.forEach(cap => prereleaseCapability(cap, value, proofRevision, agentProjection));
   strings(value.deferredCapabilities); unique(value.deferredCapabilities);
   requireValue(value.deferredCapabilities.every(cid => value.capabilities.some(c => c.id === cid && c.status === 'not-yet-verified')), 'Deferred capability must remain an included unverified gap');
   const records = value.capabilities.flatMap(cap => cap.evidence);
@@ -168,13 +198,13 @@ function prereleaseRelease(value, containerSchema) {
   if (proofRevision && runs.length === 0) requireValue(value.evidenceWindow === null, 'Absent scenarios require a null evidence window');
   else {
     shape(value.evidenceWindow, ['earliestRunFinishedAt', 'latestRunFinishedAt']);
-    requireValue(runs.length > 0 && value.evidenceWindow.earliestRunFinishedAt === runs[0] && value.evidenceWindow.latestRunFinishedAt === runs.at(-1), 'Evidence window must match the recorded runs');
+    requireValue((runs.length > 0 || agentProjection) && value.evidenceWindow.earliestRunFinishedAt === (runs[0] ?? null) && value.evidenceWindow.latestRunFinishedAt === (runs.at(-1) ?? null), 'Evidence window must match the recorded runs');
   }
   const assessments = value.capabilities.filter(cap => cap.assessment).map(cap => cap.assessment.assessedAt).sort();
   if (proofRevision && assessments.length === 0) requireValue(value.assessmentWindow === null, 'Absent assessments require a null assessment window');
   else {
     shape(value.assessmentWindow, ['earliestAssessedAt', 'latestAssessedAt']);
-    requireValue(assessments.length > 0 && value.assessmentWindow.earliestAssessedAt === assessments[0] && value.assessmentWindow.latestAssessedAt === assessments.at(-1), 'Assessment window must match accepted assessments');
+    requireValue((assessments.length > 0 || agentProjection) && value.assessmentWindow.earliestAssessedAt === (assessments[0] ?? null) && value.assessmentWindow.latestAssessedAt === (assessments.at(-1) ?? null), 'Assessment window must match accepted assessments');
   }
   if (proofRevision) {
     const proofs = value.capabilities.map(cap => cap.proof?.observedAt).filter(Boolean).sort(
@@ -194,13 +224,15 @@ function prereleaseRelease(value, containerSchema) {
   }
   const count = status => value.capabilities.filter(cap => cap.status === status).length;
   const countKeys = ['included', 'prereleaseVerified', 'scenarioVerified', 'developerAssessed', 'failedOrMixed', 'notYetVerified', 'releaseVerified', 'releaseFailed'];
-  shape(value.counts, proofRevision ? [...countKeys, 'scopedProofVerified'] : countKeys);
+  shape(value.counts, [...countKeys, ...(proofRevision ? ['scopedProofVerified'] : []), ...(agentRevision ? ['agentVerified'] : []), ...(carryRevision ? ['carriedVerified'] : [])]);
+  if (agentProjection) requireValue((value.counts.carriedVerified ?? 0) === value.capabilities.filter(c => c.verificationBasis === 'historical-carry').length, 'Carry count mismatch');
+  if (agentProjection) requireValue((value.counts.agentVerified ?? 0) === value.capabilities.filter(c => c.verificationBasis === 'agent-verification' && c.status === 'prerelease-verified').length, 'Agent count mismatch');
 
   requireValue(value.counts.included === value.capabilities.length && value.counts.prereleaseVerified === count('prerelease-verified') &&
     value.counts.scenarioVerified === value.capabilities.filter(c => c.status === 'prerelease-verified' && c.verificationBasis === 'historical-scenario').length &&
     value.counts.developerAssessed === value.capabilities.filter(c => c.verificationBasis === 'developer-assessment').length &&
     (!proofRevision || value.counts.scopedProofVerified === value.capabilities.filter(c => c.status === 'prerelease-verified' && c.verificationBasis === 'value-stream').length) &&
-    value.counts.prereleaseVerified === value.counts.scenarioVerified + value.counts.developerAssessed + (proofRevision ? value.counts.scopedProofVerified : 0) &&
+    value.counts.prereleaseVerified === value.counts.scenarioVerified + value.counts.developerAssessed + (proofRevision ? value.counts.scopedProofVerified : 0) + (agentRevision ? value.counts.agentVerified : 0) + (carryRevision ? value.counts.carriedVerified : 0) &&
     value.counts.failedOrMixed === count('failed-or-mixed') && value.counts.notYetVerified === count('not-yet-verified') &&
     value.counts.releaseVerified === 0 && value.counts.releaseFailed === value.capabilities.filter(cap => cap.releaseStatus === 'failed').length, 'Counts must match the published capabilities');
 }
@@ -258,7 +290,7 @@ function testedRelease(value) {
 const testedReleases = releases => releases.filter(value => value.baselineKind === undefined).forEach(testedRelease);
 // `container` is true from container schema 5, the first level that admits a tested-build release
 // beside the schema-2 kinds. It has no `baselineKind` and carries an explicit `publicationState`.
-function release(value, schema, container = false, containerSchema = schema) {
+function release(value, schema, container = false, containerSchema = schema, agentProjection = false) {
   const keys = ['id', 'version', 'channel', 'approval', 'build', 'sourceRevision', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities'];
   const prerelease = schema >= 2 && value?.baselineKind === 'prerelease-evidence';
   requireValue(prerelease || schema < 3, 'Schema 3 carries pre-release evidence only');
@@ -285,7 +317,7 @@ function release(value, schema, container = false, containerSchema = schema) {
   if (prerelease) instant(value.generatedAt);
   publicationIdentity(value, prerelease || tested);
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Release must contain approved capabilities');
-  if (prerelease) prereleaseRelease(value, containerSchema);
+  if (prerelease) prereleaseRelease(value, containerSchema, agentProjection);
   else value.capabilities.forEach(cap => tested ? testedCapability(cap, value.build) : capability(cap, value.build, sourceOnly));
   unique(value.capabilities.map(cap => cap.id));
 }
@@ -513,4 +545,12 @@ export function validatePublication(input) {
   if (container) containerParts(input);
   if (input.schema === 6 || input.schema === 8) releaseStampsOf(input);
   return input;
+}
+
+// The caller separately pins the bytes, reviewed Kit source and target version.
+export function validateFreshAgentRelease(value) {
+  requireValue(value?.baselineKind === 'prerelease-evidence' && value.publicationState === 'draft', 'Expected native prerelease draft');
+  requireValue(!Object.hasOwn(value.counts ?? {}, 'scopedProofVerified'), 'Value-stream projection is not accepted here');
+  release(value, 4, false, 4, true);
+  return value;
 }

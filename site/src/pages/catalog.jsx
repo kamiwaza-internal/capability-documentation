@@ -162,19 +162,20 @@ export default function Catalog() {
         </div>
       {reports.map(report => <section className="release" key={report.version}>
         <h2>Kamiwaza {report.version}: {report.qualificationTarget ? 'prerelease qualification' : 'current capability status'}</h2>
-        {report.prereleaseCarry && <p><strong>{report.prereleaseCarry.capabilityIds.length} of {report.counts.included} prerelease verified through native carry</strong>. These reuse earlier evidence; they are not fresh tests or release certifications. The scoped-proof history below overlaps this count and must not be added to it.</p>}
+        {report.freshProjection ? <p><strong>{report.freshVerified} freshly tested and {report.effectiveCarry} carried capabilities for {report.version}</strong>. These categories are deduplicated scoped prerelease evidence, not final-release certification.</p> : report.prereleaseCarry && <p><strong>{report.prereleaseCarry.capabilityIds.length} of {report.counts.included} prerelease verified through native carry</strong>. These reuse earlier evidence; they are not fresh tests or release certifications. The scoped-proof history below overlaps this count and must not be added to it.</p>}
         <p><strong>{report.counts.acceptedScoped} of {report.counts.included} capabilities with {report.qualificationTarget ? 'retained scoped evidence available for qualification' : 'accepted scoped proofs across recorded builds'}</strong>; {report.counts.remaining} without accepted scoped proof. {report.counts.historicalPrerelease} historical prerelease verifications are retained separately, not added to the cumulative proof count.</p>
         <p>Evidence through {report.asOf}. {report.qualificationTarget ? `Prior results retain their original tested builds and dates. They are not fresh ${report.version} tests or accepted release carry-forward.` : 'Results cover multiple configurations, not one jointly tested deployment or whole-release approval.'} <a href={report.sourcePath}>Original detailed evidence</a></p>
         {report.capabilities.filter(row => (!query || (row.title + ' ' + row.id).toLowerCase().includes(query.toLowerCase())) &&
           (status === 'all' || (status === 'release-stamped' && !row.qualificationTarget && row.status === 'accepted-scoped-release') ||
           (status === 'qualification-pending' && row.qualificationTarget) ||
-          (['verified', 'prerelease-verified'].includes(status) && (row.qualificationTarget ? row.prereleaseCarried : row.historicalPrerelease)) ||
+          (['verified', 'prerelease-verified'].includes(status) && (row.qualificationTarget ? row.prereleaseCarried || row.freshStatus === 'prerelease-verified' : row.historicalPrerelease)) ||
           (['untested', 'not-yet-verified'].includes(status) && row.status !== 'accepted-scoped-release'))).map(row => <article className="capability" key={row.id}>
           <h3>{row.title} <span className="status">{verificationLabel(row)}</span></h3>
           <p><code>{row.id}</code> · {report.qualificationTarget ? prereleaseHistoryText(row) : `Historical prerelease: ${row.historicalPrerelease ? 'verified' : 'not recorded'}`}</p>
           {row.gap && <p>Remaining work: {row.gap}</p>}
-          {row.withheldReason && <p>Target carry withheld: {row.withheldReason}</p>}
-          {row.scopeNote && <p>{row.scopeNote}</p>}
+          {row.withheldReason && <p>{row.currentProjection ? 'Prior carry withheld' : 'Target carry withheld'}: {row.withheldReason}</p>}
+          {row.freshAssessment && <><p>Current scoped observation: {row.freshAssessment.scope}</p><p>Actual tested version: {row.freshAssessment.testedVersion}. Observed source: {row.freshAssessment.observedSourceRevision}. Assessed: {row.freshAssessment.assessedAt}.</p><TextList title="Observed operations" items={row.freshAssessment.operations.map(item => `${item.operation}: ${item.status}`)}/><TextList title="Current scope limits" items={row.freshAssessment.limits}/></>}
+          {row.scopeNote && <p>{row.freshStatus ? 'Retained prior scope: ' : ''}{row.scopeNote}</p>}
           {row.limits?.length > 0 && <details><summary>Retained evidence notes and limits</summary><p>These include earlier assessments. Historical missing-proof statements do not override the current status; current scope and exclusions still apply.</p><TextList title="Evidence notes" items={row.limits}/></details>}
           {row.assumptions?.length > 0 && <TextList title="Assumptions" items={row.assumptions}/>}
         </article>)}

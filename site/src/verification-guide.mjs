@@ -1,7 +1,11 @@
 const h = (level, text) => ({type: 'h', level, text});
 const p = text => ({type: 'p', text});
 const li = text => ({type: 'li', level: 0, text});
-export const verificationLabel = row => row.prereleaseCarried
+export const verificationLabel = row => row.freshStatus
+  ? row.freshStatus === 'prerelease-verified' ? `Prerelease verified — freshly tested for ${row.qualificationTarget}`
+    : row.freshStatus === 'failed-or-mixed' ? `Current ${row.qualificationTarget} proof failed or mixed`
+      : `Current ${row.qualificationTarget} proof incomplete`
+  : row.prereleaseCarried
   ? `Prerelease verified — carried into ${row.qualificationTarget}`
   : row.withheldReason ? 'Historical prerelease verified — current target blocked'
   : row.qualificationTarget
@@ -14,13 +18,30 @@ export const verificationLabel = row => row.prereleaseCarried
 
 // Presentation context only. The original source JSON and its version/stamps remain unchanged.
 export function releaseWorkView(work) {
-  return {...work.retained, version: work.version, originalVersion: work.originalVersion,
-    qualificationTarget: work.version, sourceBranch: work.sourceBranch,
-    prereleaseCarry:work.prereleaseCarry,
-    capabilities: work.retained.capabilities.map(row => ({...row, qualificationTarget: work.version, originalVersion: work.originalVersion,
-      prereleaseCarried:work.prereleaseCarry.capabilityIds.includes(row.id),
-      withheldReason:work.prereleaseCarry.withheld.find(cap => cap.id === row.id)?.reason}))};
+  const capabilities = work.retained.capabilities.map(row => {
+    const current = work.fresh?.release.capabilities.find(cap => cap.id === row.id);
+    const freshStatus = current?.releaseStatus === 'failed' ? 'failed-or-mixed'
+      : current?.verificationBasis === 'agent-verification' || current?.status === 'failed-or-mixed' ? current.status : null;
+    return {...row, qualificationTarget:work.version, originalVersion:work.originalVersion,
+      prereleaseCarried:!freshStatus && (current ? current.verificationBasis === 'historical-carry' : work.prereleaseCarry.capabilityIds.includes(row.id)),
+      withheldReason:work.prereleaseCarry.withheld.find(cap => cap.id === row.id)?.reason,
+      ...(current ? {currentProjection:true} : {}),
+      ...(freshStatus ? {freshStatus, freshAssessment:current.assessment} : {})};
+  });
+  return {...work.retained, version:work.version, originalVersion:work.originalVersion,
+    qualificationTarget:work.version, sourceBranch:work.sourceBranch,
+    prereleaseCarry:work.prereleaseCarry, capabilities,
+    ...(work.fresh ? {freshProjection:work.freshProjection,
+      freshVerified:capabilities.filter(row => row.freshStatus === 'prerelease-verified').length,
+      effectiveCarry:capabilities.filter(row => row.prereleaseCarried).length} : {})};
 }
+
+const freshDetails = row => row.freshAssessment ? [
+  p(`Current scoped observation: ${row.freshAssessment.scope}`),
+  p(`Actual tested version: ${row.freshAssessment.testedVersion}. Observed source: ${row.freshAssessment.observedSourceRevision}. Assessed: ${row.freshAssessment.assessedAt}.`),
+  ...row.freshAssessment.operations.map(item => li(`${item.operation}: ${item.status}`)),
+  ...row.freshAssessment.limits.map(item => li(item)),
+] : [];
 
 export function prereleaseHistoryText(row) {
   if (row.prereleaseCarried) return row.historicalPrerelease
@@ -33,6 +54,7 @@ export function prereleaseHistoryText(row) {
 
 function progressSummary(report) {
   const c = report.counts;
+  if (report.freshProjection) return `${report.freshVerified} capabilities have fresh scoped prerelease verification for ${report.version}; ${report.effectiveCarry} others retain native prerelease carry. These categories are deduplicated. The unchanged prior history retains ${c.acceptedScoped} scoped proofs and ${c.historicalPrerelease} historical prerelease records; do not add those overlapping history counts. This is not final-release certification.`;
   return report.qualificationTarget
     ? `${report.prereleaseCarry.capabilityIds.length} of ${c.included} capabilities are prerelease verified through native carry into ${report.version}. Separately, ${c.acceptedScoped} of ${c.included} capabilities have retained scoped evidence available for qualification; ${c.remaining} have no accepted scoped proof in that history. These overlapping counts are not additive and are not ${report.version} release certifications. Evidence through ${report.asOf}.`
     : `${c.acceptedScoped} of ${c.included} capabilities have accepted scoped proofs across the recorded builds. ${c.remaining} have no accepted scoped proof. Evidence through ${report.asOf}.`;
@@ -124,8 +146,9 @@ export function verificationDocument(report, concise = false) {
   for (const row of report.capabilities) {
     blocks.push(h(3, row.title), p(`${row.id} · ${verificationLabel(row)}`),
       p(report.qualificationTarget ? prereleaseHistoryText(row) : row.historicalPrerelease ? 'Historical prerelease verification is also retained.' : 'No historical prerelease verification is recorded for this capability.'));
-    if (row.gap) blocks.push(p(`Remaining work: ${row.gap}`));
-    if (row.withheldReason) blocks.push(p(`Target carry withheld: ${row.withheldReason}`));
+    blocks.push(...freshDetails(row));
+    if (row.gap) blocks.push(p(`${row.freshStatus ? 'Prior recorded gap' : 'Remaining work'}: ${row.gap}`));
+    if (row.withheldReason) blocks.push(p(`${row.currentProjection ? 'Prior carry withheld' : 'Target carry withheld'}: ${row.withheldReason}`));
     if (row.scopeNote) blocks.push(p(`Current versus historical scope: ${row.scopeNote}`));
     if (row.limits?.length) blocks.push(p('Retained evidence notes include earlier assessments. Historical statements about missing release proof do not override the current status above; current scope and exclusions still apply.'));
     for (const limit of row.limits ?? []) blocks.push(li(limit));
@@ -139,6 +162,7 @@ export function verificationDocument(report, concise = false) {
   blocks.push(h(2, 'Sources'), p(`Canonical capability-kit commit: ${report.sourceKitCommit}. Original baseline Core source: ${report.sourceCoreCommit}. Any corrected release-line source is identified separately in its capability record.`),
     p(`Full source record: ${report.sourcePath}. Detailed stamps, limits and historical records are retained in the ZIP.`));
   if (report.prereleaseCarry) blocks.push(p(`Native prerelease carry: capability-kit ${report.prereleaseCarry.sourceKitCommit}; ${report.prereleaseCarry.reviewReference}. This is prerelease evidence reuse, not accepted release carry-forward.`));
+  if (report.freshProjection) blocks.push(p(`Fresh scoped projection: capability-kit ${report.freshProjection.sourceKitCommit}; reviewed public bytes ${report.freshProjection.sha256}; ${report.freshProjection.reviewReference}. Recipe qualification remains separate from ingredient status.`));
   return blocks;
 }
 
@@ -152,7 +176,7 @@ const scopedIngredientTitles = {
 const ingredientTitle = row => scopedIngredientTitles[row.id] ?? row.title;
 const ingredientStatus = row => ({
   ...p(`**${verificationLabel(row)}**`), callout: true,
-  tone: !row.qualificationTarget && row.status === 'accepted-scoped-release' ? 'green' : 'amber',
+  tone: row.freshStatus === 'prerelease-verified' || (!row.qualificationTarget && row.status === 'accepted-scoped-release') ? 'green' : 'amber',
 });
 
 // Human summaries of the pinned report; the ZIP retains every original note and assumption.
@@ -200,19 +224,21 @@ export function recipeGuide(report) {
   for (const row of report.capabilities) {
     blocks.push(h(3, ingredientTitle(row)), ingredientStatus(row), p(`Ingredient: ${row.id}`),
       p(report.qualificationTarget ? prereleaseHistoryText(row) : `Prerelease evidence: ${row.historicalPrerelease ? 'verified in the historical ledger' : 'not recorded'}.`));
-    if (row.gap) blocks.push(p(`Still needed: ${row.gap}`));
-    if (row.withheldReason) blocks.push(p(`Target carry withheld: ${row.withheldReason}`));
-    if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`Verified scope and limits: ${scopeSummaries[row.id] || row.scopeNote}`));
+    blocks.push(...freshDetails(row));
+    if (row.gap) blocks.push(p(`${row.freshStatus ? 'Prior recorded gap' : 'Still needed'}: ${row.gap}`));
+    if (row.withheldReason) blocks.push(p(`${row.currentProjection ? 'Prior carry withheld' : 'Target carry withheld'}: ${row.withheldReason}`));
+    if (scopeSummaries[row.id] || row.scopeNote) blocks.push(p(`${row.freshStatus ? 'Retained prior scope and limits' : 'Verified scope and limits'}: ${scopeSummaries[row.id] || row.scopeNote}`));
     else {
       for (const note of row.limits ?? []) blocks.push(p(note));
       for (const assumption of row.assumptions ?? []) blocks.push(p(`Assumption: ${assumption}`));
     }
-    if (row.finishedAt) blocks.push(p(`Evidence date: ${row.finishedAt.slice(0, 10)}. Full record: ${row.id} in the ZIP verification report.`));
+    if (row.finishedAt) blocks.push(p(`${row.freshStatus ? 'Prior evidence date' : 'Evidence date'}: ${row.finishedAt.slice(0, 10)}. Full record: ${row.id} in the ZIP verification report.`));
   }
   blocks.push(h(2, 'Evidence and further reading'),
     p('Glossary entries summarize tested scope. The complete ZIP contains the detailed verification report and source records, including all historical prerelease entries. They preserve the exact test scope, assumptions and stamps behind this glossary.'),
     p(`Canonical source: capability-kit commit ${report.sourceKitCommit}. Report: ${report.sourcePath}.`),
     p('The retired Docker/SSH paired-node workflow is excluded. Counts are cumulative across test configurations and do not constitute whole-release sign-off.'));
   if (report.prereleaseCarry) blocks.push(p(`Native prerelease carry: capability-kit ${report.prereleaseCarry.sourceKitCommit}; ${report.prereleaseCarry.reviewReference}. This reuses prior evidence and creates no fresh test or release certification.`));
+  if (report.freshProjection) blocks.push(p(`Fresh scoped projection: capability-kit ${report.freshProjection.sourceKitCommit}; reviewed public bytes ${report.freshProjection.sha256}; ${report.freshProjection.reviewReference}. Recipe qualification remains separate from ingredient status.`));
   return blocks;
 }
