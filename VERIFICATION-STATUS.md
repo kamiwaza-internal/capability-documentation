@@ -11,6 +11,8 @@ Verify the release delta. Unchanged capabilities do not need a full replay when 
 | **Prerelease verified** | Accepted historical prerelease evidence exists, but release-baseline acceptance is not established. | No; report separately |
 | **Release verification pending** | Neither accepted fresh evidence nor an applicable carry-forward decision establishes release coverage. | No |
 
+Readiness checks, rehearsal (dry) runs and attempt counts are internal process diagnostics. They never establish any status above and are neither accepted execution evidence nor an accepted assessment; statuses rest only on those. A capability that needed several attempts is not verified to a lesser degree than one that passed first time.
+
 Use **release verified**, not **release certified**. Verification describes the recorded scope; it is not certification, accreditation, every possible operation, or human whole-release approval.
 
 ## Carry-forward decision
