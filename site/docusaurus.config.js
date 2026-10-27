@@ -10,8 +10,8 @@ module.exports = async function config() {
   if (process.env.GITHUB_SHA && !/^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA)) throw new Error('Invalid site build revision');
   const {loadReleaseCorpora} = await import('./scripts/release-corpora.mjs');
   const currentVerification = loadReleaseCorpora().filter(row => row.presentation !== 'original-tagged-release').map(row => row.currentVerification).filter(Boolean);
-  const {loadReleaseWork} = await import('./scripts/release-work.mjs');
-  const releaseWork = loadReleaseWork({publication: require('./data/publication.json')}).map(({retainedBytes, ...row}) => row);
+  const {loadReleaseWork, releaseWorkSiteData} = await import('./scripts/release-work.mjs');
+  const releaseWork = loadReleaseWork({publication: require('./data/publication.json')}).map(releaseWorkSiteData);
   return {
     title: 'Kamiwaza Sales Dev Kit',
     tagline: 'Know what is established. See the conditions. Choose your release.',

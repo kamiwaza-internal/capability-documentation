@@ -646,3 +646,32 @@ Run `npm test`, `npm run test:integration`, `npm run build` and
 `PUBLICATION_BASE_SHA=<base-commit> node scripts/preserve-history.mjs`. Review public
 projection text for private prompts, credentials, local paths and internal runtime
 addresses; do not copy raw execution logs or browser captures into public output.
+
+## Optional fresh agent evidence in target-work downloads
+
+`release-work.json` may add a `freshProjection` reference with exactly `path`,
+`sha256`, `sourceKitCommit`, `releaseId` and `reviewReference`. The file lives under
+`site/static/fresh-projections/` and contains the existing native Kit prerelease
+export container. Its selected draft release must match the target and pinned Kit
+commit; other release objects must exactly match already reviewed publication
+history. The selected revision must be last and cover the complete current
+ingredient inventory, so omitted current failures cannot borrow a carry label. The reference cites the documentation review PR for these public bytes,
+not a fabricated packet attestation. A digest or URL alone is not approval.
+
+The default production configuration has no such reference. Do not add one until
+an actual accepted native packet and its curated public projection are reviewed.
+Tests use synthetic fixtures only. The native Kit validator and prevailing verdict
+remain authoritative; this loader validates the public projection, not private
+receipts. Never add agent evidence to `prereleaseCarry` or rewrite retained prior
+verification. Fresh observations, effective carry and prior history stay separate
+and deduplicated. Native `historical-carry` rows remain carry, never fresh tests.
+The selected native projection controls current carry when present; its carried
+count must match its rows. Current failed/partial outcomes override a carry label. Actual
+tested version, source, operation outcomes and limits appear in both document
+formats; an ingredient result does not qualify its recipe.
+
+The existing ZIP contains the exact separate `fresh-agent-projection.json` and
+unchanged `retained-prior-verification.json`, plus the same generated PDF/Markdown
+bytes as the downloads. Agent instructions remain requirement-support reporting,
+not vendor response generation. General publication intake does not accept this
+new basis; only the hash-bound target-work loader does. No layout change is needed.
