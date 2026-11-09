@@ -33,6 +33,10 @@ export default function Home() {
       <h1>What each Kamiwaza release can do, and the evidence behind it</h1>
     </div></header>
     <main className="container kitMain">
+      <nav className="kitTabs" aria-label="Explore capabilities">
+        <Link to="/" aria-current="page">About and evidence</Link>
+        <Link to="/value-streams/">Value stream map <span aria-hidden="true">↗</span></Link>
+      </nav>
       <section aria-labelledby="about" className="panel panelTint">
         <h2 id="about">About</h2>
         <p>Explore Kamiwaza capabilities by release in the <Link to="/catalog/">catalog</Link>, or download a release’s PDF, Markdown or ZIP. Each download includes the supporting evidence and known limits.</p>
