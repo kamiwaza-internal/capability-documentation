@@ -1,5 +1,6 @@
 // Group definitions by their stable persona/parent ID, never by a blended title.
 export const parentId = id => id.split(':').slice(0, 2).join(':');
+export const linkedCapabilityIds = recipe => recipe.capabilityIds ?? recipe.reviewedVerifies;
 export const cleanTitle = title => title.replace(/^VS[\d.-]+:\s*/, '');
 export const gapLabels = {
   'typed-definition-needed': 'Typed definition needed',
@@ -26,18 +27,19 @@ export function findStreams(streams, query, persona, corpus) {
   return streams.filter(stream => {
     if (persona !== 'all' && stream.persona !== persona) return false;
     const text = [stream.id, stream.title, ...stream.recipes.flatMap(recipe =>
-      [recipe.title, recipe.id, ...recipe.reviewedVerifies.flatMap(id => [id, names.get(id)])])];
+      [recipe.title, recipe.id, ...linkedCapabilityIds(recipe).flatMap(id => [id, names.get(id)])])];
     return text.join(' ').toLowerCase().includes(needle);
   });
 }
 
 export function streamCapabilities(stream, corpus) {
-  const ids = new Set(stream.recipes.flatMap(recipe => recipe.reviewedVerifies));
+  const ids = new Set(stream.recipes.flatMap(linkedCapabilityIds));
   return corpus.capabilities.filter(cap => ids.has(cap.id));
 }
 
 export function mappingSummary(corpus) {
-  const mapped = new Set(corpus.recipes.flatMap(recipe => recipe.reviewedVerifies));
+  const known = new Set(corpus.capabilities.map(cap => cap.id));
+  const mapped = new Set(corpus.recipes.flatMap(linkedCapabilityIds).filter(id => known.has(id)));
   return {streams: streamInventory(corpus).length, recipes: corpus.recipes.length,
     linked: mapped.size, unmapped: corpus.capabilities.filter(cap => !mapped.has(cap.id)).length};
 }

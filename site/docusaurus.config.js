@@ -10,10 +10,14 @@ module.exports = async function config() {
   if (process.env.GITHUB_SHA && !/^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA)) throw new Error('Invalid site build revision');
   const {loadReleaseCorpora} = await import('./scripts/release-corpora.mjs');
   const corpora = loadReleaseCorpora();
-  const dashboardCorpora = corpora.map(row => row.catalog);
   const currentVerification = corpora.filter(row => row.presentation !== 'original-tagged-release').map(row => row.currentVerification).filter(Boolean);
   const {loadReleaseWork, releaseWorkSiteData} = await import('./scripts/release-work.mjs');
   const releaseWork = loadReleaseWork({publication: require('./data/publication.json')}).map(releaseWorkSiteData);
+  const {validateStreams} = await import('./scripts/value-streams.mjs');
+  const streams = validateStreams(require('./data/value-streams.json'), require('./data/publication.json'));
+  const {dashboardReleases} = await import('./src/dashboard-releases.mjs');
+  const dashboard = dashboardReleases({publication: require('./data/publication.json'),
+    releaseStamps: require('./data/release-stamps-1.3.2.json'), corpora, currentVerification, releaseWork, streams});
   return {
     title: 'Kamiwaza Sales Dev Kit',
     tagline: 'Know what is established. See the conditions. Choose your release.',
@@ -27,7 +31,7 @@ module.exports = async function config() {
     staticDirectories: [],
     favicon: 'favicon.svg',
     // The commit this site was built from, when CI provides it. Not a test or publication date.
-    customFields: {dashboardCorpora, currentVerification, releaseWork, buildRevision: process.env.GITHUB_SHA || null, builtAt: new Date().toISOString()},
+    customFields: {dashboardReleases: dashboard, currentVerification, releaseWork, buildRevision: process.env.GITHUB_SHA || null, builtAt: new Date().toISOString()},
     plugins: ['./scripts/published-bundles.mjs'],
     presets: [['classic', {docs: false, blog: false, theme: {customCss: './src/css/custom.css'}}]],
     themeConfig: {

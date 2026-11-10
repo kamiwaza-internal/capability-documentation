@@ -137,6 +137,12 @@ test('BUILD-1 real static build renders public claims safely and excludes siblin
   for (const absent of ['Release stamped', 'Source-contract verified', 'scoped stamp', 'stamps.json']) assert.ok(!html.includes(absent), `Stamp content rendered for another publication: ${absent}`);
   for (const file of ['local-stamps.json', 'release-stamps-1.3.2.json']) assert.equal(existsSync(join(site, 'build', file)), false);
   assertHomeAndDownloads(site, '0.0.0', ['synthetic.only', '&lt;script&gt;NOT_EXECUTABLE&lt;/script&gt;', 'Known input', 'Not a product claim', 'Whole-claim verification is not established.']);
+  const dashboard = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  assert.ok(dashboard.includes('aria-label="Release"'), 'dashboard discovers the synthetic release through ordinary publication intake');
+  assert.ok(dashboard.includes(release.version), 'new publication version appears without a corpus or dashboard registration');
+  assert.ok(dashboard.includes('synthetic.only'), 'the new release capability renders');
+  assert.ok(dashboard.includes('No recipe mapping published for'), 'missing recipe data is explicit');
+  assert.ok(!dashboard.includes('Operator:VS1'), 'historical recipe data cannot leak into a new release');
   const stale = JSON.parse(readFileSync(join(site, 'data/sales-guidance.json')));
   stale.publicationSha256 = 'f'.repeat(64);
   writeFileSync(join(site, 'data/sales-guidance.json'), JSON.stringify(stale));
@@ -276,5 +282,9 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(catalog.includes('Inherited assumptions and limits about mocked tests'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));
+  const dashboard = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  for (const entry of index.versions) assert.ok(dashboard.includes(`<option${entry.version === index.versions[0].version ? ' selected=""' : ''}>${entry.version}</option>`), `dashboard lists ${entry.version}`);
+  assert.ok(dashboard.includes('No recipe mapping published for 1.3.5'), 'the newest release is selected with its own mapping gaps');
+  assert.ok(dashboard.includes('Prerelease verified — carried into 1.3.5'), 'current qualification wording is retained');
   console.log(`Offline release-card build evidence: ${root}`);
 });

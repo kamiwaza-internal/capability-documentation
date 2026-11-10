@@ -1,5 +1,5 @@
 import React from 'react';
-import {gapLabels} from '../value-stream-map.mjs';
+import {gapLabels, linkedCapabilityIds} from '../value-stream-map.mjs';
 
 export default function RecipeDetail({recipe, capability, corpus}) {
   const proof = corpus.establishedScopedProofs.find(row => row.recipeId === recipe?.id);
@@ -8,8 +8,9 @@ export default function RecipeDetail({recipe, capability, corpus}) {
     <h3>{capability?.title ?? recipe?.title ?? 'Select a recipe'}</h3>
     {capability ? <>
       <code>{capability.id}</code>
-      <dl><dt>Inventory scope</dt><dd>{capability.disposition}</dd><dt>Source declaration</dt><dd>{capability.sourceDeclaration}</dd>
-        <dt>Snapshot prerelease status</dt><dd>{capability.prereleaseStatus}</dd></dl>
+      <dl><dt>Inventory scope</dt><dd>{capability.disposition}</dd>{(capability.details ?? []).map(item => <React.Fragment key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></React.Fragment>)}</dl>
+      {capability.conditions?.length > 0 && <><h4>Conditions & assumptions</h4><ul>{capability.conditions.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
+      {capability.limits?.length > 0 && <><h4>Limits</h4><ul>{capability.limits.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
       <p>This capability retains its own identity and evidence scope wherever it is used. Connections do not grant additional verification.</p>
     </> : recipe && <>
       <code>{recipe.id}</code>
@@ -21,8 +22,10 @@ export default function RecipeDetail({recipe, capability, corpus}) {
       <h4>Reviewed capability claims</h4>
       {recipe.reviewedVerifies.length ? <ul>{recipe.reviewedVerifies.map(id => <li key={id}><code>{id}</code></li>)}</ul> : <p>No reviewed claims published for this recipe.</p>}
       {recipe.reviewedVerifies.length > 0 && !proof && <p>These reviewed links have no established scoped SDK proof here.</p>}
+      {recipe.capabilityIds && <><h4>Capability ingredients</h4><ul>{linkedCapabilityIds(recipe).map(id => <li key={id}><code>{id}</code> · ingredient only</li>)}</ul></>}
+      {recipe.limits?.length > 0 && <><h4>Recipe limits</h4><ul>{recipe.limits.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
       <h4>Recorded gaps</h4><ul>{recipe.gaps.map(gap => <li key={gap}>{gapLabels[gap]}</li>)}</ul>
-      <p>Step instructions and ingredient links are not published in this inventory snapshot.</p>
+      <p>{recipe.capabilityIds ? 'Ingredient links come from this release’s reviewed recipe publication. A definition does not establish execution.' : 'Step instructions and ingredient links are not published in this inventory snapshot.'}</p>
     </>}
   </aside>;
 }
