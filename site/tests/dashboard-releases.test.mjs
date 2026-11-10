@@ -85,6 +85,18 @@ test('discovery is a presentation projection and never mutates canonical evidenc
   assert.equal(JSON.stringify(sources), before);
 });
 
+test('the latest applicable declaration supplies title and scope without changing historical verification', () => {
+  const entry = dashboards.find(row => row.release === '1.3.0');
+  const cap = entry.capabilities.find(row => row.id === 'platform.airgapped-install');
+  const declared = publication.releases.find(row => row.id === '1.3.0-declared-r5').capabilities.find(row => row.id === cap.id);
+  assert.equal(cap.title, declared.title);
+  assert.deepEqual(cap.conditions, declared.conditions);
+  assert.deepEqual(cap.limits, declared.limits);
+  assert.equal(cap.details.find(row => row.label === 'Evidence status').value, 'Not yet verified');
+  const reordered = {...publication, releases:[...publication.releases].reverse()};
+  assert.deepEqual(dashboardReleases({...sources, publication:reordered}).find(row => row.release === '1.3.0').capabilities.find(row => row.id === cap.id), cap);
+});
+
 
 test('a revised publication refreshes the same release without retaining stale capability rows', () => {
   const older = newRelease('1.10.0');

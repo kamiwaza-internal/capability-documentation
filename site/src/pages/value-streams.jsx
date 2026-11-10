@@ -42,6 +42,10 @@ function Dashboard({corpus}) {
   const recipe = stream?.recipes.find(row => row.id === selection.recipe) ?? stream?.recipes[0];
   const effective = {...selection, recipe: recipe?.id};
   const capability = corpus.capabilities.find(row => row.id === selection.capability);
+  function updateFilter(setFilter, value) {
+    setFilter(value);
+    setSelection(current => ({...current, capability:null}));
+  }
   function chooseStream(id) {
     setStreamId(id);
     setSelection({recipe: streams.find(row => row.id === id).recipes[0].id, capability: null});
@@ -55,8 +59,8 @@ function Dashboard({corpus}) {
       <p>{corpus.basis} <a href={salesKitPath(corpus.release) + '.md'}>Read this release’s scope and limits</a>.</p>
       <p>{corpus.recipeNote}</p>
     </aside>
-    {streams.length > 0 && <div className="mapFilters"><label>Find a value stream<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search streams, recipes or linked capabilities"/></label>
-      <label>Persona<select aria-label="Persona" value={persona} onChange={event => setPersona(event.target.value)}><option value="all">All personas</option>{[...new Set(streams.map(row => row.persona))].map(name => <option key={name}>{name}</option>)}</select></label>
+    {streams.length > 0 && <div className="mapFilters"><label>Find a value stream<input type="search" value={query} onChange={event => updateFilter(setQuery, event.target.value)} placeholder="Search streams, recipes or linked capabilities"/></label>
+      <label>Persona<select aria-label="Persona" value={persona} onChange={event => updateFilter(setPersona, event.target.value)}><option value="all">All personas</option>{Array.from(new Set(streams.map(row => row.persona))).map(name => <option key={name} value={name}>{name}</option>)}</select></label>
       <label>Value stream<select aria-label="Value stream" value={stream?.id ?? ''} onChange={event => chooseStream(event.target.value)} disabled={!matches.length}>
         {!matches.length && <option value="">No matching streams</option>}{matches.map(row => <option key={row.id} value={row.id}>{row.persona} · {row.title}</option>)}
       </select></label></div>}

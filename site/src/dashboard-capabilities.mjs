@@ -17,15 +17,18 @@ function publicationRows(entry, publication) {
 }
 
 function publishedCapabilities(entry, publication) {
-  const records = publication.releases.filter(row => row.version === entry.version);
+  const records = publication.releases.filter(row => row.version === entry.version)
+    .sort((a, b) => b.publicationRevision - a.publicationRevision);
   return publicationRows(entry, publication).map(row => {
-    const title = row.title || records.flatMap(record => record.capabilities).find(cap => cap.id === row.id && cap.title)?.title;
+    const described = records.find(record => record.id === row.describedIn)?.capabilities.find(cap => cap.id === row.id);
+    const fallback = row.title ? null : records.flatMap(record => record.capabilities).find(cap => cap.id === row.id && cap.title);
+    const description = described ?? fallback;
     const declaration = records.some(record => record.capabilities.some(cap => cap.id === row.id && cap.declaration));
     const observation = row.lineage?.assessment;
     const proof = row.lineage?.proof;
-    return {...common({...row, title}),
-      conditions:[...row.conditions, ...(observation?.assumptions ?? [])],
-      limits:[...row.limits, ...(observation?.limits ?? []), ...(proof?.limits ?? [])], details: [
+    return {...common({...row, title:description?.title ?? row.title}),
+      conditions:[...new Set([...row.conditions, ...(description?.conditions ?? []), ...(observation?.assumptions ?? [])])],
+      limits:[...new Set([...row.limits, ...(description?.limits ?? []), ...(observation?.limits ?? []), ...(proof?.limits ?? [])])], details: [
       detail('Evidence status', entry.kind === 'tested' ? row.status : labels[row.status] ?? row.status),
       detail('Source declaration', declaration ? 'Declared in this version’s source records' : 'Not established'),
       detail('Evidence version', entry.version), detail('Verification basis', row.lineage?.verificationBasis),
