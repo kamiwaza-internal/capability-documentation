@@ -21,17 +21,23 @@ function publishedCapabilities(entry, publication) {
   return publicationRows(entry, publication).map(row => {
     const title = row.title || records.flatMap(record => record.capabilities).find(cap => cap.id === row.id && cap.title)?.title;
     const declaration = records.some(record => record.capabilities.some(cap => cap.id === row.id && cap.declaration));
-    return {...common({...row, title}), details: [
+    const observation = row.lineage?.assessment;
+    const proof = row.lineage?.proof;
+    return {...common({...row, title}),
+      conditions:[...row.conditions, ...(observation?.assumptions ?? [])],
+      limits:[...row.limits, ...(observation?.limits ?? []), ...(proof?.limits ?? [])], details: [
       detail('Evidence status', entry.kind === 'tested' ? row.status : labels[row.status] ?? row.status),
       detail('Source declaration', declaration ? 'Declared in this version’s source records' : 'Not established'),
-      detail('Evidence version', entry.version),
+      detail('Evidence version', entry.version), detail('Verification basis', row.lineage?.verificationBasis),
+      detail('Observed scope', observation?.scope ?? proof?.scope), detail('Actual tested version', observation?.testedVersion),
+      detail('Original carry cycle', row.lineage?.carry?.sourceRelease),
     ]};
   });
 }
 
 function stampedCapabilities(entry, sources) {
   const baseline = sources.publication.releases.find(row => row.id === sources.releaseStamps.baselineReleaseId);
-  const rows = activeCapabilities(currentCapabilityView(sources.publication, baseline.version));
+  const rows = activeCapabilities(currentCapabilityView(sources.publication, baseline.version, baseline.id));
   return joinReleaseStamps(rows, sources.releaseStamps).rows.map(row => ({...common(row),
     limits: [...row.limits, ...(row.releaseStamp?.limits ?? [])], details: [
       detail('Release evidence', row.releaseStamp ? 'Scoped release stamp' : 'No scoped release stamp'),
@@ -60,6 +66,7 @@ function workCapabilities(entry) {
       detail('Original evidence version', row.originalVersion), detail('Original observation', row.finishedAt),
       detail('Current scoped assessment', row.freshAssessment?.scope), detail('Current target blocker', row.withheldReason),
       detail('Evidence gap', row.gap),
+      ...(row.nativeEvidence ? [detail('Native basis', row.nativeEvidence.verificationBasis), detail('Native scope', row.nativeEvidence.assessment?.scope ?? row.nativeEvidence.proof?.scope)] : []),
     ]}));
 }
 

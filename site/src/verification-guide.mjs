@@ -1,7 +1,7 @@
 const h = (level, text) => ({type: 'h', level, text});
 const p = text => ({type: 'p', text});
 const li = text => ({type: 'li', level: 0, text});
-export const verificationLabel = row => row.freshStatus
+export const verificationLabel = row => row.nativeQualification ?? (row.freshStatus
   ? row.freshStatus === 'prerelease-verified' ? `Prerelease verified — freshly tested for ${row.qualificationTarget}`
     : row.freshStatus === 'failed-or-mixed' ? `Current ${row.qualificationTarget} proof failed or mixed`
       : `Current ${row.qualificationTarget} proof incomplete`
@@ -14,10 +14,11 @@ export const verificationLabel = row => row.freshStatus
       : `${row.qualificationTarget} qualification pending`
   : row.status === 'accepted-scoped-release'
   ? 'Scoped proof — verified on the recorded build' : row.historicalPrerelease
-    ? 'Prerelease verified — release acceptance pending' : 'Release verification pending';
+    ? 'Prerelease verified — release acceptance pending' : 'Release verification pending');
 
 // Presentation context only. The original source JSON and its version/stamps remain unchanged.
 export function releaseWorkView(work) {
+  if (work.fresh?.release.recipeInventory) return nativeWorkView(work);
   const capabilities = work.retained.capabilities.map(row => {
     const current = work.fresh?.release.capabilities.find(cap => cap.id === row.id);
     const freshStatus = current?.releaseStatus === 'failed' ? 'failed-or-mixed'
@@ -34,6 +35,34 @@ export function releaseWorkView(work) {
     ...(work.fresh ? {freshProjection:work.freshProjection,
       freshVerified:capabilities.filter(row => row.freshStatus === 'prerelease-verified').length,
       effectiveCarry:capabilities.filter(row => row.prereleaseCarried).length} : {})};
+}
+
+function nativeQualification(cap, version) {
+  if (!cap) return 'Outside current native scope; prior history retained without current credit';
+  if (cap.status !== 'prerelease-verified') return `${cap.status} for ${version}; not release verification`;
+  const basis = {'historical-carry':'native carry; no fresh execution', 'historical-scenario':'retained scenario evidence',
+    'agent-verification':'scoped agent observations', 'value-stream':'scoped recipe proof', 'developer-assessment':'local contract; no live runtime pass'};
+  return `Prerelease verified for ${version}: ${basis[cap.verificationBasis]}`;
+}
+
+function nativeWorkView(work) {
+  const release = work.fresh.release;
+  const prior = new Map(work.retained.capabilities.map(cap => [cap.id, cap]));
+  const ids = [...new Set([...prior.keys(), ...release.capabilities.map(cap => cap.id)])];
+  const capabilities = ids.map(id => {
+    const current = release.capabilities.find(cap => cap.id === id);
+    const original = prior.get(id);
+    return {...(original ?? {id, title:current.title ?? id, status:'not-release-verified', historicalPrerelease:false}),
+      originalVersion:original ? work.originalVersion : work.version, qualificationTarget:work.version,
+      nativeQualification:nativeQualification(current, work.version), nativeEvidence:current,
+      prereleaseCarried:current?.verificationBasis === 'historical-carry',
+      assumptions:[...(original?.assumptions ?? []), ...(current?.carry?.assumptions ?? [])],
+      limits:[...(original?.limits ?? []), ...(current?.limits ?? []), ...(current?.carry?.limits ?? []), ...(current?.assessment?.limits ?? []), ...(current?.proof?.limits ?? [])],
+      ...(current?.verificationBasis === 'agent-verification' ? {freshAssessment:current.assessment} : {})};
+  });
+  return {...work.retained, version:work.version, originalVersion:work.originalVersion, qualificationTarget:work.version,
+    sourceBranch:work.sourceBranch, prereleaseCarry:work.prereleaseCarry, freshProjection:work.freshProjection,
+    nativeCounts:release.counts, capabilities};
 }
 
 const freshDetails = row => row.freshAssessment ? [
@@ -54,6 +83,7 @@ export function prereleaseHistoryText(row) {
 
 function progressSummary(report) {
   const c = report.counts;
+  if (report.nativeCounts) return `${report.nativeCounts.prereleaseVerified} of ${report.nativeCounts.included} capabilities have native prerelease verification for ${report.version}: ${report.nativeCounts.carriedVerified} carried, ${report.nativeCounts.agentVerified} agent-observed, ${report.nativeCounts.scopedProofVerified} scoped recipe proofs, ${report.nativeCounts.developerAssessed} local-contract assessments and ${report.nativeCounts.scenarioVerified} scenario-backed. Original observations and overlapping prior histories remain separate. Not final-release certification.`;
   if (report.freshProjection) return `${report.freshVerified} capabilities have fresh scoped prerelease verification for ${report.version}; ${report.effectiveCarry} others retain native prerelease carry. These categories are deduplicated. The unchanged prior history retains ${c.acceptedScoped} scoped proofs and ${c.historicalPrerelease} historical prerelease records; do not add those overlapping history counts. This is not final-release certification.`;
   return report.qualificationTarget
     ? `${report.prereleaseCarry.capabilityIds.length} of ${c.included} capabilities are prerelease verified through native carry into ${report.version}. Separately, ${c.acceptedScoped} of ${c.included} capabilities have retained scoped evidence available for qualification; ${c.remaining} have no accepted scoped proof in that history. These overlapping counts are not additive and are not ${report.version} release certifications. Evidence through ${report.asOf}.`

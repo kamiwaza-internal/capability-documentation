@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 import {existsSync, lstatSync, realpathSync, readFileSync} from 'node:fs';
 import {join, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {validateFreshAgentRelease} from './publication.mjs';
+import {validateFreshAgentRelease, validateNativeCycleRelease} from './publication.mjs';
 import {loadCurrentVerification} from './current-verification.mjs';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 
@@ -26,7 +26,7 @@ function loadFreshProjection(repo, binding, target, retained, publication) {
   const container = JSON.parse(bytes);
   assertPublicOutputSafe(JSON.stringify(container));
   keys(container, ['schema', 'releases']);
-  assert.ok([2, 4].includes(container.schema), 'Expected native prerelease projection container');
+  assert.ok([2, 4, 9].includes(container.schema), 'Expected native prerelease projection container');
   assert.ok(Array.isArray(container.releases));
   assert.equal(new Set(container.releases.map(row => row.id)).size, container.releases.length, 'Duplicate projection release');
   for (const prior of container.releases.filter(row => row.id !== binding.releaseId)) {
@@ -40,8 +40,10 @@ function loadFreshProjection(repo, binding, target, retained, publication) {
   assert.equal(release.id, `${target}-prerelease-r${release.publicationRevision}`, 'Native projection identity mismatch');
   assert.equal(release.version, target, 'Fresh projection target mismatch');
   assert.equal(release.sourceRevision, binding.sourceKitCommit, 'Fresh projection source mismatch');
-  validateFreshAgentRelease(release);
-  assert.deepEqual(release.capabilities.map(row => row.id).sort(), retained.capabilities.map(row => row.id).sort(), 'Fresh projection must cover the complete ingredient inventory');
+  if (container.schema === 9) validateNativeCycleRelease(release);
+  else validateFreshAgentRelease(release);
+  if (container.schema === 9) assert.ok(retained.capabilities.every(row => release.capabilities.some(cap => cap.id === row.id) || release.omittedCapabilities.includes(row.id)), 'Native projection must account for retained inventory');
+  else assert.deepEqual(release.capabilities.map(row => row.id).sort(), retained.capabilities.map(row => row.id).sort(), 'Fresh projection must cover the complete ingredient inventory');
   return {release, bytes};
 }
 

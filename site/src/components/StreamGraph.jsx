@@ -1,5 +1,5 @@
 import React from 'react';
-import {cleanTitle, linkedCapabilityIds, streamCapabilities} from '../value-stream-map.mjs';
+import {cleanTitle, linkedCapabilityIds, recipeProof, streamCapabilities} from '../value-stream-map.mjs';
 
 const center = (index, count) => (index + 0.5) / count * 100;
 
@@ -28,7 +28,7 @@ export default function StreamGraph({stream, corpus, selection, onSelect}) {
       <button type="button" key={recipe.id} title={recipe.title} className="streamNode recipeNode" aria-pressed={recipe.id === selection.recipe}
         onClick={() => onSelect({recipe: recipe.id, capability: null})}>
         <small>Recipe · revision {recipe.definitionRevision}</small><strong>{cleanTitle(recipe.title)}</strong>
-        <span>{recipe.scopedSdkProof === 'established' ? 'Scoped SDK proof retained' : 'No scoped SDK proof recorded'}</span>
+        <span>{recipeProof(recipe, corpus) ? 'Scoped journey proof retained' : 'No scoped journey proof recorded'}</span>
       </button>)}</div>
     <div className="streamColumn" style={{gridTemplateRows: `repeat(${Math.max(1, caps.length)}, 1fr)`}}>{caps.length ? caps.map(cap =>
       <button type="button" key={cap.id} title={cap.title} className={'streamNode capabilityNode' + (active.has(cap.id) ? ' connectedNode' : '')}

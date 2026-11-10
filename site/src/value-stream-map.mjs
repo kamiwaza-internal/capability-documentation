@@ -43,3 +43,13 @@ export function mappingSummary(corpus) {
   return {streams: streamInventory(corpus).length, recipes: corpus.recipes.length,
     linked: mapped.size, unmapped: corpus.capabilities.filter(cap => !mapped.has(cap.id)).length};
 }
+
+
+export function recipeProof(recipe, corpus) {
+  return corpus.establishedScopedProofs.find(proof => {
+    if (proof.recipeId !== recipe?.id) return false;
+    if (proof.recipeSha256 && proof.recipeSha256 !== recipe.definitionSha256) return false;
+    if (proof.recipeRevision && proof.recipeRevision !== recipe.definitionRevision) return false;
+    return true;
+  });
+}

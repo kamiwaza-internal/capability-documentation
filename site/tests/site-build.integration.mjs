@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync, cpSync, writeFileSync, readFileSync, existsSync, readdirSync, mkdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
-import {join} from 'node:path';
+import {dirname, join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
@@ -289,3 +289,77 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(dashboard.includes('Prior evidence keeps its tested build, date and scope.'), 'prior observations keep their original identity');
   console.log(`Offline release-card build evidence: ${root}`);
 });
+
+test('BUILD-4 native automatic intake renders every evidence axis and keeps historical bundles unchanged', async () => {
+  const {nativePublication} = await import('./fixtures/native-publication.mjs');
+  const {intakePublication} = await import('../scripts/intake-publication.mjs');
+  const {emitBundles} = await import('../scripts/published-bundles.mjs');
+  const source = fileURLToPath(new URL('..', import.meta.url));
+  const root = mkdtempSync(join(tmpdir(), 'capability-native-publication-'));
+  const site = join(root, 'site');
+  for (const path of ['src','scripts','data','static','docusaurus.config.js','package.json','package-lock.json'])
+    cpSync(join(source,path),join(site,path),{recursive:true});
+  cpSync(join(source,'../corpus'),join(root,'corpus'),{recursive:true});
+  const read = name => JSON.parse(readFileSync(join(site,'data',name)));
+  const original = read('publication.json');
+  const applied = intakePublication({publication:original,corpora:read('release-corpora.json'),work:read('release-work.json')},
+    nativePublication(),{url:'https://github.com/kamiwaza-internal/capability-documentation/pull/99',createdAt:'2026-11-01T00:00:00Z'});
+  for (const [path,content] of applied.files) writeFileSync(join(root,path),content);
+  const priorOut=join(root,'prior');mkdirSync(priorOut);emitBundles(original,priorOut);
+  const install=spawnSync('npm',['ci','--offline','--ignore-scripts','--no-audit'],
+    {cwd:site,encoding:'utf8',timeout:120000,maxBuffer:4*1024*1024});
+  assert.equal(install.status,0,install.stdout+install.stderr);
+  const build=spawnSync(process.execPath,[join(site,'node_modules/@docusaurus/core/bin/docusaurus.mjs'),'build',site],
+    {cwd:site,encoding:'utf8',timeout:120000,maxBuffer:4*1024*1024});
+  assert.equal(build.status,0,build.stdout+build.stderr);
+  const map=readFileSync(join(site,'build/value-streams/index.html'),'utf8').replaceAll('<!-- -->','');
+  assert.ok(map.includes('<option selected="">1.4.0</option>'));
+  assert.ok(map.includes('Synthetic recipe'));
+  const catalog=readFileSync(join(site,'build/catalog/index.html'),'utf8').replaceAll('<!-- -->','');
+  for (const text of ['Scoped agent observation','Native prerelease carry','The original contract remains applicable.','not established'])
+    assert.ok(catalog.includes(text),text);
+  const markdown=readFileSync(join(site,'build/evidence/1.4.0/kamiwaza-capabilities-1.4.0.md'),'utf8');
+  assert.ok(markdown.includes('Native prerelease carry from 1.3.5; no fresh execution.'));
+  assert.ok(markdown.includes('Scoped agent observation: verified'));
+  for (const release of original.releases) {
+    for (const name of ['bundle.json','bundle.md']) assert.deepEqual(
+      readFileSync(join(site,'build/releases',release.id,name)),readFileSync(join(priorOut,'releases',release.id,name)),
+      'Native intake cannot rewrite '+release.id+'/'+name);
+  }
+  const bundle=JSON.parse(readFileSync(join(site,'build/releases/1.4.0-prerelease-r10/bundle.json')));
+  assert.equal(bundle.schema,9);
+  await assertNativeTargetWorkBuild(site, original);
+  console.log(`Offline native intake build evidence: ${root}`);
+});
+
+
+async function assertNativeTargetWorkBuild(site, original) {
+  const {nativePublication} = await import('./fixtures/native-publication.mjs');
+  const {intakePublication} = await import('../scripts/intake-publication.mjs');
+  const read = name => JSON.parse(readFileSync(join(site,'data',name)));
+  const work = read('release-work.json');
+  const retained = JSON.parse(readFileSync(join(site,'static',work.releases[0].retainedVerification.path)));
+  const candidate = nativePublication(), release=candidate.releases[0];
+  release.version='1.3.5';release.id='1.3.5-prerelease-r10';
+  release.build=release.build.replace('1.4.0;','1.3.5;');
+  const ids=retained.capabilities.map(cap=>cap.id);
+  release.capabilities.forEach((cap,index)=>{cap.id=ids[index];if(cap.assessment?.basis==='agent-verification')cap.assessment.targetRelease='1.3.5';});
+  for(const id of ids.slice(6)) release.capabilities.push({...structuredClone(release.capabilities[5]),id});
+  release.counts.included=ids.length;release.counts.notYetVerified=ids.length-5;
+  release.recipeInventory[0].capabilityIds=[ids[4]];release.recipeInventory[0].reviewedVerifies=[ids[4]];
+  const applied=intakePublication({publication:original,corpora:read('release-corpora.json'),work},candidate,
+    {url:'https://github.com/kamiwaza-internal/capability-documentation/pull/99',createdAt:'2026-11-01T00:00:00Z'});
+  writeFileSync(join(site,'data/publication.json'),JSON.stringify(original));
+  for(const [path,content] of applied.files){mkdirSync(dirname(join(site,'..',path)),{recursive:true});writeFileSync(join(site,'..',path),content);}
+  const build=spawnSync(process.execPath,[join(site,'node_modules/@docusaurus/core/bin/docusaurus.mjs'),'build',site],
+    {cwd:site,encoding:'utf8',timeout:120000,maxBuffer:4*1024*1024});
+  assert.equal(build.status,0,build.stdout+build.stderr);
+  const map=readFileSync(join(site,'build/value-streams/index.html'),'utf8').replaceAll('<!-- -->','');
+  assert.ok(map.includes('<option selected="">1.3.5</option>'));
+  assert.ok(map.includes('5 of 87 native prerelease verifications'));
+  const archive=zipMembers(readFileSync(join(site,'build/evidence/1.3.5/kamiwaza-capabilities-1.3.5.zip')));
+  assert.ok(archive.has('machine-readable/native-cycle-projection.json'));
+  assert.ok(archive.get('AGENTS.md').toString().includes('native-cycle-projection.json'));
+  assert.deepEqual(JSON.parse(archive.get('machine-readable/retained-prior-verification.json')),retained);
+  assert.ok(readFileSync(join(site,'build/llms.txt'),'utf8').includes('schema 9'));
+}

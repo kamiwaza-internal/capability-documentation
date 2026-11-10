@@ -94,9 +94,9 @@ export function validateReleaseStamps(data, publication) {
   requireValue(data.outsideCatalog.every(c => all.includes(c)), 'outsideCatalog names a capability with no entry here');
   if (publication) {
     if (!stampsApply(data, publication)) return null;
-    const baseline = (publication.releases ?? []).filter(r => r.baselineKind === 'prerelease-evidence').sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
+    const baseline = (publication.releases ?? []).find(release => release.id === data.baselineReleaseId);
     const known = new Set((baseline?.capabilities ?? []).map(c => c.id));
-    for (const c of all) requireValue(known.has(c) !== data.outsideCatalog.includes(c), 'Capability must be in the latest pre-release evidence release or, only otherwise, in outsideCatalog: ' + c);
+    for (const c of all) requireValue(known.has(c) !== data.outsideCatalog.includes(c), 'Capability must be in the pinned pre-release evidence release or, only otherwise, in outsideCatalog: ' + c);
   }
   return data;
 }

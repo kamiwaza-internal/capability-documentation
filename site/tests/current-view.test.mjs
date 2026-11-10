@@ -161,6 +161,14 @@ test('CAT-5 statuses outside the original four are counted, never NaN', () => {
 
 // ponytail: compiles the one component with the Babel that Docusaurus installs (a transitive
 // dependency). Move to a declared devDependency if a Docusaurus upgrade stops hoisting it.
+function nativeEvidenceModule(babel) {
+  const source = readFileSync(new URL('../src/NativeEvidence.jsx', import.meta.url), 'utf8');
+  const {code} = babel.transformSync(source, {babelrc:false, configFile:false,
+    presets:[fileURLToPath(import.meta.resolve('@babel/preset-react'))]});
+  const resolved = code.replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react')));
+  return 'data:text/javascript;base64,' + Buffer.from(resolved).toString('base64');
+}
+
 async function renderCurrentView(props) {
   const {default: babel} = await import('@babel/core');
   const {createElement} = await import('react');
@@ -168,7 +176,7 @@ async function renderCurrentView(props) {
   const {code} = babel.transformSync(readFileSync(new URL('../src/CurrentView.jsx', import.meta.url), 'utf8'),
     {babelrc: false, configFile: false, presets: [fileURLToPath(import.meta.resolve('@babel/preset-react'))]});
   const file = join(mkdtempSync(join(tmpdir(), 'current-view-')), 'CurrentView.mjs');
-  writeFileSync(file, code.replace("'./catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href)).replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react'))));
+  writeFileSync(file, code.replace("'./NativeEvidence'", JSON.stringify(nativeEvidenceModule(babel))).replace("'./catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href)).replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react'))));
   return renderToStaticMarkup(createElement((await import(file)).default, props));
 }
 const occurrences = (html, text) => html.split(text).length - 1;
@@ -247,12 +255,12 @@ test('primary catalog cards retain release journey limits alongside prerelease e
   const {renderToStaticMarkup} = await import('react-dom/server');
   // Render the real card function; omit page-only framework/data imports unused by it.
   const source = readFileSync(new URL('../src/pages/catalog.jsx', import.meta.url), 'utf8')
-    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'")).join('\n')
+    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'") || line.includes("from '../NativeEvidence'")).join('\n')
     + '\nexport {PrimaryCapabilities};';
   const {code} = babel.transformSync(source,
     {babelrc: false, configFile: false, presets: [fileURLToPath(import.meta.resolve('@babel/preset-react'))]});
   const file = join(mkdtempSync(join(tmpdir(), 'catalog-cards-')), 'catalog.mjs');
-  writeFileSync(file, code.replace("'../catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href))
+  writeFileSync(file, code.replace("'../NativeEvidence'", JSON.stringify(nativeEvidenceModule(babel))).replace("'../catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href))
     .replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react'))));
   const html = renderToStaticMarkup(createElement((await import(file)).PrimaryCapabilities, {
     capabilities: joinPrimaryStamps(primaryCapabilities(published), stamps, published), query: '', status: 'all', tag: stamps.releaseTag,

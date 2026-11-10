@@ -32,9 +32,9 @@ const statusRank = {verified: 0, superseded: 1, 'failed-or-mixed': 2, 'not-yet-v
 // is `scope: 'whole-capability'` or names a `scenario` the acceptance rests on.
 // Published observation rows carry neither field today, so they are surfaced
 // as non-applicable and never change status.
-export function currentCapabilityView(publication, version) {
+export function currentCapabilityView(publication, version, baselineReleaseId) {
   const releases = publication.releases ?? [];
-  const baseline = releases.filter(r => r.baselineKind === 'prerelease-evidence' && (version === undefined || r.version === version)).sort(byRevisionDesc)[0];
+  const baseline = baselineReleaseId ? releases.find(row => row.id === baselineReleaseId) : releases.filter(r => r.baselineKind === 'prerelease-evidence' && (version === undefined || r.version === version)).sort(byRevisionDesc)[0];
   if (!baseline) return [];
   const older = releases.filter(r => r.version === baseline.version && r.publicationRevision < baseline.publicationRevision).sort(byRevisionDesc);
   const describingIds = descriptionOnly(publication);
@@ -74,12 +74,12 @@ export function currentCapabilityView(publication, version) {
     const describedIn = describing.find(r => r.capabilities.some(c => c.id === cap.id && c.summary))?.id ?? null;
     const documentationGap = !cap.summary && !describedIn;
     return {
-      id: cap.id, title: cap.title, summary: cap.summary, conditions: cap.conditions, limits: cap.limits,
+      id: cap.id, title: cap.title, summary: cap.summary, conditions: [...cap.conditions, ...(cap.carry?.assumptions ?? [])], limits: [...cap.limits, ...(cap.carry?.limits ?? [])],
       status: !isAccepted ? cap.status : failing.size ? 'superseded' : 'verified',
       acceptedAt,
       // Lineage is passed through by reference, never copied, re-versioned or re-labelled.
       lineage: {releaseId: baseline.id, version: baseline.version, verificationBasis: cap.verificationBasis,
-        evidence: cap.evidence, assessment: cap.assessment, ...(Object.hasOwn(cap, 'proof') ? {proof: cap.proof} : {}), wholeClaim: cap.wholeClaim},
+        evidence: cap.evidence, assessment: cap.assessment, ...(cap.carry ? {carry:cap.carry} : {}), ...(Object.hasOwn(cap, 'proof') ? {proof: cap.proof} : {}), wholeClaim: cap.wholeClaim},
       releaseStatus: cap.releaseStatus,
       releaseCheckFailed: cap.releaseStatus === 'failed',
       documentationGap, describedIn,

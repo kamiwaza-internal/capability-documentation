@@ -675,3 +675,20 @@ unchanged `retained-prior-verification.json`, plus the same generated PDF/Markdo
 bytes as the downloads. Agent instructions remain requirement-support reporting,
 not vendor response generation. General publication intake does not accept this
 new basis; only the hash-bound target-work loader does. No layout change is needed.
+
+## Native automatic publication intake
+
+Schema 9 carries native cycle candidates with independent scenario, local-contract,
+agent-observation, historical-carry and recipe-proof axes. Missing observed source
+commits remain explicitly unknown. Carry retains its source cycle and applicability
+assumptions; no new runtime execution, released-build binding or human release
+approval is inferred. Recipe claims bind the exact authored revision and hash.
+Historical schema 2/4/6/8 records and their bundles remain unchanged.
+
+`scripts/check-publication-candidate.mjs` validates a private candidate before public
+transport. `scripts/intake-publication.mjs` applies an already reviewed candidate to
+an append-only publication revision, or to a separately hash-bound target-work
+projection while retaining prior history. Frozen tagged releases reject intake.
+Duplicate candidates are no-ops; conflicting bytes under one identity are refused.
+The Kit's automation owns candidate generation, private review and public PR
+creation; the existing site workflow still validates and deploys reviewed main.

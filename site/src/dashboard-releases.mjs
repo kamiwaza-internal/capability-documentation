@@ -14,7 +14,11 @@ function sidecarRecipes(streams, version) {
   });
 }
 
-function recipeInventory(entry, streams) {
+function recipeInventory(entry, streams, publication) {
+  const release = entry.work?.fresh?.release ?? entry.releaseIds.map(id => publication.releases.find(row => row.id === id)).find(row => row.recipeInventory);
+  if (release?.recipeInventory) return {recipes: release.recipeInventory,
+    establishedScopedProofs: release.capabilities.filter(cap => cap.proof?.state === 'established').map(cap => ({recipeId: cap.proof.recipeId, recipeSha256:cap.proof.recipeSha256, recipeRevision:cap.proof.recipeRevision, creditedCapabilityIds: [cap.id]})),
+    recipeNote: 'Authored recipe inventory from the pinned Kit revision. Recipe release membership is not established; capability and recipe proof stay separate.'};
   const catalog = (entry.originalCorpus ?? entry.corpus)?.catalog;
   if (catalog) return {recipes: catalog.recipes, establishedScopedProofs: catalog.establishedScopedProofs,
     recipeNote: `Recipe definitions and scoped SDK proof are from the retained ${catalog.release} inventory snapshot; recipe release membership is not established.`};
@@ -25,7 +29,7 @@ function recipeInventory(entry, streams) {
 function sourceIdentity(entry, sources) {
   const catalog = (entry.originalCorpus ?? entry.corpus)?.catalog;
   if (catalog) return [`Kit revision ${catalog.pins.kitMergeCommit}`, `Core revision ${catalog.pins.productCoreCommit}`];
-  if (entry.work) return [`Prior evidence version ${entry.work.originalVersion}`, `Work source ${entry.work.sourceBranch}`];
+  if (entry.work) return [`Prior evidence version ${entry.work.originalVersion}`, `Work source ${entry.work.sourceBranch}`, ...(entry.work.fresh ? [`Current Kit revision ${entry.work.fresh.release.sourceRevision}`] : [])];
   if (entry.kind === 'release-stamps') return [`Stamp target ${sources.releaseStamps.releaseTag}`, `Prerelease baseline ${sources.releaseStamps.baselineReleaseId}`];
   if (entry.replay) return [`Replay ${entry.replay.id}`, `Core revision ${entry.replay.source.sourceRevision}`];
   return entry.releaseIds.map(id => sources.publication.releases.find(row => row.id === id))
@@ -39,7 +43,7 @@ export function dashboardReleases(sources) {
     sources.currentVerification, sources.releaseWork);
   return entries.map(entry => ({release: entry.version, kind: entry.kind, headline: entry.headline,
     basis: entry.basis, sourceIdentity: sourceIdentity(entry, sources),
-    capabilities: dashboardCapabilities(entry, sources), ...recipeInventory(entry, sources.streams),
+    capabilities: dashboardCapabilities(entry, sources), ...recipeInventory(entry, sources.streams, sources.publication),
     gaps: (entry.originalCorpus ?? entry.corpus)?.catalog.gaps ?? [],
   }));
 }

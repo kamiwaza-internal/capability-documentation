@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {NativeCounts} from './NativeEvidence';
 import {currentCapabilityView, filterCapabilities, joinLocalStamps, joinReleaseStamps, stampStatus, stampsApply, summarizeCurrentView} from './catalog.mjs';
 
 const statusLabels = {
@@ -9,6 +10,8 @@ const statusLabels = {
 };
 const basisLabels = {
   'historical-scenario': 'historical scenario',
+  'historical-carry': 'native prerelease carry · no fresh execution',
+  'agent-verification': 'scoped agent observation · not release verification',
   'developer-assessment': 'local-contract developer-assessed · no live runtime pass',
   'value-stream': 'established scoped proof · complete reviewed journey',
 };
@@ -22,7 +25,8 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
   const [stampedOnly, setStampedOnly] = useState(false);
   const [releaseOnly, setReleaseOnly] = useState(false);
   const [contractOnly, setContractOnly] = useState(false);
-  const base = currentCapabilityView(publication);
+  const boundBaseline = stampsApply(releaseStamps, publication) ? releaseStamps.baselineReleaseId : undefined;
+  const base = currentCapabilityView(publication, undefined, boundBaseline);
   if (base.length === 0) return null;
   // Additive: the join attaches a badge and never changes a row's status.
   // Stamps projected against other published records do not apply to this publication.
@@ -52,7 +56,7 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
       <h3>Earlier: {version} pre-release baseline</h3>
     </>}
     <p>Derived on this page from the published records below; nothing here is stored or re-scored. A later applicable failure on the same version and contract can supersede accepted pre-release verification. A newer native-scored pre-release revision for that version can also withdraw effective proof credit. Untested, skipped or absent later observations and missing descriptive text do not withdraw it. Accepted in <a href={'#' + releaseId}><code>{releaseId}</code></a> for {version} pre-release builds; this is not release verification and binding to a shipped {version} release is not established.</p>
-    <p><strong>{c.verified} accepted pre-release verifications retained</strong> ({c.scenarioBacked} historical scenario-backed; {c.developerAssessed} local-contract developer-assessed, no live runtime pass{c.scopedProofVerified ? '; ' + c.scopedProofVerified + ' effective scoped proof' : ''}) · {c.superseded} superseded by a later applicable failure · {c.laterNonApplicableFailure} with a later scoped failure{targets.length ? ' on ' + targets.join(', ') : ''} whose applicability to the accepted contract is not established · {c.documentationGap} of the accepted verifications with a documentation gap · {c.failedOrMixed} failed or mixed · {c.notYetVerified} not yet verified · <strong>{c.releaseVerified} of {c.capabilities} release verified</strong> · {c.releaseCheckFailed} release check failed. Counts cover all {c.capabilities} capabilities, not search results.{local && <> <strong>{local.stampedVerified} of the {c.verified} accepted pre-release verified capabilities carry a {stampLabel.toLowerCase()}</strong> ({local.stamped} of all {c.capabilities} rows).</>}</p>
+    <p><strong>{c.verified} accepted pre-release verifications retained</strong> ({c.scenarioBacked} historical scenario-backed; {c.developerAssessed} local-contract developer-assessed, no live runtime pass{c.scopedProofVerified ? '; ' + c.scopedProofVerified + ' effective scoped proof' : ''}<NativeCounts rows={rows}/>) · {c.superseded} superseded by a later applicable failure · {c.laterNonApplicableFailure} with a later scoped failure{targets.length ? ' on ' + targets.join(', ') : ''} whose applicability to the accepted contract is not established · {c.documentationGap} of the accepted verifications with a documentation gap · {c.failedOrMixed} failed or mixed · {c.notYetVerified} not yet verified · <strong>{c.releaseVerified} of {c.capabilities} release verified</strong> · {c.releaseCheckFailed} release check failed. Counts cover all {c.capabilities} capabilities, not search results.{local && <> <strong>{local.stampedVerified} of the {c.verified} accepted pre-release verified capabilities carry a {stampLabel.toLowerCase()}</strong> ({local.stamped} of all {c.capabilities} rows).</>}</p>
     {release && <p>Of the {tag} stamps: {release.releaseStamped} release stamped ({release.releaseStampedVerified} of the {c.verified} accepted pre-release verified; {release.releaseStampedNotPreviouslyVerified.length} not previously verified{release.releaseStampedNotPreviouslyVerified.length > 0 && <>: {release.releaseStampedNotPreviouslyVerified.map(id => <code key={id}>{id} </code>)}</>}) · {release.sourceContract} source-contract verified ({release.sourceContractVerified} of the {c.verified} accepted pre-release verified). No capability carries both.<br/>
       The "{c.releaseVerified} of {c.capabilities} release verified" figure above is the release-check field of the historical {version} pre-release snapshot; it is left as published and the {tag} stamps do not rewrite it or any {version} status.</p>}
     {local && <>
