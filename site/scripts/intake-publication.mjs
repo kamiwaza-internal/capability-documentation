@@ -13,9 +13,20 @@ const sha = value => createHash('sha256').update(value).digest('hex');
 const bytes = value => JSON.stringify(value, null, 2) + '\n';
 const comparable = value => ({...value, publishedAt:null, reviewReference:null, publicationState:'draft'});
 
+function currentWorkRevision(target) {
+  if (!target.freshProjection) return 0;
+  const match = target.freshProjection.releaseId.match(/-prerelease-r([1-9]\d*)$/);
+  assert.ok(match, 'Cannot establish the current work projection revision');
+  assert.equal(target.freshProjection.releaseId, `${target.version}-prerelease-r${match[1]}`);
+  const revision = Number(match[1]);
+  assert.ok(Number.isSafeInteger(revision), 'Invalid current work projection revision');
+  return revision;
+}
+
 function projectIntoWork(work, candidate, review) {
   const release = candidate.releases[0];
   const target = work.releases.find(row => row.version === release.version);
+  assert.ok(release.publicationRevision >= currentWorkRevision(target), 'Stale target-work projection revision');
   const path = `fresh-projections/${release.version}/native-r${release.publicationRevision}.json`;
   const body = bytes(candidate);
   const files = new Map();

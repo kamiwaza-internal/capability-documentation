@@ -69,6 +69,33 @@ test('native recipes and carry cannot grant unsupported scope or hide required a
   assert.throws(()=>validatePublication(carry),/explicit scope/);
 });
 
+test('carry requires an earlier source release and nonempty applicability boundaries', () => {
+  for (const sourceRelease of ['1.4.0', '9.9.9']) {
+    const candidate=nativePublication();candidate.releases[0].capabilities[3].carry.sourceRelease=sourceRelease;
+    assert.throws(()=>validatePublication(candidate),/must precede/);
+  }
+  for (const field of ['assumptions','limits']) {
+    const candidate=nativePublication();candidate.releases[0].capabilities[3].carry[field]=[];
+    assert.throws(()=>validatePublication(candidate),/nonempty assumptions and limits/);
+  }
+  const candidate=nativePublication();candidate.releases[0].capabilities[3].carry.sourceRelease='1.3.10';
+  assert.equal(validatePublication(candidate),candidate,'version ordering is numeric');
+});
+
+test('out-of-order target-work candidates cannot replace a newer bound projection', () => {
+  const candidate=nativePublication(),source=base();
+  source.work.releases=[{...source.work.releases[0],version:'1.4.0'}];
+  const newer=structuredClone(candidate);newer.releases[0].id='1.4.0-prerelease-r11';newer.releases[0].publicationRevision=11;
+  const first=intakePublication(source,newer,review);
+  source.work=JSON.parse(first.files.get('site/data/release-work.json'));
+  const before=JSON.stringify(source);
+  assert.throws(()=>intakePublication(source,candidate,review),/Stale target-work/);
+  assert.equal(JSON.stringify(source),before);
+  assert.equal(intakePublication(source,newer,review).unchanged,true);
+  const newest=structuredClone(candidate);newest.releases[0].id='1.4.0-prerelease-r12';newest.releases[0].publicationRevision=12;
+  assert.equal(intakePublication(source,newest,review).unchanged,false);
+});
+
 test('a newer version or newer baseline never retargets the historical release stamp download', () => {
   const source=base(),candidate=nativePublication();
   const before=dashboardReleases({publication:source.publication,releaseStamps:read('release-stamps-1.3.2.json')}).find(row=>row.release==='1.3.2');

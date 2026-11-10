@@ -130,16 +130,23 @@ function scopedProof(value, release) {
   publicText(value.scope); publicStrings(value.limits);
   requireValue(value.limits.length > 0, 'Scoped proof needs explicit limits');
 }
+function nativeCarry(cap, release) {
+  if (cap.verificationBasis === 'historical-carry') requireValue(cap.carry !== null, 'Carry requires explicit scope');
+  if (cap.carry === null) return;
+  shape(cap.carry, ['sourceRelease', 'assumptions', 'limits']);
+  requireValue(cap.verificationBasis === 'historical-carry' && /^\d+\.\d+\.\d+$/.test(cap.carry.sourceRelease), 'Invalid native carry source');
+  const target = release.version.split('.').map(Number);
+  const difference = cap.carry.sourceRelease.split('.').map((part, index) => Number(part) - target[index]).find(value => value !== 0);
+  requireValue(difference < 0, 'Carry source must precede the target release');
+  publicStrings(cap.carry.assumptions); publicStrings(cap.carry.limits);
+  requireValue(cap.carry.assumptions.length > 0 && cap.carry.limits.length > 0, 'Carry needs nonempty assumptions and limits');
+}
+
 function prereleaseCapability(cap, release, proofRevision, agentProjection = false) {
   const native = Object.hasOwn(release, 'recipeInventory');
   const keys = ['id', 'title', 'distribution', 'summary', 'conditions', 'limits', 'status', 'wholeClaim', 'evidence', 'declaration', 'releaseStatus', 'verificationBasis', 'assessment'];
   shape(cap, [...keys, ...(proofRevision ? ['proof'] : []), ...(native ? ['carry'] : [])]);
-  if (native && cap.carry !== null) {
-    shape(cap.carry, ['sourceRelease', 'assumptions', 'limits']);
-    requireValue(cap.verificationBasis === 'historical-carry' && /^\d+\.\d+\.\d+$/.test(cap.carry.sourceRelease), 'Invalid native carry source');
-    publicStrings(cap.carry.assumptions); publicStrings(cap.carry.limits);
-  }
-  if (native && cap.verificationBasis === 'historical-carry') requireValue(cap.carry !== null, 'Carry requires explicit scope');
+  if (native) nativeCarry(cap, release);
   requireValue(typeof cap.id === 'string' && id.test(cap.id), 'Invalid capability identifier');
   text(cap.id);
   requireValue(cap.distribution === 'public', 'Only approved public projections can be rendered');

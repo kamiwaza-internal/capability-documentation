@@ -342,6 +342,7 @@ async function assertNativeTargetWorkBuild(site, original) {
   const candidate = nativePublication(), release=candidate.releases[0];
   release.version='1.3.5';release.id='1.3.5-prerelease-r10';
   release.build=release.build.replace('1.4.0;','1.3.5;');
+  release.capabilities[3].carry.sourceRelease='1.3.4';
   const ids=retained.capabilities.map(cap=>cap.id);
   release.capabilities.forEach((cap,index)=>{cap.id=ids[index];if(cap.assessment?.basis==='agent-verification')cap.assessment.targetRelease='1.3.5';});
   for(const id of ids.slice(6)) release.capabilities.push({...structuredClone(release.capabilities[5]),id});
