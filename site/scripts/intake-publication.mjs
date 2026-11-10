@@ -13,6 +13,34 @@ const sha = value => createHash('sha256').update(value).digest('hex');
 const bytes = value => JSON.stringify(value, null, 2) + '\n';
 const comparable = value => ({...value, publishedAt:null, reviewReference:null, publicationState:'draft'});
 
+function projectIntoWork(work, candidate, review) {
+  const release = candidate.releases[0];
+  const target = work.releases.find(row => row.version === release.version);
+  const path = `fresh-projections/${release.version}/native-r${release.publicationRevision}.json`;
+  const body = bytes(candidate);
+  const files = new Map();
+  if (target.freshProjection?.releaseId === release.id) {
+    assert.equal(target.freshProjection.sha256, sha(body), 'A fresh projection identity cannot change bytes');
+    if (!review.url || target.freshProjection.reviewReference === review.url) return {files, unchanged:true};
+  }
+  target.freshProjection = {path, sha256:sha(body), sourceKitCommit:release.sourceRevision,
+    releaseId:release.id, reviewReference:review.url ?? null};
+  files.set('site/static/' + path, body);
+  files.set('site/data/release-work.json', bytes(work));
+  return {files, unchanged:false};
+}
+
+function appendRelease(base, release, review) {
+  if (review.url) {
+    release.publicationState = 'published'; release.reviewReference = review.url; release.publishedAt = review.createdAt;
+  }
+  const publication = {...base, schema:9, releases:[...base.releases, release],
+    observations:base.observations ?? [], releaseStamps:base.releaseStamps ?? []};
+  validatePublication(publication);
+  preserveHistory(base, publication);
+  return {files:new Map([['site/data/publication.json', bytes(publication)]]), unchanged:false};
+}
+
 export function intakePublication(base, candidate, review = {}) {
   assert.equal(candidate.schema, 9, 'Expected a native cycle candidate');
   validatePublication(candidate);
@@ -29,31 +57,8 @@ export function intakePublication(base, candidate, review = {}) {
   assert.ok(!base.corpora.corpora.some(row => row.version === release.version && row.presentation === 'original-tagged-release'),
     'Original tagged publications are frozen; publish into the active release cycle');
   const work = structuredClone(base.work);
-  const target = work.releases.find(row => row.version === release.version);
-  const files = new Map();
-  if (target) {
-    const path = `fresh-projections/${release.version}/native-r${release.publicationRevision}.json`;
-    const body = bytes(candidate);
-    if (target.freshProjection?.releaseId === release.id) {
-      assert.equal(target.freshProjection.sha256, sha(body), 'A fresh projection identity cannot change bytes');
-      if (!review.url || target.freshProjection.reviewReference === review.url) return {files, unchanged:true};
-    }
-    target.freshProjection = {path, sha256:sha(body), sourceKitCommit:release.sourceRevision,
-      releaseId:release.id, reviewReference:review.url ?? null};
-    files.set('site/static/' + path, body);
-    files.set('site/data/release-work.json', bytes(work));
-  } else {
-    if (review.url) {
-      assert.match(review.url, /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/);
-      release.publicationState = 'published'; release.reviewReference = review.url; release.publishedAt = review.createdAt;
-    }
-    const publication = {...base.publication, schema:9, releases:[...base.publication.releases, release],
-      observations:base.publication.observations ?? [], releaseStamps:base.publication.releaseStamps ?? []};
-    validatePublication(publication);
-    preserveHistory(base.publication, publication);
-    files.set('site/data/publication.json', bytes(publication));
-  }
-  return {files, unchanged:false};
+  if (work.releases.some(row => row.version === release.version)) return projectIntoWork(work, candidate, review);
+  return appendRelease(base.publication, release, review);
 }
 
 function baseJson(path) {
