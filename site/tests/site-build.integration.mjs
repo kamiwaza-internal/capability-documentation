@@ -285,6 +285,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const dashboard = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
   for (const entry of index.versions) assert.ok(dashboard.includes(`<option${entry.version === index.versions[0].version ? ' selected=""' : ''}>${entry.version}</option>`), `dashboard lists ${entry.version}`);
   assert.ok(dashboard.includes('No recipe mapping published for 1.3.5'), 'the newest release is selected with its own mapping gaps');
-  assert.ok(dashboard.includes('Prerelease verified — carried into 1.3.5'), 'current qualification wording is retained');
+  assert.ok(dashboard.includes('carried prerelease verifications'), 'current qualification summary is retained');
+  assert.ok(dashboard.includes('Prior evidence keeps its tested build, date and scope.'), 'prior observations keep their original identity');
   console.log(`Offline release-card build evidence: ${root}`);
 });

@@ -63,12 +63,23 @@ function workCapabilities(entry) {
     ]}));
 }
 
+function corpusCapabilities(entry) {
+  const current = entry.corpus.currentVerification;
+  return entry.corpus.catalog.capabilities.map(row => {
+    const observation = current?.capabilities.find(cap => cap.id === row.id);
+    return {...common(row), conditions: observation?.assumptions ?? [], limits: observation?.limits ?? [], details: [
+      detail('Source declaration', row.sourceDeclaration), detail('Snapshot prerelease status', row.prereleaseStatus),
+      ...(current ? [detail('Current scoped evidence', observation?.status ?? 'Outside current verification scope'),
+        detail('Current scope note', observation?.scopeNote), detail('Observation finished', observation?.finishedAt),
+        detail('Observed Core revision', observation?.sourceCommit), detail('Evidence gap', observation?.gap)] : []),
+    ]};
+  });
+}
+
 export function dashboardCapabilities(entry, sources) {
   if (entry.kind === 'release-work') return workCapabilities(entry);
   if (entry.kind === 'release-replay') return replayCapabilities(entry);
   if (entry.kind === 'release-stamps') return stampedCapabilities(entry, sources);
-  if (entry.kind === 'release-corpus') return entry.corpus.catalog.capabilities.map(row => ({...common(row), details: [
-    detail('Source declaration', row.sourceDeclaration), detail('Snapshot prerelease status', row.prereleaseStatus),
-  ]}));
+  if (entry.kind === 'release-corpus') return corpusCapabilities(entry);
   return publishedCapabilities(entry, sources.publication);
 }

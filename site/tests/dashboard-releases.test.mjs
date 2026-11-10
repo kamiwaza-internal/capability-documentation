@@ -97,3 +97,18 @@ test('a revised publication refreshes the same release without retaining stale c
   assert.equal(rows[0].capabilities[0].title, 'Updated release capability');
   assert.deepEqual(rows[0].capabilities[0].limits, ['Updated limit']);
 });
+
+
+test('a corpus current-verification update is read automatically without changing its original snapshot statuses', () => {
+  const corpora = structuredClone(sources.corpora).map(({presentation, originalReplayId, ...row}) => row);
+  const updated = corpora[0].currentVerification.capabilities.find(row => row.status === 'accepted-scoped-release');
+  updated.scopeNote = 'Synthetic scope interpretation retained on update.';
+  const entry = dashboardReleases({...sources, corpora}).find(row => row.release === '1.3.4');
+  const accepted = corpora[0].currentVerification.capabilities.find(row => row.status === 'accepted-scoped-release');
+  const cap = entry.capabilities.find(row => row.id === accepted.id);
+  assert.ok(cap.details.some(item => item.value === 'accepted-scoped-release'));
+  assert.ok(cap.details.some(item => item.value === 'Synthetic scope interpretation retained on update.'));
+  assert.ok(cap.details.some(item => item.label === 'Snapshot prerelease status'));
+  assert.equal(cap.details.find(item => item.label === 'Observation finished').value, accepted.finishedAt);
+  assert.equal(entry.capabilities.length, corpora[0].catalog.capabilities.length);
+});
