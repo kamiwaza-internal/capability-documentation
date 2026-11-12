@@ -9,6 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
 import {zipMembers} from '../scripts/check-release-corpus.mjs';
 import {publicationDigest} from '../scripts/sales-guidance.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 function writePublication(site, publication) {
   writeFileSync(join(site, 'data/publication.json'), JSON.stringify(publication));
   // Synthetic publication fixtures get their own bound empty guidance, never production prose.
@@ -259,13 +260,14 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.equal(build.status, 0, build.stdout + build.stderr);
   const cards = assertReleaseCards(site);
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
-  assert.deepEqual(index.versions.map(entry => entry.version), ['1.3.5', '1.3.4', '1.3.2', '1.3.0', '1.2.1']);
+  assert.deepEqual(index.versions.map(entry => entry.version), ['1.4.0', '1.3.5', '1.3.4', '1.3.2', '1.3.0', '1.2.1']);
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
   assert.ok(corpusCard.includes('Original tagged release') && corpusCard.includes('30 of 88'));
   assert.ok(!corpusCard.includes('73'), 'later cumulative proof count must not relabel the original release');
   const workCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.5</span>'));
   assert.ok(workCard.includes('Prerelease') && workCard.includes('73 capabilities with retained scoped evidence'));
-  const archive = zipMembers(readFileSync(join(site, 'build', index.versions[0].files.zip.path)));
+  const workRelease = index.versions.find(entry => entry.version === '1.3.5');
+  const archive = zipMembers(readFileSync(join(site, 'build', workRelease.files.zip.path)));
   const current = JSON.parse(archive.get('machine-readable/retained-prior-verification.json'));
   assert.equal(current.version, '1.3.4');
   assert.equal(current.counts.acceptedScoped, 73);
@@ -273,7 +275,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.deepEqual(readFileSync(join(site, 'build', historicalPath)), snapshotBytes);
   assert.equal(existsSync(join(site, 'build/current-verification/1.3.4/unreviewed.json')), false);
   assert.equal(current.historicalPrerelease.length, 58);
-  const human = readFileSync(join(site, 'build', index.versions[0].files.salesMd.path), 'utf8');
+  const human = readFileSync(join(site, 'build', workRelease.files.salesMd.path), 'utf8');
   assert.ok(human.includes('## Recipe 1:') && human.includes('## Ingredient glossary'));
   assert.ok(human.includes('73 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
@@ -284,9 +286,8 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));
   const dashboard = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
   for (const entry of index.versions) assert.ok(dashboard.includes(`<option${entry.version === index.versions[0].version ? ' selected=""' : ''}>${entry.version}</option>`), `dashboard lists ${entry.version}`);
-  assert.ok(dashboard.includes('No recipe mapping published for 1.3.5'), 'the newest release is selected with its own mapping gaps');
-  assert.ok(dashboard.includes('carried prerelease verifications'), 'current qualification summary is retained');
-  assert.ok(dashboard.includes('Prior evidence keeps its tested build, date and scope.'), 'prior observations keep their original identity');
+  assert.ok(dashboard.includes('Authored recipe inventory from the pinned Kit revision.'), 'the selected 1.4.0 release renders its own curated recipe inventory note');
+  assert.ok(dashboard.includes('auth.local-user-administration'), 'selected 1.4.0 dashboard renders its public capability inventory');
   console.log(`Offline release-card build evidence: ${root}`);
 });
 
@@ -301,7 +302,8 @@ test('BUILD-4 native automatic intake renders every evidence axis and keeps hist
     cpSync(join(source,path),join(site,path),{recursive:true});
   cpSync(join(source,'../corpus'),join(root,'corpus'),{recursive:true});
   const read = name => JSON.parse(readFileSync(join(site,'data',name)));
-  const original = read('publication.json');
+  const original = historicalPublication();
+  writePublication(site, original);
   const applied = intakePublication({publication:original,corpora:read('release-corpora.json'),work:read('release-work.json')},
     nativePublication(),{url:'https://github.com/kamiwaza-internal/capability-documentation/pull/99',createdAt:'2026-11-01T00:00:00Z'});
   for (const [path,content] of applied.files) writeFileSync(join(root,path),content);
