@@ -48,7 +48,7 @@ function nativeQualification(cap, version) {
 function nativeWorkView(work) {
   const release = work.fresh.release;
   const prior = new Map(work.retained.capabilities.map(cap => [cap.id, cap]));
-  const ids = [...new Set([...prior.keys(), ...release.capabilities.map(cap => cap.id)])];
+  const ids = Array.from(new Set([...prior.keys(), ...release.capabilities.map(cap => cap.id)]));
   const capabilities = ids.map(id => {
     const current = release.capabilities.find(cap => cap.id === id);
     const original = prior.get(id);

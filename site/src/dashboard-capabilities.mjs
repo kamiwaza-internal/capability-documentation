@@ -27,8 +27,8 @@ function publishedCapabilities(entry, publication) {
     const observation = row.lineage?.assessment;
     const proof = row.lineage?.proof;
     return {...common({...row, title:description?.title ?? row.title}),
-      conditions:[...new Set([...row.conditions, ...(description?.conditions ?? []), ...(observation?.assumptions ?? [])])],
-      limits:[...new Set([...row.limits, ...(description?.limits ?? []), ...(observation?.limits ?? []), ...(proof?.limits ?? [])])], details: [
+      conditions:Array.from(new Set([...row.conditions, ...(description?.conditions ?? []), ...(observation?.assumptions ?? [])])),
+      limits:Array.from(new Set([...row.limits, ...(description?.limits ?? []), ...(observation?.limits ?? []), ...(proof?.limits ?? [])])), details: [
       detail('Evidence status', entry.kind === 'tested' ? row.status : labels[row.status] ?? row.status),
       detail('Source declaration', declaration ? 'Declared in this version’s source records' : 'Not established'),
       detail('Evidence version', entry.version), detail('Verification basis', row.lineage?.verificationBasis),

@@ -316,7 +316,7 @@ const reportReleaseVerified = row => !row.qualificationTarget && row.status === 
 export function releaseOverview(capabilities, reports, tag) {
   const versions = new Set([...capabilities.map(cap => cap.version), ...reports.map(report => report.version)]);
   if (capabilities.some(cap => cap.releaseStamp || cap.sourceContractStamp)) versions.add(tagVersion(tag));
-  return [...versions].sort((a, b) => b.localeCompare(a, undefined, {numeric: true})).map(version => {
+  return Array.from(versions).sort((a, b) => b.localeCompare(a, undefined, {numeric: true})).map(version => {
     const rows = reports.filter(report => report.version === version).flatMap(report => report.capabilities);
     return {
       version,

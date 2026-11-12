@@ -35,7 +35,7 @@ module.exports = async function config() {
     plugins: ['./scripts/published-bundles.mjs'],
     presets: [['classic', {docs: false, blog: false, theme: {customCss: './src/css/custom.css'}}]],
     themeConfig: {
-      navbar: {title: 'Kamiwaza · Sales Dev Kit', items: [{to: '/', label: 'About and evidence', position: 'left'}, {to: '/value-streams/', label: 'Value stream map', position: 'left'}]},
+      navbar: {title: 'Kamiwaza · Sales Dev Kit', items: [{to: '/', label: 'About and evidence', position: 'left', activeBaseRegex: '^/$'}, {to: '/value-streams/', label: 'Value stream map', position: 'left'}]},
       footer: {style: 'dark', copyright: 'Documented does not mean verified. Evidence applies only to its named build.'},
     },
   };

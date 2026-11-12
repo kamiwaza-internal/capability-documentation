@@ -84,7 +84,7 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
         return (!label || visible.length > 0) && <tbody key={index}>
         {label && <tr><th colSpan={5} scope="colgroup">{`${label} (${size(index)})`}{visible.length < size(index) && ` · ${visible.length} shown`}</th></tr>}
         {visible.map(row => {
-        const builds = [...new Set(row.lineage.evidence.map(e => e.build))];
+        const builds = Array.from(new Set(row.lineage.evidence.map(e => e.build)));
         return <tr key={row.id}>
           <th scope="row"><a href={'#current--' + row.lineage.version + '--' + row.id}><code>{row.id}</code></a><br/>{row.title ?? 'No curated title or description published in this revision'}</th>
           <td>{!release ? statusLabels[row.status] : stampStatus(row, tag) ? <>
