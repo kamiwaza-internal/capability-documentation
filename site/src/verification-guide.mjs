@@ -56,6 +56,7 @@ function nativeWorkView(work) {
       title:current?.title ?? original?.title ?? id,
       originalVersion:original ? work.originalVersion : work.version, qualificationTarget:work.version,
       nativeQualification:nativeQualification(current, work.version), nativeEvidence:current,
+      freshStatus:current?.status ?? null,
       prereleaseCarried:current?.verificationBasis === 'historical-carry',
       assumptions:[...(original?.assumptions ?? []), ...(current?.conditions ?? []), ...(current?.carry?.assumptions ?? [])],
       limits:[...(original?.limits ?? []), ...(current?.limits ?? []), ...(current?.carry?.limits ?? []), ...(current?.assessment?.limits ?? []), ...(current?.proof?.limits ?? [])],

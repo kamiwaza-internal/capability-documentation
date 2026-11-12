@@ -9,7 +9,7 @@ import {validatePublication} from '../scripts/publication.mjs';
 import {validateStreams} from '../scripts/value-streams.mjs';
 import {nativePublication} from './fixtures/native-publication.mjs';
 import {recipeProof} from '../src/value-stream-map.mjs';
-import {releaseWorkView, verificationDocument} from '../src/verification-guide.mjs';
+import {releaseWorkView, verificationDocument, recipeGuide} from '../src/verification-guide.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL('../data/' + name, import.meta.url)));
 const publication = read('publication.json');
@@ -173,4 +173,17 @@ test('valid native downloads render missing optional evidence counts as zero', (
   const document=JSON.stringify(verificationDocument(releaseWorkView(work),true));
   for(const text of ['0 carried','0 agent-observed','0 scoped recipe proofs'])assert.ok(document.includes(text),text);
   assert.ok(!document.includes('undefined'));
+});
+
+test('every native verification basis participates in current verified filters and recipe status tones', () => {
+  const release=nativePublication().releases[0];
+  const report=releaseWorkView({...sources.releaseWork[0],version:release.version,originalVersion:'0.0.0',fresh:{release}});
+  const verified=report.capabilities.filter(row=>row.prereleaseCarried || row.freshStatus==='prerelease-verified');
+  assert.equal(verified.length,release.counts.prereleaseVerified);
+  const blocks=recipeGuide(report);
+  for(const cap of release.capabilities.filter(cap=>cap.status==='prerelease-verified')){
+    assert.equal(report.capabilities.find(row=>row.id===cap.id).freshStatus,cap.status,cap.verificationBasis);
+    const at=blocks.findIndex(block=>block.text===`Ingredient: ${cap.id}`);
+    assert.equal(blocks[at-1]?.tone,'green',cap.verificationBasis);
+  }
 });

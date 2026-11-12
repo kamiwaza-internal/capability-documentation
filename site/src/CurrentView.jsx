@@ -91,7 +91,9 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
             <br/>{version} pre-release: {statusLabels[row.status]}
           </> : <>{statusLabels[row.status]}<br/>No {tag} stamp</>}</td>
           <td>{basisLabels[row.lineage.verificationBasis] ?? 'none'}</td>
-          <td>{row.acceptedAt === null ? 'No accepted verification' : <>
+          <td>{!row.accepted ? 'No accepted verification' : row.lineage.carry ? <>
+            Accepted carry from {row.lineage.carry.sourceRelease} · no new execution date. Original scope and limits remain applicable.
+          </> : <>
             <Time value={row.acceptedAt}/> · {row.lineage.version} pre-release · {builds.length
               ? builds.map(build => <code key={build}>{build} </code>)
               : row.lineage.proof ? <>reviewed recipe <code>{row.lineage.proof.recipeId}</code> revision {row.lineage.proof.recipeRevision}; build fingerprint <code>{row.lineage.proof.buildFingerprint}</code> (not release binding)</>

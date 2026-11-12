@@ -82,6 +82,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     corpora:baseJson('site/data/release-corpora.json'), work:JSON.parse(readFileSync('site/data/release-work.json', 'utf8'))};
   preserveHistory(baseJson('site/data/publication.json'), base.publication);
   const checkOnly = process.argv[3] === '--check-only';
+  if (!checkOnly) {
+    assert.ok(process.argv[3] && process.argv[4], 'Review metadata requires a URL and timestamp');
+    assert.match(process.argv[4], /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Invalid review timestamp');
+    assert.equal(new Date(process.argv[4]).toISOString(), process.argv[4].replace('Z', '.000Z'), 'Invalid review timestamp');
+  }
   const result = intakePublication(base, plan.payload, checkOnly ? {} : {url:process.argv[3], createdAt:process.argv[4]});
   for (const content of result.files.values()) assertPublicOutputSafe(content);
   for (const [path, content] of checkOnly ? [] : result.files) {

@@ -76,7 +76,7 @@ export function currentCapabilityView(publication, version, baselineReleaseId) {
     return {
       id: cap.id, title: cap.title, summary: cap.summary, conditions: [...cap.conditions, ...(cap.carry?.assumptions ?? [])], limits: [...cap.limits, ...(cap.carry?.limits ?? [])],
       status: !isAccepted ? cap.status : failing.size ? 'superseded' : 'verified',
-      acceptedAt,
+      accepted:isAccepted, acceptedAt,
       // Lineage is passed through by reference, never copied, re-versioned or re-labelled.
       lineage: {releaseId: baseline.id, version: baseline.version, verificationBasis: cap.verificationBasis,
         evidence: cap.evidence, assessment: cap.assessment, ...(cap.carry ? {carry:cap.carry} : {}), ...(Object.hasOwn(cap, 'proof') ? {proof: cap.proof} : {}), wholeClaim: cap.wholeClaim},
@@ -93,7 +93,7 @@ export function currentCapabilityView(publication, version, baselineReleaseId) {
 
 export function summarizeCurrentView(rows) {
   const count = test => rows.filter(test).length;
-  const wasAccepted = row => row.acceptedAt !== null;
+  const wasAccepted = row => row.accepted;
   return {
     capabilities: rows.length,
     verified: count(r => r.status === 'verified'),

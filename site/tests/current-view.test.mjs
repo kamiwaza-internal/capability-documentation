@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {countStatuses, currentCapabilityView, summarizeCurrentView, primaryCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
+import {nativePublication} from './fixtures/native-publication.mjs';
 
 const deepFreeze = value => {
   if (value && typeof value === 'object') Object.values(value).forEach(deepFreeze);
@@ -33,6 +34,19 @@ const publication = (capabilities, observations = []) => deepFreeze({
 });
 const view = (capabilities, observations) => currentCapabilityView(publication(capabilities, observations));
 const whole = {scope: 'whole-capability'};
+
+test('native carry remains accepted without inventing a fresh acceptance date', async () => {
+  const rows=currentCapabilityView(nativePublication());
+  const carry=rows.find(row=>row.lineage.verificationBasis==='historical-carry');
+  assert.equal(carry.status,'verified');assert.equal(carry.accepted,true);
+  assert.equal(carry.acceptedAt,null);
+  assert.deepEqual(carry.history.map(row=>[row.event,row.at]),[['accepted',null]]);
+  assert.equal(summarizeCurrentView([carry]).documentationGap,1);
+  const html=await renderCurrentView({publication:nativePublication()});
+  const rendered=html.match(/<tr><th scope="row"><a href="#current--1\.4\.0--synthetic\.cap-3"[\s\S]*?<\/tr>/)?.[0];
+  assert.ok(rendered);assert.match(rendered,/Accepted carry from 1\.3\.5 · no new execution date/);
+  assert.ok(!rendered.includes('No accepted verification'));
+});
 
 test('CUR-A untested, skipped, absent later results and missing text never erase verification', () => {
   const rows = view([cap('synthetic.untested'), cap('synthetic.skipped'), cap('synthetic.absent'), cap('synthetic.gap', {title: null, summary: null})], [
