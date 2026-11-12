@@ -19855,10 +19855,10 @@
         "earliestStartedAt": "2026-11-09T01:51:47.277645Z",
         "latestFinishedAt": "2026-11-10T21:02:26.057218Z"
       },
-      "generatedAt": "2026-11-12T15:53:50Z",
+      "generatedAt": "2026-11-12T16:05:30Z",
       "publicationRevision": 1,
-      "publishedAt": "2026-11-12T15:53:50Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/999",
+      "publishedAt": "2026-11-12T16:05:30Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/67",
       "capabilities": [
         {
           "id": "apps.app-garden",
