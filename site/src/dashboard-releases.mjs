@@ -14,10 +14,21 @@ function sidecarRecipes(streams, version) {
   });
 }
 
+function currentRecipeProofs(release) {
+  return release.capabilities.filter(cap => {
+    if (cap.verificationBasis !== 'value-stream') return false;
+    if (cap.status !== 'prerelease-verified') return false;
+    if (cap.proof?.state !== 'established') return false;
+    const recipe = release.recipeInventory.find(row => row.id === cap.proof.recipeId);
+    return recipe?.reviewedVerifies.includes(cap.id);
+  }).map(cap => ({recipeId:cap.proof.recipeId, recipeSha256:cap.proof.recipeSha256,
+    recipeRevision:cap.proof.recipeRevision, creditedCapabilityIds:[cap.id]}));
+}
+
 function recipeInventory(entry, streams, publication) {
   const release = entry.work?.fresh?.release ?? entry.releaseIds.map(id => publication.releases.find(row => row.id === id)).find(row => row.recipeInventory);
   if (release?.recipeInventory) return {recipes: release.recipeInventory,
-    establishedScopedProofs: release.capabilities.filter(cap => cap.proof?.state === 'established').map(cap => ({recipeId: cap.proof.recipeId, recipeSha256:cap.proof.recipeSha256, recipeRevision:cap.proof.recipeRevision, creditedCapabilityIds: [cap.id]})),
+    establishedScopedProofs: currentRecipeProofs(release),
     recipeNote: 'Authored recipe inventory from the pinned Kit revision. Recipe release membership is not established; capability and recipe proof stay separate.'};
   const catalog = (entry.originalCorpus ?? entry.corpus)?.catalog;
   if (catalog) return {recipes: catalog.recipes, establishedScopedProofs: catalog.establishedScopedProofs,

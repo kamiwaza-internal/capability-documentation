@@ -7,6 +7,9 @@ import {loadReleaseCorpora} from '../scripts/release-corpora.mjs';
 import {loadReleaseWork, releaseWorkSiteData} from '../scripts/release-work.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
 import {validateStreams} from '../scripts/value-streams.mjs';
+import {nativePublication} from './fixtures/native-publication.mjs';
+import {recipeProof} from '../src/value-stream-map.mjs';
+import {releaseWorkView, verificationDocument} from '../src/verification-guide.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL('../data/' + name, import.meta.url)));
 const publication = read('publication.json');
@@ -123,4 +126,51 @@ test('a corpus current-verification update is read automatically without changin
   assert.ok(cap.details.some(item => item.label === 'Snapshot prerelease status'));
   assert.equal(cap.details.find(item => item.label === 'Observation finished').value, accepted.finishedAt);
   assert.equal(entry.capabilities.length, corpora[0].catalog.capabilities.length);
+});
+
+test('native recipes expose only effective proof credit in their current reviewed claims', () => {
+  for (const mode of ['credited', 'withdrawn', 'unreviewed']) {
+    const candidate=nativePublication(),release=candidate.releases[0];
+    if(mode==='withdrawn'){
+      release.capabilities[4].verificationBasis='none';release.capabilities[4].status='not-yet-verified';
+      release.counts.prereleaseVerified--;release.counts.scopedProofVerified--;release.counts.notYetVerified++;
+    }
+    if(mode==='unreviewed')release.recipeInventory[0].reviewedVerifies=[];
+    validatePublication(candidate);
+    const work={...sources.releaseWork[0],version:release.version,fresh:{release}};
+    const current=dashboardReleases({...sources,releaseWork:[work]})[0];
+    assert.equal(Boolean(recipeProof(current.recipes[0],current)),mode==='credited',mode);
+    assert.equal(current.establishedScopedProofs.length,mode==='credited'?1:0,mode);
+    assert.equal(release.capabilities[4].proof.state,'established','historical proof object is retained');
+  }
+});
+
+test('native declarations update dashboard and download text while retaining source history', () => {
+  const candidate=nativePublication(),release=candidate.releases[0];
+  const original=sources.releaseWork[0].retained.capabilities[0];
+  const current=release.capabilities[0];
+  current.id=original.id;current.title='Current native declaration';current.summary='Current declaration scope.';
+  current.conditions=['Current deployment condition.'];
+  current.declaration=structuredClone(publication.releases.flatMap(row=>row.capabilities).find(cap=>cap.declaration).declaration);
+  validatePublication(candidate);
+  const work={...sources.releaseWork[0],version:release.version,fresh:{release}};
+  const before=JSON.stringify(work);
+  const dashboard=dashboardReleases({...sources,releaseWork:[work]})[0].capabilities.find(cap=>cap.id===current.id);
+  assert.equal(dashboard.title,current.title);
+  assert.ok(dashboard.conditions.includes(current.conditions[0]));
+  const document=JSON.stringify(verificationDocument(releaseWorkView(work)));
+  assert.ok(document.includes(current.title));assert.ok(document.includes(current.conditions[0]));
+  assert.equal(JSON.stringify(work),before,'canonical historical records remain unchanged');
+});
+
+test('valid native downloads render missing optional evidence counts as zero', () => {
+  const candidate=nativePublication(),release=candidate.releases[0];
+  const {proof,...cap}=release.capabilities[0];release.capabilities=[cap];release.recipeInventory=[];
+  release.counts={included:1,prereleaseVerified:1,scenarioVerified:1,developerAssessed:0,failedOrMixed:0,notYetVerified:0,releaseVerified:0,releaseFailed:0};
+  release.assessmentWindow={earliestAssessedAt:null,latestAssessedAt:null};delete release.proofWindow;
+  validatePublication(candidate);
+  const work={...sources.releaseWork[0],version:release.version,fresh:{release}};
+  const document=JSON.stringify(verificationDocument(releaseWorkView(work),true));
+  for(const text of ['0 carried','0 agent-observed','0 scoped recipe proofs'])assert.ok(document.includes(text),text);
+  assert.ok(!document.includes('undefined'));
 });

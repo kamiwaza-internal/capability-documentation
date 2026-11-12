@@ -53,10 +53,11 @@ function nativeWorkView(work) {
     const current = release.capabilities.find(cap => cap.id === id);
     const original = prior.get(id);
     return {...(original ?? {id, title:current.title ?? id, status:'not-release-verified', historicalPrerelease:false}),
+      title:current?.title ?? original?.title ?? id,
       originalVersion:original ? work.originalVersion : work.version, qualificationTarget:work.version,
       nativeQualification:nativeQualification(current, work.version), nativeEvidence:current,
       prereleaseCarried:current?.verificationBasis === 'historical-carry',
-      assumptions:[...(original?.assumptions ?? []), ...(current?.carry?.assumptions ?? [])],
+      assumptions:[...(original?.assumptions ?? []), ...(current?.conditions ?? []), ...(current?.carry?.assumptions ?? [])],
       limits:[...(original?.limits ?? []), ...(current?.limits ?? []), ...(current?.carry?.limits ?? []), ...(current?.assessment?.limits ?? []), ...(current?.proof?.limits ?? [])],
       ...(current?.verificationBasis === 'agent-verification' ? {freshAssessment:current.assessment} : {})};
   });
@@ -83,7 +84,10 @@ export function prereleaseHistoryText(row) {
 
 function progressSummary(report) {
   const c = report.counts;
-  if (report.nativeCounts) return `${report.nativeCounts.prereleaseVerified} of ${report.nativeCounts.included} capabilities have native prerelease verification for ${report.version}: ${report.nativeCounts.carriedVerified} carried, ${report.nativeCounts.agentVerified} agent-observed, ${report.nativeCounts.scopedProofVerified} scoped recipe proofs, ${report.nativeCounts.developerAssessed} local-contract assessments and ${report.nativeCounts.scenarioVerified} scenario-backed. Original observations and overlapping prior histories remain separate. Not final-release certification.`;
+  if (report.nativeCounts) {
+    const native = {carriedVerified:0, agentVerified:0, scopedProofVerified:0, ...report.nativeCounts};
+    return `${native.prereleaseVerified} of ${native.included} capabilities have native prerelease verification for ${report.version}: ${native.carriedVerified} carried, ${native.agentVerified} agent-observed, ${native.scopedProofVerified} scoped recipe proofs, ${native.developerAssessed} local-contract assessments and ${native.scenarioVerified} scenario-backed. Original observations and overlapping prior histories remain separate. Not final-release certification.`;
+  }
   if (report.freshProjection) return `${report.freshVerified} capabilities have fresh scoped prerelease verification for ${report.version}; ${report.effectiveCarry} others retain native prerelease carry. These categories are deduplicated. The unchanged prior history retains ${c.acceptedScoped} scoped proofs and ${c.historicalPrerelease} historical prerelease records; do not add those overlapping history counts. This is not final-release certification.`;
   return report.qualificationTarget
     ? `${report.prereleaseCarry.capabilityIds.length} of ${c.included} capabilities are prerelease verified through native carry into ${report.version}. Separately, ${c.acceptedScoped} of ${c.included} capabilities have retained scoped evidence available for qualification; ${c.remaining} have no accepted scoped proof in that history. These overlapping counts are not additive and are not ${report.version} release certifications. Evidence through ${report.asOf}.`
