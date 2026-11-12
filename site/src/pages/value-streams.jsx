@@ -85,7 +85,7 @@ export default function ValueStreams() {
   const corpus = releases.find(row => row.release === version);
   return <Layout title="Value stream map" description="Explore value streams, recipes and distinct Kamiwaza capabilities, with scoped proof and mapping gaps kept visible.">
     <header className="mapHero"><div className="container"><p className="mapEyebrow">KAMIWAZA · CAPABILITY ATLAS</p><h1>From the job to the building blocks.</h1><p>Explore value streams, inspect recipes and see the capabilities behind each claim.</p></div></header>
-    <main className="container mapMain"><nav className="kitTabs" aria-label="Explore capabilities"><Link to="/">About and evidence</Link><Link to="/value-streams/" aria-current="page">Value stream map</Link></nav>
+    <main className="container mapMain">
       {releases.length > 0 && <label className="mapVersion">Release<select aria-label="Release" value={version} onChange={event => setVersion(event.target.value)}>{releases.map(row => <option key={row.release}>{row.release}</option>)}</select></label>}
       {corpus ? <Dashboard key={version} corpus={corpus}/> : <p>No release data is published yet. <Link to="/catalog/">Browse capability evidence</Link>.</p>}
     </main>

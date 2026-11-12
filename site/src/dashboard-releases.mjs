@@ -8,8 +8,8 @@ function sidecarRecipes(streams, version) {
     const claims = (streams.claimLinks ?? []).filter(link => link.streamId === stream.id && link.role === 'verifies');
     return {id: stream.id, title: stream.title, definitionRevision: recipe.revision,
       orderedStepCount: recipe.steps.length, sourceVersion: recipe.source_version,
-      capabilityIds: [...new Set(recipe.steps.flatMap(step => step.capability_ids))],
-      reviewedVerifies: [...new Set(claims.map(link => link.capabilityId))],
+      capabilityIds: Array.from(new Set(recipe.steps.flatMap(step => step.capability_ids))),
+      reviewedVerifies: Array.from(new Set(claims.map(link => link.capabilityId))),
       scopedSdkProof: 'none', gaps: [], limits: recipe.limits};
   });
 }

@@ -94,5 +94,4 @@
   .streamColumn:nth-of-type(3)::before { content: 'Capability claims'; }
   .mapCapabilityGrid { grid-template-columns: 1fr; }
   .mapInventoryControls { align-items: flex-start; flex-direction: column; }
-  .kitTabs a { padding: .75rem .5rem; font-size: .85rem; }
 }
