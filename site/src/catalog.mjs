@@ -292,3 +292,32 @@ export function joinPrimaryStamps(rows, data, publication) {
 
 export const stampStatus = (row, tag) => row.releaseStamp ? `Release stamped · ${tag}`
   : row.sourceContractStamp ? `Source-contract verified · ${tag} · not runtime evidence` : null;
+
+// Catalog page filters. A release selects its own versioned records; the stamped tag's version
+// (for example 1.3.2) selects the baseline records that carry one of its stamps.
+// "Release verified" means a passing scoped release stamp for that release: nothing wider.
+const tagVersion = tag => (tag ?? '').replace(/^v/, '');
+const releaseVerified = (cap, release, tag) =>
+  (cap.status === 'release-stamped' && release !== tagVersion(tag)) ||
+  (Boolean(cap.releaseStamp) && ['all', tagVersion(tag)].includes(release));
+export function filterPrimary(capabilities, query, status, release = 'all', tag) {
+  const inRelease = capabilities.filter(cap => release === 'all' || cap.version === release ||
+    (release === tagVersion(tag) && Boolean(cap.releaseStamp || cap.sourceContractStamp)));
+  return status === 'release-stamped'
+    ? filterCapabilities(inRelease.filter(cap => releaseVerified(cap, release, tag)), query, 'all')
+    : filterCapabilities(inRelease, query, status);
+}
+const reportReleaseVerified = row => !row.qualificationTarget && row.status === 'accepted-scoped-release';
+// One entry per release with records on the page, newest first, with what the filters would show.
+export function releaseOverview(capabilities, reports, tag) {
+  const versions = new Set([...capabilities.map(cap => cap.version), ...reports.map(report => report.version)]);
+  if (capabilities.some(cap => cap.releaseStamp || cap.sourceContractStamp)) versions.add(tagVersion(tag));
+  return [...versions].sort((a, b) => b.localeCompare(a, undefined, {numeric: true})).map(version => {
+    const rows = reports.filter(report => report.version === version).flatMap(report => report.capabilities);
+    return {
+      version,
+      records: filterPrimary(capabilities, '', 'all', version, tag).length + rows.length,
+      releaseVerified: filterPrimary(capabilities, '', 'release-stamped', version, tag).length + rows.filter(reportReleaseVerified).length,
+    };
+  });
+}
