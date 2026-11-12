@@ -47,3 +47,16 @@ test('the release overview lists every release with records and agrees with the 
   }
   assert.ok(overview.some(item => item.version === version));
 });
+
+test('the combined verified filter includes a record verified only by its release stamp, never by a source-contract stamp', () => {
+  const stampOnly = rows.filter(row => row.releaseStamp && !['prerelease-verified', 'release-stamped'].includes(row.status));
+  assert.ok(stampOnly.length > 0, 'the published data has a release stamp on a record without accepted pre-release verification');
+  for (const release of ['all', version]) {
+    const shown = filterPrimary(rows, '', 'verified', release, tag);
+    for (const row of stampOnly) assert.ok(shown.includes(row), release + ' ' + row.id);
+    assert.ok(shown.every(row => ['prerelease-verified', 'release-stamped'].includes(row.status) || row.releaseStamp));
+  }
+  // The stamp belongs to the tag: it adds nothing when the baseline version itself is selected.
+  const baseline = publication.releases.find(release => release.id === stamps.baselineReleaseId).version;
+  assert.ok(filterPrimary(rows, '', 'verified', baseline, tag).every(row => ['prerelease-verified', 'release-stamped'].includes(row.status)));
+});

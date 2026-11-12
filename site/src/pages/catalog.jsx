@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
@@ -151,7 +151,7 @@ export default function Catalog() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('all');
   const [release, setRelease] = useState('all');
-  const releases = [...publication.releases].filter(item => release === 'all' || item.version === release).sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || b.publicationRevision - a.publicationRevision); // newest version, then revision, first
+  const releases = [...publication.releases].sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}) || b.publicationRevision - a.publicationRevision); // newest version, then revision, first
   // Same additive join as the status table, by capability id within the stamped version; statuses and order are untouched.
   const allReports = [...(siteConfig.customFields.currentVerification ?? []), ...(siteConfig.customFields.releaseWork ?? []).map(releaseWorkView)];
   const primary = joinPrimaryStamps(primaryCapabilities(publication), releaseStamps, publication).filter(row => !allReports.some(report => report.version === row.version));
@@ -164,6 +164,23 @@ export default function Catalog() {
     if (overview.some(item => item.version === params.get('release'))) setRelease(params.get('release'));
     if (params.get('status') in filterLabels || params.get('status') in prereleaseLabels) setStatus(params.get('status'));
   }, []);
+  // An in-page link can point at a record the current filters hide. Clear them, then go there.
+  const pendingTarget = useRef(null);
+  useEffect(() => {
+    const follow = () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      if (!id || document.getElementById(id)) return;
+      pendingTarget.current = id;
+      setRelease('all'); setStatus('all'); setQuery('');
+    };
+    window.addEventListener('hashchange', follow);
+    return () => window.removeEventListener('hashchange', follow);
+  }, []);
+  useEffect(() => {
+    if (!pendingTarget.current) return;
+    document.getElementById(pendingTarget.current)?.scrollIntoView();
+    pendingTarget.current = null;
+  }, [release, status, query]);
   const tableVersions = [releaseStamps.releaseTag.replace(/^v/, ''), publication.releases.find(item => item.id === releaseStamps.baselineReleaseId)?.version];
   return <Layout title="Full catalog" description="Every published Kamiwaza capability record, with conditions, evidence and exact-build verification status.">
     <header className="catalogHero"><div className="container">
@@ -217,7 +234,7 @@ export default function Catalog() {
       </section>)}
       <PrimaryCapabilities capabilities={primary} query={query} status={status} tag={releaseStamps.releaseTag} release={release}/>
       <details className="gaps" id="catalog-history"><summary>Original immutable snapshots and separate scoped observations</summary>
-      {(publication.releaseStamps ?? []).filter(snapshot => release === 'all' || snapshot.version === release).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}
+      {(publication.releaseStamps ?? []).map(snapshot => <ReleaseStamps key={snapshot.id} snapshot={snapshot}/>)}
       {(publication.observations ?? []).map(observation => <ScopedObservations key={observation.id} observation={observation}/>)}
       <h2>Historical snapshots, newest first: accepted pre-release baseline and source snapshots</h2>
       <p><a href="/releases/index.json">Machine-readable release index</a></p>

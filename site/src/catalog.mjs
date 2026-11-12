@@ -303,9 +303,12 @@ const releaseVerified = (cap, release, tag) =>
 export function filterPrimary(capabilities, query, status, release = 'all', tag) {
   const inRelease = capabilities.filter(cap => release === 'all' || cap.version === release ||
     (release === tagVersion(tag) && Boolean(cap.releaseStamp || cap.sourceContractStamp)));
-  return status === 'release-stamped'
-    ? filterCapabilities(inRelease.filter(cap => releaseVerified(cap, release, tag)), query, 'all')
-    : filterCapabilities(inRelease, query, status);
+  if (status === 'release-stamped') return filterCapabilities(inRelease.filter(cap => releaseVerified(cap, release, tag)), query, 'all');
+  if (status !== 'verified') return filterCapabilities(inRelease, query, status);
+  // "Verified, pre-release or release" also takes a record whose only verification is the release
+  // stamp joined to it. A source-contract stamp is not runtime evidence and does not qualify.
+  const verified = new Set(filterCapabilities(inRelease, '', 'verified'));
+  return filterCapabilities(inRelease.filter(cap => verified.has(cap) || releaseVerified(cap, release, tag)), query, 'all');
 }
 const reportReleaseVerified = row => !row.qualificationTarget && row.status === 'accepted-scoped-release';
 // One entry per release with records on the page, newest first, with what the filters would show.
