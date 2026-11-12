@@ -19831,6 +19831,2039 @@
       },
       "publishedAt": "2026-11-12T15:11:07Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/66"
+    },
+    {
+      "id": "1.4.0-release-replay-r1",
+      "version": "1.4.0",
+      "basis": "canonical-release-replay",
+      "source": {
+        "ref": "v1.4.0",
+        "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+      },
+      "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+      "images": [
+        {
+          "component": "core",
+          "digest": "sha256:37b731db983cd48f85468b626e6cc83a825cc4fe620518619df327b4432d1000"
+        },
+        {
+          "component": "frontend",
+          "digest": "sha256:927d9cc8d3fb0f86b40a31dd9344ba0b71fdf9073d26c703c5f274dd122aa82f"
+        }
+      ],
+      "evidenceWindow": {
+        "earliestStartedAt": "2026-11-09T01:51:47.277645Z",
+        "latestFinishedAt": "2026-11-10T21:02:26.057218Z"
+      },
+      "generatedAt": "2026-11-12T15:53:50Z",
+      "publicationRevision": 1,
+      "publishedAt": "2026-11-12T15:53:50Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/999",
+      "capabilities": [
+        {
+          "id": "apps.app-garden",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "apps.deployment-baseline",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "beeb0916e861f13cbe4c4d90da66ebda647da96446c8c094c00b9aa79b41df74",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "apps.deployment-baseline",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T16:27:53.000000Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "apps.release-digest-pinning",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "257879aad59e11dc75a361160b21a5dca4e96faef309df9f1489ef742d440fda",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "apps.release-digest-pinning",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T18:50:15.629273Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "apps.sandbox-workload-provider",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "auth.enterprise-sso",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "auth.local-user-administration",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "c33329efdc65cd1dd444cc9a079f27c4a25577fd7b5158fb7cb65885c1ea0100",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "auth.local-user-administration",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "auth.personal-access-tokens",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "2e53da614baa8e65f95d11f8953b03c434840c20f57d14cf080388d63b685222",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "auth.personal-access-tokens",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "auth.session-revocation",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "fe9df799ec2e83b6f6d740a868eff703f04fd96631ec664974fd524b290eac17",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "auth.session-revocation",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "authz.rebac-access-control",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "21ad0fdaadee258c4ec7f9186edcb4356aa85a196c9b8aad1cb6d01e7def6cb0",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "authz.rebac-access-control",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "catalog.dataset-registry",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "catalog.registered-sources",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "catalog.secrets-management",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "fba0c1d4cb53de3223f582dd9ddd7cd4bbaed5074d3224b068a345d2f21abf59",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "catalog.secrets-management",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "catalog.writable-datasets",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "connectors.ai-assisted-connector-setup",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "connectors.connector-builder",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "7cd723e64c822426885587c1ba446a89f2fd3ca3ca64eb06f594753a10d30e71",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "connectors.connector-builder",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T02:23:32.950955Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "connectors.managed-data-sources",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "connectors.oauth-tool-policies",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "connectors.user-oauth-authorization",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "connectors.workroom-surface-access",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.dataset-indexing",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "context.workroom-document-search",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.workroom-ingestion-summary",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.workroom-raw-file-store",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.brokered-resource-access",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "delegation.capability-grants",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "delegation.consent-and-approval-gates",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "delegation.pending-approval-queue",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "delegation.run-claims-lifecycle",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "delegation.workload-identity-and-attestation",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "extensions.developer-path",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "e9b42d1f5d06c4385d3bef6cae394561221188bfbfe71eb9c7a64c46672b9cb1",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "extensions.developer-path",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T13:31:28.000000Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "federation.cluster-pairing",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "federation.execution-gates",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "federation.federated-retrieval",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "federation.remote-jobs",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "federation.user-onboarding",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "ingestion.document-translation",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "ingestion.multimedia-extraction",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "ingestion.parse-from-url",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "997f96f0c92e07942f50aaf8a667bdf1de2a965aa16998dcdaf16cd50ea94cf7",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "ingestion.parse-from-url",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T17:56:41.538732Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "ingestion.scheduled-ingest",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "ingestion.security-markings",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "ingestion.structured-document-outputs",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "6429c3d3c9a9a44a56ea0cb1bea5728c3e4775d168e7b9c8875f9881b29accd6",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "ingestion.structured-document-outputs",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T17:47:56.609956Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "ingestion.video-frame-analysis",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.admin-settings-console",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "b1e8addc4085625137c6b628635f473821ce3f5b72178c30e1b34ec3dffa0863",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.admin-settings-console",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.agent-auto-routing",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.agent-packages",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.agent-publication-approval",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "19517316c3da6a98a612797d03645c8fac0f45c84bd49aef146a21929b03078f",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.agent-publication-approval",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.answer-feedback",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "17117c4a2225a649a333b493abf01ca8c7aa63bd0fa4a1b66b9ed26089af9415",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.answer-feedback",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.artifacts",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "7a89fa052d090526909d73647079925d69e2261938ead4050030f1bb41c94ba8",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.artifacts",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.context-compression",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "6b4049cb1ddc4f78b7b0dc0ea5689280c087fee08d26df492f4b0e83b323060a",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.context-compression",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.conversation-event-streaming",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "cdb5aa2e754e4bf454223eb4e46bfe9af40cf74bfea92e43fe622c18949ae87b",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.conversation-event-streaming",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.conversation-search",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "17fc9aff931670abd94ade2cb9fc18b274b0b8f238a4e5091c749e22b1b086e7",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.conversation-search",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.custom-agents",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.data-chat",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.document-canvas-export",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "383e355b8f07a4317c88fa36a64bb8a3d7717d4e6211caeba00399cd6e46126a",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.document-canvas-export",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.document-collections",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "7beab9b5f71d73670a29328fd07df0dc1dd4807681cdf8c6fc1ece131867fec9",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.document-collections",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.member-token-budget",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "6341d34df6a0765c3775b485445975848bfbc8018cf6dc1fa288f5d6b8bb7da1",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.member-token-budget",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T19:53:48.037565Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.metrics-dashboard",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "dc2e3a43c0616f112c1f6e7204a62f89afc17482f263d4034011a497c7faed38",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.metrics-dashboard",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.multi-agent-orchestration",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "f7fa0d124a749730cdeec1a5755f860ea8f20fc2dc173131bdd53a3b9105616f",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.multi-agent-orchestration",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.notifications-inbox",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "b2c75f72422a23af7b87905385df93f151f24ace3af50ebcb3928c49fefd5847",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.notifications-inbox",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T17:46:06.193584Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.platform-operator-tools",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.prebuilt-agents",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "1b7ea8dccd3698f1142b0090538a915f49b29ed874f2ee4c5a42f21dcfb6c38a",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.prebuilt-agents",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.privacy-guard",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.product-identity",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "6a28c6b9199f26714b408c75b05a61fcad342b9d52798b7d961e6aedcd63c770",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.product-identity",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T03:27:48.504132Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.projects",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "5e7a75ecd26c4e89f4b974d81747e7c4c53f16d734b0497136d312293223a8cd",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.projects",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.prompt-library-and-chains",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "2ab3209ecc231343609c81d1093f4fbba2e520860ce159997ed057b0ae40802e",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.prompt-library-and-chains",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T01:51:47.277645Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.recipes",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.scheduled-tasks",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "kaizen.shared-chat-typing-indicators",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "38bf3aece3971cc4867798257905f0a2620fa679550049e9cb3571128788a004",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "kaizen.shared-chat-typing-indicators",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T19:28:47.891729Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "kaizen.workroom-notes",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.discover-and-download",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "models.external-endpoints",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "models.gpu-placement",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "models.local-deployment",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "models.tenant-mode-inference",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "models.tensor-parallel-serving",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "models.two-node-serving",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ontology.workroom-knowledge-graph",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.access-requests",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "platform.admin-copilot",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.airgapped-install",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.api-reference",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "95bc31b054ce5fe83a26ab84dff29f9bdbc6f69d8b8d72548e1d129ebb0dfd1c",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "platform.api-reference",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T10:33:54.931402Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "platform.app-generation-path",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "869d9ce73be6445fdcb4616805d6cf1d05ced732e3919cd9adae5892d05b6f99",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "platform.app-generation-path",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T13:31:28.000000Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "platform.greymatter-mesh-integration",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.kubernetes-install",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.licensing-and-eula",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.news-feed",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.observability",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "platform.operations-and-notifications",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "platform.tenant-namespace-install",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "platform.usage-and-audit",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-10T21:02:26.057218Z",
+              "summary": "A registered scenario failed in the release's Kajiya run.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed in the release's Kajiya run."
+        },
+        {
+          "id": "retrieval.async-retrieval-jobs",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+        },
+        {
+          "id": "security.consent-and-banners",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "8b0e8fdaf3dce6b95ab3920a9b467da258cf3725bc7a0828511d1452be1dd331",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "security.consent-and-banners",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T19:09:24.275579Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "skills.skills-library",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "c1e8d49bb41abb69db54667a4bf0e7a8242f1f88ad1f0426456fc49d80894f74",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "skills.skills-library",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-09T02:28:02.837415Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+        },
+        {
+          "id": "tools.mcp-tool-shed",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": {
+            "id": "ad416a32acef9a7be473c9611e4e08596b2541b8fcd7f578cfa0910722e5d7fc",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.0",
+            "capability": "tools.mcp-tool-shed",
+            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
+            "releaseSource": {
+              "ref": "v1.4.0",
+              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
+            },
+            "finishedAt": "2026-11-10T21:02:26.057218Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+        },
+        {
+          "id": "workrooms.admin-oversight",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.app-launch",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.app-runtime-binding",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.archive-and-delete",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.create",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.export-bundle",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.membership-and-roles",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.org-decommission",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.presence",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.s3-object-storage",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.session-scoping",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.shared-credentials",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.shared-threads",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        }
+      ],
+      "counts": {
+        "catalog": 108,
+        "included": 87,
+        "excluded": 21,
+        "deferred": 0,
+        "otherOwner": 0,
+        "releaseStamped": 34,
+        "failed": 9,
+        "notStamped": 44,
+        "wholeCapabilityPromotions": 0
+      },
+      "approval": {
+        "status": "pending",
+        "scope": "full-inventory",
+        "approvedBy": null,
+        "approvedAt": null,
+        "snapshotSha256": null
+      }
     }
   ]
 }
