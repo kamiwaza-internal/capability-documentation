@@ -118,6 +118,17 @@ const compareTime = (a, b) => timeKey(a).localeCompare(timeKey(b));
 const latest = values => values.filter(Boolean).sort(compareTime).at(-1) ?? null;
 const evidenceTime = cap => cap.verificationBasis === 'value-stream' ? cap.proof?.observedAt ?? null : latest([cap.assessment?.assessedAt, ...cap.evidence.map(record => record.runFinishedAt)]);
 
+// A later revision of the same release replay can restate a capability as not stamped with no
+// failure. That withdraws the earlier revision's failed row here; the earlier snapshot itself
+// stays published and unchanged.
+const replaySeries = snapshot => JSON.stringify([snapshot.version, snapshot.basis, snapshot.manifestId,
+  releaseRef(snapshot.source.ref), snapshot.source.sourceRevision, snapshot.id.replace(/-r\d+$/, '')]);
+const restatesWithoutFailure = (later, earlier) => later.qualified && later.cap.status === 'not-stamped' &&
+  later.cap.failures.length === 0 && later.release.publicationRevision > earlier.release.publicationRevision &&
+  replaySeries(later.release) === replaySeries(earlier.release);
+export const withdrawn = (row, rows) => row.qualified && row.cap.status === 'failed' &&
+  rows.some(later => restatesWithoutFailure(later, row));
+
 // A presentation projection: immutable upstream verdicts and original receipts stay intact.
 export function primaryCapabilities(publication) {
   const describing = descriptionOnly(publication);
@@ -148,7 +159,7 @@ export function primaryCapabilities(publication) {
     if (!rows.length) continue;
     // Release-bound stamps outrank pre-release records; ordinary missing observations do not erase acceptance.
     const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
-    const ordered = [...rows].sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
+    const ordered = [...rows].filter(row => !withdrawn(row, rows)).sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
     const verified = rows.filter(row => accepted.has(row.cap.status)).sort((a, b) => rank(a) - rank(b) || compareTime(a.at, b.at) || a.release.id.localeCompare(b.release.id));
     const retained = verified.at(-1) ?? ordered.filter(row => ['failed', 'failed-or-mixed', 'partial'].includes(row.cap.status)).at(-1) ?? ordered.at(-1);
     // A newer full native prerelease score for this version is authoritative.

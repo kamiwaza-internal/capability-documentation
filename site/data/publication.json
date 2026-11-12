@@ -21888,9 +21888,9 @@
         "earliestStartedAt": "2026-11-09T01:24:03.844624Z",
         "latestFinishedAt": "2026-11-10T21:02:26.057218Z"
       },
-      "generatedAt": "2026-11-12T18:20:40Z",
+      "generatedAt": "2026-11-12T18:37:51Z",
       "publicationRevision": 2,
-      "publishedAt": "2026-11-12T18:20:40Z",
+      "publishedAt": "2026-11-12T18:37:51Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/68",
       "capabilities": [
         {
@@ -22107,7 +22107,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "catalog.registered-sources",
@@ -22163,7 +22163,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "connectors.ai-assisted-connector-setup",
@@ -22219,7 +22219,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "connectors.oauth-tool-policies",
@@ -22287,7 +22287,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "context.workroom-document-search",
@@ -23313,7 +23313,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "models.tenant-mode-inference",
@@ -23545,7 +23545,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "platform.operations-and-notifications",
@@ -23560,7 +23560,7 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "scope": "No complete passing run of this capability's registered scenarios is retained for this release."
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "platform.tenant-namespace-install",
