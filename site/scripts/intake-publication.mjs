@@ -82,7 +82,7 @@ export function intakePublication(base, candidate, review = {}) {
 }
 
 function baseJson(path) {
-  return JSON.parse(execFileSync('git', ['show', 'origin/main:' + path], {encoding:'utf8'}));
+  return JSON.parse(execFileSync('git', ['show', 'origin/main:' + path], {encoding:'utf8', maxBuffer:256 * 1024 * 1024}));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
