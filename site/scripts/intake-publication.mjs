@@ -78,8 +78,9 @@ function baseJson(path) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const plan = JSON.parse(readFileSync(process.argv[2], 'utf8'));
-  const base = {publication:baseJson('site/data/publication.json'), corpora:baseJson('site/data/release-corpora.json'),
-    work:baseJson('site/data/release-work.json')};
+  const base = {publication:JSON.parse(readFileSync('site/data/publication.json', 'utf8')),
+    corpora:baseJson('site/data/release-corpora.json'), work:JSON.parse(readFileSync('site/data/release-work.json', 'utf8'))};
+  preserveHistory(baseJson('site/data/publication.json'), base.publication);
   const checkOnly = process.argv[3] === '--check-only';
   const result = intakePublication(base, plan.payload, checkOnly ? {} : {url:process.argv[3], createdAt:process.argv[4]});
   for (const content of result.files.values()) assertPublicOutputSafe(content);

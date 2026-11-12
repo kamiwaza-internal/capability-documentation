@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {execFileSync, spawnSync} from 'node:child_process';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {nativePublication} from './fixtures/native-publication.mjs';
 import {intakePublication} from '../scripts/intake-publication.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
@@ -102,4 +106,40 @@ test('a newer version or newer baseline never retargets the historical release s
   const publication=JSON.parse(intakePublication(source,candidate,review).files.get('site/data/publication.json'));
   const after=dashboardReleases({publication,releaseStamps:read('release-stamps-1.3.2.json')}).find(row=>row.release==='1.3.2');
   assert.deepEqual(after,before);
+});
+
+test('CLI uses checkout freshness while preserving immutable main history', t => {
+  const root=mkdtempSync(join(tmpdir(),'capability-intake-cli-'));
+  t.after(()=>rmSync(root,{recursive:true,force:true}));
+  mkdirSync(join(root,'site/data'),{recursive:true});
+  const write=(name,value)=>writeFileSync(join(root,'site/data',name),JSON.stringify(value));
+  const source=base(),candidate=nativePublication();
+  source.work.releases=[{...source.work.releases[0],version:'1.4.0'}];
+  write('publication.json',source.publication);write('release-corpora.json',source.corpora);write('release-work.json',source.work);
+  const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8',stdio:'pipe'});
+  git('init');git('add','.');
+  git('-c','user.name=Drew','-c','user.email=drew@kamiwaza.ai','commit','-m','Fixture');
+  git('update-ref','refs/remotes/origin/main','HEAD');
+  const newer=structuredClone(candidate);newer.releases[0].id='1.4.0-prerelease-r11';newer.releases[0].publicationRevision=11;
+  const applied=intakePublication(source,newer,review);
+  for(const [path,content] of applied.files){mkdirSync(join(root,path,'..'),{recursive:true});writeFileSync(join(root,path),content);}
+  const before=readFileSync(join(root,'site/data/release-work.json'),'utf8');
+  const plan=join(root,'candidate.json');
+  const run=(payload,...args)=>{
+    writeFileSync(plan,JSON.stringify({payload}));
+    return spawnSync(process.execPath,[fileURLToPath(new URL('../scripts/intake-publication.mjs',import.meta.url)),plan,...args],{cwd:root,encoding:'utf8'});
+  };
+  for(const args of [['--check-only'],[review.url,review.createdAt]]){
+    const stale=run(candidate,...args);
+    assert.notEqual(stale.status,0,stale.stdout+stale.stderr);
+    assert.match(stale.stderr,/Stale target-work/);
+    assert.equal(readFileSync(join(root,'site/data/release-work.json'),'utf8'),before);
+  }
+  const replay=run(newer,review.url,review.createdAt);
+  assert.equal(replay.status,0,replay.stdout+replay.stderr);
+  assert.equal(JSON.parse(replay.stdout).unchanged,true);
+  source.publication.releases.shift();write('publication.json',source.publication);
+  const rewritten=run(newer,'--check-only');
+  assert.notEqual(rewritten.status,0);
+  assert.match(rewritten.stderr,/Published revision cannot be changed or removed/);
 });
