@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {primaryCapabilities} from '../src/catalog.mjs';
+import {readFileSync} from 'node:fs';
+import {validatePublication} from '../scripts/publication.mjs';
+import {nativePublication} from './fixtures/native-publication.mjs';
 
 // One synthetic capability per revision isolates the native scorer's effective
 // verdict from unrelated observations and qualified release-stamp precedence.
@@ -24,6 +27,34 @@ const revision = (state, number) => {
 };
 const view = states => primaryCapabilities({releases: states.map((state, i) => revision(state, i + 1))})[0];
 const proofFailures = row => row.failures.filter(failure => failure.axis === 'scoped-proof');
+
+test('a valid schema-9 revision without a proof count withdraws older native verification credit', () => {
+  const older=nativePublication().releases[0],newer=structuredClone(older);
+  newer.id='1.4.0-prerelease-r11';newer.publicationRevision=11;
+  newer.capabilities=newer.capabilities.map(({proof,...cap})=>({...cap,status:'not-yet-verified',
+    verificationBasis:'none',assessment:null,carry:null,evidence:[]}));
+  newer.counts={included:6,prereleaseVerified:0,scenarioVerified:0,developerAssessed:0,
+    failedOrMixed:0,notYetVerified:6,releaseVerified:0,releaseFailed:0};
+  newer.recipeInventory=[];newer.testedBuilds=[];delete newer.proofWindow;
+  newer.evidenceWindow={earliestRunFinishedAt:null,latestRunFinishedAt:null};
+  newer.assessmentWindow={earliestAssessedAt:null,latestAssessedAt:null};
+  for(const [index,release] of [older,newer].entries())Object.assign(release,{
+    publicationState:'published',publishedAt:`2020-01-0${index+5}T00:00:00Z`,
+    reviewReference:'https://github.com/kamiwaza-internal/capability-documentation/pull/99'});
+  const base=JSON.parse(readFileSync(new URL('../data/publication.json',import.meta.url)));
+  const publication={...base,schema:9,releases:[...base.releases,older,newer]};
+  validatePublication(publication);
+  const before=JSON.stringify(publication);
+  const rows=primaryCapabilities(publication).filter(row=>row.version===newer.version);
+  assert.equal(rows.length,6);
+  for(const row of rows){
+    assert.equal(row.status,'not-yet-verified',row.id);
+    assert.equal(row.snapshotId,newer.id,row.id);
+  }
+  assert.deepEqual(rows.find(row=>row.id==='synthetic.cap-4').history.map(row=>row.status),
+    ['prerelease-verified','not-yet-verified']);
+  assert.equal(JSON.stringify(publication),before,'historical records stay intact');
+});
 
 test('first failed proof claims no earlier acceptance', () => {
   const row = view(['failed']);

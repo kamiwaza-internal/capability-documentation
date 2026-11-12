@@ -1,0 +1,10 @@
+import {readFileSync} from 'node:fs';
+import {validatePublication} from './publication.mjs';
+import {assertPublicOutputSafe} from './public-output-privacy.mjs';
+const raw = readFileSync(process.argv[2], 'utf8');
+const candidate = JSON.parse(raw);
+if (candidate.schema !== 9) throw new Error('Expected native cycle candidate');
+validatePublication(candidate);
+assertPublicOutputSafe(raw);
+assertPublicOutputSafe(JSON.stringify(candidate));
+console.log('Candidate schema, scope and privacy checks passed');

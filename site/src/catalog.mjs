@@ -15,6 +15,7 @@ export function countStatuses(capabilities) {
 }
 
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
+const nativeScored = release => Object.hasOwn(release, 'recipeInventory') || Object.hasOwn(release.counts ?? {}, 'scopedProofVerified');
 
 // A source declaration published after its version's pre-release evidence only adds descriptions:
 // it never selects a status, lineage or omission for that version.
@@ -32,9 +33,9 @@ const statusRank = {verified: 0, superseded: 1, 'failed-or-mixed': 2, 'not-yet-v
 // is `scope: 'whole-capability'` or names a `scenario` the acceptance rests on.
 // Published observation rows carry neither field today, so they are surfaced
 // as non-applicable and never change status.
-export function currentCapabilityView(publication, version) {
+export function currentCapabilityView(publication, version, baselineReleaseId) {
   const releases = publication.releases ?? [];
-  const baseline = releases.filter(r => r.baselineKind === 'prerelease-evidence' && (version === undefined || r.version === version)).sort(byRevisionDesc)[0];
+  const baseline = baselineReleaseId ? releases.find(row => row.id === baselineReleaseId) : releases.filter(r => r.baselineKind === 'prerelease-evidence' && (version === undefined || r.version === version)).sort(byRevisionDesc)[0];
   if (!baseline) return [];
   const older = releases.filter(r => r.version === baseline.version && r.publicationRevision < baseline.publicationRevision).sort(byRevisionDesc);
   const describingIds = descriptionOnly(publication);
@@ -74,12 +75,12 @@ export function currentCapabilityView(publication, version) {
     const describedIn = describing.find(r => r.capabilities.some(c => c.id === cap.id && c.summary))?.id ?? null;
     const documentationGap = !cap.summary && !describedIn;
     return {
-      id: cap.id, title: cap.title, summary: cap.summary, conditions: cap.conditions, limits: cap.limits,
+      id: cap.id, title: cap.title, summary: cap.summary, conditions: [...cap.conditions, ...(cap.carry?.assumptions ?? [])], limits: [...cap.limits, ...(cap.carry?.limits ?? [])],
       status: !isAccepted ? cap.status : failing.size ? 'superseded' : 'verified',
-      acceptedAt,
+      accepted:isAccepted, acceptedAt,
       // Lineage is passed through by reference, never copied, re-versioned or re-labelled.
       lineage: {releaseId: baseline.id, version: baseline.version, verificationBasis: cap.verificationBasis,
-        evidence: cap.evidence, assessment: cap.assessment, ...(Object.hasOwn(cap, 'proof') ? {proof: cap.proof} : {}), wholeClaim: cap.wholeClaim},
+        evidence: cap.evidence, assessment: cap.assessment, ...(cap.carry ? {carry:cap.carry} : {}), ...(Object.hasOwn(cap, 'proof') ? {proof: cap.proof} : {}), wholeClaim: cap.wholeClaim},
       releaseStatus: cap.releaseStatus,
       releaseCheckFailed: cap.releaseStatus === 'failed',
       documentationGap, describedIn,
@@ -93,7 +94,7 @@ export function currentCapabilityView(publication, version) {
 
 export function summarizeCurrentView(rows) {
   const count = test => rows.filter(test).length;
-  const wasAccepted = row => row.acceptedAt !== null;
+  const wasAccepted = row => row.accepted;
   return {
     capabilities: rows.length,
     verified: count(r => r.status === 'verified'),
@@ -153,7 +154,7 @@ export function primaryCapabilities(publication) {
     // A newer full native prerelease score for this version is authoritative.
     // An explicit omission is different: it keeps the earlier accepted result.
     const nativeRows = ordered.filter(row => !row.qualified && !row.omitted &&
-      row.release.baselineKind === 'prerelease-evidence' && Object.hasOwn(row.release.counts ?? {}, 'scopedProofVerified'));
+      row.release.baselineKind === 'prerelease-evidence' && nativeScored(row.release));
     const native = nativeRows.at(-1);
     const effectiveProof = row => row?.cap.status === 'prerelease-verified' &&
       row.cap.verificationBasis === 'value-stream' && row.cap.proof?.state === 'established';

@@ -9,8 +9,9 @@ import {descriptionOnly, filterCapabilities, countStatuses, joinPrimaryStamps, j
 import {revisionLabel} from '../evidence.mjs';
 import {verificationLabel, releaseWorkView, prereleaseHistoryText} from '../verification-guide.mjs';
 import CurrentView from '../CurrentView';
+import NativeEvidence from '../NativeEvidence';
 
-function TextList({title, items}) {
+function TextList({title, items = []}) {
   return <><h4>{title}</h4>{items.length ? <ul>{items.map((item, i) => <li key={i}>{item}</li>)}</ul> : <p>None specified in this publication.</p>}</>;
 }
 
@@ -30,14 +31,14 @@ function PrereleaseSummary({release}) {
     <dl className="dateAxes">
       {evidenceWindow && <><dt>Test runs finished</dt><dd><time dateTime={evidenceWindow.earliestRunFinishedAt}>{evidenceWindow.earliestRunFinishedAt}</time> to <time dateTime={evidenceWindow.latestRunFinishedAt}>{evidenceWindow.latestRunFinishedAt}</time>. Each record below carries its own run date.</dd>
       <dt>Evidence ingested</dt><dd>Each scenario record shows when it entered the kit.</dd></>}
-      {release.assessmentWindow && <><dt>Developer assessments</dt><dd><time dateTime={release.assessmentWindow.earliestAssessedAt}>{release.assessmentWindow.earliestAssessedAt}</time> to <time dateTime={release.assessmentWindow.latestAssessedAt}>{release.assessmentWindow.latestAssessedAt}</time>. Local contracts; no live scenario execution.</dd></>}
+      {release.assessmentWindow && <><dt>{release.counts.agentVerified ? 'Assessments' : 'Developer assessments'}</dt><dd><time dateTime={release.assessmentWindow.earliestAssessedAt}>{release.assessmentWindow.earliestAssessedAt}</time> to <time dateTime={release.assessmentWindow.latestAssessedAt}>{release.assessmentWindow.latestAssessedAt}</time>. Local contracts; no live scenario execution.</dd></>}
       {release.proofWindow && <><dt>Scoped proofs observed</dt><dd><time dateTime={release.proofWindow.earliestObservedAt}>{release.proofWindow.earliestObservedAt}</time> to <time dateTime={release.proofWindow.latestObservedAt}>{release.proofWindow.latestObservedAt}</time>. Each record below carries its own scope and limits.</dd></>}
       <dt>Kit revision committed</dt><dd><time dateTime={release.sourceCommittedAt}>{release.sourceCommittedAt}</time>. This is not a new test date.</dd>
       <dt>Draft generated</dt><dd><time dateTime={release.generatedAt}>{release.generatedAt}</time>. Draft preparation, not publication or a test date.</dd>
       <dt>Publication review opened</dt><dd>{release.publishedAt ? <><time dateTime={release.publishedAt}>{release.publishedAt}</time>. When the publication review PR was opened, not the site deployment time.</> : 'Pending; no publication timestamp recorded.'}</dd>
       <dt>Scenario tested builds</dt><dd>{release.testedBuilds.length ? release.testedBuilds.map(build => <code key={build}>{build} </code>) : 'None in this revision; scoped proof build fingerprints appear with their proof records.'}</dd>
     </dl>
-    <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed{counts.scopedProofVerified ? '; ' + counts.scopedProofVerified + ' effective scoped proof' : ''}) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
+    <p><strong>{counts.prereleaseVerified} of {counts.included} project pre-release verified</strong> ({counts.scenarioVerified} historical scenario-backed; {counts.developerAssessed} local-contract developer-assessed{counts.scopedProofVerified ? '; ' + counts.scopedProofVerified + ' effective scoped proof' : ''}{counts.agentVerified ? '; ' + counts.agentVerified + ' scoped agent observations' : ''}{counts.carriedVerified ? '; ' + counts.carriedVerified + ' retained native carry' : ''}) · {counts.failedOrMixed} failed or mixed · {counts.notYetVerified} not yet verified · <strong>{counts.releaseVerified} of {counts.included} release verified</strong> · {counts.releaseFailed} release check failed. Counts cover the full snapshot, not search results.</p>
     <details className="gaps"><summary>Historical baseline gaps: {counts.failedOrMixed} failed or mixed, {counts.notYetVerified} not yet verified</summary>
       <p>A gap means no clean pre-release evidence is published here. It does not mean unsupported.</p>
       <p>Deferred capabilities (included in the unverified count): {release.deferredCapabilities.map(cid => <code key={cid}>{cid} </code>)}</p>
@@ -118,7 +119,7 @@ function PrimaryCapabilities({capabilities, query, status, tag}) {
       {cap.retainedCapability.scope && <><p>Original verified scope: {cap.retainedCapability.scope}</p><TextList title="Verification assumptions" items={cap.retainedCapability.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.limits}/></>}
       {cap.retainedCapability.proof && <p>Scoped proof {cap.retainedCapability.proof.state}: reviewed recipe <code>{cap.retainedCapability.proof.recipeId}</code> revision {cap.retainedCapability.proof.recipeRevision}, observed <time dateTime={cap.retainedCapability.proof.observedAt}>{cap.retainedCapability.proof.observedAt}</time>. {cap.retainedCapability.proof.scope} {cap.retainedCapability.proof.limits.join(' ')} This is not whole-capability or release verification.</p>}
       {cap.retainedCapability.verificationBasis === 'developer-assessment' && <p>Accepted local-contract developer assessment; no live scenario execution. {cap.retainedCapability.assessment.scope}</p>}
-      {cap.retainedCapability.assessment && <><TextList title="Verification assumptions" items={cap.retainedCapability.assessment.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.assessment.limits}/></>}
+      <NativeEvidence cap={cap.retainedCapability}/>{cap.retainedCapability.assessment && <><TextList title="Verification assumptions" items={cap.retainedCapability.assessment.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.assessment.limits}/></>}
       {cap.retainedCapability.evidence.length > 0 && <p>Original scenario scope: {cap.retainedCapability.evidence.map(record => <React.Fragment key={record.scenario ?? record.summary}><code>{record.scenario ?? record.summary}</code> · {record.outcome} on <code>{record.build}</code>; </React.Fragment>)}. These original scoped records do not establish a fresh release replay.</p>}
       {cap.failures.length > 0 && <aside className="evidenceNotice"><strong>Retained failure or release hold.</strong><ul>{cap.failures.map((failure, index) => <li key={index}><a href={'#' + failure.snapshotId}>{failure.snapshotId}</a> · {failure.at ?? 'failure date not established'} · {failure.superseded ? failure.axis === 'scoped-proof' ? 'Historical proof failure; a later established native-scored proof is current.' : 'Earlier matching failure; a later matching pass is primary.' : failure.supersedes ? failure.axis === 'scoped-proof' ? 'Latest failed proof withdrew earlier effective proof credit.' : 'Applicable later failure supersedes the earlier verification.' : failure.ambiguous ? 'Same-bound failure; ordering relative to acceptance is not established. Hold remains explicit.' : failure.reason}</li>)}</ul></aside>}
       {cap.description ? <>
@@ -162,7 +163,7 @@ export default function Catalog() {
         </div>
       {reports.map(report => <section className="release" key={report.version}>
         <h2>Kamiwaza {report.version}: {report.qualificationTarget ? 'prerelease qualification' : 'current capability status'}</h2>
-        {report.freshProjection ? <p><strong>{report.freshVerified} freshly tested and {report.effectiveCarry} carried capabilities for {report.version}</strong>. These categories are deduplicated scoped prerelease evidence, not final-release certification.</p> : report.prereleaseCarry && <p><strong>{report.prereleaseCarry.capabilityIds.length} of {report.counts.included} prerelease verified through native carry</strong>. These reuse earlier evidence; they are not fresh tests or release certifications. The scoped-proof history below overlaps this count and must not be added to it.</p>}
+        {report.nativeCounts ? <p><strong>{report.nativeCounts.prereleaseVerified} of {report.nativeCounts.included} native prerelease verifications for {report.version}</strong>. Original observations and overlapping prior histories stay separate; this is not final-release certification.</p> : report.freshProjection ? <p><strong>{report.freshVerified} freshly tested and {report.effectiveCarry} carried capabilities for {report.version}</strong>. These categories are deduplicated scoped prerelease evidence, not final-release certification.</p> : report.prereleaseCarry && <p><strong>{report.prereleaseCarry.capabilityIds.length} of {report.counts.included} prerelease verified through native carry</strong>. These reuse earlier evidence; they are not fresh tests or release certifications. The scoped-proof history below overlaps this count and must not be added to it.</p>}
         <p><strong>{report.counts.acceptedScoped} of {report.counts.included} capabilities with {report.qualificationTarget ? 'retained scoped evidence available for qualification' : 'accepted scoped proofs across recorded builds'}</strong>; {report.counts.remaining} without accepted scoped proof. {report.counts.historicalPrerelease} historical prerelease verifications are retained separately, not added to the cumulative proof count.</p>
         <p>Evidence through {report.asOf}. {report.qualificationTarget ? `Prior results retain their original tested builds and dates. They are not fresh ${report.version} tests or accepted release carry-forward.` : 'Results cover multiple configurations, not one jointly tested deployment or whole-release approval.'} <a href={report.sourcePath}>Original detailed evidence</a></p>
         {report.capabilities.filter(row => (!query || (row.title + ' ' + row.id).toLowerCase().includes(query.toLowerCase())) &&
@@ -220,10 +221,10 @@ export default function Catalog() {
               <p>Kit document SHA-256: <code>{cap.declaration.documentSha256}</code></p>
               <ul>{cap.declaration.citations.map((c, i) => <li key={i}><code>{c.repo}/{c.path}</code> · {c.symbol} · revision <code>{c.read_at}</code> · {c.closed ? 'closed declaration' : 'open declaration'}</li>)}</ul>
             </section>}
-            {cap.assessment && <section><h4>Developer assessment basis</h4>
+            <NativeEvidence cap={cap}/>{cap.assessment?.basis === 'developer-assessment' && <section><h4>Developer assessment basis</h4>
               <p>{cap.assessment.scope}</p>
               <p>Assessed <time dateTime={cap.assessment.assessedAt}>{cap.assessment.assessedAt}</time> · {cap.assessment.ingestedAt ? <>ingested <time dateTime={cap.assessment.ingestedAt}>{cap.assessment.ingestedAt}</time></> : 'Kit ingestion timestamp not established.'}</p>
-              <p>Observed source revision <code>{cap.assessment.observedSourceRevision}</code> (source only; no tested-build binding).</p>
+              <p>Observed source revision <code>{cap.assessment.observedSourceRevision ?? 'not established'}</code> (source only; no tested-build binding).</p>
               <TextList title="Assessment assumptions" items={cap.assessment.assumptions}/>
               <TextList title="Assessment limits" items={cap.assessment.limits}/>
             </section>}
