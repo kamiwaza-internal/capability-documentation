@@ -41,7 +41,7 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
   const stampLabel = local && `Local ${localStamps.targetVersion} scoped stamp`;
   const c = summarizeCurrentView(rows);
   const {releaseId, version} = rows[0].lineage;
-  const targets = [...new Set(rows.flatMap(row => row.later.filter(l => !l.applicable && l.failedScenarios > 0).map(l => `${l.environment} ${l.version}`)))];
+  const targets = Array.from(new Set(rows.flatMap(row => row.later.filter(l => !l.applicable && l.failedScenarios > 0).map(l => `${l.environment} ${l.version}`))));
   const shown = filterCapabilities(rows, query, status).filter(row => (!stampedOnly || row.localStamp) && (!releaseOnly || row.releaseStamp) && (!contractOnly || row.sourceContractStamp));
   return <section className="release" id="current-capability-status">
     <h2>Current capability status</h2>
@@ -56,8 +56,10 @@ export default function CurrentView({publication, localStamps, releaseStamps}) {
     {release && <p>Of the {tag} stamps: {release.releaseStamped} release stamped ({release.releaseStampedVerified} of the {c.verified} accepted pre-release verified; {release.releaseStampedNotPreviouslyVerified.length} not previously verified{release.releaseStampedNotPreviouslyVerified.length > 0 && <>: {release.releaseStampedNotPreviouslyVerified.map(id => <code key={id}>{id} </code>)}</>}) · {release.sourceContract} source-contract verified ({release.sourceContractVerified} of the {c.verified} accepted pre-release verified). No capability carries both.<br/>
       The "{c.releaseVerified} of {c.capabilities} release verified" figure above is the release-check field of the historical {version} pre-release snapshot; it is left as published and the {tag} stamps do not rewrite it or any {version} status.</p>}
     {local && <>
+      <details className="readingNotes"><summary>What a local scoped stamp covers</summary>
       <p>A local scoped stamp records that every latest scoped scenario run for that capability in one local {localStamps.targetVersion} run, <Time value={localStamps.runWindow.earliestStartedAt}/> to <Time value={localStamps.runWindow.latestFinishedAt}/>, passed or passed with notes. It is not a release stamp, not release verification and not sign-off. It covers only the listed scenarios on the build that run recorded (core source <code>{localStamps.coreSource.ref}@{localStamps.coreSource.commit}</code>), and it never changes a status shown here. Derived in <a href={localStamps.source.kitPullRequest}>the capability kit pull request</a>; <a href="/local-stamps.json">machine-readable local stamps</a>.</p>
       {local.stampedOutside.length + local.notStampedOutside.length > 0 && <p>{local.stampedOutside.length} stamped, outside the {c.capabilities} included capabilities: {local.stampedOutside.map(id => <code key={id}>{id} </code>)}{local.notStampedOutside.length > 0 && <>· {local.notStampedOutside.length} with a failed latest scenario and no stamp, also outside: {local.notStampedOutside.map(id => <code key={id}>{id} </code>)}</>}</p>}
+      </details>
     </>}
     <div className="catalogFilters">
       <label>Search current status <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
