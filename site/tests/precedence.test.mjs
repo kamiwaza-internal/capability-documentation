@@ -5,7 +5,8 @@ import {readFileSync as read} from 'node:fs';
 import {descriptionOnly, primaryCapabilities, filterCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
 import {releaseStampsFixture} from './fixtures/release-stamps.mjs';
 import {releaseSnapshotDigest, validatePublication} from '../scripts/publication.mjs';
-const actual = () => JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));
+import {historicalPublication} from './fixtures/historical-publication.mjs';
+const actual = () => historicalPublication();
 const find = p => primaryCapabilities(p).find(row => row.id === 'synthetic.stamped' && row.version === '1.3.2');
 function timeline(finish = '2026-10-01T11:00:00.000003Z') {
   const p = releaseStampsFixture(), next = structuredClone(p.releaseStamps[0]);

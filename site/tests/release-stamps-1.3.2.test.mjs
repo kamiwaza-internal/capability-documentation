@@ -8,6 +8,7 @@ import {validateReleaseStamps} from '../scripts/release-stamps.mjs';
 import {projectReleaseStamps, serialize} from '../scripts/project-release-stamps.mjs';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
 import {currentCapabilityView, joinLocalStamps, joinReleaseStamps, summarizeCurrentView} from '../src/catalog.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const fixture = () => ({
@@ -106,7 +107,7 @@ test('RS-4 join is additive: statuses, order and inputs unchanged; outside stamp
     releaseStampedOutside: ['synthetic.new'], sourceContractOutside: []});
 });
 
-const published = JSON.parse(read('../data/publication.json'));
+const published = historicalPublication();
 const raw = read('../data/release-stamps-1.3.2.json');
 const stamps = JSON.parse(raw);
 const neverVerified = ['kaizen.conversation-event-streaming', 'kaizen.prebuilt-agents'];

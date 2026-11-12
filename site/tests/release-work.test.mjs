@@ -10,8 +10,9 @@ import {recipeGuide, releaseWorkView, verificationLabel, prereleaseHistoryText} 
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {zipMembers} from '../scripts/check-release-corpus.mjs';
 import {nativePublication} from './fixtures/native-publication.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
-const publication = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));
+const publication = historicalPublication();
 const source = JSON.parse(readFileSync(new URL('../data/release-work.json', import.meta.url)));
 
 test('native target-work ZIP instructions name the actual projection and every native evidence axis', t => {

@@ -6,9 +6,10 @@ import {agentsMd, CHANGE_NOTE, changesSince, compareRows, curatedIds, evidenceDo
 import {currentCapabilityView, joinReleaseStamps} from '../src/catalog.mjs';
 import {toPdf, toZip} from '../scripts/evidence-files.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
-const publication = read('../data/publication.json');
+const publication = historicalPublication();
 const releaseStamps = read('../data/release-stamps-1.3.2.json');
 // The historical document assertions below cover the original three releases. The public
 // replay-only 1.3.4 version has its own contract and provenance checks below.

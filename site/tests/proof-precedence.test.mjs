@@ -4,6 +4,7 @@ import {primaryCapabilities} from '../src/catalog.mjs';
 import {readFileSync} from 'node:fs';
 import {validatePublication} from '../scripts/publication.mjs';
 import {nativePublication} from './fixtures/native-publication.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
 // One synthetic capability per revision isolates the native scorer's effective
 // verdict from unrelated observations and qualified release-stamp precedence.
@@ -41,7 +42,7 @@ test('a valid schema-9 revision without a proof count withdraws older native ver
   for(const [index,release] of [older,newer].entries())Object.assign(release,{
     publicationState:'published',publishedAt:`2020-01-0${index+5}T00:00:00Z`,
     reviewReference:'https://github.com/kamiwaza-internal/capability-documentation/pull/99'});
-  const base=JSON.parse(readFileSync(new URL('../data/publication.json',import.meta.url)));
+  const base=historicalPublication();
   const publication={...base,schema:9,releases:[...base.releases,older,newer]};
   validatePublication(publication);
   const before=JSON.stringify(publication);
