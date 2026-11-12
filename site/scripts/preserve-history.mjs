@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
+// publication.json is past Node's 1 MiB default; a larger file must not stop the history check.
+const READ_LIMIT = 256 * 1024 * 1024;
 import {readFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
 import {loadCurrentVerification} from './current-verification.mjs';
@@ -55,8 +57,8 @@ export function preserveVerificationHistory(root, previous, current) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const base = process.env.PUBLICATION_BASE_SHA;
   if (!/^[a-f0-9]{40}$/.test(base || '')) throw new Error('Missing immutable base SHA');
-  const previous = JSON.parse(execFileSync('git', ['show', base + ':site/data/publication.json'], {encoding: 'utf8'}));
+  const previous = JSON.parse(execFileSync('git', ['show', base + ':site/data/publication.json'], {encoding: 'utf8', maxBuffer: READ_LIMIT}));
   preserveHistory(previous, JSON.parse(readFileSync('data/publication.json', 'utf8')));
-  const previousCorpora = JSON.parse(execFileSync('git', ['show', base + ':site/data/release-corpora.json'], {encoding: 'utf8'}));
+  const previousCorpora = JSON.parse(execFileSync('git', ['show', base + ':site/data/release-corpora.json'], {encoding: 'utf8', maxBuffer: READ_LIMIT}));
   preserveVerificationHistory('..', previousCorpora, JSON.parse(readFileSync('data/release-corpora.json', 'utf8')));
 }
