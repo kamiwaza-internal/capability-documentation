@@ -9,9 +9,26 @@ import {evidenceVersions, changesSince, agentsMd} from '../src/evidence.mjs';
 import {recipeGuide, releaseWorkView, verificationLabel, prereleaseHistoryText} from '../src/verification-guide.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
 import {zipMembers} from '../scripts/check-release-corpus.mjs';
+import {nativePublication} from './fixtures/native-publication.mjs';
 
 const publication = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url)));
 const source = JSON.parse(readFileSync(new URL('../data/release-work.json', import.meta.url)));
+
+test('native target-work ZIP instructions name the actual projection and every native evidence axis', t => {
+  const out=mkdtempSync(join(tmpdir(),'native-work-readme-'));
+  t.after(()=>rmSync(out,{recursive:true,force:true}));
+  const candidate=nativePublication();
+  const work={...loadReleaseWork({publication})[0],version:'1.4.0',fresh:{release:candidate.releases[0],bytes:Buffer.from(JSON.stringify(candidate))}};
+  emitBundles(publication,out);emitEvidence(publication,null,out,{},null,null,[],[],[work]);
+  const index=JSON.parse(readFileSync(join(out,'evidence/index.json')));
+  const entry=index.versions.find(row=>row.version===work.version);
+  const members=zipMembers(readFileSync(join(out,entry.files.zip.path)));
+  const readme=members.get('README.md').toString();
+  assert.ok(members.has('machine-readable/native-cycle-projection.json'));
+  assert.ok(readme.includes('machine-readable/native-cycle-projection.json'));
+  assert.ok(!readme.includes('fresh-agent-projection.json'));
+  for(const axis of ['scenario','local-contract','agent','carry','recipe-proof'])assert.ok(readme.includes(axis),axis);
+});
 
 test('prerelease work preserves exact prior evidence and cannot retarget its stamps', t => {
   const repo = mkdtempSync(join(tmpdir(), 'release-work-'));

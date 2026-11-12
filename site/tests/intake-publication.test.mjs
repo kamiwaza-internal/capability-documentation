@@ -129,7 +129,7 @@ test('CLI uses checkout freshness while preserving immutable main history', t =>
     writeFileSync(plan,JSON.stringify({payload}));
     return spawnSync(process.execPath,[fileURLToPath(new URL('../scripts/intake-publication.mjs',import.meta.url)),plan,...args],{cwd:root,encoding:'utf8'});
   };
-  for(const args of [[],[review.url],[review.url,'invalid-date']]){
+  for(const args of [[],[review.url],[review.url,'invalid-date'],[review.url,'2019-01-01T00:00:00Z'],[review.url,'2099-01-01T00:00:00Z']]){
     const rejected=run(newer,...args);
     assert.notEqual(rejected.status,0);
     assert.match(rejected.stderr,/review.*(metadata|timestamp)/i);

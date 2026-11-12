@@ -52,12 +52,21 @@ function appendRelease(base, release, review) {
   return {files:new Map([['site/data/publication.json', bytes(publication)]]), unchanged:false};
 }
 
+function validateReview(review, release) {
+  if (!review.url) return;
+  assert.match(review.url, /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/);
+  assert.match(review.createdAt ?? '', /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Invalid review timestamp');
+  assert.equal(new Date(review.createdAt).toISOString(), review.createdAt.replace('Z', '.000Z'), 'Invalid review timestamp');
+  assert.ok(review.createdAt >= release.generatedAt, 'Review timestamp predates candidate generation');
+  assert.ok(Date.parse(review.createdAt) <= Date.now(), 'Future review timestamp');
+}
+
 export function intakePublication(base, candidate, review = {}) {
   assert.equal(candidate.schema, 9, 'Expected a native cycle candidate');
   validatePublication(candidate);
   assertPublicOutputSafe(bytes(candidate));
   const release = structuredClone(candidate.releases[0]);
-  if (review.url) assert.match(review.url, /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/);
+  validateReview(review, release);
   const original = base.publication.releases.find(row => row.id === release.id);
   if (original) {
     assert.deepEqual(comparable(original), comparable(release), 'A publication identity cannot change bytes');
@@ -84,8 +93,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const checkOnly = process.argv[3] === '--check-only';
   if (!checkOnly) {
     assert.ok(process.argv[3] && process.argv[4], 'Review metadata requires a URL and timestamp');
-    assert.match(process.argv[4], /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, 'Invalid review timestamp');
-    assert.equal(new Date(process.argv[4]).toISOString(), process.argv[4].replace('Z', '.000Z'), 'Invalid review timestamp');
   }
   const result = intakePublication(base, plan.payload, checkOnly ? {} : {url:process.argv[3], createdAt:process.argv[4]});
   for (const content of result.files.values()) assertPublicOutputSafe(content);

@@ -160,6 +160,12 @@ test('native declarations update dashboard and download text while retaining sou
   assert.ok(dashboard.conditions.includes(current.conditions[0]));
   const document=JSON.stringify(verificationDocument(releaseWorkView(work)));
   assert.ok(document.includes(current.title));assert.ok(document.includes(current.conditions[0]));
+  const assessed=release.capabilities.find(cap=>cap.verificationBasis==='developer-assessment');
+  const projected=dashboardReleases({...sources,releaseWork:[work]})[0].capabilities.find(cap=>cap.id===assessed.id);
+  for(const assumption of assessed.assessment.assumptions){
+    assert.ok(projected.conditions.includes(assumption),assumption);
+    assert.ok(document.includes(assumption),assumption);
+  }
   assert.equal(JSON.stringify(work),before,'canonical historical records remain unchanged');
 });
 
