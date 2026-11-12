@@ -15,6 +15,7 @@ export function countStatuses(capabilities) {
 }
 
 const byRevisionDesc = (a, b) => b.publicationRevision - a.publicationRevision;
+const nativeScored = release => Object.hasOwn(release, 'recipeInventory') || Object.hasOwn(release.counts ?? {}, 'scopedProofVerified');
 
 // A source declaration published after its version's pre-release evidence only adds descriptions:
 // it never selects a status, lineage or omission for that version.
@@ -153,7 +154,7 @@ export function primaryCapabilities(publication) {
     // A newer full native prerelease score for this version is authoritative.
     // An explicit omission is different: it keeps the earlier accepted result.
     const nativeRows = ordered.filter(row => !row.qualified && !row.omitted &&
-      row.release.baselineKind === 'prerelease-evidence' && Object.hasOwn(row.release.counts ?? {}, 'scopedProofVerified'));
+      row.release.baselineKind === 'prerelease-evidence' && nativeScored(row.release));
     const native = nativeRows.at(-1);
     const effectiveProof = row => row?.cap.status === 'prerelease-verified' &&
       row.cap.verificationBasis === 'value-stream' && row.cap.proof?.state === 'established';
