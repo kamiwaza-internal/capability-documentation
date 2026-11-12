@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {validatePublication} from '../scripts/publication.mjs';
+import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
 import {preserveHistory} from '../scripts/preserve-history.mjs';
 import {emitBundles} from '../scripts/published-bundles.mjs';
 import {filterCapabilities} from '../src/catalog.mjs';
@@ -105,10 +106,11 @@ test('current publication: every pre-release revision is sanitized and claims no
   for (const release of releases) {
     assert.equal(release.counts.releaseVerified, 0);
     assert.equal(release.approval.status, 'pending');
-    const {capabilities, omittedCapabilities, deferredCapabilities, ...metadata} = release;
+    const {capabilities, omittedCapabilities, deferredCapabilities, recipeInventory, ...metadata} = release;
     const structural = JSON.stringify([metadata, capabilities.map(c => [c.status, c.releaseStatus, c.evidence, c.assessment])]);
     // Capability identities are validated public identifiers, including federation.cluster-pairing.
-    // Scan runtime metadata separately so a product identifier does not masquerade as a host.
+    // Recipe IDs also contain capability identifiers; the privacy validator checks the full release.
+    assertPublicOutputSafe(JSON.stringify(release));
     assert.doesNotMatch(structural, /ghcr\.io|sha256:|kubectl|\.test\b|cluster|mirror|bug-?bash|eng-\d+|feature\/|fix\/|localhost|\d+\.\d+\.\d+\.\d+/i);
   }
 });

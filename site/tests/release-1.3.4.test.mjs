@@ -4,8 +4,9 @@ import {readFileSync} from 'node:fs';
 import {primaryCapabilities} from '../src/catalog.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 const bytes = readFileSync(new URL('../data/publication.json', import.meta.url));
-const publication = () => JSON.parse(bytes);
+const publication = () => historicalPublication();
 
 test('the actual 1.3.4 projection retains full inventory, failures and pending approval', () => {
   const data = validatePublication(publication());

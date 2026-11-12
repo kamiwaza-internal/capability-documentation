@@ -9,10 +9,11 @@ import {validatePublication} from '../scripts/publication.mjs';
 import {validateStreams} from '../scripts/value-streams.mjs';
 import {nativePublication} from './fixtures/native-publication.mjs';
 import {recipeProof} from '../src/value-stream-map.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 import {releaseWorkView, verificationDocument, recipeGuide} from '../src/verification-guide.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL('../data/' + name, import.meta.url)));
-const publication = read('publication.json');
+const publication = historicalPublication();
 const sources = {publication, releaseStamps: read('release-stamps-1.3.2.json'), corpora: loadReleaseCorpora(),
   releaseWork: loadReleaseWork({publication}).map(releaseWorkSiteData), currentVerification: [],
   streams: validateStreams(read('value-streams.json'), publication)};

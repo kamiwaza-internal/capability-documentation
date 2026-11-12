@@ -5,6 +5,7 @@ import {validateLocalStamps} from '../scripts/local-stamps.mjs';
 import {projectLocalStamps, serialize} from '../scripts/project-local-stamps.mjs';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
 import {currentCapabilityView, joinLocalStamps, summarizeCurrentView} from '../src/catalog.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const scenario = (scenarioId, extra = {}) => ({scenarioId, lane: 'sdk', status: 'passed',
@@ -94,7 +95,7 @@ test('LS-4 join is additive: statuses, order and inputs unchanged; outside stamp
   assert.deepEqual([joined.stamped, joined.stampedVerified, joined.stampedOutside, joined.notStampedOutside], [1, 1, ['synthetic.outside'], []]);
 });
 
-const published = JSON.parse(read('../data/publication.json'));
+const published = historicalPublication();
 const raw = read('../data/local-stamps.json');
 const stamps = JSON.parse(raw);
 const flagged = ['catalog.writable-datasets', 'connectors.connector-builder', 'kaizen.notifications-inbox', 'kaizen.product-identity'];

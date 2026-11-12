@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {countStatuses, currentCapabilityView, summarizeCurrentView, primaryCapabilities, joinPrimaryStamps} from '../src/catalog.mjs';
 import {nativePublication} from './fixtures/native-publication.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
 const deepFreeze = value => {
   if (value && typeof value === 'object') Object.values(value).forEach(deepFreeze);
@@ -134,7 +135,7 @@ test('CUR-E evidence lineage passes through unmodified, in order, without mutati
 });
 
 test('CUR-F published data: 50 verifications retained, 4 later non-applicable failures, 4 documentation gaps (r5 describes the rest)', () => {
-  const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
+  const published = historicalPublication();
   const rows = currentCapabilityView(deepFreeze(published));
   assert.deepEqual(summarizeCurrentView(rows), {
     capabilities: 87, verified: 50, scenarioBacked: 33, developerAssessed: 17, scopedProofVerified: 0, superseded: 0, laterNonApplicableFailure: 4,
@@ -196,7 +197,7 @@ async function renderCurrentView(props) {
 const occurrences = (html, text) => html.split(text).length - 1;
 
 test('CUR-G rendered page: stamp badges, counts and paragraphs appear only for the publication the stamps were projected against', async () => {
-  const published = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
+  const published = historicalPublication();
   const localStamps = JSON.parse(readFileSync(new URL('../data/local-stamps.json', import.meta.url), 'utf8'));
   const releaseStamps = JSON.parse(readFileSync(new URL('../data/release-stamps-1.3.2.json', import.meta.url), 'utf8'));
   const badge = text => '<span class="status">' + text + '</span>';

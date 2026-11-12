@@ -10,9 +10,10 @@ import {intakePublication} from '../scripts/intake-publication.mjs';
 import {validatePublication} from '../scripts/publication.mjs';
 import {preserveHistory} from '../scripts/preserve-history.mjs';
 import {dashboardReleases} from '../src/dashboard-releases.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL('../data/' + name, import.meta.url)));
-const base = () => ({publication:read('publication.json'), corpora:read('release-corpora.json'),work:read('release-work.json')});
+const base = () => ({publication:historicalPublication(), corpora:read('release-corpora.json'),work:read('release-work.json')});
 const review = {url:'https://github.com/kamiwaza-internal/capability-documentation/pull/99',createdAt:'2026-11-01T00:00:00Z'};
 
 test('automatic intake accepts the combined native axes without inventing source bindings or runtime approval', () => {
@@ -32,6 +33,24 @@ test('automatic intake accepts the combined native axes without inventing source
   assert.equal(dashboards[0].release,'1.4.0');
   assert.equal(dashboards[0].recipes.length,1);
   assert.deepEqual(dashboards[0].capabilities.find(row=>row.id==='synthetic.cap-3').conditions,['The original contract remains applicable.']);
+});
+
+test('the real 1.4.0 candidate retains its native 87-capability prerelease axes', () => {
+  const published = read('publication.json');
+  const release = published.releases.find(row => row.version === '1.4.0');
+  const candidate = {schema:9, releases:[release]};
+  validatePublication(candidate);
+  const applied = intakePublication(base(), candidate, {});
+  const result = JSON.parse(applied.files.get('site/data/publication.json'));
+  const added = result.releases.find(row => row.id === release.id);
+  assert.deepEqual(added.counts, {included:87, prereleaseVerified:66, scenarioVerified:0, developerAssessed:6,
+    agentVerified:3, carriedVerified:51, scopedProofVerified:6, failedOrMixed:0, notYetVerified:21,
+    releaseVerified:0, releaseFailed:0});
+  assert.equal(added.releaseBinding, 'not-established');
+  assert.equal(added.publicationState, 'published');
+  assert.equal(added.reviewReference, 'https://github.com/kamiwaza-internal/capability-documentation/pull/66');
+  assert.equal(added.publishedAt, '2026-11-12T15:11:07Z');
+  assert.deepEqual(result.releases.slice(0,-1), base().publication.releases);
 });
 
 test('privacy failures stop intake before any target file is returned', () => {

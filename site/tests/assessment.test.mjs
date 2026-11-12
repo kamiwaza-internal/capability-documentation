@@ -8,6 +8,7 @@ import {validatePublication} from '../scripts/publication.mjs';
 import {currentCapabilityView, primaryCapabilities} from '../src/catalog.mjs';
 import {evidenceDocument, evidenceVersions, summaryDocument, toMarkdown} from '../src/evidence.mjs';
 import {prereleaseFixture} from './fixtures/prerelease.mjs';
+import {historicalPublication} from './fixtures/historical-publication.mjs';
 const release = x => x.releases[0];
 const assessed = x => release(x).capabilities[3];
 test('accepted local-contract basis remains distinct from scenario credit, source, approval and publication', () => {
@@ -68,7 +69,7 @@ for (const [name, change, reason] of [
 // Schema 8 is a new reviewed consumer contract. Historical publication bytes
 // remain untouched; these are synthetic rows with no private proof receipt.
 function proofFixture() {
-  const data = JSON.parse(readFileSync(new URL('../data/publication.json', import.meta.url), 'utf8'));
+  const data = historicalPublication();
   data.schema = 8;
   const r = structuredClone(data.releases.find(item => item.id === '1.3.0-prerelease-r3'));
   r.id = '1.3.0-prerelease-r4';
