@@ -47,7 +47,9 @@ test('the real 1.4.0 candidate retains its native 87-capability prerelease axes'
     agentVerified:3, carriedVerified:51, scopedProofVerified:6, failedOrMixed:0, notYetVerified:21,
     releaseVerified:0, releaseFailed:0});
   assert.equal(added.releaseBinding, 'not-established');
-  assert.equal(added.publicationState, 'draft');
+  assert.equal(added.publicationState, 'published');
+  assert.equal(added.reviewReference, 'https://github.com/kamiwaza-internal/capability-documentation/pull/66');
+  assert.equal(added.publishedAt, '2026-11-12T15:11:07Z');
   assert.deepEqual(result.releases.slice(0,-1), base().publication.releases);
 });
 
