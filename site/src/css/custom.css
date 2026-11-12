@@ -169,7 +169,3 @@ code { overflow-wrap: anywhere; }
   .instructions > li::before { left: .75rem; }
 }
 
-.kitTabs { display: flex; gap: .5rem; border-bottom: 1px solid var(--ifm-color-emphasis-300); margin-bottom: 2rem; }
-.kitTabs a { padding: .8rem 1rem; color: var(--ifm-font-color-base); border-bottom: 3px solid transparent; font-weight: 600; }
-.kitTabs a[aria-current='page'] { border-color: var(--ifm-color-primary); color: var(--ifm-color-primary); }
-.kitTabs a:hover { text-decoration: none; background: var(--ifm-color-emphasis-100); }

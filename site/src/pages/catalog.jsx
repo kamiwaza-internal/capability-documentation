@@ -163,7 +163,7 @@ export default function Catalog() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (overview.some(item => item.version === params.get('release'))) setRelease(params.get('release'));
-    if (params.get('status') in filterLabels || params.get('status') in prereleaseLabels) setStatus(params.get('status'));
+    if (Object.hasOwn(filterLabels, params.get('status') ?? '') || Object.hasOwn(prereleaseLabels, params.get('status') ?? '')) setStatus(params.get('status'));
   }, []);
   // An in-page link can point at a record the current filters hide. Clear them, then go there.
   const pendingTarget = useRef(null);
@@ -193,7 +193,7 @@ export default function Catalog() {
       <aside className="evidenceNotice"><strong>Evidence basis is explicit.</strong> A documented feature is not automatically verified. Partial coverage and development builds are labeled explicitly. Absence does not mean unsupported.</aside>
       <p className="evidenceNotice">Legacy Docker/SSH paired-node serving (models.two-node-serving) is retired and unsupported. It is removed from current claims. Historical publication sections retain their original evidence and counts.</p>
       <nav className="catalogJump" aria-label="On this page">
-        <a href="#current-capability-status">Status table</a>
+        {(release === 'all' || tableVersions.includes(release)) && <a href="#current-capability-status">Status table</a>}
         <a href="#catalog-records">Capability records</a>
         <a href="#current-capabilities">Accepted verification by version</a>
         <a href="#catalog-history">Original snapshots</a>
