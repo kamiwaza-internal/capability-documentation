@@ -23890,9 +23890,9 @@
         "earliestStartedAt": "2026-11-09T01:24:03.844624Z",
         "latestFinishedAt": "2026-11-13T00:03:59.834794Z"
       },
-      "generatedAt": "2026-11-13T17:30:18Z",
+      "generatedAt": "2026-11-16T19:04:25Z",
       "publicationRevision": 3,
-      "publishedAt": "2026-11-13T17:30:18Z",
+      "publishedAt": "2026-11-16T19:04:25Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/69",
       "capabilities": [
         {
@@ -25252,21 +25252,10 @@
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately."
           ],
-          "stamp": {
-            "id": "e8c8fde5a39b1028a56bfb9b4806d6e9fd2f66e1aef95aad12d9b0caa90a0506",
-            "basis": "fresh-release-replay",
-            "targetRelease": "1.4.0",
-            "capability": "models.discover-and-download",
-            "manifestId": "4573ba9ba47d2abb808817d92fa687dbaf3c5d6d4b1d8c9c953a8eea6a044fb8",
-            "releaseSource": {
-              "ref": "v1.4.0",
-              "sourceRevision": "aa9171549fa5ffcabdff8a87aaf0d5b78b02bfd4"
-            },
-            "finishedAt": "2026-11-13T00:03:59.834794Z"
-          },
+          "stamp": null,
           "failures": [],
-          "status": "release-stamped",
-          "scope": "Every scenario registered for this capability passed in the release's Kajiya run on the published release artifacts."
+          "status": "not-stamped",
+          "scope": "Every test mapped to this capability passed in the release's Kajiya run, but the capability names operations no test covers. No test failed."
         },
         {
           "id": "models.external-endpoints",
@@ -25867,9 +25856,9 @@
         "excluded": 21,
         "deferred": 0,
         "otherOwner": 0,
-        "releaseStamped": 36,
+        "releaseStamped": 35,
         "failed": 2,
-        "notStamped": 49,
+        "notStamped": 50,
         "wholeCapabilityPromotions": 0
       },
       "approval": {
