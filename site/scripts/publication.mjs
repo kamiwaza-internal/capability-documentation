@@ -448,6 +448,25 @@ export function releaseSnapshotDigest(snapshot) {
   const {approval: ignored, ...body} = snapshot;
   return createHash('sha256').update(JSON.stringify(body)).digest('hex');
 }
+// Operation counts and not-stamped reasons are optional per snapshot and all-or-nothing within
+// one: its counts declare them, and then every row carries exactly the fields it is due. An
+// included row counts its operations; only an included, not-stamped row gives a reason.
+const notStampedReasons = ['untested', 'skipped', 'partial', 'incomplete'];
+function operationFields(cap) {
+  if (cap?.disposition !== 'included') return [];
+  shape(cap.operations, ['named', 'verified']);
+  const {named, verified} = cap.operations;
+  requireValue([named, verified].every(Number.isSafeInteger) && 0 <= verified && verified <= named, 'Invalid operation counts');
+  if (cap.status === 'release-stamped') requireValue(verified === named, 'Stamped capability must verify every named operation');
+  if (cap.status !== 'not-stamped') return ['operations'];
+  requireValue(notStampedReasons.includes(cap.notStampedReason), 'Invalid not-stamped reason');
+  return ['operations', 'notStampedReason'];
+}
+function operationCounts(included) {
+  const sum = key => included.reduce((total, cap) => total + cap.operations[key], 0);
+  return {operationsNamed: sum('named'), operationsVerified: sum('verified'),
+    ...Object.fromEntries(notStampedReasons.map(reason => [reason, included.filter(cap => cap.notStampedReason === reason).length]))};
+}
 function releasedSnapshot(value) {
   shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval']);
   identifier(value.id);
@@ -472,8 +491,9 @@ function releasedSnapshot(value) {
   requireValue(Number.isSafeInteger(value.publicationRevision) && value.publicationRevision > 0, 'Invalid publication revision');
   requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Full release inventory required');
+  const withOperations = Object.hasOwn(value.counts ?? {}, 'operationsNamed');
   for (const cap of value.capabilities) {
-    shape(cap, ['id', 'distribution', 'disposition', 'status', 'wholeClaim', 'scope', 'assumptions', 'limits', 'stamp', 'failures']);
+    shape(cap, ['id', 'distribution', 'disposition', 'status', 'wholeClaim', 'scope', 'assumptions', 'limits', 'stamp', 'failures', ...(withOperations ? operationFields(cap) : [])]);
     identifier(cap.id);
     requireValue(cap.distribution === 'public', 'Only approved public projections can be rendered');
     requireValue(['included', 'excluded', 'deferred', 'other-owner'].includes(cap.disposition), 'Invalid release inventory disposition');
@@ -507,11 +527,12 @@ function releasedSnapshot(value) {
   }
   unique(value.capabilities.map(cap => cap.id));
   unique(value.capabilities.filter(cap => cap.stamp).map(cap => cap.stamp.id));
-  shape(value.counts, ['catalog', 'included', 'excluded', 'deferred', 'otherOwner', 'releaseStamped', 'failed', 'notStamped', 'wholeCapabilityPromotions']);
+  shape(value.counts, ['catalog', 'included', 'excluded', 'deferred', 'otherOwner', 'releaseStamped', 'failed', 'notStamped', 'wholeCapabilityPromotions', ...(withOperations ? ['operationsNamed', 'operationsVerified', ...notStampedReasons] : [])]);
   const rows = value.capabilities;
   const dispositionCount = disposition => rows.filter(cap => cap.disposition === disposition).length;
   const statusCount = status => rows.filter(cap => cap.disposition === 'included' && cap.status === status).length;
   const derived = {catalog: rows.length, included: dispositionCount('included'), excluded: dispositionCount('excluded'), deferred: dispositionCount('deferred'), otherOwner: dispositionCount('other-owner'), releaseStamped: statusCount('release-stamped'), failed: statusCount('failed'), notStamped: statusCount('not-stamped'), wholeCapabilityPromotions: 0};
+  if (withOperations) Object.assign(derived, operationCounts(rows.filter(cap => cap.disposition === 'included')));
   requireValue(Object.entries(derived).every(([key, number]) => value.counts[key] === number), 'Release counts must match full inventory');
   shape(value.approval, ['status', 'scope', 'approvedBy', 'approvedAt', 'snapshotSha256']);
   const decision = value.approval;

@@ -10,6 +10,7 @@ import {loadReleaseWork} from '../scripts/release-work.mjs';
 import {loadVerificationReports} from '../scripts/verification-reports.mjs';
 import {toZip} from '../scripts/evidence-files.mjs';
 import {emitBundles, emitEvidence} from '../scripts/published-bundles.mjs';
+import {replayOperations} from '../src/evidence.mjs';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const publication = JSON.parse(readFileSync(join(root, 'site/data/publication.json')));
@@ -21,7 +22,7 @@ const fixtureHome = (index, source = publication) => `<section aria-labelledby="
   const replay = (source.releaseStamps ?? []).filter(row => row.version === entry.version)
     .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
   return `<li class="releaseRow"><span class="releaseVersion">${entry.version}</span>${replay
-    ? `<span>${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped; Human release sign-off: ${replay.approval.status}</span>`
+    ? `<span>${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities; ${replayOperations(replay) ? `${replayOperations(replay).headline}; ${replayOperations(replay).breakdown}` : `${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped`}; Human release sign-off: ${replay.approval.status}</span>`
     : ''}<nav class="fileGroup" aria-label="For AI, ${entry.version}"><a href="${entry.files.zip.path}" download="">ZIP</a></nav><nav class="fileGroup" aria-label="For people, ${entry.version}"><a href="${entry.files.salesPdf.path}" download="">PDF</a><a href="${entry.files.salesMd.path}" download="">MD</a></nav></li>`;
 }).join('')}</ul></section>`;
 

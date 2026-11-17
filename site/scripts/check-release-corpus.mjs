@@ -11,6 +11,7 @@ import {loadReleaseWork} from './release-work.mjs';
 import {loadVerificationReports} from './verification-reports.mjs';
 import {assertPublicOutputSafe} from './public-output-privacy.mjs';
 import {validateReleaseStamps} from './release-stamps.mjs';
+import {replayOperations} from '../src/evidence.mjs';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -58,8 +59,9 @@ function checkHomeDownloadCards(home, index, publication, out) {
       const visible = card.replaceAll('<!-- -->', '');
       assert.ok(visible.includes(`${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities`),
         `${entry.version} scoped replay totals must remain in its release card`);
-      assert.ok(visible.includes(`${replay.counts.failed} failed selections`) &&
-        visible.includes(`${replay.counts.notStamped} not stamped`) &&
+      const operations = replayOperations(replay);
+      assert.ok((operations ? visible.includes(operations.headline) && visible.includes(operations.breakdown)
+        : visible.includes(`${replay.counts.failed} failed selections`) && visible.includes(`${replay.counts.notStamped} not stamped`)) &&
         visible.includes(`Human release sign-off: ${replay.approval.status}`),
       `${entry.version} failures, gaps and approval must remain visible`);
     }

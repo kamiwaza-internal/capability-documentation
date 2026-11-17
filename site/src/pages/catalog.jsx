@@ -6,7 +6,7 @@ import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import {descriptionOnly, filterCapabilities, filterPrimary, releaseOverview, countStatuses, joinPrimaryStamps, joinReleaseStamps, primaryCapabilities, stampStatus, stampsApply} from '../catalog.mjs';
-import {revisionLabel} from '../evidence.mjs';
+import {operationsVerified, replayLabel, replayOperations, replayStatusKey, revisionLabel} from '../evidence.mjs';
 import {verificationLabel, releaseWorkView, prereleaseHistoryText} from '../verification-guide.mjs';
 import CurrentView from '../CurrentView';
 import NativeEvidence from '../NativeEvidence';
@@ -87,6 +87,7 @@ function ScopedObservations({observation}) {
 // Full inventory decision and individually scoped replay stamps are separate axes.
 function ReleaseStamps({snapshot}) {
   const {counts: c, source, approval: decision} = snapshot;
+  const operations = replayOperations(snapshot);
   return <section className="release">
     <Heading as="h2" id={snapshot.id}>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</Heading>
     <aside className="evidenceNotice">Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification. Full inventory release approval is {decision.status}.</aside>
@@ -94,12 +95,13 @@ function ReleaseStamps({snapshot}) {
     <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>
     <ul>{snapshot.images.map(image => <li key={image.component}>{image.component}: <code>{image.digest}</code></li>)}</ul>
     <p>Fresh replay window (UTC): <time dateTime={snapshot.evidenceWindow.earliestStartedAt}>{snapshot.evidenceWindow.earliestStartedAt}</time> to <time dateTime={snapshot.evidenceWindow.latestFinishedAt}>{snapshot.evidenceWindow.latestFinishedAt}</time>. Snapshot generated <time dateTime={snapshot.generatedAt}>{snapshot.generatedAt}</time>; publication review opened <time dateTime={snapshot.publishedAt}>{snapshot.publishedAt}</time>. Review opening is not a deployment or approval date.</p>
-    <p><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped. Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner. These dispositions retain their own counts and grant no verification credit.</p>
+    <p>{operations ? <><strong>{operations.headline}</strong>. {operations.breakdown}.</> : <><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped.</>} Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner. These dispositions retain their own counts and grant no verification credit.</p>
     {decision.status === 'approved' ? <p>Full inventory release decision by {decision.approvedBy}, <time dateTime={decision.approvedAt}>{decision.approvedAt}</time>. Exact public snapshot SHA-256: <code>{decision.snapshotSha256}</code>. Review verifies operator and approver identity; the digest establishes consistency.</p> : <p>Human release approval is pending. Scoped passing replays do not approve the release.</p>}
     <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>Download scoped release stamps and inventory decision</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
+    {operations && <dl className="statusKey">{replayStatusKey([snapshot]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>}
     <details><summary>All {c.catalog} inventory dispositions, stamps and failures</summary>
       {snapshot.capabilities.map(cap => <article className="capability" key={cap.id}>
-        <h3><code>{cap.id}</code> · {cap.disposition} · {cap.status}</h3>
+        <h3><code>{cap.id}</code> · {cap.disposition} · {operations ? [replayLabel(cap), operationsVerified(cap)].filter(Boolean).join(' · ') : cap.status}</h3>
         <p>{cap.scope}</p>
         <TextList title="Replay assumptions" items={cap.assumptions}/>
         <TextList title="Replay limits" items={cap.limits}/>

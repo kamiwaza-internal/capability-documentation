@@ -31,6 +31,8 @@ Release coverage is the union of distinct capability IDs with accepted fresh evi
 
 A carry-forward decision contributes to the target release's coverage, but is not a new execution or newly discovered capability. Report genuinely new coverage separately from refreshed tests, carried coverage and additional scenarios for an existing ID.
 
+Where a release snapshot counts operations, the site reports operations verified alongside capabilities stamped. It labels each capability that is not stamped as **No test yet** (no test is registered; this says nothing about whether the capability works), **Test not run** (a test is registered but the release test run did not run it; a gap in the test run, not a product failure) or **Partly covered** (every registered test passed, but the capability names operations no test covers). None of these labels counts toward release coverage, and the operation count is never reported without the number of capabilities that have no test.
+
 For example, if a release has 12 freshly tested IDs and 40 carried IDs, with two IDs in both sets, release coverage is 50 distinct IDs, not 52. These are illustrative numbers, not Kamiwaza release results.
 
 Catalogs, PDFs, Markdown, ZIP records and agent reports must use the same accepted status source and labels. Never replace a carried or prerelease verdict with “not verified” merely because no fresh test ran. Preserve superseded snapshots as history; current applicable failures and retirement still control current claims.
