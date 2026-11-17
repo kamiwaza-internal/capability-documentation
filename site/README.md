@@ -152,6 +152,20 @@ have `release-stamped`, `failed` or `not-stamped` status. Counts are checked
 against unique rows; excluded or deferred rows do not become passes. Scoped
 stamps always retain `wholeClaim: false`, reviewed scope, assumptions and limits.
 
+A schema-6 snapshot may also count operations; the fields are optional per
+snapshot and all-or-nothing within one. Every included row then has
+`operations: {named, verified}` with `0 <= verified <= named`, equal on a
+`release-stamped` row. Every included `not-stamped` row has a `notStampedReason`
+of `untested`, `skipped`, `partial` or `incomplete`; no other row has one.
+`counts` adds `operationsNamed`, `operationsVerified` and one count per reason,
+all re-derived from the rows. An operation is one registered test scenario, or
+one operation the capability names that no test covers; a capability with no
+registered test names none. The pages then show operations verified beside
+capabilities stamped, label each not-stamped capability No test yet, Test not
+run, Partly covered or Not stamped, and always print the operation count with
+the breakdown that includes the number of capabilities with no test. A snapshot
+without these fields renders as before.
+
 `publishedAt` retains the existing publication-metadata convention: the actual
 publication review PR opening time, not deployment or human approval. It may
 precede the human decision; `approvedAt` is that separate decision time.

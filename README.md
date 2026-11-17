@@ -177,6 +177,12 @@ Where a stamp supplies `scope` and `limits`, the catalog and downloadable eviden
 show those alongside its status. The absence of those fields does not establish
 whole-capability coverage; existing scenario and global limits still apply.
 
+Where a release snapshot provides them, the site reports operations verified
+alongside capabilities stamped, and says why each remaining capability is not
+stamped: no test yet, test not run, or partly covered. The operation count covers
+only capabilities that have a registered test, so it is always shown with the
+number that have none.
+
 The private GitHub capability-kit corpus remains canonical for original evidence.
 Keep prerelease verification visible independently of release stamps, including
 its original version, provenance, scope and limits. A smaller fresh-release count

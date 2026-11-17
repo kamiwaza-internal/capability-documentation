@@ -169,6 +169,18 @@ Rules that follow from this:
 - `wholeClaim: false` means the evidence covers part of the capability. Say which part.
 - A failure and an earlier success can both be true. Report both; never present a
   failed capability as working.
+- A release snapshot (`releaseStamps` in the publication, or a bundle under
+  `/release-stamps/`) may give a capability `operations` (`named`, `verified`) and, when
+  it is not stamped, a `notStampedReason`. When they are present, report them with the
+  row: "N of M operations verified", and the reason in plain words: `untested` is no
+  test registered yet, which says nothing about whether the capability works; `skipped`
+  is a registered test the release test run did not run, a gap in the test run and not
+  a product failure; `partial` is every registered test passed but the capability names
+  operations no test covers; `incomplete` is not stamped for another reason. These
+  fields change no state: only a stamp makes a capability release verified, verified
+  operations on an unstamped capability are not release verification of it, and a
+  snapshot's operation total is never quoted without its count of untested
+  capabilities. When the fields are absent, say nothing about operations or reasons.
 - A source-contract stamp records tests on source with mocks or fixtures. It is not
   runtime evidence and is never a release stamp. Mention it under conditions and
   evidence only.

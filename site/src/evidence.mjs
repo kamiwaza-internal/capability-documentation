@@ -77,8 +77,8 @@ export function evidenceVersions(publication, releaseStamps, corpora = [], curre
       if (!replay || replay.version !== original.version || replay.source.ref !== original.productTag || replay.source.sourceRevision !== original.productCoreCommit) throw new Error('Original tagged replay is missing');
       entries.push({version: original.version, kind: 'release-replay', path: evidencePath(original.version),
         summaryPath: summaryPath(original.version), releaseIds: [], replay, originalCorpus: original,
-        headline: `Original tagged release · ${replay.counts.releaseStamped} of ${replay.counts.included} capabilities have scoped scenario stamps`,
-        basis: `Original ${original.productTag} evidence. Later corrective builds and cumulative verification updates are retained separately under prerelease work. Human release sign-off: ${replay.approval.status}.`});
+        headline: `Original tagged release · ${replayOperations(replay)?.headline ?? `${replay.counts.releaseStamped} of ${replay.counts.included} capabilities have scoped scenario stamps`}`,
+        basis: `${breakdownSentence(replay)}Original ${original.productTag} evidence. Later corrective builds and cumulative verification updates are retained separately under prerelease work. Human release sign-off: ${replay.approval.status}.`});
       continue;
     }
     const corpus = {...original, currentVerification: currentVerification.find(row => row.version === original.version) ?? (original.currentVerification?.capabilities ? original.currentVerification : null)};
@@ -101,8 +101,8 @@ export function evidenceVersions(publication, releaseStamps, corpora = [], curre
     if (entries.some(entry => entry.version === replay.version)) continue;
     entries.push({version: replay.version, kind: 'release-replay', path: evidencePath(replay.version),
       summaryPath: summaryPath(replay.version), releaseIds: [], replay,
-      headline: `${replay.counts.releaseStamped} scoped release stamps · ${replay.counts.failed} failed · ${replay.counts.notStamped} not stamped, of ${replay.counts.included} included capabilities`,
-      basis: `Replay of registered scenarios on ${replay.source.ref}; human full-inventory release sign-off: ${replay.approval.status}. Stamps alone do not establish whole-capability verification.`});
+      headline: replayOperations(replay)?.headline ?? `${replay.counts.releaseStamped} scoped release stamps · ${replay.counts.failed} failed · ${replay.counts.notStamped} not stamped, of ${replay.counts.included} included capabilities`,
+      basis: `${breakdownSentence(replay)}Replay of registered scenarios on ${replay.source.ref}; human full-inventory release sign-off: ${replay.approval.status}. Stamps alone do not establish whole-capability verification.`});
   }
   return entries.sort((a, b) => byVersionDesc(a.version, b.version));
 }
@@ -201,6 +201,35 @@ When a document describes an application or solution to build on Kamiwaza, map e
 - Never say "not supported" for missing evidence.
 - Never act as a general assistant. Answer the capability question only.
 `;
+
+// A replay snapshot may count operations and say why each capability is not stamped; an
+// operation is one registered test scenario, or one named operation no test covers. Older
+// snapshots carry neither and read as before. The operation count never appears without the
+// breakdown: capabilities with no test name no operations, so the count alone is not the product.
+const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;
+export function replayOperations({counts: c}) {
+  if (!Number.isInteger(c.operationsNamed)) return null;
+  return {
+    headline: `${c.operationsVerified} of ${c.operationsNamed} named operations verified on the release build · ${c.releaseStamped} of ${c.included} included capabilities fully release stamped`,
+    breakdown: [counted(c.untested, 'capability has no test yet', 'capabilities have no test yet'),
+      counted(c.skipped, 'has a test that did not run', 'have a test that did not run'),
+      counted(c.partial, 'is partly covered', 'are partly covered'),
+      ...(c.incomplete ? [`${c.incomplete} not stamped for another reason`] : []), `${c.failed} failed`].join(' · '),
+  };
+}
+const breakdownSentence = replay => replayOperations(replay) ? replayOperations(replay).breakdown + '. ' : '';
+const NOT_STAMPED_LABEL = {untested: 'No test yet', skipped: 'Test not run', partial: 'Partly covered'};
+export const replayLabel = row => row.disposition === 'included'
+  ? {'release-stamped': 'Release stamped', failed: 'Failed'}[row.status] ?? NOT_STAMPED_LABEL[row.notStampedReason] ?? 'Not stamped'
+  : 'Outside inventory';
+export const operationsVerified = row => row.operations?.named ? `${row.operations.verified} of ${row.operations.named} operations verified` : null;
+const REASON_KEY = [
+  ['No test yet', 'No test is registered for this capability yet. This says nothing about whether the capability works.'],
+  ['Test not run', 'A test is registered, but the release test run did not run it. This is a gap in the test run, not a product failure.'],
+  ['Partly covered', 'Every registered test passed, but the capability names operations no test covers.'],
+];
+export const replayStatusKey = replays => replays.some(replayOperations)
+  ? [...STATUS_KEY['release-replay'].slice(0, 2), ...REASON_KEY, ...STATUS_KEY['release-replay'].slice(2)] : STATUS_KEY['release-replay'];
 
 export const STATUS_KEY = {
   'release-work': [
@@ -604,10 +633,6 @@ function historicalSummaryDocument(entry, publication, releaseStamps, descriptio
   return blocks;
 }
 
-const replayLabel = row => row.disposition === 'included'
-  ? {'release-stamped': 'Release stamped', failed: 'Failed', 'not-stamped': 'Not stamped'}[row.status]
-  : 'Outside inventory';
-
 function replayIntro(entry) {
   const {replay} = entry, {counts} = replay;
   return [li(`Public replay snapshot: ${replay.id}, revision ${replay.publicationRevision}, published ${replay.publishedAt}`),
@@ -616,19 +641,22 @@ function replayIntro(entry) {
     li(`Human full-inventory release sign-off: ${replay.approval.status}. Scenario stamps alone do not establish whole-capability verification.`),
     countTable([['Inventory definitions', counts.catalog], ['Included', counts.included], ['Excluded', counts.excluded],
       ['Deferred', counts.deferred], ['Other owner', counts.otherOwner], ['Scoped release stamps', counts.releaseStamped],
-      ['Failed selections', counts.failed], ['Not stamped', counts.notStamped]])];
+      ['Failed selections', counts.failed], ['Not stamped', counts.notStamped],
+      ...(replayOperations(replay) ? [['Operations named', counts.operationsNamed], ['Operations verified', counts.operationsVerified],
+        ['No test yet', counts.untested], ['Test not run', counts.skipped], ['Partly covered', counts.partial]] : [])])];
 }
 
 function replayDocument(entry, publication) {
   const rows = [...entry.replay.capabilities].sort((a, b) => a.id.localeCompare(b.id));
   return [h(1, `Kamiwaza platform capabilities, version ${entry.version}`), p(entry.basis),
     h(2, 'How to read this file'), ...READING_RULES.map(text => li(text)),
-    h(2, 'Status key'), table(['Status', 'Meaning'], STATUS_KEY['release-replay'], [0.28, 0.72]),
+    h(2, 'Status key'), table(['Status', 'Meaning'], replayStatusKey([entry.replay]), [0.28, 0.72]),
     h(2, 'About this evidence'), ...replayIntro(entry),
     h(2, 'Capability index'), table(['Capability ID', 'Title', 'Replay status'], rows.map(row =>
       [row.id, titleOf(row, publication) ?? 'No description published', replayLabel(row)]), [0.34, 0.44, 0.22]),
     h(2, 'Capability details'), ...rows.flatMap(row => [h(3, `${titleOf(row, publication) ?? row.id} (${row.id})`),
       li(`Disposition: ${row.disposition}; replay status: ${replayLabel(row)}; whole-capability claim: not established.`),
+      ...(operationsVerified(row) ? [li(`Operations: ${operationsVerified(row)}.`)] : []),
       li(`Scope: ${row.scope}`), ...row.assumptions.map(value => li(`Assumption: ${value}`)),
       ...row.limits.map(value => li(`Limit: ${value}`)),
       ...row.failures.map(value => li(`Failure at ${value.finishedAt}: ${value.summary}${value.resolvedByStampId ? ' (resolved by a later stamp)' : ' (unresolved)'}`)),
@@ -640,7 +668,7 @@ function replaySummary(entry, publication) {
   const rows = entry.replay.capabilities.filter(row => row.disposition === 'included').sort((a, b) => a.id.localeCompare(b.id));
   return [h(1, `Kamiwaza ${entry.version}: release replay at a glance`), note(entry.basis), ...replayIntro(entry),
     h(2, `Included capabilities (${rows.length})`), table(['Capability', 'Scoped replay result'],
-      rows.map(row => [titleOf(row, publication) ?? row.id, replayLabel(row)]), [0.65, 0.35]),
+      rows.map(row => [titleOf(row, publication) ?? row.id, [replayLabel(row), operationsVerified(row)].filter(Boolean).join(' · ')]), [0.65, 0.35]),
     h(2, 'Good to know'), li('Each stamp covers only the registered scenarios on the named build. The human full-inventory release decision is separate.'),
     li('The ZIP includes the full replay inventory, failure notes, readable documents and source JSON.')];
 }

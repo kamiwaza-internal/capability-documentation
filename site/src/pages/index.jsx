@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import releaseCorpora from '../../data/release-corpora.json';
-import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY} from '../evidence.mjs';
+import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY, replayOperations, replayStatusKey} from '../evidence.mjs';
 import {salesKitPath} from '../sales-kit.mjs';
 
 function Changes({entry}) {
@@ -48,7 +48,7 @@ export default function Home() {
               <span className="releaseVersion">{entry.version}</span>
               <span className="releaseHeadline">{entry.headline}</span>
               <span className="releaseBasis">{entry.basis}</span>
-              {replay && <span className="releaseBasis">Scoped build replay: {replay.counts.releaseStamped} of {replay.counts.included} included capabilities have scenario stamps; {replay.counts.failed} failed selections; {replay.counts.notStamped} not stamped. {replay.counts.catalog} inventory definitions, {replay.counts.excluded} excluded. Scenario stamps alone do not establish whole-release approval. Human release sign-off: {replay.approval.status}.</span>}
+              {replay && <span className="releaseBasis">Scoped build replay: {replayOperations(replay) ? `${replayOperations(replay).headline}. ${replayOperations(replay).breakdown}.` : `${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities have scenario stamps; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped.`} {replay.counts.catalog} inventory definitions, {replay.counts.excluded} excluded. Scenario stamps alone do not establish whole-release approval. Human release sign-off: {replay.approval.status}.</span>}
               <Changes entry={entry} />
             </div>
             <div className="releaseFiles">
@@ -83,7 +83,7 @@ export default function Home() {
         <h2 id="faqs">FAQs</h2>
         <details className="faq">
           <summary>What do the statuses mean?</summary>
-          <dl className="statusKey">{kinds.flatMap(kind => STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
+          <dl className="statusKey">{kinds.flatMap(kind => kind === 'release-replay' ? replayStatusKey([...currentReplays.values()]) : STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
         </details>
         <details className="faq">
           <summary>What counts as a capability?</summary>
