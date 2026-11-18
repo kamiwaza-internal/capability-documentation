@@ -14273,12 +14273,12 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-18T14:37:11.361962Z"
+        "latestFinishedAt": "2026-11-18T15:00:28.659057Z"
       },
-      "generatedAt": "2026-11-18T14:38:21Z",
+      "generatedAt": "2026-11-18T15:02:25Z",
       "publicationRevision": 1,
-      "publishedAt": "2026-11-18T14:38:29Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/80",
+      "publishedAt": "2026-11-18T15:02:41Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/81",
       "capabilities": [
         {
           "id": "apps.app-garden",
@@ -14585,7 +14585,7 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 1,
+            "named": 2,
             "verified": 0
           },
           "assumptions": [],
@@ -14594,10 +14594,15 @@
             "Human release sign-off is recorded separately."
           ],
           "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "failures": [
+            {
+              "finishedAt": "2026-11-18T14:54:13.400168Z",
+              "summary": "The OpenAPI import returned HTTP 404. Generation could not proceed without a project ID.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "An import request to a deployment running the published 1.4.1 Connector Builder FIPS image returned HTTP 404."
         },
         {
           "id": "connectors.managed-data-sources",
@@ -15355,21 +15360,21 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 1,
-            "verified": 1
+            "named": 2,
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
-            "The replay did not render a canvas or complete an export.",
-            "The disposable deployment used reduced CPU requests. These tests did not measure performance."
+            "The test covered one Markdown document. Canvas opening or editing, DOCX and PDF, and other users were outside scope.",
+            "The disposable deployment used reduced CPU requests. Performance was outside scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "The Kaizen API returned the expected response for an unknown document and rejected an export without a target format."
+          "scope": "An enrolled owner uploaded a Markdown document, exported it as Markdown, and downloaded a text/markdown response with the original test text. The test deleted the upload and confirmed it was gone."
         },
         {
           "id": "kaizen.document-collections",
@@ -15463,15 +15468,15 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 2,
-            "verified": 1
+            "named": 3,
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
-            "The test used synthetic notifications inserted through the production notification service. Outbound delivery and notification generation by background workflows were outside scope.",
-            "The disposable deployment used reduced CPU requests. These tests did not measure performance."
+            "The two new notifications were seeded through the production service. Creation by an actual approval or task workflow and outbound delivery were outside scope.",
+            "The disposable deployment used reduced CPU requests. Performance was outside scope."
           ],
           "stamp": null,
           "failures": [
@@ -15482,7 +15487,7 @@
             }
           ],
           "status": "failed",
-          "scope": "Two ordinary Workroom members exercised the notification inbox with seeded entries. The replay verified listing, unread count, pagination, marking one and all read, access limited to the recipient, and cleanup."
+          "scope": "Earlier checking verified inbox listing, pagination, unread counts, marking one and all read, and recipient access. A new replay verified the source, kind, and severity for one seeded approval notification and one seeded task notification by their returned IDs."
         },
         {
           "id": "kaizen.platform-operator-tools",
@@ -15596,21 +15601,21 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 1,
-            "verified": 1
+            "named": 8,
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
-            "The replay did not create prompts or execute a chain.",
-            "The disposable deployment used reduced CPU requests. These tests did not measure performance."
+            "The run covered one prompt in their personal library. Listing, versioning, validation, debugging, execution, prompt chains, the UI, and sharing were outside scope.",
+            "The disposable deployment used reduced CPU requests. Performance was outside scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "The prompt list returned HTTP 200 and contained a title field. An unknown ID returned the expected prompt-specific error."
+          "scope": "An enrolled member created, read, edited, and deleted one prompt in their personal library. The member confirmed the deleted prompt was gone, and the disposable user was removed."
         },
         {
           "id": "kaizen.recipes",
@@ -16384,13 +16389,13 @@
         "deferred": 0,
         "otherOwner": 0,
         "releaseStamped": 1,
-        "failed": 6,
-        "notStamped": 80,
+        "failed": 7,
+        "notStamped": 79,
         "wholeCapabilityPromotions": 0,
-        "operationsNamed": 204,
-        "operationsVerified": 68,
+        "operationsNamed": 214,
+        "operationsVerified": 71,
         "untested": 32,
-        "skipped": 9,
+        "skipped": 8,
         "partial": 39,
         "incomplete": 0
       },
