@@ -14273,12 +14273,12 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-14T01:27:44.531636Z",
-        "latestFinishedAt": "2026-11-17T23:58:54.809871Z"
+        "latestFinishedAt": "2026-11-18T04:36:57.018719Z"
       },
-      "generatedAt": "2026-11-18T04:06:07Z",
+      "generatedAt": "2026-11-18T04:38:27Z",
       "publicationRevision": 1,
-      "publishedAt": "2026-11-18T04:17:50Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/72",
+      "publishedAt": "2026-11-18T04:40:08Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/75",
       "capabilities": [
         {
           "id": "apps.app-garden",
@@ -14625,18 +14625,19 @@
           "wholeClaim": false,
           "operations": {
             "named": 1,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay exercised only listing. Policy creation, individual lookup, updates, deletion, and enforcement were outside this replay."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "notStampedReason": "partial",
+          "scope": "A local API replay on the published 1.4.1 artifacts verified that tool policies can be listed as a counted page."
         },
         {
           "id": "connectors.user-oauth-authorization",
@@ -16344,10 +16345,10 @@
         "notStamped": 81,
         "wholeCapabilityPromotions": 0,
         "operationsNamed": 193,
-        "operationsVerified": 42,
+        "operationsVerified": 43,
         "untested": 33,
-        "skipped": 23,
-        "partial": 25,
+        "skipped": 22,
+        "partial": 26,
         "incomplete": 0
       },
       "approval": {
