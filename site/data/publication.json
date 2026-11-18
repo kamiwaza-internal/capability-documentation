@@ -14253,6 +14253,2112 @@
   ],
   "releaseStamps": [
     {
+      "id": "1.4.1-release-replay-r1",
+      "version": "1.4.1",
+      "basis": "canonical-release-replay",
+      "source": {
+        "ref": "v1.4.1",
+        "sourceRevision": "f615ce9d599f2bd09768791b082d1bbe73af9acc"
+      },
+      "manifestId": "1c07e42181d2fe7f3c3e8c873cdf22245f63872c2d5a350628a84dec46d00aaf",
+      "images": [
+        {
+          "component": "core",
+          "digest": "sha256:a1740fd68d56276f04d6d70e727a19525a43680ad0f73f654dc26b64ea26f3e0"
+        },
+        {
+          "component": "frontend",
+          "digest": "sha256:7260bcc1af4c3c62ec2ef907b491ae261889a9ea35d815e3bee28168519c0ebe"
+        }
+      ],
+      "evidenceWindow": {
+        "earliestStartedAt": "2026-11-14T01:27:44.531636Z",
+        "latestFinishedAt": "2026-11-17T23:58:54.809871Z"
+      },
+      "generatedAt": "2026-11-18T04:06:07Z",
+      "publicationRevision": 1,
+      "publishedAt": "2026-11-18T04:17:50Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/72",
+      "capabilities": [
+        {
+          "id": "apps.app-garden",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 3,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Browser TLS was not verified by this UI capture.",
+            "This UI capture used direct sign-in with account credentials.",
+            "This UI capture did not enforce a read-only route guard."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-17T23:32:07.357803Z",
+              "summary": "A registered scenario failed on the published release artifacts.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed on the published release artifacts."
+        },
+        {
+          "id": "apps.deployment-baseline",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "apps.release-digest-pinning",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 5,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "apps.sandbox-workload-provider",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "auth.enterprise-sso",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "auth.local-user-administration",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 2,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "auth.personal-access-tokens",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 3,
+            "verified": 3
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "auth.session-revocation",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "authz.rebac-access-control",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "catalog.dataset-registry",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 4,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-17T21:46:52.138244Z",
+              "summary": "A registered scenario failed on the published release artifacts.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed on the published release artifacts."
+        },
+        {
+          "id": "catalog.registered-sources",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 9,
+            "verified": 4
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-17T23:55:38.865585Z",
+              "summary": "A registered scenario failed on the published release artifacts.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed on the published release artifacts."
+        },
+        {
+          "id": "catalog.secrets-management",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 2,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "catalog.writable-datasets",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 8,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "connectors.ai-assisted-connector-setup",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "connectors.connector-builder",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "connectors.managed-data-sources",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 5,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "connectors.oauth-tool-policies",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "connectors.user-oauth-authorization",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "connectors.workroom-surface-access",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.dataset-indexing",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 8,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "context.workroom-document-search",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.workroom-ingestion-summary",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "context.workroom-raw-file-store",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "delegation.brokered-resource-access",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "delegation.capability-grants",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Verified journey: A genuinely attested owned workload discovers a nonempty capability catalog, obtains member consent for a task-owned Workroom read, and the same disposable member reads and lists that exact grant with matching revision digest. Teardown requests grant revocation and accepts HTTP204 or a pre-read404.",
+            "No exhaustive catalog vocabulary or operation-isolation assertion; catalog is only asserted nonempty.",
+            "No proof of durable revocation enforcement, expiry, grant pause/resume, registration withdrawal, cross-member or cross-tenant isolation.",
+            "Task-owned ordinary member, real projected assertion and combined control/executor workload role; no separate-role isolation claim."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "delegation.consent-and-approval-gates",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Verified journey: An attested workload creates an intent, a disposable authenticated member reads its same-origin consent view and submits approval with nonce/CSRF token, and workload readback observes CONSUMED, APPROVE and a grant ID; teardown accepts an already missing grant or requests revocation and requires HTTP204.",
+            "Member-consent happy path only; no effect-approval queue, negative CSRF/nonce tests, denial path, resource execution or IT approval enforcement claim.",
+            "Requires a task-owned workload registration and disposable member. Revoke the grant, remove the member, retire the registration and confirm pod/serviceaccount absence before sealing.",
+            "Cleanup accepts a grant pre-read404 without DELETE; otherwise it requires DELETE204. Persisted revocation state is not reread, and this journey does not claim revocation enforcement."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "delegation.pending-approval-queue",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "delegation.run-claims-lifecycle",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Verified journey: An attested workload reserves and claims local runs, records start/heartbeat/completion, acknowledges member-requested cancellation with persisted readback, and reserves a Workroom read effect whose stored IDs/key, ALLOW decision and RESERVED status match the request. It exchanges successor run capability material, uses that authority to complete the same run, and inspects persisted success.",
+            "Four isolated subjourneys reuse one owned registration/member/Workroom; each grant revoked on exit.",
+            "No effect execution, dispatch, credential brokering, quota enforcement, scheduler/failover or cross-cluster task federation claim.",
+            "Corrected-build proof cannot relabel the original frozen1.3.4 failure."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "delegation.workload-identity-and-attestation",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Verified journey: A registered Kubernetes pod uses its real projected assertion and SDK DPoP proof to discover a ready attestation profile and observed role; anonymous discovery is explicitly rejected and public JWKS contains key identifiers/types.",
+            "Discovery and anonymous refusal only; no bootstrap, capability issuance/signature verification, rotation, replay resistance, revocation enforcement or other attestation provider claim.",
+            "Requires an enabled deployment and a disposable registered workload. Retire the owned registration and delete its pod/service account with UID checks before sealing."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "extensions.developer-path",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "federation.cluster-pairing",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "federation.execution-gates",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "federation.federated-retrieval",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "federation.remote-jobs",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "federation.user-onboarding",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "ingestion.document-translation",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "ingestion.multimedia-extraction",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "ingestion.parse-from-url",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "ingestion.scheduled-ingest",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "ingestion.security-markings",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "ingestion.structured-document-outputs",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "ingestion.video-frame-analysis",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.admin-settings-console",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.agent-auto-routing",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.agent-packages",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.agent-publication-approval",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.answer-feedback",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.artifacts",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.context-compression",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.conversation-event-streaming",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "kaizen.conversation-search",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.custom-agents",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.data-chat",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "kaizen.document-canvas-export",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.document-collections",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 5,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "kaizen.member-token-budget",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.metrics-dashboard",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.multi-agent-orchestration",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.notifications-inbox",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 2,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.platform-operator-tools",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.prebuilt-agents",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "kaizen.privacy-guard",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.product-identity",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.projects",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 5,
+            "verified": 3
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "kaizen.prompt-library-and-chains",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "kaizen.recipes",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.scheduled-tasks",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.shared-chat-typing-indicators",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "kaizen.workroom-notes",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "models.discover-and-download",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 6,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "models.external-endpoints",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 6,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "models.gpu-placement",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "models.local-deployment",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 4,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "models.openai-compatible-inference",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 2,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "models.tenant-mode-inference",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "models.tensor-parallel-serving",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "models.two-node-serving",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "ontology.workroom-knowledge-graph",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "platform.access-requests",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 2,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "platform.admin-copilot",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 6,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "platform.airgapped-install",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "platform.api-reference",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 2,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Verified journey: On the 1.4.0 GA API, the signed-in OpenAPI document identifies the platform and describes its routes; auth scheme, role and exemption annotations are present; Swagger UI and ReDoc both execute in Chromium and support endpoint navigation; all required assets and schema are served from the same origin while off-origin browser requests are blocked.",
+            "Auth annotations describe intended policy; this read-only scenario does not test runtime authorization enforcement.",
+            "Does not establish that generated SDK methods cover all OpenAPI routes.",
+            "The annotations describe route policy. Runtime policy enforcement and SDK method parity were outside this replay."
+          ],
+          "stamp": {
+            "id": "e089b4b33e5961d4366a5a23ef561ccbd8de43dd8232b7ef85e111ae36e18988",
+            "basis": "fresh-release-replay",
+            "targetRelease": "1.4.1",
+            "capability": "platform.api-reference",
+            "manifestId": "1c07e42181d2fe7f3c3e8c873cdf22245f63872c2d5a350628a84dec46d00aaf",
+            "releaseSource": {
+              "ref": "v1.4.1",
+              "sourceRevision": "f615ce9d599f2bd09768791b082d1bbe73af9acc"
+            },
+            "finishedAt": "2026-11-17T18:33:01.697855Z"
+          },
+          "failures": [],
+          "status": "release-stamped",
+          "scope": "A sealed local replay on the published 1.4.1 artifacts checked the OpenAPI schema, Swagger UI, ReDoc, and authentication annotations. The browser checks covered same-origin assets and reference navigation."
+        },
+        {
+          "id": "platform.app-generation-path",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+        },
+        {
+          "id": "platform.greymatter-mesh-integration",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "platform.kubernetes-install",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "platform.licensing-and-eula",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "platform.news-feed",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 6,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "platform.observability",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 6,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "platform.operations-and-notifications",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 5,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-17T22:27:13.007105Z",
+              "summary": "A registered scenario failed on the published release artifacts.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed on the published release artifacts."
+        },
+        {
+          "id": "platform.tenant-namespace-install",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "platform.usage-and-audit",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 1
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately.",
+            "Verified journey: On the captured GA Core, prove newest-first 100-row recent activity for an induced actor, then correlate fresh allow and deny decisions to a filtered, cursor-paged administrator export and refuse a non-admin read.",
+            "Decision export history is process-local and bounded; it does not establish durable or cross-replica history.",
+            "This does not establish authentication/session audit events, an audit reporting tool, redaction, or activity retention time."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "retrieval.async-retrieval-jobs",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 12,
+            "verified": 2
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "security.consent-and-banners",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 1,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "untested",
+          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+        },
+        {
+          "id": "skills.skills-library",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 7,
+            "verified": 3
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+        },
+        {
+          "id": "tools.mcp-tool-shed",
+          "distribution": "public",
+          "disposition": "included",
+          "wholeClaim": false,
+          "operations": {
+            "named": 7,
+            "verified": 0
+          },
+          "assumptions": [],
+          "limits": [
+            "The result covers the capability's registered scenarios, not every operation or configuration.",
+            "Human release sign-off is recorded separately."
+          ],
+          "stamp": null,
+          "failures": [
+            {
+              "finishedAt": "2026-11-17T23:45:56.182593Z",
+              "summary": "A registered scenario failed on the published release artifacts.",
+              "resolvedByStampId": null
+            }
+          ],
+          "status": "failed",
+          "scope": "A registered scenario failed on the published release artifacts."
+        },
+        {
+          "id": "workrooms.admin-oversight",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.app-launch",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.app-runtime-binding",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.archive-and-delete",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.create",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.export-bundle",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.membership-and-roles",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.org-decommission",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.presence",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.s3-object-storage",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.session-scoping",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.shared-credentials",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        },
+        {
+          "id": "workrooms.shared-threads",
+          "distribution": "public",
+          "disposition": "excluded",
+          "status": "not-stamped",
+          "wholeClaim": false,
+          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
+          "assumptions": [],
+          "limits": [],
+          "stamp": null,
+          "failures": []
+        }
+      ],
+      "counts": {
+        "catalog": 108,
+        "included": 87,
+        "excluded": 21,
+        "deferred": 0,
+        "otherOwner": 0,
+        "releaseStamped": 1,
+        "failed": 5,
+        "notStamped": 81,
+        "wholeCapabilityPromotions": 0,
+        "operationsNamed": 193,
+        "operationsVerified": 42,
+        "untested": 33,
+        "skipped": 23,
+        "partial": 25,
+        "incomplete": 0
+      },
+      "approval": {
+        "status": "pending",
+        "scope": "full-inventory",
+        "approvedBy": null,
+        "approvedAt": null,
+        "snapshotSha256": null
+      }
+    },
+    {
       "id": "1.3.4-release-replay-r1",
       "version": "1.3.4",
       "basis": "canonical-release-replay",
@@ -30676,2112 +32782,6 @@
         "untested": 34,
         "skipped": 7,
         "partial": 9,
-        "incomplete": 0
-      },
-      "approval": {
-        "status": "pending",
-        "scope": "full-inventory",
-        "approvedBy": null,
-        "approvedAt": null,
-        "snapshotSha256": null
-      }
-    },
-    {
-      "id": "1.4.1-release-replay-r1",
-      "version": "1.4.1",
-      "basis": "canonical-release-replay",
-      "source": {
-        "ref": "v1.4.1",
-        "sourceRevision": "f615ce9d599f2bd09768791b082d1bbe73af9acc"
-      },
-      "manifestId": "1c07e42181d2fe7f3c3e8c873cdf22245f63872c2d5a350628a84dec46d00aaf",
-      "images": [
-        {
-          "component": "core",
-          "digest": "sha256:a1740fd68d56276f04d6d70e727a19525a43680ad0f73f654dc26b64ea26f3e0"
-        },
-        {
-          "component": "frontend",
-          "digest": "sha256:7260bcc1af4c3c62ec2ef907b491ae261889a9ea35d815e3bee28168519c0ebe"
-        }
-      ],
-      "evidenceWindow": {
-        "earliestStartedAt": "2026-11-14T01:27:44.531636Z",
-        "latestFinishedAt": "2026-11-17T23:58:54.809871Z"
-      },
-      "generatedAt": "2026-11-18T04:06:07Z",
-      "publicationRevision": 1,
-      "publishedAt": "2026-11-18T04:17:50Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/72",
-      "capabilities": [
-        {
-          "id": "apps.app-garden",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 3,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Browser TLS was not verified by this UI capture.",
-            "This UI capture used direct sign-in with account credentials.",
-            "This UI capture did not enforce a read-only route guard."
-          ],
-          "stamp": null,
-          "failures": [
-            {
-              "finishedAt": "2026-11-17T23:32:07.357803Z",
-              "summary": "A registered scenario failed on the published release artifacts.",
-              "resolvedByStampId": null
-            }
-          ],
-          "status": "failed",
-          "scope": "A registered scenario failed on the published release artifacts."
-        },
-        {
-          "id": "apps.deployment-baseline",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "apps.release-digest-pinning",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 5,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "apps.sandbox-workload-provider",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "auth.enterprise-sso",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "auth.local-user-administration",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 2,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "auth.personal-access-tokens",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 3,
-            "verified": 3
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "auth.session-revocation",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "authz.rebac-access-control",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "catalog.dataset-registry",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 4,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [
-            {
-              "finishedAt": "2026-11-17T21:46:52.138244Z",
-              "summary": "A registered scenario failed on the published release artifacts.",
-              "resolvedByStampId": null
-            }
-          ],
-          "status": "failed",
-          "scope": "A registered scenario failed on the published release artifacts."
-        },
-        {
-          "id": "catalog.registered-sources",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 9,
-            "verified": 4
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [
-            {
-              "finishedAt": "2026-11-17T23:55:38.865585Z",
-              "summary": "A registered scenario failed on the published release artifacts.",
-              "resolvedByStampId": null
-            }
-          ],
-          "status": "failed",
-          "scope": "A registered scenario failed on the published release artifacts."
-        },
-        {
-          "id": "catalog.secrets-management",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 2,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "catalog.writable-datasets",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 8,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "connectors.ai-assisted-connector-setup",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "connectors.connector-builder",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "connectors.managed-data-sources",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 5,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "connectors.oauth-tool-policies",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "connectors.user-oauth-authorization",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "connectors.workroom-surface-access",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "context.dataset-indexing",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 8,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "context.workroom-document-search",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "context.workroom-ingestion-summary",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "context.workroom-raw-file-store",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "delegation.brokered-resource-access",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "delegation.capability-grants",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Verified journey: A genuinely attested owned workload discovers a nonempty capability catalog, obtains member consent for a task-owned Workroom read, and the same disposable member reads and lists that exact grant with matching revision digest. Teardown requests grant revocation and accepts HTTP204 or a pre-read404.",
-            "No exhaustive catalog vocabulary or operation-isolation assertion; catalog is only asserted nonempty.",
-            "No proof of durable revocation enforcement, expiry, grant pause/resume, registration withdrawal, cross-member or cross-tenant isolation.",
-            "Task-owned ordinary member, real projected assertion and combined control/executor workload role; no separate-role isolation claim."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "delegation.consent-and-approval-gates",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Verified journey: An attested workload creates an intent, a disposable authenticated member reads its same-origin consent view and submits approval with nonce/CSRF token, and workload readback observes CONSUMED, APPROVE and a grant ID; teardown accepts an already missing grant or requests revocation and requires HTTP204.",
-            "Member-consent happy path only; no effect-approval queue, negative CSRF/nonce tests, denial path, resource execution or IT approval enforcement claim.",
-            "Requires a task-owned workload registration and disposable member. Revoke the grant, remove the member, retire the registration and confirm pod/serviceaccount absence before sealing.",
-            "Cleanup accepts a grant pre-read404 without DELETE; otherwise it requires DELETE204. Persisted revocation state is not reread, and this journey does not claim revocation enforcement."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "delegation.pending-approval-queue",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "delegation.run-claims-lifecycle",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Verified journey: An attested workload reserves and claims local runs, records start/heartbeat/completion, acknowledges member-requested cancellation with persisted readback, and reserves a Workroom read effect whose stored IDs/key, ALLOW decision and RESERVED status match the request. It exchanges successor run capability material, uses that authority to complete the same run, and inspects persisted success.",
-            "Four isolated subjourneys reuse one owned registration/member/Workroom; each grant revoked on exit.",
-            "No effect execution, dispatch, credential brokering, quota enforcement, scheduler/failover or cross-cluster task federation claim.",
-            "Corrected-build proof cannot relabel the original frozen1.3.4 failure."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "delegation.workload-identity-and-attestation",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Verified journey: A registered Kubernetes pod uses its real projected assertion and SDK DPoP proof to discover a ready attestation profile and observed role; anonymous discovery is explicitly rejected and public JWKS contains key identifiers/types.",
-            "Discovery and anonymous refusal only; no bootstrap, capability issuance/signature verification, rotation, replay resistance, revocation enforcement or other attestation provider claim.",
-            "Requires an enabled deployment and a disposable registered workload. Retire the owned registration and delete its pod/service account with UID checks before sealing."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "extensions.developer-path",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "federation.cluster-pairing",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "federation.execution-gates",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "federation.federated-retrieval",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "federation.remote-jobs",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "federation.user-onboarding",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "ingestion.document-translation",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "ingestion.multimedia-extraction",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "ingestion.parse-from-url",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "ingestion.scheduled-ingest",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "ingestion.security-markings",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "ingestion.structured-document-outputs",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "ingestion.video-frame-analysis",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.admin-settings-console",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.agent-auto-routing",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.agent-packages",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.agent-publication-approval",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.answer-feedback",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.artifacts",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.context-compression",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.conversation-event-streaming",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "kaizen.conversation-search",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.custom-agents",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.data-chat",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "kaizen.document-canvas-export",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.document-collections",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 5,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "kaizen.member-token-budget",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.metrics-dashboard",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.multi-agent-orchestration",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.notifications-inbox",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 2,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.platform-operator-tools",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.prebuilt-agents",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "kaizen.privacy-guard",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.product-identity",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.projects",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 5,
-            "verified": 3
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "kaizen.prompt-library-and-chains",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "kaizen.recipes",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.scheduled-tasks",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.shared-chat-typing-indicators",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "kaizen.workroom-notes",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "models.discover-and-download",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 6,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "models.external-endpoints",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 6,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "models.gpu-placement",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "models.local-deployment",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 4,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "models.openai-compatible-inference",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 2,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "models.tenant-mode-inference",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "models.tensor-parallel-serving",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "models.two-node-serving",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "ontology.workroom-knowledge-graph",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "platform.access-requests",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 2,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "platform.admin-copilot",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 6,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "platform.airgapped-install",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "platform.api-reference",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 2,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Verified journey: On the 1.4.0 GA API, the signed-in OpenAPI document identifies the platform and describes its routes; auth scheme, role and exemption annotations are present; Swagger UI and ReDoc both execute in Chromium and support endpoint navigation; all required assets and schema are served from the same origin while off-origin browser requests are blocked.",
-            "Auth annotations describe intended policy; this read-only scenario does not test runtime authorization enforcement.",
-            "Does not establish that generated SDK methods cover all OpenAPI routes.",
-            "The annotations describe route policy. Runtime policy enforcement and SDK method parity were outside this replay."
-          ],
-          "stamp": {
-            "id": "e089b4b33e5961d4366a5a23ef561ccbd8de43dd8232b7ef85e111ae36e18988",
-            "basis": "fresh-release-replay",
-            "targetRelease": "1.4.1",
-            "capability": "platform.api-reference",
-            "manifestId": "1c07e42181d2fe7f3c3e8c873cdf22245f63872c2d5a350628a84dec46d00aaf",
-            "releaseSource": {
-              "ref": "v1.4.1",
-              "sourceRevision": "f615ce9d599f2bd09768791b082d1bbe73af9acc"
-            },
-            "finishedAt": "2026-11-17T18:33:01.697855Z"
-          },
-          "failures": [],
-          "status": "release-stamped",
-          "scope": "A sealed local replay on the published 1.4.1 artifacts checked the OpenAPI schema, Swagger UI, ReDoc, and authentication annotations. The browser checks covered same-origin assets and reference navigation."
-        },
-        {
-          "id": "platform.app-generation-path",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
-        },
-        {
-          "id": "platform.greymatter-mesh-integration",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "platform.kubernetes-install",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "platform.licensing-and-eula",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "platform.news-feed",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 6,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "platform.observability",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 6,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "platform.operations-and-notifications",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 5,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [
-            {
-              "finishedAt": "2026-11-17T22:27:13.007105Z",
-              "summary": "A registered scenario failed on the published release artifacts.",
-              "resolvedByStampId": null
-            }
-          ],
-          "status": "failed",
-          "scope": "A registered scenario failed on the published release artifacts."
-        },
-        {
-          "id": "platform.tenant-namespace-install",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "platform.usage-and-audit",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 1
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately.",
-            "Verified journey: On the captured GA Core, prove newest-first 100-row recent activity for an induced actor, then correlate fresh allow and deny decisions to a filtered, cursor-paged administrator export and refuse a non-admin read.",
-            "Decision export history is process-local and bounded; it does not establish durable or cross-replica history.",
-            "This does not establish authentication/session audit events, an audit reporting tool, redaction, or activity retention time."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "retrieval.async-retrieval-jobs",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 12,
-            "verified": 2
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "security.consent-and-banners",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 1,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
-        },
-        {
-          "id": "skills.skills-library",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 7,
-            "verified": 3
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [],
-          "status": "not-stamped",
-          "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
-        },
-        {
-          "id": "tools.mcp-tool-shed",
-          "distribution": "public",
-          "disposition": "included",
-          "wholeClaim": false,
-          "operations": {
-            "named": 7,
-            "verified": 0
-          },
-          "assumptions": [],
-          "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
-          ],
-          "stamp": null,
-          "failures": [
-            {
-              "finishedAt": "2026-11-17T23:45:56.182593Z",
-              "summary": "A registered scenario failed on the published release artifacts.",
-              "resolvedByStampId": null
-            }
-          ],
-          "status": "failed",
-          "scope": "A registered scenario failed on the published release artifacts."
-        },
-        {
-          "id": "workrooms.admin-oversight",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.app-launch",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.app-runtime-binding",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.archive-and-delete",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.create",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.export-bundle",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.membership-and-roles",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.org-decommission",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.presence",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.s3-object-storage",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.session-scoping",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.shared-credentials",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        },
-        {
-          "id": "workrooms.shared-threads",
-          "distribution": "public",
-          "disposition": "excluded",
-          "status": "not-stamped",
-          "wholeClaim": false,
-          "scope": "Outside this release's verification scope. Exclusion is not a verdict.",
-          "assumptions": [],
-          "limits": [],
-          "stamp": null,
-          "failures": []
-        }
-      ],
-      "counts": {
-        "catalog": 108,
-        "included": 87,
-        "excluded": 21,
-        "deferred": 0,
-        "otherOwner": 0,
-        "releaseStamped": 1,
-        "failed": 5,
-        "notStamped": 81,
-        "wholeCapabilityPromotions": 0,
-        "operationsNamed": 193,
-        "operationsVerified": 42,
-        "untested": 33,
-        "skipped": 23,
-        "partial": 25,
         "incomplete": 0
       },
       "approval": {
