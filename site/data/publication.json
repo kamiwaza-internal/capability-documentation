@@ -14273,9 +14273,9 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-18T15:00:28.659057Z"
+        "latestFinishedAt": "2026-11-18T16:05:45.868997Z"
       },
-      "generatedAt": "2026-11-18T15:02:25Z",
+      "generatedAt": "2026-11-18T16:13:50Z",
       "publicationRevision": 1,
       "publishedAt": "2026-11-18T15:02:41Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/81",
@@ -14287,27 +14287,21 @@
           "wholeClaim": false,
           "operations": {
             "named": 3,
-            "verified": 1
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
-            "Browser TLS was not verified by this UI capture.",
-            "The browser capture signed in with an account username and passphrase.",
-            "This UI capture did not enforce a read-only route guard.",
-            "The replay used one pinned hello-web catalog template. The browser browse check remains separately recorded as failed."
+            "The read-only browser replay used verified HTTPS and checked one catalogue card.",
+            "The deployment replay covered one template and one reserved environment setting.",
+            "A separate registered catalogue scenario still lacks release evidence."
           ],
           "stamp": null,
-          "failures": [
-            {
-              "finishedAt": "2026-11-17T23:32:07.357803Z",
-              "summary": "A registered scenario failed on the published release artifacts.",
-              "resolvedByStampId": null
-            }
-          ],
-          "status": "failed",
-          "scope": "The API deployed one catalog app, correlated it with its running instance, stopped it and purged it. The test also exercised validation of one reserved environment setting."
+          "failures": [],
+          "status": "not-stamped",
+          "notStampedReason": "partial",
+          "scope": "An ordinary user opened the App Garden catalogue and saw a named application card with its own Deploy control. A separate API replay deployed one pinned catalogue app, observed its running instance, stopped and removed it, and checked that one reserved environment setting could not be overridden."
         },
         {
           "id": "apps.deployment-baseline",
@@ -16389,14 +16383,14 @@
         "deferred": 0,
         "otherOwner": 0,
         "releaseStamped": 1,
-        "failed": 7,
-        "notStamped": 79,
+        "failed": 6,
+        "notStamped": 80,
         "wholeCapabilityPromotions": 0,
         "operationsNamed": 214,
-        "operationsVerified": 71,
+        "operationsVerified": 72,
         "untested": 32,
         "skipped": 8,
-        "partial": 39,
+        "partial": 40,
         "incomplete": 0
       },
       "approval": {
