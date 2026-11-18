@@ -48197,9 +48197,9 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-18T17:14:57.335691Z"
+        "latestFinishedAt": "2026-11-18T17:20:11.258279Z"
       },
-      "generatedAt": "2026-11-18T17:26:44.251808Z",
+      "generatedAt": "2026-11-18T17:27:52Z",
       "publicationRevision": 8,
       "publishedAt": "2026-11-18T17:26:44.251808Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/81",
@@ -49204,21 +49204,22 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 1,
-            "verified": 1
+            "named": 2,
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
             "The replay covers one ordinary chat turn. Load, reconnect edge cases and other stream transports were outside its scope.",
-            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope.",
+            "The member replay covers one default-agent turn on a disposable canonical Kaizen instance. Browser workflows, interrupted streams, concurrent turns, retention duration, and access by another signed-in user were outside that replay."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "A sealed 1.4.1 replay sent a benign chat turn, received its reply over the canonical event stream, and deleted the test conversation."
+          "scope": "A sealed 1.4.1 replay sent a benign chat turn, received its reply over the canonical event stream, and deleted the test conversation. A second sealed replay checked one enrolled member's exact reply, ordered events tied to the accepted input, and terminal replay after the assistant event. It also checked refusal of a mismatched cursor and anonymous event-stream access."
         },
         {
           "id": "kaizen.conversation-search",
@@ -50316,8 +50317,8 @@
         "failed": 6,
         "notStamped": 80,
         "wholeCapabilityPromotions": 0,
-        "operationsNamed": 215,
-        "operationsVerified": 76,
+        "operationsNamed": 216,
+        "operationsVerified": 77,
         "untested": 30,
         "skipped": 7,
         "partial": 43,
