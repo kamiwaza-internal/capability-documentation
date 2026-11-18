@@ -14273,12 +14273,12 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-14T01:27:44.531636Z",
-        "latestFinishedAt": "2026-11-18T12:24:40.189629Z"
+        "latestFinishedAt": "2026-11-18T13:27:59.728572Z"
       },
-      "generatedAt": "2026-11-18T12:26:19Z",
+      "generatedAt": "2026-11-18T13:28:40Z",
       "publicationRevision": 1,
-      "publishedAt": "2026-11-18T12:26:27Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/76",
+      "publishedAt": "2026-11-18T13:28:50Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/77",
       "capabilities": [
         {
           "id": "apps.app-garden",
@@ -15189,18 +15189,20 @@
           "wholeClaim": false,
           "operations": {
             "named": 1,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay covers read endpoints. Proposal creation, approval actions and changing preferences were outside its scope.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "notStampedReason": "partial",
+          "scope": "A sealed replay on the published 1.4.1 Kaizen API verified the response shapes for proposal queues, approval preferences and approvals."
         },
         {
           "id": "kaizen.answer-feedback",
@@ -15249,18 +15251,20 @@
           "wholeClaim": false,
           "operations": {
             "named": 1,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay read configuration and preferences. Compression execution and setting changes were outside its scope.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "notStampedReason": "partial",
+          "scope": "A sealed replay on the published 1.4.1 Kaizen API verified that compression statistics expose the effective configuration and that the preference endpoint responds."
         },
         {
           "id": "kaizen.conversation-event-streaming",
@@ -15269,18 +15273,20 @@
           "wholeClaim": false,
           "operations": {
             "named": 1,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay covers one ordinary chat turn. Load, reconnect edge cases and other stream transports were outside its scope.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+          "scope": "A sealed 1.4.1 replay sent a benign chat turn, received its reply over the canonical event stream, and deleted the test conversation."
         },
         {
           "id": "kaizen.conversation-search",
@@ -15360,19 +15366,21 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 5,
-            "verified": 1
+            "named": 6,
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "This replay covers one owned upload and collection. Collection sharing and per-document access rules were outside its scope.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+          "scope": "A sealed 1.4.1 replay verified that an uploaded document can be added to a collection once, removed, and remained ready afterward. Adding it twice left one membership."
         },
         {
           "id": "kaizen.member-token-budget",
@@ -15401,18 +15409,20 @@
           "wholeClaim": false,
           "operations": {
             "named": 1,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "Dashboard rendering, alert delivery and metric accuracy were outside this replay.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "notStampedReason": "partial",
+          "scope": "A sealed replay on the published 1.4.1 Kaizen API verified that the operations metrics response includes the sampling window, overall status, completeness, usage and alert information."
         },
         {
           "id": "kaizen.multi-agent-orchestration",
@@ -15481,18 +15491,20 @@
           "wholeClaim": false,
           "operations": {
             "named": 1,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay covers the API roster and one representative chat turn. Agents gallery rendering and the quality of specialist output were outside its scope.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+          "scope": "A sealed 1.4.1 replay listed four bundled specialists, selected Software Engineer for a chat turn, received a streamed reply, and removed the test conversation."
         },
         {
           "id": "kaizen.privacy-guard",
@@ -15540,19 +15552,21 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 5,
-            "verified": 3
+            "named": 6,
+            "verified": 4
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay covers one member-only project. Both test users were already viewers of the host Workroom. Invitation refusal, cancellation, Library linking, browser behavior and cross-tenant access were outside its scope.",
+            "The replay used a disposable instance with reduced CPU requests; performance was outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+          "scope": "A sealed 1.4.1 replay verified that a project owner can invite a member and the recipient can accept and see the project through their normal membership."
         },
         {
           "id": "kaizen.prompt-library-and-chains",
@@ -16346,11 +16360,11 @@
         "failed": 5,
         "notStamped": 81,
         "wholeCapabilityPromotions": 0,
-        "operationsNamed": 197,
-        "operationsVerified": 44,
+        "operationsNamed": 199,
+        "operationsVerified": 51,
         "untested": 33,
-        "skipped": 21,
-        "partial": 27,
+        "skipped": 18,
+        "partial": 30,
         "incomplete": 0
       },
       "approval": {
