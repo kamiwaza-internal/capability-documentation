@@ -14273,12 +14273,12 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-18T14:20:02.922021Z"
+        "latestFinishedAt": "2026-11-18T14:37:11.361962Z"
       },
-      "generatedAt": "2026-11-18T14:22:01Z",
+      "generatedAt": "2026-11-18T14:38:21Z",
       "publicationRevision": 1,
-      "publishedAt": "2026-11-18T14:22:06Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/78",
+      "publishedAt": "2026-11-18T14:38:29Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/80",
       "capabilities": [
         {
           "id": "apps.app-garden",
@@ -14287,15 +14287,16 @@
           "wholeClaim": false,
           "operations": {
             "named": 3,
-            "verified": 0
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
             "Browser TLS was not verified by this UI capture.",
-            "This UI capture used direct sign-in with account credentials.",
-            "This UI capture did not enforce a read-only route guard."
+            "The browser capture signed in with an account username and passphrase.",
+            "This UI capture did not enforce a read-only route guard.",
+            "The replay used one pinned hello-web catalog template. The browser browse check remains separately recorded as failed."
           ],
           "stamp": null,
           "failures": [
@@ -14306,7 +14307,7 @@
             }
           ],
           "status": "failed",
-          "scope": "A registered scenario failed on the published release artifacts."
+          "scope": "The API deployed one catalog app, correlated it with its running instance, stopped it and purged it. The test also exercised validation of one reserved environment setting."
         },
         {
           "id": "apps.deployment-baseline",
@@ -15551,20 +15552,20 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 1,
-            "verified": 1
+            "named": 2,
+            "verified": 2
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
-            "The check covered the selected release row. It did not test historical rows, retired aliases or the Kaizen user interface."
+            "These checks read catalog classification. Deployment eligibility and the Kaizen user interface were outside scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "The 1.4.1 App Garden catalog identified its selected Kaizen 0.9.16 release as Kaizen v4."
+          "scope": "The App Garden catalog identifies selected Kaizen 0.9.16 as Kaizen v4. A second replay verified that historical Kaizen 2.0.3 is labeled Kaizen v3 and the retired Kaizen Next 0.4.1 entry is labeled Kaizen v4."
         },
         {
           "id": "kaizen.projects",
@@ -15689,19 +15690,20 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 6,
-            "verified": 0
+            "named": 7,
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The query checked one repository. Model downloads, registration, inference and other hubs were outside scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "notStampedReason": "partial",
+          "scope": "An exact Hugging Face model hub search returned the expected repository ID and source provider through 1.4.1 Core."
         },
         {
           "id": "models.external-endpoints",
@@ -16179,18 +16181,19 @@
           "wholeClaim": false,
           "operations": {
             "named": 7,
-            "verified": 3
+            "verified": 4
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "This check used one synthetic draft. It covered stored data, with UI, tenant and curation behavior outside its scope."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
           "notStampedReason": "partial",
-          "scope": "Retained test results cover part of this capability. Other scenarios, operating conditions, or release artifact evidence still need verification."
+          "scope": "A local 1.4.1 replay imported a draft skill package and verified the stored Markdown matched the submitted body byte for byte. The stored manifest reported the correct package root, file list, archive size, and directory flags. The test soft-deleted the draft and confirmed it left the active list."
         },
         {
           "id": "tools.mcp-tool-shed",
@@ -16384,11 +16387,11 @@
         "failed": 6,
         "notStamped": 80,
         "wholeCapabilityPromotions": 0,
-        "operationsNamed": 202,
-        "operationsVerified": 64,
+        "operationsNamed": 204,
+        "operationsVerified": 68,
         "untested": 32,
-        "skipped": 10,
-        "partial": 38,
+        "skipped": 9,
+        "partial": 39,
         "incomplete": 0
       },
       "approval": {
