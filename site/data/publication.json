@@ -15883,7 +15883,7 @@
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
-            "Verified journey: On the 1.4.0 GA API, the signed-in OpenAPI document identifies the platform and describes its routes; auth scheme, role and exemption annotations are present; Swagger UI and ReDoc both execute in Chromium and support endpoint navigation; all required assets and schema are served from the same origin while off-origin browser requests are blocked.",
+            "Verified journey: On the 1.4.1 GA API, the signed-in OpenAPI document identifies the platform and describes its routes; auth scheme, role and exemption annotations are present; Swagger UI and ReDoc both execute in Chromium and support endpoint navigation; all required assets and schema are served from the same origin while off-origin browser requests are blocked.",
             "Auth annotations describe intended policy; this read-only scenario does not test runtime authorization enforcement.",
             "Does not establish that generated SDK methods cover all OpenAPI routes.",
             "The annotations describe route policy. Runtime policy enforcement and SDK method parity were outside this replay."
