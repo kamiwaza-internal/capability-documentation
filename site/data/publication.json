@@ -39588,7 +39588,7 @@
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
         "latestFinishedAt": "2026-11-18T16:06:43.049287Z"
       },
-      "generatedAt": "2026-11-18T16:56:13Z",
+      "generatedAt": "2026-11-18T17:01:16Z",
       "publicationRevision": 4,
       "publishedAt": "2026-11-18T15:02:41Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/81",
@@ -41116,8 +41116,8 @@
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "untested",
-          "scope": "No test is registered for this capability yet. This says nothing about whether the capability works."
+          "notStampedReason": "skipped",
+          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
         },
         {
           "id": "models.tensor-parallel-serving",
@@ -41703,8 +41703,8 @@
         "wholeCapabilityPromotions": 0,
         "operationsNamed": 214,
         "operationsVerified": 73,
-        "untested": 31,
-        "skipped": 8,
+        "untested": 30,
+        "skipped": 9,
         "partial": 41,
         "incomplete": 0
       },
