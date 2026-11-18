@@ -14273,12 +14273,12 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-14T01:27:44.531636Z",
-        "latestFinishedAt": "2026-11-18T04:36:57.018719Z"
+        "latestFinishedAt": "2026-11-18T12:24:40.189629Z"
       },
-      "generatedAt": "2026-11-18T04:38:27Z",
+      "generatedAt": "2026-11-18T12:26:19Z",
       "publicationRevision": 1,
-      "publishedAt": "2026-11-18T04:40:08Z",
-      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/75",
+      "publishedAt": "2026-11-18T12:26:27Z",
+      "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/76",
       "capabilities": [
         {
           "id": "apps.app-garden",
@@ -15816,19 +15816,21 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 2,
-            "verified": 0
+            "named": 6,
+            "verified": 1
           },
           "assumptions": [],
           "limits": [
             "The result covers the capability's registered scenarios, not every operation or configuration.",
-            "Human release sign-off is recorded separately."
+            "Human release sign-off is recorded separately.",
+            "The replay covered one Workroom and two test users, including repeated requests from the same requester.",
+            "Dataset and model requests, rate limits, concurrent requests, changes of grantor, and the request UI were outside this replay."
           ],
           "stamp": null,
           "failures": [],
           "status": "not-stamped",
-          "notStampedReason": "skipped",
-          "scope": "A test is registered for this capability, but the release test run did not run it. This is a gap in the test run, not a product failure."
+          "notStampedReason": "partial",
+          "scope": "A sealed 1.4.1 replay verified that the owner of a test Workroom can approve or deny access requests and that the workflow notifies both parties. Approval records a decision and leaves access management to the grantor."
         },
         {
           "id": "platform.admin-copilot",
@@ -16344,11 +16346,11 @@
         "failed": 5,
         "notStamped": 81,
         "wholeCapabilityPromotions": 0,
-        "operationsNamed": 193,
-        "operationsVerified": 43,
+        "operationsNamed": 197,
+        "operationsVerified": 44,
         "untested": 33,
-        "skipped": 22,
-        "partial": 26,
+        "skipped": 21,
+        "partial": 27,
         "incomplete": 0
       },
       "approval": {
