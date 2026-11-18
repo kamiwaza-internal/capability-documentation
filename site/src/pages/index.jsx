@@ -83,7 +83,7 @@ export default function Home() {
         <h2 id="faqs">FAQs</h2>
         <details className="faq">
           <summary>What do the statuses mean?</summary>
-          <dl className="statusKey">{kinds.flatMap(kind => kind === 'release-replay' ? replayStatusKey([...currentReplays.values()]) : STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
+          <dl className="statusKey">{kinds.flatMap(kind => kind === 'release-replay' ? replayStatusKey(Array.from(currentReplays.values())) : STATUS_KEY[kind]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>
         </details>
         <details className="faq">
           <summary>What counts as a capability?</summary>
