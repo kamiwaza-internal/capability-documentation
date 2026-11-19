@@ -67,3 +67,29 @@ jobs:
       - name: Deploy reviewed site
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify_downloads:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/deployed-pages
+      - name: Verify the deployed release bundles
+        working-directory: site
+        env:
+          CAPABILITY_SITE_ACCESS_CLIENT_ID: ${{ secrets.CAPABILITY_SITE_ACCESS_CLIENT_ID }}
+          CAPABILITY_SITE_ACCESS_CLIENT_SECRET: ${{ secrets.CAPABILITY_SITE_ACCESS_CLIENT_SECRET }}
+        run: |
+          mkdir -p build
+          tar -xf "$RUNNER_TEMP/deployed-pages/artifact.tar" -C build
+          npm run check:release-corpus
+          node scripts/check-deployed-downloads.mjs
