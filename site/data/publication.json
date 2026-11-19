@@ -74346,9 +74346,9 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-19T18:10:00.504534Z"
+        "latestFinishedAt": "2026-11-19T18:19:16.178493Z"
       },
-      "generatedAt": "2026-11-19T18:11:04Z",
+      "generatedAt": "2026-11-19T18:20:27Z",
       "publicationRevision": 20,
       "publishedAt": "2026-11-19T17:22:16Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/89",
@@ -74359,8 +74359,8 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 7,
-            "verified": 6
+            "named": 8,
+            "verified": 7
           },
           "assumptions": [],
           "limits": [
@@ -74370,7 +74370,8 @@
             "The deployment replay covered one template and one reserved environment setting.",
             "The logout replay covered explicit logout. Session expiry and image pre-pull remain outside this replay.",
             "The model-routing scenario used one pinned template in a workroom with a visible healthy model. It sent no inference traffic.",
-            "The explicit-model replay covers one existing direct llama.cpp deployment. It did not send inference traffic or repeat default model selection."
+            "The explicit-model replay covers one existing direct llama.cpp deployment. It did not send inference traffic or repeat default model selection.",
+            "The mid-launch stop replay used API observations for one app over 20 seconds. Internal worker fencing was outside the observation."
           ],
           "stamp": null,
           "failures": [
@@ -74381,7 +74382,7 @@
             }
           ],
           "status": "failed",
-          "scope": "An ordinary user opened the App Garden catalogue and saw a named application card with its own Deploy control. A separate API replay deployed one pinned catalogue app, observed its running instance, stopped and removed it, and checked that one reserved environment setting could not be overridden. The version-pinned installation ran in the caller’s workroom and returned an HTTPS gateway response. Logout removed the ephemeral deployment and left its persistent control running. A separate deployment for the model-routing check returned HTTP 500 before routing assertions could run. A separately registered ordinary-user browser scenario also confirmed the catalogue and one named card with its own Deploy control. With a direct llama.cpp model explicitly selected, the same pinned template ran and exposed four HTTPS model-routing settings and the selected model name."
+          "scope": "An ordinary user opened the App Garden catalogue and saw a named application card with its own Deploy control. A separate API replay deployed one pinned catalogue app, observed its running instance, stopped and removed it, and checked that one reserved environment setting could not be overridden. The version-pinned installation ran in the caller’s workroom and returned an HTTPS gateway response. Logout removed the ephemeral deployment and left its persistent control running. A separate deployment for the model-routing check returned HTTP 500 before routing assertions could run. A separately registered ordinary-user browser scenario also confirmed the catalogue and one named card with its own Deploy control. With a direct llama.cpp model explicitly selected, the same pinned template ran and exposed four HTTPS model-routing settings and the selected model name. A separate deployment was stopped after the API reported a pending launch. Each follow-up check over the next 20 seconds found it stopped or absent."
         },
         {
           "id": "apps.deployment-baseline",
@@ -76528,8 +76529,8 @@
         "failed": 8,
         "notStamped": 76,
         "wholeCapabilityPromotions": 2,
-        "operationsNamed": 227,
-        "operationsVerified": 96,
+        "operationsNamed": 228,
+        "operationsVerified": 97,
         "untested": 26,
         "skipped": 5,
         "partial": 45,
