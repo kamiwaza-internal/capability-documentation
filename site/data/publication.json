@@ -74346,9 +74346,9 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-19T18:28:05.716399Z"
+        "latestFinishedAt": "2026-11-19T18:37:55.594712Z"
       },
-      "generatedAt": "2026-11-19T18:29:04Z",
+      "generatedAt": "2026-11-19T18:40:03Z",
       "publicationRevision": 20,
       "publishedAt": "2026-11-19T17:22:16Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/89",
@@ -74359,7 +74359,7 @@
           "disposition": "included",
           "wholeClaim": false,
           "operations": {
-            "named": 9,
+            "named": 10,
             "verified": 8
           },
           "assumptions": [],
@@ -74372,7 +74372,8 @@
             "The model-routing scenario used one pinned template in a workroom with a visible healthy model. It sent no inference traffic.",
             "The explicit-model replay covers one existing direct llama.cpp deployment. It did not send inference traffic or repeat default model selection.",
             "The mid-launch stop replay used API observations for one app over 20 seconds. Internal worker fencing was outside the observation.",
-            "The template-variable replay used one copied template and one explicitly selected direct model."
+            "The template-variable replay used one copied template and one explicitly selected direct model.",
+            "The starting-copy check covers one single-service app on the tested Kubernetes configuration."
           ],
           "stamp": null,
           "failures": [
@@ -74380,10 +74381,15 @@
               "finishedAt": "2026-11-19T17:18:28.507998Z",
               "summary": "The application deployment returned HTTP 500 during a model-routing scenario. The replay did not reach the routing assertions.",
               "resolvedByStampId": null
+            },
+            {
+              "finishedAt": "2026-11-19T18:37:55.594712Z",
+              "summary": "The API retained a request for two starting copies, but the Kubernetes workload had one desired and one ready replica.",
+              "resolvedByStampId": null
             }
           ],
           "status": "failed",
-          "scope": "An ordinary user opened the App Garden catalogue and saw a named application card with its own Deploy control. A separate API replay deployed one pinned catalogue app, observed its running instance, stopped and removed it, and checked that one reserved environment setting could not be overridden. The version-pinned installation ran in the caller’s workroom and returned an HTTPS gateway response. Logout removed the ephemeral deployment and left its persistent control running. A separate deployment for the model-routing check returned HTTP 500 before routing assertions could run. A separately registered ordinary-user browser scenario also confirmed the catalogue and one named card with its own Deploy control. With a direct llama.cpp model explicitly selected, the same pinned template ran and exposed four HTTPS model-routing settings and the selected model name. A separate deployment was stopped after the API reported a pending launch. Each follow-up check over the next 20 seconds found it stopped or absent. A run-owned template also expanded four routing-aware defaults to the injected HTTPS URLs."
+          "scope": "An ordinary user opened the App Garden catalogue and saw a named application card with its own Deploy control. A separate API replay deployed one pinned catalogue app, observed its running instance, stopped and removed it, and checked that one reserved environment setting could not be overridden. The version-pinned installation ran in the caller’s workroom and returned an HTTPS gateway response. Logout removed the ephemeral deployment and left its persistent control running. A separate deployment for the model-routing check returned HTTP 500 before routing assertions could run. A separately registered ordinary-user browser scenario also confirmed the catalogue and one named card with its own Deploy control. With a direct llama.cpp model explicitly selected, the same pinned template ran and exposed four HTTPS model-routing settings and the selected model name. A separate deployment was stopped after the API reported a pending launch. Each follow-up check over the next 20 seconds found it stopped or absent. A run-owned template also expanded four routing-aware defaults to the injected HTTPS URLs. A separate scaling check found that the API retained two starting copies while the Kubernetes workload had one desired and one ready replica."
         },
         {
           "id": "apps.deployment-baseline",
@@ -76530,7 +76536,7 @@
         "failed": 8,
         "notStamped": 76,
         "wholeCapabilityPromotions": 2,
-        "operationsNamed": 229,
+        "operationsNamed": 230,
         "operationsVerified": 98,
         "untested": 26,
         "skipped": 5,
