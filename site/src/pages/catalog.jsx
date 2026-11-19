@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
+import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import publication from '../../data/publication.json';
 import localStamps from '../../data/local-stamps.json';
@@ -95,7 +96,11 @@ function ReleaseStamps({snapshot}) {
     <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>
     <ul>{snapshot.images.map(image => <li key={image.component}>{image.component}: <code>{image.digest}</code></li>)}</ul>
     <p>Fresh replay window (UTC): <time dateTime={snapshot.evidenceWindow.earliestStartedAt}>{snapshot.evidenceWindow.earliestStartedAt}</time> to <time dateTime={snapshot.evidenceWindow.latestFinishedAt}>{snapshot.evidenceWindow.latestFinishedAt}</time>. Snapshot generated <time dateTime={snapshot.generatedAt}>{snapshot.generatedAt}</time>; publication review opened <time dateTime={snapshot.publishedAt}>{snapshot.publishedAt}</time>. Review opening is not a deployment or approval date.</p>
-    <p>{operations ? <><strong>{operations.headline}</strong>. {operations.breakdown}.</> : <><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped.</>} Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner. These dispositions retain their own counts and grant no verification credit.</p>
+    <p><Link to="/value-streams/">View value streams and recipes</Link></p>
+    <details><summary>Capabilities demonstrated and test coverage</summary>
+      <p>{operations ? <><strong>{operations.headline}</strong>. {operations.breakdown}.</> : <><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped.</>} Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner.</p>
+      {operations && <p>The total includes registered scenarios and behaviors listed as coverage gaps.</p>}
+    </details>
     {decision.status === 'approved' ? <p>Full inventory release decision by {decision.approvedBy}, <time dateTime={decision.approvedAt}>{decision.approvedAt}</time>. Exact public snapshot SHA-256: <code>{decision.snapshotSha256}</code>. Review verifies operator and approver identity; the digest establishes consistency.</p> : <p>Human release approval is pending. Scoped passing replays do not approve the release.</p>}
     <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>Download scoped release stamps and inventory decision</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
     {operations && <dl className="statusKey">{replayStatusKey([snapshot]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>}
