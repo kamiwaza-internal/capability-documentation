@@ -1,4 +1,5 @@
 import {evidenceVersions} from './evidence.mjs';
+import {releaseMapRecipes} from '../scripts/release-recipe-map.mjs';
 import {dashboardCapabilities} from './dashboard-capabilities.mjs';
 
 function sidecarRecipes(streams, version) {
@@ -25,7 +26,13 @@ function currentRecipeProofs(release) {
     recipeRevision:cap.proof.recipeRevision, creditedCapabilityIds:[cap.id]}));
 }
 
-function recipeInventory(entry, streams, publication) {
+function recipeInventory(entry, sources) {
+  const {streams, publication, releaseMap} = sources;
+  if (releaseMap?.release === entry.version) return {
+    recipes: releaseMapRecipes(releaseMap), establishedScopedProofs: [],
+    sourceStreamCount: releaseMap.sourceStreamCount,
+    recipeMapPath: `/evidence/${entry.version}/release-recipe-map.json`,
+  };
   const release = entry.work?.fresh?.release ?? entry.releaseIds.map(id => publication.releases.find(row => row.id === id)).find(row => row.recipeInventory);
   if (release?.recipeInventory) return {recipes: release.recipeInventory,
     establishedScopedProofs: currentRecipeProofs(release),
@@ -54,7 +61,7 @@ export function dashboardReleases(sources) {
     sources.currentVerification, sources.releaseWork);
   return entries.map(entry => ({release: entry.version, kind: entry.kind, headline: entry.headline,
     basis: entry.basis, sourceIdentity: sourceIdentity(entry, sources),
-    capabilities: dashboardCapabilities(entry, sources), ...recipeInventory(entry, sources.streams, sources.publication),
+    capabilities: dashboardCapabilities(entry, sources), ...recipeInventory(entry, sources),
     gaps: (entry.originalCorpus ?? entry.corpus)?.catalog.gaps ?? [],
   }));
 }

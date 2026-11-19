@@ -705,3 +705,12 @@ projection while retaining prior history. Frozen tagged releases reject intake.
 Duplicate candidates are no-ops; conflicting bytes under one identity are refused.
 The Kit's automation owns candidate generation, private review and public PR
 creation; the existing site workflow still validates and deploys reviewed main.
+
+## Release recipe maps
+
+The 1.4.1 release recipe map pins each definition to a Kit revision and binds
+its capability links to the published 1.4.1 replay snapshot. The site shows the
+ordered recipe steps, declared capability links, and scenario identifiers.
+Download the same map as JSON from the value-stream page or its release ZIP.
+Map entries describe verification scope. Recipe and value-stream pass results
+require separate evidence. Private test selectors and receipts stay in the Kit.
