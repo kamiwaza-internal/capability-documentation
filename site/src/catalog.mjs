@@ -158,7 +158,7 @@ export function primaryCapabilities(publication) {
     // Only evidence selects status: an id that appears only in a description-only release has no row.
     if (!rows.length) continue;
     // Release-bound stamps outrank pre-release records; ordinary missing observations do not erase acceptance.
-    const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
+    const rank = row => (['verified', 'release-stamped'].includes(row.cap.status) && row.cap.wholeClaim) ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
     const ordered = [...rows].filter(row => !withdrawn(row, rows)).sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
     const verified = rows.filter(row => accepted.has(row.cap.status)).sort((a, b) => rank(a) - rank(b) || compareTime(a.at, b.at) || a.release.id.localeCompare(b.release.id));
     const retained = verified.at(-1) ?? ordered.filter(row => ['failed', 'failed-or-mixed', 'partial'].includes(row.cap.status)).at(-1) ?? ordered.at(-1);
