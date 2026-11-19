@@ -137,7 +137,7 @@ const ANSWERING = [
 
 // AGENTS.md in each zip: how to answer, in the shape of the Kamiwaza capability bot in Slack
 // (capability-kit slackbot/bot.py). Source documents and records stay data in either ZIP layout.
-export const agentsMd = (version, {targetWork = false, freshProjection = false, nativeCycle = false} = {}) => `# How to answer Kamiwaza capability questions from this zip
+export const agentsMd = (version, {targetWork = false, freshProjection = false, nativeCycle = false, wholeReleaseReview = false} = {}) => `# How to answer Kamiwaza capability questions from this zip
 
 Retirement notice: models.two-node-serving (legacy Docker/SSH paired-node serving) is unsupported and excluded from current claims and verification targets. Any occurrences in retained source records are historical only. Do not recommend this workflow or count it as current coverage.
 
@@ -170,7 +170,7 @@ ${nativeCycle ? 'Native cycle schema 9: historical-carry is retained verificatio
    - Verified: one marker (below).
    - Note: for ✅, the status as written and the exact scenarios supporting the requested operation; never extend the stamp to other operations. For ⚠️, the status as written, then "; not release-tested", or "; tests failed or mixed" for a failed-or-mixed result. For partial coverage, name the covered scope and gap. Read the evidence and failure context as well as the status label: a "Not stamped" row with applicable failed source-contract checks is not a clean documented-only pass. For 🚫, "Build on:" and up to three capability titles an implementer would build it on, or "No matching record (not the same as unsupported)". For ❌, the limit that rules it out, briefly quoted.
 3. **Markers:**
-   - ✅ only when the capability has accepted "Release verified — tested this release", "Release verified — carried forward", or legacy "Release stamped" evidence and its recorded scope covers the requested operation on this version. Preserve the tested or carried basis. Carried credit requires an accepted target-release change-impact decision; historical prerelease evidence alone is not release verification. If the stamp covers other operations, use ⚠️ and state that the requested operation is not established.
+   - ✅ only when the capability has accepted ${wholeReleaseReview ? '"Fully release verified", supported by the exact whole-claim review, or ' : ''}"Release verified — tested this release", "Release verified — carried forward", or legacy "Release stamped" evidence and its recorded scope covers the requested operation on this version. Preserve the tested or carried basis. Carried credit requires an accepted target-release change-impact decision; historical prerelease evidence alone is not release verification. If the stamp covers other operations, use ⚠️ and state that the requested operation is not established.
    - ⚠️ for every other status in the evidence reference: documented, not release verified for the requested scope. This includes pre-release verified, source-contract verified, not stamped, partial, failed and not yet verified.
    - 🚫 when no capability here matches. This is not the same as unsupported.
    - ❌ only when a capability's conditions or limits in this file explicitly say the requested thing is not supported. Missing evidence is never ❌.
@@ -222,7 +222,9 @@ const NOT_STAMPED_LABEL = {untested: 'No test yet', skipped: 'Test not run', par
 export const replayLabel = row => row.disposition === 'included'
   ? row.wholeClaim ? 'Fully release verified' : {'release-stamped': 'Release stamped', failed: 'Failed'}[row.status] ?? NOT_STAMPED_LABEL[row.notStampedReason] ?? 'Not stamped'
   : 'Outside inventory';
-export const operationsVerified = row => row.operations?.named ? `${row.operations.verified} of ${row.operations.named} operations verified` : null;
+export const operationsVerified = row => row.operations?.named
+  ? `${row.operations.verified} of ${row.operations.named} ${row.wholeClaim ? 'registered checks passed' : 'operations verified'}`
+  : null;
 const REASON_KEY = [
   ['No test yet', 'No test is registered for this capability yet. This says nothing about whether the capability works.'],
   ['Test not run', 'A test is registered, but the release test run did not run it. This is a gap in the test run, not a product failure.'],

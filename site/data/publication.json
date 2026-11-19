@@ -67694,7 +67694,7 @@
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
         "latestFinishedAt": "2026-11-19T16:33:03.977653Z"
       },
-      "generatedAt": "2026-11-19T17:01:05Z",
+      "generatedAt": "2026-11-19T17:06:52Z",
       "publicationRevision": 17,
       "publishedAt": "2026-11-19T16:39:04Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/87",
@@ -67736,7 +67736,7 @@
             "Human release sign-off is recorded separately.",
             "The replay used the shipped data and a rollback-only database transaction. Installer execution and deployment history remain outside its scope.",
             "Verified journey: Load the shipped baseline from its configured path, reject missing, malformed and mismatched digests before parsing, reject malformed structure, retain one immutable release per name, reject duplicates and incompatible Core constraints, ignore top-level file core_version, and prove database rollback and unchanged retained identities.",
-            "The deployed validator and retention functions run in a fresh Core process with the real database; the test does not restart the installer or exercise deployment history or rollback.",
+            "The deployed validator and retention functions run in a fresh Core process with the real database; the test does not restart the installer or exercise deployment history or deployment rollback.",
             "Uses already retained shipped members and an uncommitted transaction; no production release is added."
           ],
           "stamp": {

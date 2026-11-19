@@ -1,4 +1,5 @@
 import {activeCapabilities, currentCapabilityView, joinReleaseStamps} from './catalog.mjs';
+import {replayLabel} from './evidence.mjs';
 import {prereleaseHistoryText, releaseWorkView, verificationLabel} from './verification-guide.mjs';
 
 const labels = {
@@ -54,7 +55,10 @@ function stampedCapabilities(entry, sources) {
 function replayCapabilities(entry) {
   const titles = new Map((entry.originalCorpus?.catalog.capabilities ?? []).map(row => [row.id, row.title]));
   return entry.replay.capabilities.map(row => ({...common({...row, title: titles.get(row.id)}),
-    conditions: row.assumptions, details: [detail('Scoped release replay status', row.status),
+    conditions: row.assumptions, details: [
+      row.wholeClaim ? detail('Release verification', replayLabel(row)) : detail('Scoped release replay status', row.status),
+      ...(row.wholeClaimReview ? [detail('Whole-claim review', row.wholeClaimReview.id),
+        detail('Verified operations', row.wholeClaimReview.operations.join(' · '))] : []),
       detail('Replay scope', row.scope), detail('Human release approval', entry.replay.approval.status),
       detail('Replay publication', entry.replay.id), detail('Stamp finished', row.stamp?.finishedAt),
       ...(row.failures ?? []).map((failure, index) => detail(`Retained failure ${index + 1}`,

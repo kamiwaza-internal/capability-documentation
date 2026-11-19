@@ -105,7 +105,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
       records.map(file => `- [${file.name}](${file.name})\n`).join('') +
       (reportFiles.length ? '\n## Verification reports\n\nDated reports retain their own scope and source references. They do not replace the canonical source records or confer release approval. Historical reports are snapshots, not additive counts.\n\n' + reportFiles.map(file => `- [${file.name}](${file.name})\n`).join('') : '');
     const contents = [{name: 'README.md', data: Buffer.from(readme, 'utf8')},
-      {name: 'AGENTS.md', data: Buffer.from(agentsMd(entry.version, {targetWork:Boolean(entry.work), freshProjection:Boolean(entry.work?.fresh), nativeCycle:Boolean(entry.work?.fresh?.release.recipeInventory || entry.releaseIds.some(id => publication.releases.find(row => row.id === id)?.recipeInventory))}), 'utf8')},
+      {name: 'AGENTS.md', data: Buffer.from(agentsMd(entry.version, {targetWork:Boolean(entry.work), freshProjection:Boolean(entry.work?.fresh), wholeReleaseReview:Boolean(entry.replay?.counts.wholeCapabilityPromotions), nativeCycle:Boolean(entry.work?.fresh?.release.recipeInventory || entry.releaseIds.some(id => publication.releases.find(row => row.id === id)?.recipeInventory))}), 'utf8')},
       {name: 'CLAUDE.md', data: Buffer.from('@AGENTS.md\n', 'utf8')}, ...readable, ...records, ...reportFiles];
     contents.push({name: 'SHA256SUMS', data: contents.map(file => sha256(file.data) + '  ' + file.name + '\n').join('')});
     files.zip = {path: entry.path + '.zip', bytes: toZip(contents), audience: 'human-and-machine'};
@@ -181,7 +181,9 @@ export function emitBundles(publication, out) {
     for (const snapshot of publication.releaseStamps) {
       const dir = join(out, 'release-stamps', snapshot.id);
       mkdirSync(dir, {recursive: true});
-      const bytes = JSON.stringify({schema: 'capability-public-release-stamps.v1', snapshot}, null, 2) + '\n';
+      const schema = snapshot.counts.wholeCapabilityPromotions
+        ? 'capability-public-release-stamps.v2' : 'capability-public-release-stamps.v1';
+      const bytes = JSON.stringify({schema, snapshot}, null, 2) + '\n';
       writeFileSync(join(dir, 'bundle.json'), bytes);
       const heading = snapshot.counts.wholeCapabilityPromotions
         ? '# Release verification\n\nWhole-claim reviews bind the documented operations to an exact release replay. Full-inventory approval is separate.\n\n'

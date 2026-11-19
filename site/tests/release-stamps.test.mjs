@@ -8,6 +8,8 @@ import {validatePublication, releaseSnapshotDigest} from '../scripts/publication
 import {preserveHistory} from '../scripts/preserve-history.mjs';
 import {emitBundles} from '../scripts/published-bundles.mjs';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
+import {agentsMd, operationsVerified, replayLabel} from '../src/evidence.mjs';
+import {dashboardCapabilities} from '../src/dashboard-capabilities.mjs';
 import {releaseStampsFixture} from './fixtures/release-stamps.mjs';
 import {observationsFixture} from './fixtures/observations.mjs';
 const first = publication => publication.releaseStamps[0];
@@ -46,6 +48,7 @@ test('additive migration keeps every old bundle and index byte-identical; new bu
   const index = JSON.parse(readFileSync(join(b, 'release-stamps/index.json')));
   const bytes = readFileSync(join(b, index.snapshots[0].bundle));
   assert.equal(index.snapshots[0].sha256, createHash('sha256').update(bytes).digest('hex'));
+  assert.equal(JSON.parse(bytes).schema, 'capability-public-release-stamps.v1');
   assert.deepEqual(JSON.parse(bytes).snapshot, first(after));
   assertPublicOutputSafe(bytes);
   const changed = structuredClone(after); first(changed).capabilities[2].scope = 'Changed public scope.';
@@ -134,6 +137,17 @@ test('fully verified replay requires the exact reviewed stamp, canonical claim a
     reviewedAt: '2026-10-01T11:30:00Z', operations: ['Load the synthetic configuration', 'Retain the synthetic record'],
   };
   assert.doesNotThrow(() => validatePublication(publication));
+  const out = mkdtempSync(join(tmpdir(), 'whole-release-replay-'));
+  emitBundles(publication, out);
+  const bundle = JSON.parse(readFileSync(join(out, 'release-stamps', snapshot.id, 'bundle.json')));
+  assert.equal(bundle.schema, 'capability-public-release-stamps.v2');
+  assert.deepEqual(bundle.snapshot.capabilities[0], cap);
+  assert.equal(replayLabel(cap), 'Fully release verified');
+  assert.equal(operationsVerified(cap), '1 of 1 registered checks passed');
+  assert.match(agentsMd(snapshot.version, {wholeReleaseReview: true}), /✅ only when.*"Fully release verified"/);
+  assert.doesNotMatch(agentsMd(snapshot.version), /"Fully release verified"/);
+  const [dashboard] = dashboardCapabilities({kind: 'release-replay', replay: snapshot}, {});
+  assert.deepEqual(dashboard.details[0], {label: 'Release verification', value: 'Fully release verified'});
   for (const [mutate, error] of [
     [c => { delete c.wholeClaimReview; }, /without a bound review/],
     [c => { c.wholeClaim = false; }, /Unexpected or missing/],

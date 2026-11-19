@@ -91,7 +91,9 @@ function ReleaseStamps({snapshot}) {
   const operations = replayOperations(snapshot);
   return <section className="release">
     <Heading as="h2" id={snapshot.id}>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</Heading>
-    <aside className="evidenceNotice">Fresh release verification applies to the stated scope and limits. A whole-claim review covers all documented operations. Full inventory release approval is {decision.status}.</aside>
+    <aside className="evidenceNotice">{c.wholeCapabilityPromotions
+      ? 'Fresh release verification applies to the stated scope and limits. A whole-claim review covers all documented operations.'
+      : 'Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification.'} Full inventory release approval is {decision.status}.</aside>
     <p>Exact source <code>{source.ref}@{source.sourceRevision}</code> · qualified running manifest <code>{snapshot.manifestId}</code>.</p>
     <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>
     <ul>{snapshot.images.map(image => <li key={image.component}>{image.component}: <code>{image.digest}</code></li>)}</ul>
@@ -102,7 +104,7 @@ function ReleaseStamps({snapshot}) {
       {operations && <p>The total includes registered scenarios and behaviors listed as coverage gaps.</p>}
     </details>
     {decision.status === 'approved' ? <p>Full inventory release decision by {decision.approvedBy}, <time dateTime={decision.approvedAt}>{decision.approvedAt}</time>. Exact public snapshot SHA-256: <code>{decision.snapshotSha256}</code>. Review verifies operator and approver identity; the digest establishes consistency.</p> : <p>Human release approval is pending. Scoped passing replays do not approve the release.</p>}
-    <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>Download release verification and inventory decision</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
+    <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>{c.wholeCapabilityPromotions ? 'Download release verification and inventory decision' : 'Download scoped release stamps and inventory decision'}</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
     {operations && <dl className="statusKey">{replayStatusKey([snapshot]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>}
     <details><summary>All {c.catalog} inventory dispositions, stamps and failures</summary>
       {snapshot.capabilities.map(cap => <article className="capability" key={cap.id}>
