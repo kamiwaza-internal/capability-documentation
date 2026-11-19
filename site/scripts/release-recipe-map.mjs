@@ -59,7 +59,7 @@ export function validateReleaseRecipeMap(map, publication) {
   unique(map.streams.map(stream => stream.id));
   unique(map.streams.flatMap(stream => stream.recipes.map(recipe => recipe.id)));
   const definitions = new Map(map.streams.flatMap(stream => stream.recipes.map(recipe => [recipe.id, recipe])));
-  for (const verdict of latest.recipeVerifications ?? []) {
+  for (const verdict of releases.flatMap(row => row.recipeVerifications ?? [])) {
     const definition = definitions.get(verdict.id);
     requireValue(definition?.definitionRevision === verdict.revision &&
       definition.definitionSha256 === verdict.recipeSha256, 'Full recipe verdict does not match the mapped definition');

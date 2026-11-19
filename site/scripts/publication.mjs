@@ -485,6 +485,8 @@ function releaseRecipeVerifications(snapshot) {
   requireValue(Array.isArray(rows) && rows.length > 0 && rows.length <= 500, 'Invalid recipe verifications');
   requireValue(typeof snapshot.chartArchiveDigest === 'string' &&
     /^sha256:[a-f0-9]{64}$/.test(snapshot.chartArchiveDigest), 'Recipe verification requires the release chart archive digest');
+  requireValue(snapshot.capabilities.every(row => !row.wholeClaimReview ||
+    row.wholeClaimReview.chartArchiveDigest === snapshot.chartArchiveDigest), 'Recipe and capability chart archives differ');
   for (const row of rows) {
     shape(row, ['id', 'revision', 'recipeSha256', 'title', 'scope', 'limits', 'status', 'wholeClaim', 'basis',
       'startedAt', 'finishedAt', 'evidenceSha256', 'kitCommit']);
