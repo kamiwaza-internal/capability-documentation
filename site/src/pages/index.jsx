@@ -27,15 +27,20 @@ export default function Home() {
     const previous = currentReplays.get(snapshot.version);
     if (!previous || previous.publicationRevision < snapshot.publicationRevision) currentReplays.set(snapshot.version, snapshot);
   }
-  return <Layout description="What each Kamiwaza release can do, with the evidence behind it, as one download per release.">
+  return <Layout description="Browse Kamiwaza value streams, recipes, and capability evidence by release.">
     <header className="kitHero"><div className="container">
       <p className="eyebrow">KAMIWAZA SALES DEV KIT</p>
-      <h1>What each Kamiwaza release can do, and the evidence behind it</h1>
+      <h1>Value-stream verification</h1>
     </div></header>
     <main className="container kitMain">
-      <section aria-labelledby="about" className="panel panelTint">
-        <h2 id="about">About</h2>
-        <p>Explore Kamiwaza capabilities by release in the <Link to="/catalog/">catalog</Link>, or download a release’s PDF, Markdown or ZIP. Each download includes the supporting evidence and known limits.</p>
+      <section aria-labelledby="verification" className="panel panelTint">
+        <h2 id="verification">Verification results</h2>
+        <ol>
+          <li><Link to="/value-streams/">Value streams verified</Link></li>
+          <li>Recipes succeeded</li>
+          <li><Link to="/catalog/">Capabilities demonstrated</Link></li>
+        </ol>
+        <p>The value-stream map shows the recipe and capability evidence available for each release.</p>
       </section>
 
       <section aria-labelledby="releases">
@@ -46,9 +51,13 @@ export default function Home() {
             return <li key={entry.version} className="releaseRow">
             <div className="releaseText">
               <span className="releaseVersion">{entry.version}</span>
-              <span className="releaseHeadline">{entry.headline}</span>
-              <span className="releaseBasis">{entry.basis}</span>
-              {replay && <span className="releaseBasis">Scoped build replay: {replayOperations(replay) ? `${replayOperations(replay).headline}. ${replayOperations(replay).breakdown}.` : `${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities have scenario stamps; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped.`} {replay.counts.catalog} inventory definitions, {replay.counts.excluded} excluded. Scenario stamps alone do not establish whole-release approval. Human release sign-off: {replay.approval.status}.</span>}
+              <details className="releaseChanges">
+                <summary>Capabilities demonstrated and test coverage</summary>
+                {replay ? <>
+                  <p>{replayOperations(replay) ? `${replayOperations(replay).headline}. ${replayOperations(replay).breakdown}.` : `${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities have scoped release stamps; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped.`}</p>
+                  <p>Human release sign-off: {replay.approval.status}. <Link to={`/catalog/#${replay.id}`}>View capability evidence</Link>.</p>
+                </> : <><p>{entry.headline}</p><p>{entry.basis}</p></>}
+              </details>
               <Changes entry={entry} />
             </div>
             <div className="releaseFiles">
@@ -95,7 +104,7 @@ export default function Home() {
         </details>
         <details className="faq">
           <summary>What are recipes and value streams?</summary>
-          <p>A <strong>value stream</strong> is an end-to-end job a customer persona does with Kamiwaza, such as an analyst taking in a mission and managing its projects, written as ordered steps from start to outcome. A <strong>recipe</strong> is the reviewed, step-by-step definition of one value stream that can be run against a named build. A complete recorded run can establish a <strong>scoped proof</strong> when its reviewed checks pass and the published verdict accepts it. That proof covers only the named operations, modality and build; linked building blocks do not automatically receive capability credit. A recipe on its own is a plan, not a result. Prerelease proof, release verification and human release approval remain separate.</p>
+          <p>A <strong>value stream</strong> is an end-to-end job a customer persona does with Kamiwaza. A <strong>recipe</strong> defines the steps and checks for that job. A successful run demonstrates the capabilities its checks cover on the tested build. Prerelease proof, release verification and human release approval are recorded separately.</p>
         </details>
         <details className="faq">
           <summary>How do I ask an AI assistant about a release?</summary>

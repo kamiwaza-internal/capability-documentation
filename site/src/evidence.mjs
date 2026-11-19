@@ -210,7 +210,7 @@ const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;
 export function replayOperations({counts: c}) {
   if (!Number.isInteger(c.operationsNamed)) return null;
   return {
-    headline: `${c.operationsVerified} of ${c.operationsNamed} named operations verified on the release build · ${c.releaseStamped} of ${c.included} included capabilities fully release stamped`,
+    headline: `${c.operationsVerified} of ${c.operationsNamed} operations verified on the release build · ${c.releaseStamped} of ${c.included} included capabilities have scoped release stamps`,
     breakdown: [counted(c.untested, 'capability has no test yet', 'capabilities have no test yet'),
       counted(c.skipped, 'has a test that did not run', 'have a test that did not run'),
       counted(c.partial, 'is partly covered', 'are partly covered'),

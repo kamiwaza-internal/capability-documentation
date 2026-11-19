@@ -15,7 +15,7 @@ function CapabilityInventory({corpus, selection, onSelect}) {
   const caps = corpus.capabilities.filter(cap => (full || cap.disposition === 'included') &&
     `${cap.id} ${cap.title}`.toLowerCase().includes(query.trim().toLowerCase()));
   return <section className="mapInventory" aria-labelledby="capability-inventory">
-    <div className="mapSectionHeading"><div><p className="mapEyebrow">Independent building blocks</p><h2 id="capability-inventory">Capabilities & mapping gaps</h2></div>
+    <div className="mapSectionHeading"><div><h2 id="capability-inventory">Capability inventory</h2></div>
       <span>{caps.length} definitions shown</span></div>
     <p>Ontology, Workroom and other product areas remain separate capabilities. Recipes can use multiple capabilities together. A missing connection means the relationship is not published here.</p>
     <div className="mapInventoryControls"><label>Find a capability<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search name or capability ID"/></label>
@@ -42,6 +42,8 @@ function Dashboard({corpus}) {
   const recipe = stream?.recipes.find(row => row.id === selection.recipe) ?? stream?.recipes[0];
   const effective = {...selection, recipe: recipe?.id};
   const capability = corpus.capabilities.find(row => row.id === selection.capability);
+  const scopedRecipes = new Set(corpus.establishedScopedProofs.map(proof => proof.recipeId));
+  const demonstrated = new Set(corpus.establishedScopedProofs.flatMap(proof => proof.creditedCapabilityIds));
   function updateFilter(setFilter, value) {
     setFilter(value);
     setSelection(current => ({...current, capability:null}));
@@ -55,10 +57,13 @@ function Dashboard({corpus}) {
       [counts.streams, 'value stream groups'], [counts.recipes, 'recipe definitions'],
       [corpus.capabilities.length, 'capability definitions'], [counts.unmapped, 'without a reviewed recipe link'],
     ].map(([count, label]) => <div key={label}><strong>{count}</strong><span>{label}</span></div>)}</div>
-    <aside className="mapSnapshot"><strong>{corpus.release} · {corpus.headline}</strong>
-      <p>{corpus.basis} <a href={salesKitPath(corpus.release) + '.md'}>Read this release’s scope and limits</a>.</p>
-      <p>{corpus.recipeNote}</p>
-    </aside>
+    <section aria-labelledby="stream-results"><h2 id="stream-results">Value streams verified</h2>
+      <p>Complete value-stream verification results are not published for {corpus.release}.</p>
+    </section>
+    <h2 id="recipes-succeeded">Recipes succeeded</h2>
+    {scopedRecipes.size > 0
+      ? <p>{scopedRecipes.size} recipes have published scoped proof. Select a recipe to inspect its evidence.</p>
+      : <p>No passing recipe results are published for {corpus.release}.</p>}
     {streams.length > 0 && <div className="mapFilters"><label>Find a value stream<input type="search" value={query} onChange={event => updateFilter(setQuery, event.target.value)} placeholder="Search streams, recipes or linked capabilities"/></label>
       <label>Persona<select aria-label="Persona" value={persona} onChange={event => updateFilter(setPersona, event.target.value)}><option value="all">All personas</option>{Array.from(new Set(streams.map(row => row.persona))).map(name => <option key={name} value={name}>{name}</option>)}</select></label>
       <label>Value stream<select aria-label="Value stream" value={stream?.id ?? ''} onChange={event => chooseStream(event.target.value)} disabled={!matches.length}>
@@ -73,7 +78,16 @@ function Dashboard({corpus}) {
       </div><RecipeDetail recipe={recipe} capability={capability} corpus={corpus}/></div>
       <p className="mapBoundary">Stream groups follow stable source IDs. A stream title such as “Use Ontologies in Workroom” describes a use case; it does not combine Ontology and Workroom into one capability. Default infrastructure or a historical definition does not establish supported user workflows.</p>
     </section> : streams.length === 0 ? <div className="mapEmpty" role="status"><h2>No recipe mapping published for {corpus.release}</h2><p>This release’s capability data is available below. Recipe definitions and proof are not inherited from another version.</p></div> : <div className="mapEmpty" role="status"><h2>No matching value streams</h2><p>Try another name, capability ID or persona.</p><button type="button" onClick={() => {setQuery(''); setPersona('all');}}>Clear filters</button></div>}
+    <section aria-labelledby="demonstrated-capabilities"><h2 id="demonstrated-capabilities">Capabilities demonstrated</h2>
+      {demonstrated.size > 0
+        ? <ul>{corpus.capabilities.filter(cap => demonstrated.has(cap.id)).map(cap => <li key={cap.id}>{cap.title}</li>)}</ul>
+        : <p>No recipe-based capability results are published for {corpus.release}. <Link to="/catalog/">View capability evidence</Link>.</p>}
+    </section>
     <CapabilityInventory corpus={corpus} selection={effective} onSelect={setSelection}/>
+    <details className="mapSnapshot"><summary>{corpus.release} release evidence</summary><p>{corpus.headline}</p>
+      <p>{corpus.basis} <a href={salesKitPath(corpus.release) + '.md'}>Read this release’s scope and limits</a>.</p>
+      <p>{corpus.recipeNote}</p>
+    </details>
     <details className="mapSource"><summary>Source identity & reading rules</summary><ul>{corpus.sourceIdentity.map(item => <li key={item}>{item}</li>)}</ul><p>Source identities are not a new test date.</p><ul>{corpus.gaps.map(gap => <li key={gap}>{gap}</li>)}</ul><p>Not mapped and not established do not mean unsupported. Counts describe this inventory and must not be added to verification totals.</p></details>
   </>;
 }
@@ -84,7 +98,7 @@ export default function ValueStreams() {
   const [version, setVersion] = useState(releases[0]?.release ?? '');
   const corpus = releases.find(row => row.release === version);
   return <Layout title="Value stream map" description="Explore value streams, recipes and distinct Kamiwaza capabilities, with scoped proof and mapping gaps kept visible.">
-    <header className="mapHero"><div className="container"><p className="mapEyebrow">KAMIWAZA · CAPABILITY ATLAS</p><h1>From the job to the building blocks.</h1><p>Explore value streams, inspect recipes and see the capabilities behind each claim.</p></div></header>
+    <header className="mapHero"><div className="container"><h1>Value-stream verification</h1><p>Start with the value stream, then inspect its recipes and capability evidence.</p></div></header>
     <main className="container mapMain">
       {releases.length > 0 && <label className="mapVersion">Release<select aria-label="Release" value={version} onChange={event => setVersion(event.target.value)}>{releases.map(row => <option key={row.release}>{row.release}</option>)}</select></label>}
       {corpus ? <Dashboard key={version} corpus={corpus}/> : <p>No release data is published yet. <Link to="/catalog/">Browse capability evidence</Link>.</p>}

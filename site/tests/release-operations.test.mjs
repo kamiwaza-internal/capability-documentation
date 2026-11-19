@@ -49,7 +49,7 @@ for (const [name, mutate, reason] of [
   ['reasons do not sum to not stamped', s => s.counts.partial = 0, /Release counts must match/],
 ]) test('operation counts reject ' + name, () => assert.throws(() => validatePublication(operationsFixture(mutate)), reason));
 
-const HEADLINE = '7 of 12 named operations verified on the release build · 1 of 6 included capabilities fully release stamped';
+const HEADLINE = '7 of 12 operations verified on the release build · 1 of 6 included capabilities have scoped release stamps';
 const BREAKDOWN = '1 capability has no test yet · 1 has a test that did not run · 1 is partly covered · 1 not stamped for another reason · 1 failed';
 const replayEntry = publication => evidenceVersions({...publication, releases: []}, null).find(entry => entry.kind === 'release-replay');
 
