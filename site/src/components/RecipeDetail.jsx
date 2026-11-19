@@ -12,6 +12,7 @@ function RecipeChecks({steps}) {
 
 export default function RecipeDetail({recipe, capability, corpus}) {
   const proof = recipeProof(recipe, corpus);
+  const limits = recipe?.releaseVerification?.limits ?? recipe?.limits ?? [];
   return <aside className="mapDetail" aria-label={capability ? `Capability details: ${capability.id}` : `Recipe details: ${recipe?.id ?? "selection"}`}>
     <p className="mapEyebrow">{capability ? 'Capability detail' : 'Recipe detail'}</p>
     <h3>{capability?.title ?? recipe?.title ?? 'Select a recipe'}</h3>
@@ -28,13 +29,13 @@ export default function RecipeDetail({recipe, capability, corpus}) {
         {recipe.releaseVerification
           ? <><dt>Recipe verdict</dt><dd><a href={'/catalog/#' + recipe.releaseVerification.snapshotId + '--' + recipe.id}>Fully verified for {recipe.sourceVersion}</a></dd></>
           : <><dt>Scoped journey</dt><dd>{proof ? 'Established in this source snapshot' : 'No established proof in this source snapshot'}</dd></>}
-        <dt>Complete UI journey</dt><dd>Not established</dd><dt>Recipe release membership</dt><dd>Not established</dd></dl>
+        <dt>Complete UI journey</dt><dd>Not established</dd>{!recipe.releaseVerification && <><dt>Recipe release membership</dt><dd>Not established</dd></>}</dl>
       <p>{recipe.releaseVerification ? recipe.releaseVerification.scope : proof ? 'Retained proof covers only its recorded scopes and build. The reviewed claims below keep their independent capability verdicts; they do not certify the parent stream.' : 'A recipe definition records a plan. It does not establish a passing run.'}</p>
       <h4>Reviewed capability claims</h4>
       {recipe.reviewedVerifies.length ? <ul>{recipe.reviewedVerifies.map(id => <li key={id}><code>{id}</code></li>)}</ul> : <p>No reviewed claims published for this recipe.</p>}
       {recipe.reviewedVerifies.length > 0 && !proof && <p>These reviewed links have no established scoped SDK proof here.</p>}
       {recipe.capabilityIds && <><h4>Capability ingredients</h4><ul>{linkedCapabilityIds(recipe).filter(id => !recipe.steps || !recipe.reviewedVerifies.includes(id)).map(id => <li key={id}><code>{id}</code> · ingredient only</li>)}</ul></>}
-      {recipe.limits?.length > 0 && <><h4>Recipe limits</h4><ul>{recipe.limits.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
+      {limits.length > 0 && <><h4>Recipe limits</h4><ul>{limits.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
       {recipe.steps && <RecipeChecks steps={recipe.steps}/>}
       {recipe.gaps.length > 0 && <><h4>Recorded gaps</h4><ul>{recipe.gaps.map(gap => <li key={gap}>{gapLabels[gap]}</li>)}</ul></>}
       <p>{recipe.capabilityIds ? 'Recipe links show the declared scope of this definition. Check outcomes are recorded separately.' : 'Step instructions and ingredient links are not published in this inventory snapshot.'}</p>
