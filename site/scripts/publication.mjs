@@ -485,9 +485,9 @@ function releasedSnapshot(value) {
   shape(value.evidenceWindow, ['earliestStartedAt', 'latestFinishedAt']);
   const window = value.evidenceWindow;
   [window.earliestStartedAt, window.latestFinishedAt, value.generatedAt, value.publishedAt].forEach(observationInstant);
+  // The shared review PR can open before a later snapshot and its evidence exist.
   requireValue(orderedObservationTime(window.earliestStartedAt) <= orderedObservationTime(window.latestFinishedAt) &&
-    orderedObservationTime(window.latestFinishedAt) <= orderedObservationTime(value.generatedAt) &&
-    orderedObservationTime(value.generatedAt) <= orderedObservationTime(value.publishedAt), 'Release dates out of order');
+    orderedObservationTime(window.latestFinishedAt) <= orderedObservationTime(value.generatedAt), 'Release dates out of order');
   requireValue(Number.isSafeInteger(value.publicationRevision) && value.publicationRevision > 0, 'Invalid publication revision');
   requireValue(typeof value.reviewReference === 'string' && /^https:\/\/github\.com\/kamiwaza-internal\/capability-documentation\/pull\/[1-9]\d*$/.test(value.reviewReference), 'Public review PR reference required');
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Full release inventory required');

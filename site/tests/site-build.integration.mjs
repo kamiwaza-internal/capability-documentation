@@ -260,7 +260,9 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.equal(build.status, 0, build.stdout + build.stderr);
   const cards = assertReleaseCards(site);
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
-  assert.deepEqual(index.versions.map(entry => entry.version), ['1.4.0', '1.3.5', '1.3.4', '1.3.2', '1.3.0', '1.2.1']);
+  assert.deepEqual(index.versions.map(entry => entry.version), ['1.4.1', '1.4.0', '1.3.5', '1.3.4', '1.3.2', '1.3.0', '1.2.1']);
+  const releaseCard = cards.find(card => card.includes('<span class="releaseVersion">1.4.1</span>'));
+  assert.ok(releaseCard.includes('Scoped build replay') && releaseCard.includes('Human release sign-off: pending'));
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
   assert.ok(corpusCard.includes('Original tagged release') && corpusCard.includes('30 of 88'));
   assert.ok(!corpusCard.includes('73'), 'later cumulative proof count must not relabel the original release');
@@ -286,8 +288,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));
   const dashboard = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
   for (const entry of index.versions) assert.ok(dashboard.includes(`<option${entry.version === index.versions[0].version ? ' selected=""' : ''}>${entry.version}</option>`), `dashboard lists ${entry.version}`);
-  assert.ok(dashboard.includes('Authored recipe inventory from the pinned Kit revision.'), 'the selected 1.4.0 release renders its own curated recipe inventory note');
-  assert.ok(dashboard.includes('auth.local-user-administration'), 'selected 1.4.0 dashboard renders its public capability inventory');
+  assert.ok(dashboard.includes('platform.api-reference'), 'the selected release renders the public API Reference stamp');
   console.log(`Offline release-card build evidence: ${root}`);
 });
 

@@ -167,8 +167,9 @@ the breakdown that includes the number of capabilities with no test. A snapshot
 without these fields renders as before.
 
 `publishedAt` retains the existing publication-metadata convention: the actual
-publication review PR opening time, not deployment or human approval. It may
-precede the human decision; `approvedAt` is that separate decision time.
+publication review PR opening time. An open release PR can take later evidence,
+so its opening time may precede the snapshot's `generatedAt`. The evidence
+window must end by generation. `approvedAt` records the separate human decision.
 
 The public projection names the intended release tag or branch/full source
 commit, qualified running manifest identity, Core/frontend image digests and

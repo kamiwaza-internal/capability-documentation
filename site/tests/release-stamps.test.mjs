@@ -22,6 +22,15 @@ test('scoped stamps retain failed, unexecuted and excluded inventory separately 
   first(publication).approval = {status: 'pending', scope: 'full-inventory', approvedBy: null, approvedAt: null, snapshotSha256: null};
   assert.doesNotThrow(() => validatePublication(publication));
 });
+test('a shared release review can take evidence produced after the PR opened', () => {
+  const publication = releaseStampsFixture();
+  const snapshot = first(publication);
+  snapshot.publishedAt = '2026-10-01T10:30:00Z';
+  snapshot.approval = {status: 'pending', scope: 'full-inventory', approvedBy: null, approvedAt: null, snapshotSha256: null};
+  assert.doesNotThrow(() => validatePublication(publication));
+  snapshot.generatedAt = '2026-10-01T10:59:59Z';
+  assert.throws(() => validatePublication(publication), /Release dates out of order/);
+});
 test('additive migration keeps every old bundle and index byte-identical; new bundle hashes exact bytes', () => {
   const before = observationsFixture(), after = releaseStampsFixture();
   preserveHistory(before, after);
