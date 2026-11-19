@@ -158,7 +158,8 @@ export function primaryCapabilities(publication) {
     // Only evidence selects status: an id that appears only in a description-only release has no row.
     if (!rows.length) continue;
     // Release-bound stamps outrank pre-release records; ordinary missing observations do not erase acceptance.
-    const rank = row => row.cap.status === 'verified' && row.cap.wholeClaim ? 3 : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
+    const rank = row => fullyReleaseVerified(row.cap) ? 4 : row.cap.status === 'verified' && row.cap.wholeClaim ? 3
+      : row.cap.status === 'release-stamped' ? 2 : row.cap.status === 'prerelease-verified' ? 1 : 0;
     const ordered = [...rows].filter(row => !withdrawn(row, rows)).sort((a, b) => (a.release.publicationRevision - b.release.publicationRevision) || a.release.id.localeCompare(b.release.id));
     const verified = rows.filter(row => accepted.has(row.cap.status)).sort((a, b) => rank(a) - rank(b) || compareTime(a.at, b.at) || a.release.id.localeCompare(b.release.id));
     const retained = verified.at(-1) ?? ordered.filter(row => ['failed', 'failed-or-mixed', 'partial'].includes(row.cap.status)).at(-1) ?? ordered.at(-1);
@@ -307,7 +308,8 @@ export const stampStatus = (row, tag) => row.releaseStamp ? `Release stamped · 
 
 // Catalog page filters. A release selects its own versioned records; the stamped tag's version
 // (for example 1.3.2) selects the baseline records that carry one of its stamps.
-// "Release verified" means a passing scoped release stamp for that release: nothing wider.
+// Release filters separate reviewed whole claims from the broader set of passing release stamps.
+const fullyReleaseVerified = cap => cap.status === 'release-stamped' && cap.wholeClaim === true;
 const tagVersion = tag => (tag ?? '').replace(/^v/, '');
 const releaseVerified = (cap, release, tag) =>
   (cap.status === 'release-stamped' && release !== tagVersion(tag)) ||
@@ -315,6 +317,7 @@ const releaseVerified = (cap, release, tag) =>
 export function filterPrimary(capabilities, query, status, release = 'all', tag) {
   const inRelease = capabilities.filter(cap => release === 'all' || cap.version === release ||
     (release === tagVersion(tag) && Boolean(cap.releaseStamp || cap.sourceContractStamp)));
+  if (status === 'fully-release-verified') return filterCapabilities(inRelease.filter(fullyReleaseVerified), query, 'all');
   if (status === 'release-stamped') return filterCapabilities(inRelease.filter(cap => releaseVerified(cap, release, tag)), query, 'all');
   if (status !== 'verified') return filterCapabilities(inRelease, query, status);
   // "Verified, pre-release or release" also takes a record whose only verification is the release

@@ -22,7 +22,8 @@ const prereleaseLabels = {
   'not-yet-verified': 'Not yet verified',
 };
 const filterLabels = {
-  'release-stamped': 'Release verified (scoped release stamp)',
+  'fully-release-verified': 'Fully release verified',
+  'release-stamped': 'Release verified (all release stamps)',
   verified: 'Verified, pre-release or release',
   'qualification-pending': 'Qualification pending',
   partial: 'Partial',
@@ -140,7 +141,7 @@ function PrimaryCapabilities({capabilities, query, status, tag, release = 'all'}
     <p>The latest native-scored pre-release revision for a version controls its effective verdict; older proof and scenario records remain in history. A later release-stamp failure requires the same qualified environment and claim scope. Missing descriptions, untested sources and unrelated scoped observations do not remove verification.</p>
     {filterPrimary(capabilities, query, status, release, tag).length === 0 && <p role="status">No matching capability records.</p>}
     {filterPrimary(capabilities, query, status, release, tag).map(cap => <article className="capability" data-tone={cap.failures.some(failure => !failure.superseded) ? 'bad' : ['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'ok' : 'none'} id={'current--' + cap.version + '--' + cap.id} key={cap.version + ':' + cap.id}>
-      <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? (cap.status === 'release-stamped' ? `Release stamped · v${cap.version}` : cap.status === 'not-stamped' ? 'Not stamped' : cap.status)}</span>}</h3>
+      <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? (cap.status === 'release-stamped' ? `${replayLabel(cap)} · v${cap.version}` : cap.status === 'not-stamped' ? 'Not stamped' : cap.status)}</span>}</h3>
       {cap.releaseStamp?.scope && <><p>Verified release journey: {cap.releaseStamp.scope}</p><TextList title="Release verification limits" items={cap.releaseStamp.limits}/></>}
       <p><code>{cap.id}</code> · version {cap.version} · <a href={'#' + cap.snapshotId}>{['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'Retained verification snapshot' : 'Published record'}</a> · {cap.verifiedAt ? <>evidence date <time dateTime={cap.verifiedAt}>{cap.verifiedAt}</time></> : 'execution date not established'}</p>
       <details className="capBody"><summary>Scope, limits and evidence</summary>
@@ -223,13 +224,13 @@ export default function Catalog() {
         <button type="button" aria-pressed={release === 'all'} onClick={() => setRelease('all')}><strong>All releases</strong><span>{overview.length} releases</span></button>
         {overview.map(item => <button type="button" key={item.version} aria-pressed={release === item.version} onClick={() => setRelease(item.version)}><strong>{item.version}</strong><span>{item.releaseVerified} release verified · {item.records} records</span></button>)}
       </div>
-      <p className="releasePickerNote">Release verified counts capability records with a passing scoped release stamp for that release. It is not whole-capability certification or release sign-off.</p>
+      <p className="releasePickerNote">Release verified counts passing release stamps for the selected version. Fully release verified identifies the capabilities with independently reviewed coverage of every documented operation. Release sign-off is recorded separately.</p>
       {(release === 'all' || tableVersions.includes(release)) && <CurrentView publication={publication} localStamps={localStamps} releaseStamps={releaseStamps}/>}
         <div className="catalogFilters catalogToolbar" id="catalog-records">
           <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
             <option value="all">All statuses</option>
-            {['release-stamped', 'verified', 'qualification-pending', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{filterLabels[value] ?? prereleaseLabels[value]}</option>)}
+            {['fully-release-verified', 'release-stamped', 'verified', 'qualification-pending', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{filterLabels[value] ?? prereleaseLabels[value]}</option>)}
           </select></label>
         </div>
       {reports.map(report => <section className="release" key={report.version}>

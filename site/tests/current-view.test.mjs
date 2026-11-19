@@ -270,12 +270,13 @@ test('primary catalog cards retain release journey limits alongside prerelease e
   const {renderToStaticMarkup} = await import('react-dom/server');
   // Render the real card function; omit page-only framework/data imports unused by it.
   const source = readFileSync(new URL('../src/pages/catalog.jsx', import.meta.url), 'utf8')
-    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'") || line.includes("from '../NativeEvidence'")).join('\n')
+    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'") || line.includes("from '../evidence.mjs'") || line.includes("from '../NativeEvidence'")).join('\n')
     + '\nexport {PrimaryCapabilities};';
   const {code} = babel.transformSync(source,
     {babelrc: false, configFile: false, presets: [fileURLToPath(import.meta.resolve('@babel/preset-react'))]});
   const file = join(mkdtempSync(join(tmpdir(), 'catalog-cards-')), 'catalog.mjs');
   writeFileSync(file, code.replace("'../NativeEvidence'", JSON.stringify(nativeEvidenceModule(babel))).replace("'../catalog.mjs'", JSON.stringify(new URL('../src/catalog.mjs', import.meta.url).href))
+    .replace("'../evidence.mjs'", JSON.stringify(new URL('../src/evidence.mjs', import.meta.url).href))
     .replace("from 'react'", 'from ' + JSON.stringify(import.meta.resolve('react'))));
   const html = renderToStaticMarkup(createElement((await import(file)).PrimaryCapabilities, {
     capabilities: joinPrimaryStamps(primaryCapabilities(published), stamps, published), query: '', status: 'all', tag: stamps.releaseTag,
