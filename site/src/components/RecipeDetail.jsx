@@ -1,6 +1,15 @@
 import React from 'react';
 import {gapLabels, linkedCapabilityIds, recipeProof} from '../value-stream-map.mjs';
 
+function RecipeChecks({steps}) {
+  return <><h4>Recipe steps and check bindings</h4><ol>{steps.map(step => <li key={step.id}>
+    <code>{step.id}</code>
+    <ul>{step.links.map(link => <li key={link.capabilityId}><code>{link.capabilityId}</code> · {link.role}</li>)}</ul>
+    {step.scenarios.length ? <ul>{step.scenarios.map(scenario => <li key={scenario}><code>{scenario}</code></li>)}</ul>
+      : <p>No check binding is published for this step.</p>}
+  </li>)}</ol></>;
+}
+
 export default function RecipeDetail({recipe, capability, corpus}) {
   const proof = recipeProof(recipe, corpus);
   return <aside className="mapDetail" aria-label={capability ? `Capability details: ${capability.id}` : `Recipe details: ${recipe?.id ?? "selection"}`}>
@@ -22,10 +31,11 @@ export default function RecipeDetail({recipe, capability, corpus}) {
       <h4>Reviewed capability claims</h4>
       {recipe.reviewedVerifies.length ? <ul>{recipe.reviewedVerifies.map(id => <li key={id}><code>{id}</code></li>)}</ul> : <p>No reviewed claims published for this recipe.</p>}
       {recipe.reviewedVerifies.length > 0 && !proof && <p>These reviewed links have no established scoped SDK proof here.</p>}
-      {recipe.capabilityIds && <><h4>Capability ingredients</h4><ul>{linkedCapabilityIds(recipe).map(id => <li key={id}><code>{id}</code> · ingredient only</li>)}</ul></>}
+      {recipe.capabilityIds && <><h4>Capability ingredients</h4><ul>{linkedCapabilityIds(recipe).filter(id => !recipe.steps || !recipe.reviewedVerifies.includes(id)).map(id => <li key={id}><code>{id}</code> · ingredient only</li>)}</ul></>}
       {recipe.limits?.length > 0 && <><h4>Recipe limits</h4><ul>{recipe.limits.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
-      <h4>Recorded gaps</h4><ul>{recipe.gaps.map(gap => <li key={gap}>{gapLabels[gap]}</li>)}</ul>
-      <p>{recipe.capabilityIds ? 'Ingredient links come from this release’s reviewed recipe publication. A definition does not establish execution.' : 'Step instructions and ingredient links are not published in this inventory snapshot.'}</p>
+      {recipe.steps && <RecipeChecks steps={recipe.steps}/>}
+      {recipe.gaps.length > 0 && <><h4>Recorded gaps</h4><ul>{recipe.gaps.map(gap => <li key={gap}>{gapLabels[gap]}</li>)}</ul></>}
+      <p>{recipe.capabilityIds ? 'Recipe links show the declared scope of this definition. Check outcomes are recorded separately.' : 'Step instructions and ingredient links are not published in this inventory snapshot.'}</p>
     </>}
   </aside>;
 }

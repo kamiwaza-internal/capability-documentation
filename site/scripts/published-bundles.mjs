@@ -12,6 +12,7 @@ import {toPdf, toZip} from './evidence-files.mjs';
 import {loadReleaseCorpora} from './release-corpora.mjs';
 import {loadReleaseWork} from './release-work.mjs';
 import {validateGuidance} from './sales-guidance.mjs';
+import {validateReleaseRecipeMap} from './release-recipe-map.mjs';
 import {validateStreams} from './value-streams.mjs';
 import {loadVerificationReports} from './verification-reports.mjs';
 import {salesKitDocument, salesKitPath} from '../src/sales-kit.mjs';
@@ -19,9 +20,10 @@ import {salesKitDocument, salesKitPath} from '../src/sales-kit.mjs';
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 
 // Per-version standalone documents and one complete ZIP for people and assistants.
-export function emitEvidence(publication, releaseStamps, out, descriptions, guidance, streams = null, corpora = [], reports = loadVerificationReports(), releaseWork = []) {
+export function emitEvidence(publication, releaseStamps, out, descriptions, guidance, streams = null, corpora = [], reports = loadVerificationReports(), releaseWork = [], releaseMap = null) {
   guidance = guidance ? validateGuidance(guidance, publication) : null;
   streams = streams ? validateStreams(streams, publication) : null;
+  releaseMap = releaseMap && validateReleaseRecipeMap(releaseMap, publication);
   if (streams && streams.streams.some(row => row.id === 'Analyst:VS2-5' && row.recipe)) {
     // staticDirectories is deliberately disabled: publish only this reviewed source.
     mkdirSync(join(out, 'examples'), {recursive: true});
@@ -79,7 +81,12 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     };
     if (scopedStreams) files.streamsJson = {path: `/evidence/${entry.version}/value-stream-recipes.json`,
       bytes: Buffer.from(JSON.stringify(scopedStreams, null, 2) + '\n'), audience: 'machine'};
-    const readable = Object.entries(files).filter(([key]) => key !== 'streamsJson')
+    if (releaseMap?.release === entry.version) {
+      const bytes = Buffer.from(JSON.stringify(releaseMap, null, 2) + '\n');
+      files.recipeMapJson = {path: `/evidence/${entry.version}/release-recipe-map.json`, bytes, audience: 'machine'};
+      records.push({name: 'machine-readable/release-recipe-map.json', data: bytes});
+    }
+    const readable = Object.entries(files).filter(([key]) => !['streamsJson', 'recipeMapJson'].includes(key))
       .map(([, file]) => ({name: 'human-readable/' + file.path.split('/').at(-1), data: file.bytes}));
     if (scopedStreams) records.push({name: 'machine-readable/value-stream-recipes.json', data: files.streamsJson.bytes});
     const reportFiles = entry.originalCorpus ? [] : reports.filter(report =>
@@ -223,7 +230,8 @@ export default function bundlePlugin() {
       if (corpus.currentVerification) publishCurrentVerification(fileURLToPath(new URL('../../', import.meta.url)),
         {path: corpus.currentVerification.sourcePath.slice(1), sha256: corpus.currentVerification.sourceSha256}, outDir);
     }
-    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance, streams, corpora, loadVerificationReports(), releaseWork);
+    const releaseMap = JSON.parse(readFileSync(new URL('../data/release-recipe-map-1.4.1.json', import.meta.url), 'utf8'));
+    emitEvidence(data, releaseStamps, outDir, descriptions?.descriptions, guidance, streams, corpora, loadVerificationReports(), releaseWork, releaseMap);
     if (data.schema !== 9 && releaseWork.some(work => work.fresh?.release.recipeInventory)) appendFileSync(join(outDir, 'llms.txt'), '\nNative cycle schema 9 may appear in target-work downloads as native-cycle-projection.json. Preserve original observation builds, unknown source bindings, carry assumptions and recipe definition hashes. Native carry is not fresh execution or release verification.\n');
     // New report submissions contain only PDF + MD. Historical URLs remain available.
     const versions = new Set(evidenceVersions(data, releaseStamps, corpora, [], releaseWork).map(entry => entry.version));
