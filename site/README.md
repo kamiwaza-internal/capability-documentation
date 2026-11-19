@@ -34,6 +34,14 @@ declarations. It prohibits runtime verification credit.
 
 Docusaurus presentation for reviewed public capability snapshots. It does not read the repository's legacy `capabilities/`, `tests/`, `synthetic-data/` or `evidence/` trees. Private generation and evidence scoring belong to the capability framework, not this site.
 
+## Verify published downloads
+
+After Pages deploys, the workflow reopens the uploaded site artifact and checks
+each release ZIP against its source snapshot and evidence index. It also checks
+the live ZIP hashes when the site is reachable. Cloudflare Access can use the
+`CAPABILITY_SITE_ACCESS_CLIENT_ID` and `CAPABILITY_SITE_ACCESS_CLIENT_SECRET`
+GitHub environment secrets for the live check.
+
 ## Local checks
 
 Use Node 22 or later:
