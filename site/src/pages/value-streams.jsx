@@ -61,6 +61,7 @@ function Dashboard({corpus}) {
       <p>Complete value-stream verification results are not published for {corpus.release}.</p>
     </section>
     <h2 id="recipes-succeeded">Recipes succeeded</h2>
+    {corpus.recipeMapPath && <p>{counts.streams} of {corpus.sourceStreamCount} source inventory streams have published {corpus.release} recipe mappings. <a href={corpus.recipeMapPath}>Download the release recipe map (JSON)</a>.</p>}
     {scopedRecipes.size > 0
       ? <p>{scopedRecipes.size} recipes have published scoped proof. Select a recipe to inspect its evidence.</p>
       : <p>No passing recipe results are published for {corpus.release}.</p>}

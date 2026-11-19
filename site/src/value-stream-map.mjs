@@ -17,7 +17,7 @@ export function streamInventory(corpus) {
     groups.get(id).recipes.push(recipe);
   }
   return [...groups.values()].map(stream => ({...stream,
-    title: cleanTitle(stream.recipes.find(recipe => recipe.id === stream.id)?.title ?? stream.id),
+    title: cleanTitle(stream.recipes.find(recipe => recipe.id === stream.id)?.title ?? stream.recipes[0].parentTitle ?? stream.id),
   }));
 }
 

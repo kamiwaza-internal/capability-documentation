@@ -18,6 +18,7 @@ const stamps = JSON.parse(readFileSync(join(root, 'site/data/release-stamps-1.3.
 const descriptions = JSON.parse(readFileSync(join(root, 'site/data/descriptions.json'))).descriptions;
 const guidance = JSON.parse(readFileSync(join(root, 'site/data/sales-guidance.json')));
 const streams = JSON.parse(readFileSync(join(root, 'site/data/value-streams.json')));
+const releaseMap = JSON.parse(readFileSync(join(root, 'site/data/release-recipe-map-1.4.1.json')));
 const fixtureHome = (index, source = publication) => `<section aria-labelledby="releases"><ul class="releaseList">${index.versions.map(entry => {
   const replay = (source.releaseStamps ?? []).filter(row => row.version === entry.version)
     .sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
@@ -38,7 +39,7 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   const out = mkdtempSync(join(tmpdir(), 'release-corpus-bundle-'));
   emitBundles(publication, out);
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
-  emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}), loadVerificationReports(), loadReleaseWork({publication}));
+  emitEvidence(publication, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({publication}), loadVerificationReports(), loadReleaseWork({publication}), releaseMap);
   const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
   const entry = index.versions.find(row => row.version === '1.3.4');
   assert.equal(entry.kind, 'release-replay');
@@ -48,7 +49,7 @@ test('every public corpus emits matching detailed MD, PDF, ZIP, manifest, digest
   const prior = mkdtempSync(join(tmpdir(), 'release-corpus-historical-'));
   emitBundles(publication, prior);
   writeFileSync(join(prior, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
-  emitEvidence(publication, stamps, prior, descriptions, guidance, streams);
+  emitEvidence(publication, stamps, prior, descriptions, guidance, streams, [], undefined, [], releaseMap);
   for (const historical of index.versions.filter(row => !['1.3.4', '1.3.5'].includes(row.version))) {
     for (const file of Object.values(historical.files)) assert.deepEqual(readFileSync(join(out, file.path)),
       readFileSync(join(prior, file.path)), `historical download ${file.path} must retain its bytes`);
@@ -132,7 +133,7 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   cpSync(join(root, 'corpus'), join(repo, 'corpus'), {recursive: true});
   cpSync(join(root, 'site/static/verification-results'), join(repo, 'site/static/verification-results'), {recursive: true});
   if (existsSync(join(root, 'site/static/current-verification'))) cpSync(join(root, 'site/static/current-verification'), join(repo, 'site/static/current-verification'), {recursive:true});
-  for (const name of ['release-stamps-1.3.2.json', 'descriptions.json', 'sales-guidance.json', 'value-streams.json', 'release-corpora.json'])
+  for (const name of ['release-stamps-1.3.2.json', 'descriptions.json', 'sales-guidance.json', 'value-streams.json', 'release-corpora.json', 'release-recipe-map-1.4.1.json'])
     cpSync(join(root, 'site/data', name), join(repo, 'site/data', name));
   const extended = structuredClone(publication);
   const replay = structuredClone(extended.releaseStamps.at(-1));
@@ -150,7 +151,7 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   const out = join(repo, 'build');
   emitBundles(extended, out);
   writeFileSync(join(out, 'release-stamps-1.3.2.json'), readFileSync(join(root, 'site/data/release-stamps-1.3.2.json')));
-  emitEvidence(extended, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({root: repo, publication: extended}));
+  emitEvidence(extended, stamps, out, descriptions, guidance, streams, loadReleaseCorpora({root: repo, publication: extended}), undefined, [], releaseMap);
   const indexPath = join(out, 'evidence/index.json');
   const index = JSON.parse(readFileSync(indexPath));
   const entry = index.versions.find(row => row.version === '1.3.5');

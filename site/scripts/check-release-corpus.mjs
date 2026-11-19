@@ -82,7 +82,8 @@ export function checkReleaseCorpusBuild({repo = root, out = join(repo, 'site/bui
     const read = name => JSON.parse(readFileSync(join(repo, 'site/data', name)));
     const descriptions = validateDescriptions(read('descriptions.json'), publication);
     emitEvidence(publication, stamps, expectedOut, descriptions?.descriptions,
-      read('sales-guidance.json'), read('value-streams.json'), corpora, loadVerificationReports(join(repo, 'site/static/verification-results')), releaseWork);
+      read('sales-guidance.json'), read('value-streams.json'), corpora, loadVerificationReports(join(repo, 'site/static/verification-results')), releaseWork,
+      read('release-recipe-map-1.4.1.json'));
     const expectedIndex = JSON.parse(readFileSync(join(expectedOut, 'evidence/index.json')));
     const index = JSON.parse(readFileSync(join(out, 'evidence/index.json')));
     assert.equal(index.schema, 'capability-evidence-downloads.v1');

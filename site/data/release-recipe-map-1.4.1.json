@@ -1,0 +1,591 @@
+{
+  "schema": "public-release-recipe-map.v1",
+  "release": "1.4.1",
+  "snapshot": "1.4.1-release-replay-r16",
+  "coreRevision": "f615ce9d599f2bd09768791b082d1bbe73af9acc",
+  "sourceStreamCount": 46,
+  "streams": [
+    {
+      "id": "Analyst:VS1",
+      "title": "VS1: Intake Mission and Create / Manage Projects",
+      "recipes": [
+        {
+          "id": "Analyst:VS1:project-invitation-sdk",
+          "title": "Create and share one Kaizen project by invitation",
+          "definitionRevision": 1,
+          "definitionSha256": "785439d73ecb79f9feedba25713b342f95222a609b2f6b8a980cdff85681df2a",
+          "sourceCommit": "3c20ebf68230d04243773c65244997ecaf5df08e",
+          "steps": [
+            {
+              "id": "accept-project-invitation",
+              "links": [
+                {
+                  "capabilityId": "kaizen.projects",
+                  "role": "uses"
+                }
+              ],
+              "scenarios": [
+                "project-invitation-acceptance-grants-collaborator-membership"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Analyst:VS2",
+      "title": "VS2: Discover and Select Data Sources",
+      "recipes": [
+        {
+          "id": "Analyst:VS2:core-multimedia-ingest-search-sdk",
+          "title": "Ingest and search synthetic image, audio and video through Core",
+          "definitionRevision": 2,
+          "definitionSha256": "427736937282b200d8b3f50207ba939ea7c303fa0fb3f09739b69f4c9a130acc",
+          "sourceCommit": "8e0400803b0abf626b641ab83dd169b657ece30e",
+          "steps": [
+            {
+              "id": "core-multimedia-ingest-and-search",
+              "links": [
+                {
+                  "capabilityId": "ingestion.multimedia-extraction",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "core-mediated-synthetic-png-ocr-wav-transcription-and-mp4-frame-audio-extraction-unique-source-vector-search-and-owned-cleanup-excludes-ui-arbitrary-media-quality-and-physical-storage-erasure"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS2:owned-oauth-two-user",
+          "title": "Connect an owned OAuth provider, isolate two users and disconnect",
+          "definitionRevision": 2,
+          "definitionSha256": "ad325de5b51895939189d1641cc3b794bf70396215e27fe244712a5aac77de00",
+          "sourceCommit": "1ca79eb98cdffeb32c35386deda53f340c8aa800",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "connectors.user-oauth-authorization",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "UI-CONNECTOR-USER-OAUTH-01"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS2:registered-dataset-sdk-retrieval",
+          "title": "Register owned S3 datasets and retrieve exact seeded rows over inline and trusted Flight transports",
+          "definitionRevision": 2,
+          "definitionSha256": "0a059795f16162f06044ad841a0a4555759ff18a1293640f038d893b482976de",
+          "sourceCommit": "e82cb01ab0de3bb12868e27ac0cadb5a59d2df09",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "catalog.dataset-registry",
+                  "role": "uses"
+                },
+                {
+                  "capabilityId": "retrieval.async-retrieval-jobs",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "scoped-arrow-flight-retrieval-of-an-ingested-s3-dataset",
+                "scoped-inline-retrieval-of-an-ingested-s3-dataset"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Analyst:VS5",
+      "title": "VS5: Configure, Manage, and Govern Agents / A2A Across the Kamiwaza Mesh",
+      "recipes": [
+        {
+          "id": "Analyst:VS5:canonical-conversation-stream-sdk",
+          "title": "Stream one canonical Kaizen conversation turn over the event stream",
+          "definitionRevision": 3,
+          "definitionSha256": "bf11c3b4f8c7b37ef3f6feeb4c833b548dd97b12ed496e06ef2f2e5f6da4a800",
+          "sourceCommit": "11b34b313d73c83fcc5653bfc438cc739fb6b9f3",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "kaizen.conversation-event-streaming",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "canonical-conversation-streams-a-replayed-marked-reply"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS5:conversation-streaming",
+          "title": "Follow and replay a primary Kaizen agent conversation turn",
+          "definitionRevision": 2,
+          "definitionSha256": "0b0ccb56c227e49ecf71b6a5f004df78e9f062830b6cc5c9ab0ef93edab37291",
+          "sourceCommit": "890408e5b2b4004021e54ef1b9bc1c34c15d47c4",
+          "steps": [
+            {
+              "id": "replay-completed-turn",
+              "links": [
+                {
+                  "capabilityId": "kaizen.conversation-event-streaming",
+                  "role": "uses"
+                }
+              ],
+              "scenarios": [
+                "member-replays-exact-reply-from-assistant-cursor"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS5:package-authoring-member-delegation",
+          "title": "Create and approve a skill package, then delegate to its agent",
+          "definitionRevision": 2,
+          "definitionSha256": "670683810d4dc829835fb33aa9ce403d844214ffc24f1225744e59ddb8737171",
+          "sourceCommit": "07dd73d3cb819152ce50a9f829e1113a9443413d",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "kaizen.agent-packages",
+                  "role": "verifies"
+                },
+                {
+                  "capabilityId": "kaizen.agent-auto-routing",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "kaizen-native-package-authoring-141"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS5:prebuilt-agents-selectable-sdk",
+          "title": "List the bundled Kaizen agents and run one selected agent",
+          "definitionRevision": 3,
+          "definitionSha256": "381f72b1dd81d5679861a9b33e310b9287a0b43928387cd2d945a5dc305bacda",
+          "sourceCommit": "07dd73d3cb819152ce50a9f829e1113a9443413d",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "kaizen.prebuilt-agents",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "bundled-specialist-agents-are-listed-and-selectable-for-chat"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS5:shared-chat-collaboration-ui",
+          "title": "Collaborate in a shared conversation with live artifacts, retained history and revocation",
+          "definitionRevision": 2,
+          "definitionSha256": "43321fb6bb27b6d9a0af38e33b733fcd48c8d96a5c592f6c312b2da5eb38524c",
+          "sourceCommit": "07dd73d3cb819152ce50a9f829e1113a9443413d",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "kaizen.conversation-event-streaming",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "kaizen-native-shared-chat-streaming-141"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Analyst:VS5:supplied-specialist",
+          "title": "Start a conversation with a supplied Kaizen specialist",
+          "definitionRevision": 2,
+          "definitionSha256": "9bff4601b55de9e77e351c4ee102078cd7e12dad68f6fb4e86de873fe1f0871c",
+          "sourceCommit": "07dd73d3cb819152ce50a9f829e1113a9443413d",
+          "steps": [
+            {
+              "id": "complete-supplied-specialist-turn",
+              "links": [
+                {
+                  "capabilityId": "kaizen.prebuilt-agents",
+                  "role": "uses"
+                }
+              ],
+              "scenarios": [
+                "bundled-specialist-agents-are-listed-and-selectable-for-chat"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Analyst:VS6",
+      "title": "VS6: Use Ontologies in Workroom",
+      "recipes": [
+        {
+          "id": "Analyst:VS6:federated-retrieval-mesh-sdk",
+          "title": "Discover and retrieve gated remote data inline, over SSE and over Flight through the SDK",
+          "definitionRevision": 2,
+          "definitionSha256": "05fe02786e6ac3563fb826e12afd0a59b9f9edd61865027bdd97249d52d67cc8",
+          "sourceCommit": "1194f409ff8f3e754f9797cc001b6ccde563ed76",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "federation.federated-retrieval",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "federated-retrieval-across-a-shared-idp-pair-by-every-transport-under-receiver-authorization"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Operator:VS1",
+      "title": "VS1: Configure Models",
+      "recipes": [
+        {
+          "id": "Operator:VS1:cold-gguf-acquisition",
+          "title": "Acquire one previously absent quantized GGUF through the native SDK",
+          "definitionRevision": 2,
+          "definitionSha256": "a6fb235b3420ede6b82bd22241d820f84bdfab50feddac266f988082e6b09090",
+          "sourceCommit": "532ab993be7721dd6a717d9d1c01615db899ee81",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "models.discover-and-download",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "cold-quantized-model-acquisition"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Operator:VS1:cpu-model-lifecycle-and-text-client",
+          "title": "Deploy and retire one CPU model with real native OpenAI arithmetic completions",
+          "definitionRevision": 3,
+          "definitionSha256": "e5841ed841d43cd3fe2e2590fafd7be786a3607412ce052b2d7ee8fd99ddc55e",
+          "sourceCommit": "a5c8f2c2e5244c0613dc87109d2b2b8cd592cc3c",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "models.local-deployment",
+                  "role": "verifies"
+                },
+                {
+                  "capabilityId": "models.openai-compatible-inference",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "model-config-and-local-deployment-lifecycle-through-the-sdk"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Operator:VS1:existing-external-chat-sdk",
+          "title": "Use an existing external model for one chat completion",
+          "definitionRevision": 2,
+          "definitionSha256": "41e561e2f1b2195d66837d2d7e6a9ceee0e8d86502b818568e06ef39e204c937",
+          "sourceCommit": "53591e696f5c2378dc2e058cd996c536ce11bdcc",
+          "steps": [
+            {
+              "id": "existing-external-chat",
+              "links": [
+                {
+                  "capabilityId": "models.external-endpoints",
+                  "role": "uses"
+                },
+                {
+                  "capabilityId": "models.openai-compatible-inference",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "existing-external-deployment-discovers-one-model-and-answers-through-kamiwaza"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Operator:VS1:nightly-llamacpp-lifecycle",
+          "title": "Deploy and retire one llama.cpp model on Helm 1.4.1",
+          "definitionRevision": 2,
+          "definitionSha256": "59dc67bb5d4ff54a28081c7ab16874870337f0d1de7ff40799426d02579a4a62",
+          "sourceCommit": "ed59c89c2ca8486694697abc1cd4465af1f23a1d",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "models.local-deployment",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "model-config-and-local-deployment-lifecycle-through-the-sdk"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Operator:VS2",
+      "title": "VS2: Configure Data Connectors",
+      "recipes": [
+        {
+          "id": "Operator:VS2:catalog-secret-lifecycle-sdk",
+          "title": "Create, find and delete one governed catalog secret through the SDK",
+          "definitionRevision": 3,
+          "definitionSha256": "9e97368cf57b64eca79669aa8b8e75fc0c817ba8fe89c091f488e843fa9cb81f",
+          "sourceCommit": "61333cd85de01631bfbebee41be7190fcd598dc9",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "catalog.secrets-management",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "catalog-governed-secret-lifecycle"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Operator:VS3",
+      "title": "VS3: Configure MCP Tools and Applications",
+      "recipes": [
+        {
+          "id": "Operator:VS3:app-garden-sdk-lifecycle",
+          "title": "Deploy, inspect and retire one owned App Garden application through the SDK",
+          "definitionRevision": 3,
+          "definitionSha256": "5153de8d881958804d269fbb7925a0d786366a1fefa3e8db5c84badbe16b7cc8",
+          "sourceCommit": "13dbde33608ad9153cbed40bed0237c612864296",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "apps.app-garden",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "app-garden-deploy-lifecycle-and-reserved-environment-key-boundary"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Operator:VS3:skills-library-lifecycle-sdk",
+          "title": "Import, curate, export and soft-delete one skill package through the SDK",
+          "definitionRevision": 2,
+          "definitionSha256": "7fdbdc476fda9b04278eb7c1c875b9d578cc1247e6adc86ead0f39fc92129c0b",
+          "sourceCommit": "e0307992a28402ac111d10a0baa3d3cb3ea7163e",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "skills.skills-library",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "skills-library-import-curation-export-and-soft-delete"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Operator:VS3:tool-shed-mcp-lifecycle-sdk",
+          "title": "Deploy, discover and stop one MCP tool server from the Tool Shed",
+          "definitionRevision": 3,
+          "definitionSha256": "ed2e766a0436910902b807c4e360f2092261893183682ff361e4d227ebb83307",
+          "sourceCommit": "e311e5afb270555c18461f90aee49715679c434a",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "tools.mcp-tool-shed",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "tool-shed-deploy-mcp-protocol-handshake-discovery-and-stop"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Operator:VS4",
+      "title": "VS4: Configure Users and Access",
+      "recipes": [
+        {
+          "id": "Operator:VS4:rebac-decisions-sdk",
+          "title": "Grant, check and revoke one ReBAC viewer relation through the SDK",
+          "definitionRevision": 3,
+          "definitionSha256": "721f0591c1af0521914e86ef790b35a10c7427d27792cfc86b19acc7cab1c0f6",
+          "sourceCommit": "a9bb8fb1538afb248e0b749a3e5002d4695f6a31",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "authz.rebac-access-control",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "rebac-attributable-allow-decisions-and-policy-shaped-denies"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SysAdmin:Manage-Users-and-Access-Control",
+      "title": "Manage Users and Access Control",
+      "recipes": [
+        {
+          "id": "SysAdmin:Manage-Users-and-Access-Control:local-user-administration-sdk",
+          "title": "Administer one disposable local user end to end through the SDK",
+          "definitionRevision": 3,
+          "definitionSha256": "c7051e87ab7bb3bd345ae14d3b849b05b456a33c5e76c9ad49607f05e4adea25",
+          "sourceCommit": "1d4877f1940a0a6ddbb57a5d1a59413542a94e15",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "auth.local-user-administration",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "local-user-administration-with-non-admin-denial"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SysAdmin:Manage-Users-and-Access-Control:personal-access-token-lifecycle-sdk",
+          "title": "Mint, inventory and revoke personal access tokens through the SDK",
+          "definitionRevision": 3,
+          "definitionSha256": "9b774b56a7b222abc73c0cb6c3e94e28e98bc1fd2ff36ed8c9520a360de2ec35",
+          "sourceCommit": "53591e696f5c2378dc2e058cd996c536ce11bdcc",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "auth.personal-access-tokens",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "personal-access-token-authentication-and-revocation",
+                "personal-access-token-inventory-and-individual-revocation"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SysAdmin:Manage-Users-and-Access-Control:session-revocation-sdk",
+          "title": "Revoke exactly the targeted login session through admin and logout paths",
+          "definitionRevision": 3,
+          "definitionSha256": "29849e10c07be6c545755384dc7c43d8dc2abce119e5400e3b9b16127f45372e",
+          "sourceCommit": "890408e5b2b4004021e54ef1b9bc1c34c15d47c4",
+          "steps": [
+            {
+              "id": "complete-native-journey",
+              "links": [
+                {
+                  "capabilityId": "auth.session-revocation",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "logout-and-administrator-session-revocation-lifecycle"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SysAdmin:Support-Audit-and-Compliance",
+      "title": "Support Audit and Compliance",
+      "recipes": [
+        {
+          "id": "SysAdmin:Support-Audit-and-Compliance:attributable-decision-export-sdk",
+          "title": "Trace a disposable viewer’s allowed and refused Workroom access through audit export",
+          "definitionRevision": 3,
+          "definitionSha256": "c42b2d21e3160d2276b48b99d45569890786e4b3626bd6236670907fe93528cc",
+          "sourceCommit": "13ba7ebb5eecf4e9de1744d706e052ed51db1b89",
+          "steps": [
+            {
+              "id": "complete-native-audit-journey",
+              "links": [
+                {
+                  "capabilityId": "platform.usage-and-audit",
+                  "role": "verifies"
+                }
+              ],
+              "scenarios": [
+                "fresh-attributable-activity-and-authorization-decision-export"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

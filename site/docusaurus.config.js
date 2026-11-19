@@ -15,9 +15,11 @@ module.exports = async function config() {
   const releaseWork = loadReleaseWork({publication: require('./data/publication.json')}).map(releaseWorkSiteData);
   const {validateStreams} = await import('./scripts/value-streams.mjs');
   const streams = validateStreams(require('./data/value-streams.json'), require('./data/publication.json'));
+  const {validateReleaseRecipeMap} = await import('./scripts/release-recipe-map.mjs');
+  const releaseMap = validateReleaseRecipeMap(require('./data/release-recipe-map-1.4.1.json'), require('./data/publication.json'));
   const {dashboardReleases} = await import('./src/dashboard-releases.mjs');
   const dashboard = dashboardReleases({publication: require('./data/publication.json'),
-    releaseStamps: require('./data/release-stamps-1.3.2.json'), corpora, currentVerification, releaseWork, streams});
+    releaseStamps: require('./data/release-stamps-1.3.2.json'), corpora, currentVerification, releaseWork, streams, releaseMap});
   return {
     title: 'Kamiwaza Sales Dev Kit',
     tagline: 'Know what is established. See the conditions. Choose your release.',
