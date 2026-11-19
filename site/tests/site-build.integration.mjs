@@ -280,6 +280,16 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.equal(crosswalk.streams.flatMap(stream => stream.recipes).length, 24);
   const mapZip = zipMembers(readFileSync(join(site, 'build', mappedRelease.files.zip.path)));
   assert.deepEqual(mapZip.get('machine-readable/release-recipe-map.json'), mapBytes);
+  const roadmapBytes = readFileSync(join(site, 'build', mappedRelease.files.roadmapJson.path));
+  const roadmap = JSON.parse(roadmapBytes);
+  assert.equal(roadmap.release, '1.4.1');
+  assert.equal(roadmap.streams.length, 13);
+  assert.equal(roadmap.features.length, 37);
+  assert.ok([...roadmap.streams, ...roadmap.features].every(row => row.status === 'unverified'));
+  assert.deepEqual(mapZip.get('machine-readable/roadmap-verification.json'), roadmapBytes);
+  assert.ok(map.includes('id="roadmap-verification-pending"'));
+  assert.ok(mapZip.get('human-readable/kamiwaza-sales-dev-kit-1.4.1.md').toString().includes('## Roadmap verification pending'));
+  assert.ok(index.versions.filter(row => row.version !== roadmap.release).every(row => !row.files.roadmapJson));
   const releaseCard = cards.find(card => card.includes('<span class="releaseVersion">1.4.1</span>'));
   assert.ok(releaseCard.includes('Release verification') && releaseCard.includes('fully release verified') &&
     releaseCard.includes('Human release sign-off: pending'));
