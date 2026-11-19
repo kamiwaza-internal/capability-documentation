@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import publication from '../../data/publication.json';
 import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import releaseCorpora from '../../data/release-corpora.json';
-import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY, replayStatusKey} from '../evidence.mjs';
+import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY, replayOperations, replayStatusKey} from '../evidence.mjs';
 import {salesKitPath} from '../sales-kit.mjs';
 
 function Changes({entry}) {
@@ -37,7 +37,7 @@ export default function Home() {
         <h2 id="verification">Verification results</h2>
         <ol>
           <li><Link to="/value-streams/">Value streams verified</Link></li>
-          <li><Link to="/value-streams/#recipes-succeeded">Recipes succeeded</Link></li>
+          <li>Recipes succeeded</li>
           <li><Link to="/catalog/">Capabilities demonstrated</Link></li>
         </ol>
         <p>The value-stream map shows the recipe and capability evidence available for each release.</p>
@@ -53,9 +53,10 @@ export default function Home() {
               <span className="releaseVersion">{entry.version}</span>
               <details className="releaseChanges">
                 <summary>Capabilities demonstrated and test coverage</summary>
-                <p>{entry.headline}</p>
-                <p>{entry.basis}</p>
-                {replay && <p>Release sign-off is {replay.approval.status}. <Link to={`/catalog/#${replay.id}`}>View capability evidence</Link>.</p>}
+                {replay ? <>
+                  <p>{replayOperations(replay) ? `${replayOperations(replay).headline}. ${replayOperations(replay).breakdown}.` : `${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities have scoped release stamps; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped.`}</p>
+                  <p>Human release sign-off: {replay.approval.status}. <Link to={`/catalog/#${replay.id}`}>View capability evidence</Link>.</p>
+                </> : <><p>{entry.headline}</p><p>{entry.basis}</p></>}
               </details>
               <Changes entry={entry} />
             </div>
