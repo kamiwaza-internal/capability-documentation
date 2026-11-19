@@ -27,6 +27,13 @@ Prerelease-only evidence is preserved as **Prerelease verified** until an explic
 
 ## Counting and publication
 
+**Value streams verified → Recipes succeeded → Capabilities demonstrated.**
+A value stream passes when all its registered recipes pass in the same release run.
+A recipe succeeds when all its registered checks pass in order on the named build.
+Passing checks demonstrate the capabilities their reviewed verification links cover.
+Report missing definitions, failed or incomplete runs, and skipped checks explicitly.
+Capability check counts and scoped stamps belong in the release details.
+
 Release coverage is the union of distinct capability IDs with accepted fresh evidence or applicable carried evidence. Count an ID once when both exist. Report tested and carried scopes separately where useful, without adding overlapping counts. Keep historical prerelease counts separate and preserve their original versions.
 
 A carry-forward decision contributes to the target release's coverage, but is not a new execution or newly discovered capability. Report genuinely new coverage separately from refreshed tests, carried coverage and additional scenarios for an existing ID.

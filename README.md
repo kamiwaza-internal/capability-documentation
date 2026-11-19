@@ -170,6 +170,11 @@ its files, source pins, counts, ZIP members, checksums and homepage links.
 
 ## Weekly scoped verification
 
+**Value streams verified → Recipes succeeded → Capabilities demonstrated.** The [value-stream map](https://capabilities.kamiwaza.dev/value-streams/)
+opens on the latest release with a published map. The release selector identifies releases
+whose publication contains capability evidence and is still awaiting a recipe map.
+Definitions and verification results are scoped to the displayed release.
+
 A verified capability count means unique capability IDs with passing registered
 journeys on the named release, not exhaustive coverage of every operation. New
 journeys for an already verified ID and refreshed runs are reported separately.
