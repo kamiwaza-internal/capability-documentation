@@ -270,7 +270,7 @@ test('primary catalog cards retain release journey limits alongside prerelease e
   const {renderToStaticMarkup} = await import('react-dom/server');
   // Render the real card function; omit page-only framework/data imports unused by it.
   const source = readFileSync(new URL('../src/pages/catalog.jsx', import.meta.url), 'utf8')
-    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'") || line.includes("from '../NativeEvidence'") || line.includes("from '../evidence.mjs'")).join('\n')
+    .split('\n').filter(line => !line.startsWith('import ') || line.includes("from 'react'") || line.includes("from '../catalog.mjs'") || line.includes("from '../evidence.mjs'") || line.includes("from '../NativeEvidence'")).join('\n')
     + '\nexport {PrimaryCapabilities};';
   const {code} = babel.transformSync(source,
     {babelrc: false, configFile: false, presets: [fileURLToPath(import.meta.resolve('@babel/preset-react'))]});

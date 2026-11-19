@@ -22,7 +22,8 @@ const prereleaseLabels = {
   'not-yet-verified': 'Not yet verified',
 };
 const filterLabels = {
-  'release-stamped': 'Release verified (scoped release stamp)',
+  'fully-release-verified': 'Fully release verified',
+  'release-stamped': 'Release verified (all release stamps)',
   verified: 'Verified, pre-release or release',
   'qualification-pending': 'Qualification pending',
   partial: 'Partial',
@@ -229,13 +230,13 @@ export default function Catalog() {
         <button type="button" aria-pressed={release === 'all'} onClick={() => setRelease('all')}><strong>All releases</strong><span>{overview.length} releases</span></button>
         {overview.map(item => <button type="button" key={item.version} aria-pressed={release === item.version} onClick={() => setRelease(item.version)}><strong>{item.version}</strong><span>{item.releaseVerified} release verified · {item.records} records</span></button>)}
       </div>
-      <p className="releasePickerNote">Release verified counts capability records with a passing scoped release stamp for that release. It is not whole-capability certification or release sign-off.</p>
+      <p className="releasePickerNote">Release verified counts passing release stamps for the selected version. Fully release verified identifies the capabilities with independently reviewed coverage of every documented operation. Release sign-off is recorded separately.</p>
       {(release === 'all' || tableVersions.includes(release)) && <CurrentView publication={publication} localStamps={localStamps} releaseStamps={releaseStamps}/>}
         <div className="catalogFilters catalogToolbar" id="catalog-records">
           <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
             <option value="all">All statuses</option>
-            {['release-stamped', 'verified', 'qualification-pending', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{filterLabels[value] ?? prereleaseLabels[value]}</option>)}
+            {['fully-release-verified', 'release-stamped', 'verified', 'qualification-pending', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{filterLabels[value] ?? prereleaseLabels[value]}</option>)}
           </select></label>
         </div>
       {reports.map(report => <section className="release" key={report.version}>

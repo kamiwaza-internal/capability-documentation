@@ -33,6 +33,17 @@ test('release verified means a passing scoped release stamp for the selected rel
   assert.ok(filterPrimary(rows, '', 'release-stamped', 'all', tag).every(row => row.status === 'release-stamped' || row.releaseStamp));
 });
 
+test('whole-release filter selects the bound whole claim and leaves scoped coverage in the broader filter', () => {
+  const whole = rows.find(row => row.id === 'apps.deployment-baseline' && row.version === '1.4.1');
+  assert.ok(whole?.wholeClaimReview);
+  const scoped = {...whole, id: 'synthetic.scoped', wholeClaim: false};
+  delete scoped.wholeClaimReview;
+  const input = [whole, scoped];
+  assert.deepEqual(filterPrimary(input, '', 'fully-release-verified', '1.4.1', tag), [whole]);
+  assert.deepEqual(filterPrimary(input, '', 'release-stamped', '1.4.1', tag), input);
+  assert.ok(!filterPrimary(rows, '', 'fully-release-verified', '1.4.1', tag).some(row => row.id === 'apps.app-garden'));
+});
+
 test('the release overview lists every release with records and agrees with the filters', () => {
   const report = {version: '9.9.9', capabilities: [
     {id: 'synthetic.one', status: 'accepted-scoped-release'},
