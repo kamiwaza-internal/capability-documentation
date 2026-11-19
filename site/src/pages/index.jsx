@@ -47,7 +47,7 @@ export default function Home() {
         <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
           <ul className="releaseList">{versions.map(entry => {
-            const replay = entry.corpus?.currentVerification ? null : currentReplays.get(entry.version);
+            const replay = entry.originalCorpus || entry.corpus?.currentVerification ? null : currentReplays.get(entry.version);
             return <li key={entry.version} className="releaseRow">
             <div className="releaseText">
               <span className="releaseVersion">{entry.version}</span>
