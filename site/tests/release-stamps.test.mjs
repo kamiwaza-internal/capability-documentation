@@ -116,3 +116,37 @@ test('exact fully-qualified tag refs are retained rather than normalized', () =>
   snapshot.approval.snapshotSha256 = releaseSnapshotDigest(snapshot);
   assert.equal(first(validatePublication(publication)).source.ref, 'refs/tags/v1.3.2');
 });
+
+test('fully verified replay requires the exact reviewed stamp, canonical claim and tested operations', () => {
+  const publication = releaseStampsFixture();
+  const snapshot = first(publication);
+  snapshot.approval = {status: 'pending', scope: 'full-inventory', approvedBy: null, approvedAt: null, snapshotSha256: null};
+  for (const cap of snapshot.capabilities.filter(cap => cap.disposition === 'included')) {
+    cap.operations = {named: 1, verified: Number(cap.status === 'release-stamped')};
+    if (cap.status === 'not-stamped') cap.notStampedReason = 'skipped';
+  }
+  Object.assign(snapshot.counts, {operationsNamed: 3, operationsVerified: 1, untested: 0, skipped: 1, partial: 0, incomplete: 0, wholeCapabilityPromotions: 1});
+  const cap = snapshot.capabilities[0];
+  cap.wholeClaim = true;
+  cap.wholeClaimReview = {
+    id: '5'.repeat(64), stampId: cap.stamp.id, contractSha256: '6'.repeat(64),
+    kitRevision: '7'.repeat(40), chartArchiveDigest: 'sha256:' + '8'.repeat(64),
+    reviewedAt: '2026-10-01T11:30:00Z', operations: ['Load the synthetic configuration', 'Retain the synthetic record'],
+  };
+  assert.doesNotThrow(() => validatePublication(publication));
+  for (const [mutate, error] of [
+    [c => { delete c.wholeClaimReview; }, /without a bound review/],
+    [c => { c.wholeClaim = false; }, /Unexpected or missing/],
+    [c => { c.wholeClaimReview.stampId = '9'.repeat(64); }, /stamp binding mismatch/],
+    [c => { c.wholeClaimReview.reviewedAt = '2026-10-01T10:30:00Z'; }, /outside its replay/],
+    [c => { c.wholeClaimReview.operations = []; }, /needs documented operations/],
+    [c => { c.wholeClaimReview.operations = ['https://internal.invalid/']; }, /Private release/],
+    [c => { c.operations = {named: 0, verified: 0}; }, /tested operations/],
+  ]) {
+    const changed = structuredClone(publication);
+    mutate(first(changed).capabilities[0]);
+    assert.throws(() => validatePublication(changed), error);
+  }
+  snapshot.counts.wholeCapabilityPromotions = 0;
+  assert.throws(() => validatePublication(publication), /counts must match/);
+});

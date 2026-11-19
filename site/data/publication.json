@@ -67694,7 +67694,7 @@
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
         "latestFinishedAt": "2026-11-19T16:33:03.977653Z"
       },
-      "generatedAt": "2026-11-19T16:39:20Z",
+      "generatedAt": "2026-11-19T17:01:05Z",
       "publicationRevision": 17,
       "publishedAt": "2026-11-19T16:39:04Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/87",
@@ -67726,14 +67726,13 @@
           "id": "apps.deployment-baseline",
           "distribution": "public",
           "disposition": "included",
-          "wholeClaim": false,
+          "wholeClaim": true,
           "operations": {
             "named": 1,
             "verified": 1
           },
           "assumptions": [],
           "limits": [
-            "The result covers the capability's registered scenarios, not every operation or configuration.",
             "Human release sign-off is recorded separately.",
             "The replay used the shipped data and a rollback-only database transaction. Installer execution and deployment history remain outside its scope.",
             "Verified journey: Load the shipped baseline from its configured path, reject missing, malformed and mismatched digests before parsing, reject malformed structure, retain one immutable release per name, reject duplicates and incompatible Core constraints, ignore top-level file core_version, and prove database rollback and unchanged retained identities.",
@@ -67754,7 +67753,22 @@
           },
           "failures": [],
           "status": "release-stamped",
-          "scope": "Every scenario registered for this capability passed in a sealed local run on the published release artifacts."
+          "scope": "The reviewed replay covered every documented operation of the shipped baseline capability on the released build.",
+          "wholeClaimReview": {
+            "id": "cfc709dc2c5b9d89fb2ebffbbb68f917bc8c9ed56d5be9f8ad44c04e8d4c163b",
+            "stampId": "8bd2b069ed5f1afef1bd98f037585449d2902ad2e95ee5341da31a27176d232b",
+            "contractSha256": "c3f0cb4d7c8ddcd39d69000a2c9382983607a433353eb2580523710caf0c915c",
+            "kitRevision": "538badb774bbcc0589f42cc3dfe7e80c9d223919",
+            "chartArchiveDigest": "sha256:b0555721977ce1b72f725565c84a985f1bac1bb3c034c9049104f721e7ea8ad4",
+            "reviewedAt": "2026-11-19T16:34:22.790477Z",
+            "operations": [
+              "load the shipped baseline from its configured path",
+              "verify the file against its expected SHA256 before parsing it",
+              "validate the baseline's structure and reject a malformed one",
+              "retain exactly one release per name as an immutable baseline member",
+              "refuse a baseline member incompatible with the running Core version"
+            ]
+          }
         },
         {
           "id": "apps.release-digest-pinning",
@@ -69839,7 +69853,7 @@
         "releaseStamped": 2,
         "failed": 7,
         "notStamped": 77,
-        "wholeCapabilityPromotions": 0,
+        "wholeCapabilityPromotions": 1,
         "operationsNamed": 223,
         "operationsVerified": 92,
         "untested": 26,

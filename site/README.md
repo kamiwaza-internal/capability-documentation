@@ -149,8 +149,20 @@ Schema 6 adds `releaseStamps` beside unchanged schema-5 `releases` and
 Every snapshot declares the full reviewed inventory: `included`, `excluded`,
 `deferred` and `other-owner` are explicit dispositions. Included capabilities
 have `release-stamped`, `failed` or `not-stamped` status. Counts are checked
-against unique rows; excluded or deferred rows do not become passes. Scoped
-stamps always retain `wholeClaim: false`, reviewed scope, assumptions and limits.
+against unique rows; excluded or deferred rows do not become passes. Scoped stamps retain `wholeClaim: false`, reviewed scope, assumptions and limits.
+A clean exact-build stamp may assert `wholeClaim: true` only with
+`wholeClaimReview`. The review carries the canonical coverage binding ID,
+matching stamp ID, contract SHA-256, pinned Kit revision, chart archive digest,
+review time, and public names of every documented operation. The Kit must
+revalidate the whole-claim binding against the original replay before export.
+The site validates the public fields and their relation to the stamp, including
+dates and inventory totals. Publication review checks the source of the binding.
+No private receipt paths or reviewer identities are exported.
+
+`counts.wholeCapabilityPromotions` counts these whole-claim rows within
+`releaseStamped`. A registered operation count and the list of documented
+behaviors answer different questions. Earlier scoped rows and bundle revisions
+keep their original fields and verdicts.
 
 A schema-6 snapshot may also count operations; the fields are optional per
 snapshot and all-or-nothing within one. Every included row then has

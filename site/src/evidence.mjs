@@ -210,7 +210,7 @@ const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;
 export function replayOperations({counts: c}) {
   if (!Number.isInteger(c.operationsNamed)) return null;
   return {
-    headline: `${c.operationsVerified} of ${c.operationsNamed} operations verified on the release build · ${c.releaseStamped} of ${c.included} included capabilities have scoped release stamps`,
+    headline: `${c.operationsVerified} of ${c.operationsNamed} operations verified on the release build · ${c.releaseStamped} of ${c.included} included capabilities have ${c.wholeCapabilityPromotions ? 'release stamps · ' + counted(c.wholeCapabilityPromotions, 'capability fully release verified', 'capabilities fully release verified') : 'scoped release stamps'}`,
     breakdown: [counted(c.untested, 'capability has no test yet', 'capabilities have no test yet'),
       counted(c.skipped, 'has a test that did not run', 'have a test that did not run'),
       counted(c.partial, 'is partly covered', 'are partly covered'),
@@ -220,7 +220,7 @@ export function replayOperations({counts: c}) {
 const breakdownSentence = replay => replayOperations(replay) ? replayOperations(replay).breakdown + '. ' : '';
 const NOT_STAMPED_LABEL = {untested: 'No test yet', skipped: 'Test not run', partial: 'Partly covered'};
 export const replayLabel = row => row.disposition === 'included'
-  ? {'release-stamped': 'Release stamped', failed: 'Failed'}[row.status] ?? NOT_STAMPED_LABEL[row.notStampedReason] ?? 'Not stamped'
+  ? row.wholeClaim ? 'Fully release verified' : {'release-stamped': 'Release stamped', failed: 'Failed'}[row.status] ?? NOT_STAMPED_LABEL[row.notStampedReason] ?? 'Not stamped'
   : 'Outside inventory';
 export const operationsVerified = row => row.operations?.named ? `${row.operations.verified} of ${row.operations.named} operations verified` : null;
 const REASON_KEY = [
@@ -228,8 +228,12 @@ const REASON_KEY = [
   ['Test not run', 'A test is registered, but the release test run did not run it. This is a gap in the test run, not a product failure.'],
   ['Partly covered', 'Every registered test passed, but the capability names operations no test covers.'],
 ];
-export const replayStatusKey = replays => replays.some(replayOperations)
-  ? [...STATUS_KEY['release-replay'].slice(0, 2), ...REASON_KEY, ...STATUS_KEY['release-replay'].slice(2)] : STATUS_KEY['release-replay'];
+export function replayStatusKey(replays) {
+  const historical = STATUS_KEY['release-replay'];
+  const whole = replays.some(replay => replay.counts.wholeCapabilityPromotions > 0)
+    ? [['Fully release verified', 'A reviewed exact-build replay covers every documented operation within the stated conditions.']] : [];
+  return [...whole, ...historical.slice(0, 2), ...(replays.some(replayOperations) ? REASON_KEY : []), ...historical.slice(2)];
+}
 
 export const STATUS_KEY = {
   'release-work': [
@@ -640,7 +644,8 @@ function replayIntro(entry) {
     li(`Scenario window: ${replay.evidenceWindow.earliestStartedAt} to ${replay.evidenceWindow.latestFinishedAt}`),
     li(`Human full-inventory release sign-off: ${replay.approval.status}. Scenario stamps alone do not establish whole-capability verification.`),
     countTable([['Inventory definitions', counts.catalog], ['Included', counts.included], ['Excluded', counts.excluded],
-      ['Deferred', counts.deferred], ['Other owner', counts.otherOwner], ['Scoped release stamps', counts.releaseStamped],
+      ['Deferred', counts.deferred], ['Other owner', counts.otherOwner], [counts.wholeCapabilityPromotions ? 'Release stamps' : 'Scoped release stamps', counts.releaseStamped],
+      ...(counts.wholeCapabilityPromotions ? [['Fully release verified', counts.wholeCapabilityPromotions]] : []),
       ['Failed selections', counts.failed], ['Not stamped', counts.notStamped],
       ...(replayOperations(replay) ? [['Operations named', counts.operationsNamed], ['Operations verified', counts.operationsVerified],
         ['No test yet', counts.untested], ['Test not run', counts.skipped], ['Partly covered', counts.partial]] : [])])];
@@ -655,21 +660,27 @@ function replayDocument(entry, publication) {
     h(2, 'Capability index'), table(['Capability ID', 'Title', 'Replay status'], rows.map(row =>
       [row.id, titleOf(row, publication) ?? 'No description published', replayLabel(row)]), [0.34, 0.44, 0.22]),
     h(2, 'Capability details'), ...rows.flatMap(row => [h(3, `${titleOf(row, publication) ?? row.id} (${row.id})`),
-      li(`Disposition: ${row.disposition}; replay status: ${replayLabel(row)}; whole-capability claim: not established.`),
+      li(`Disposition: ${row.disposition}; replay status: ${replayLabel(row)}; whole-capability claim: ${row.wholeClaim ? 'verified' : 'not established'}.`),
       ...(operationsVerified(row) ? [li(`Operations: ${operationsVerified(row)}.`)] : []),
       li(`Scope: ${row.scope}`), ...row.assumptions.map(value => li(`Assumption: ${value}`)),
       ...row.limits.map(value => li(`Limit: ${value}`)),
       ...row.failures.map(value => li(`Failure at ${value.finishedAt}: ${value.summary}${value.resolvedByStampId ? ' (resolved by a later stamp)' : ' (unresolved)'}`)),
-      ...(row.stamp ? [li(`Scoped stamp ${row.stamp.id}, finished ${row.stamp.finishedAt}`)] : [])]),
+      ...(row.wholeClaimReview ? [
+        li(`Whole-claim review ${row.wholeClaimReview.id}, reviewed ${row.wholeClaimReview.reviewedAt}. Contract SHA-256 ${row.wholeClaimReview.contractSha256}. Chart archive ${row.wholeClaimReview.chartArchiveDigest}. Kit revision ${row.wholeClaimReview.kitRevision}.`),
+        ...row.wholeClaimReview.operations.map(operation => li(`Verified operation: ${operation}`)),
+      ] : []),
+      ...(row.stamp ? [li(`${row.wholeClaim ? 'Release' : 'Scoped'} stamp ${row.stamp.id}, finished ${row.stamp.finishedAt}`)] : [])]),
     h(2, 'Machine-readable records'), p('The ZIP includes this digest and the exact public replay snapshot with SHA256SUMS. Cite the snapshot and source revision; original private receipts are not included.')];
 }
 
 function replaySummary(entry, publication) {
   const rows = entry.replay.capabilities.filter(row => row.disposition === 'included').sort((a, b) => a.id.localeCompare(b.id));
   return [h(1, `Kamiwaza ${entry.version}: release replay at a glance`), note(entry.basis), ...replayIntro(entry),
-    h(2, `Included capabilities (${rows.length})`), table(['Capability', 'Scoped replay result'],
+    h(2, `Included capabilities (${rows.length})`), table(['Capability', entry.replay.counts.wholeCapabilityPromotions ? 'Release verification result' : 'Scoped replay result'],
       rows.map(row => [titleOf(row, publication) ?? row.id, [replayLabel(row), operationsVerified(row)].filter(Boolean).join(' · ')]), [0.65, 0.35]),
-    h(2, 'Good to know'), li('Each stamp covers only the registered scenarios on the named build. The human full-inventory release decision is separate.'),
+    h(2, 'Good to know'), li(entry.replay.counts.wholeCapabilityPromotions
+      ? 'Whole-claim reviews cover the documented operations on the named build. The full-inventory release decision is separate.'
+      : 'Each stamp covers only the registered scenarios on the named build. The human full-inventory release decision is separate.'),
     li('The ZIP includes the full replay inventory, failure notes, readable documents and source JSON.')];
 }
 
