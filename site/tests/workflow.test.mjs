@@ -33,3 +33,13 @@ test('guard regression controls fail when either gate is removed', () => {
   delete noUpload.jobs.build.steps.find(step => step.uses?.startsWith('actions/upload-pages-artifact@')).if;
   assert.throws(() => deploymentGates(noUpload));
 });
+
+test('release download verification runs after the approved Pages deploy', () => {
+  const verification = workflow.jobs.verify_downloads;
+  assert.equal(verification.needs, 'deploy');
+  assert.equal(verification.if, undefined);
+  assert.equal(verification.permissions, undefined);
+  const download = verification.steps.find(step => step.uses?.startsWith('actions/download-artifact@'));
+  assert.equal(download.with.name, 'github-pages');
+  assert.ok(verification.steps.some(step => step.run?.includes('node scripts/check-deployed-downloads.mjs')));
+});

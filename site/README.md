@@ -40,7 +40,7 @@ After Pages deploys, the workflow reopens the uploaded site artifact and checks
 each release ZIP against its source snapshot and evidence index. It also checks
 the live ZIP hashes when the site is reachable. Cloudflare Access can use the
 `CAPABILITY_SITE_ACCESS_CLIENT_ID` and `CAPABILITY_SITE_ACCESS_CLIENT_SECRET`
-GitHub environment secrets for the live check.
+GitHub repository secrets for the live check.
 
 ## Local checks
 

@@ -58,7 +58,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
@@ -68,6 +67,12 @@ jobs:
       - name: Deploy reviewed site
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify_downloads:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
