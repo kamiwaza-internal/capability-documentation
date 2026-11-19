@@ -480,8 +480,34 @@ function wholeClaimReview(review, cap, generatedAt) {
   requireValue(review.operations.length > 0, 'Whole-claim review needs documented operations');
   unique(review.operations);
 }
+function releaseRecipeVerifications(snapshot) {
+  const rows = snapshot.recipeVerifications;
+  requireValue(Array.isArray(rows) && rows.length > 0 && rows.length <= 500, 'Invalid recipe verifications');
+  requireValue(typeof snapshot.chartArchiveDigest === 'string' &&
+    /^sha256:[a-f0-9]{64}$/.test(snapshot.chartArchiveDigest), 'Recipe verification requires the release chart archive digest');
+  for (const row of rows) {
+    shape(row, ['id', 'revision', 'recipeSha256', 'title', 'scope', 'limits', 'status', 'wholeClaim', 'basis',
+      'startedAt', 'finishedAt', 'evidenceSha256', 'kitCommit']);
+    requireValue(typeof row.id === 'string' && /^[a-zA-Z0-9-]+:[a-zA-Z0-9.-]+:[a-zA-Z0-9.-]+$/.test(row.id)
+      && row.id.length <= 180, 'Invalid release recipe ID');
+    requireValue(Number.isSafeInteger(row.revision) && row.revision > 0, 'Invalid recipe revision');
+    requireValue(row.status === 'release-verified' && row.wholeClaim === true &&
+      row.basis === 'complete-release-recipe-replay', 'Full recipe replay required');
+    hash(row.recipeSha256); hash(row.evidenceSha256);
+    requireValue(typeof row.kitCommit === 'string' && sha.test(row.kitCommit), 'Recipe verification requires a pinned Kit commit');
+    publicText(row.title); publicText(row.scope); publicStrings(row.limits);
+    [row.startedAt, row.finishedAt].forEach(observationInstant);
+    const {earliestStartedAt, latestFinishedAt} = snapshot.evidenceWindow;
+    requireValue(orderedObservationTime(earliestStartedAt) <= orderedObservationTime(row.startedAt) &&
+      orderedObservationTime(row.startedAt) <= orderedObservationTime(row.finishedAt) &&
+      orderedObservationTime(row.finishedAt) <= orderedObservationTime(latestFinishedAt), 'Recipe replay outside evidence window');
+  }
+  unique(rows.map(row => row.id));
+}
+
 function releasedSnapshot(value) {
-  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval']);
+  const recipeFields = Object.hasOwn(value ?? {}, 'recipeVerifications') ? ['chartArchiveDigest', 'recipeVerifications'] : [];
+  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval', ...recipeFields]);
   identifier(value.id);
   requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+$/.test(value.version), 'Invalid release version');
   requireValue(value.basis === 'canonical-release-replay', 'Canonical replay required');
@@ -552,6 +578,7 @@ function releasedSnapshot(value) {
   if (withOperations) Object.assign(derived, operationCounts(rows.filter(cap => cap.disposition === 'included')));
   requireValue(Object.entries(derived).every(([key, number]) => value.counts[key] === number), 'Release counts must match full inventory');
   shape(value.approval, ['status', 'scope', 'approvedBy', 'approvedAt', 'snapshotSha256']);
+  if (recipeFields.length) releaseRecipeVerifications(value);
   const decision = value.approval;
   requireValue(decision.scope === 'full-inventory' && ['pending', 'approved'].includes(decision.status), 'Full inventory release decision required');
   if (decision.status === 'approved') {

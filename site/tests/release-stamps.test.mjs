@@ -150,3 +150,29 @@ test('fully verified replay requires the exact reviewed stamp, canonical claim a
   snapshot.counts.wholeCapabilityPromotions = 0;
   assert.throws(() => validatePublication(publication), /counts must match/);
 });
+
+test('a complete release recipe binds one revision and its evidence without promoting a capability', () => {
+  const publication = releaseStampsFixture();
+  const snapshot = first(publication);
+  snapshot.approval = {status: 'pending', scope: 'full-inventory', approvedBy: null, approvedAt: null, snapshotSha256: null};
+  snapshot.chartArchiveDigest = 'sha256:' + 'f'.repeat(64);
+  const recipe = {
+    id: 'Analyst:VS1:synthetic', revision: 1, recipeSha256: 'a'.repeat(64),
+    title: 'Synthetic recipe', scope: 'One complete synthetic journey.', limits: ['Synthetic fixture.'],
+    status: 'release-verified', wholeClaim: true, basis: 'complete-release-recipe-replay',
+    startedAt: '2026-10-01T10:30:00Z', finishedAt: '2026-10-01T11:00:00Z',
+    evidenceSha256: 'b'.repeat(64), kitCommit: 'c'.repeat(40),
+  };
+  snapshot.recipeVerifications = [recipe];
+  assert.equal(first(validatePublication(publication)).recipeVerifications[0].wholeClaim, true);
+  assert.equal(snapshot.counts.wholeCapabilityPromotions, 0);
+  for (const patch of [
+    {wholeClaim: false}, {evidenceSha256: ''}, {scope: 'Private receipt /tmp/test.json'},
+    {finishedAt: '2026-10-01T11:30:00Z'}, {rawReceipt: {}},
+  ]) {
+    snapshot.recipeVerifications = [{...recipe, ...patch}];
+    assert.throws(() => validatePublication(publication));
+  }
+  snapshot.recipeVerifications = [recipe, {...recipe}];
+  assert.throws(() => validatePublication(publication), /Duplicate identifiers/);
+});

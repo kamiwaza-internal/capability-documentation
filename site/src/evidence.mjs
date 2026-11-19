@@ -643,6 +643,12 @@ function replayIntro(entry) {
     li(`Release source: ${replay.source.ref}, revision ${replay.source.sourceRevision}; manifest ${replay.manifestId}`),
     li(`Scenario window: ${replay.evidenceWindow.earliestStartedAt} to ${replay.evidenceWindow.latestFinishedAt}`),
     li(`Human full-inventory release sign-off: ${replay.approval.status}. Scenario stamps alone do not establish whole-capability verification.`),
+    ...(replay.recipeVerifications ?? []).flatMap(recipe => [
+      h(3, `${recipe.title} (${recipe.id}, revision ${recipe.revision})`),
+      li(`Fully verified for ${entry.version}. Replay finished ${recipe.finishedAt}.`),
+      li(recipe.scope), ...recipe.limits.map(limit => li(limit)),
+      li(`Chart archive: ${replay.chartArchiveDigest}; recipe SHA-256: ${recipe.recipeSha256}; evidence binding SHA-256: ${recipe.evidenceSha256}.`),
+    ]),
     countTable([['Inventory definitions', counts.catalog], ['Included', counts.included], ['Excluded', counts.excluded],
       ['Deferred', counts.deferred], ['Other owner', counts.otherOwner], [counts.wholeCapabilityPromotions ? 'Release stamps' : 'Scoped release stamps', counts.releaseStamped],
       ...(counts.wholeCapabilityPromotions ? [['Fully release verified', counts.wholeCapabilityPromotions]] : []),

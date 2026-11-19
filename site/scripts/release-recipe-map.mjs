@@ -58,14 +58,24 @@ export function validateReleaseRecipeMap(map, publication) {
   }
   unique(map.streams.map(stream => stream.id));
   unique(map.streams.flatMap(stream => stream.recipes.map(recipe => recipe.id)));
+  const definitions = new Map(map.streams.flatMap(stream => stream.recipes.map(recipe => [recipe.id, recipe])));
+  for (const verdict of latest.recipeVerifications ?? []) {
+    const definition = definitions.get(verdict.id);
+    requireValue(definition?.definitionRevision === verdict.revision &&
+      definition.definitionSha256 === verdict.recipeSha256, 'Full recipe verdict does not match the mapped definition');
+  }
   assertPublicOutputSafe(JSON.stringify(map));
   return map;
 }
 
-export function releaseMapRecipes(map) {
+export function releaseMapRecipes(map, replay) {
+  const verifications = new Map((replay?.recipeVerifications ?? []).map(row => [row.id, row]));
   return map.streams.flatMap(stream => stream.recipes.map(recipe => {
     const links = recipe.steps.flatMap(step => step.links);
-    return {...recipe, parentTitle: stream.title,
+    const verdict = verifications.get(recipe.id);
+    const releaseVerification = verdict?.revision === recipe.definitionRevision && verdict.recipeSha256 === recipe.definitionSha256
+      ? {...verdict, snapshotId: replay.id} : null;
+    return {...recipe, parentTitle: stream.title, releaseVerification,
       orderedStepCount: recipe.steps.length, sourceVersion: map.release,
       capabilityIds: [...new Set(links.map(link => link.capabilityId))],
       reviewedVerifies: [...new Set(links.filter(link => link.role === 'verifies').map(link => link.capabilityId))],

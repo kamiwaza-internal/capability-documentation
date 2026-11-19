@@ -221,6 +221,15 @@ tests grants no production verification, human sign-off, publication or deployme
 Only a reviewed actual publication input update can expose a signed release.
 
 
+A new replay snapshot can carry `recipeVerifications` and its exact
+`chartArchiveDigest`. A row marked `release-verified` and `wholeClaim: true`
+covers the named recipe revision. The Kit requires one complete, accepted run
+on the release artifacts. The row gives the definition digest, test window,
+pinned Kit commit and a digest of the private proof and release identity.
+The snapshot supplies the matching Core revision, manifest and image digests.
+This verdict adds no capability stamp or full-inventory approval. The catalog
+and release downloads show its scope and limits.
+
 ## Current capability precedence
 
 The first view derives one primary row per published version/capability without

@@ -43,6 +43,7 @@ function Dashboard({corpus}) {
   const effective = {...selection, recipe: recipe?.id};
   const capability = corpus.capabilities.find(row => row.id === selection.capability);
   const scopedRecipes = new Set(corpus.establishedScopedProofs.map(proof => proof.recipeId));
+  const verifiedRecipes = corpus.recipes.filter(row => row.releaseVerification);
   const demonstrated = new Set(corpus.establishedScopedProofs.flatMap(proof => proof.creditedCapabilityIds));
   function updateFilter(setFilter, value) {
     setFilter(value);
@@ -62,9 +63,12 @@ function Dashboard({corpus}) {
     </section>
     <h2 id="recipes-succeeded">Recipes succeeded</h2>
     {corpus.recipeMapPath && <p>{counts.streams} of {corpus.sourceStreamCount} source inventory streams have published {corpus.release} recipe mappings. <a href={corpus.recipeMapPath}>Download the release recipe map (JSON)</a>.</p>}
+    {verifiedRecipes.length > 0 && <ul>{verifiedRecipes.map(row => <li key={row.id}>
+      <a href={'/catalog/#' + row.releaseVerification.snapshotId + '--' + row.id}>{row.title}</a> · Fully verified for {corpus.release}
+    </li>)}</ul>}
     {scopedRecipes.size > 0
       ? <p>{scopedRecipes.size} recipes have published scoped proof. Select a recipe to inspect its evidence.</p>
-      : <p>No passing recipe results are published for {corpus.release}.</p>}
+      : verifiedRecipes.length === 0 && <p>No passing recipe results are published for {corpus.release}.</p>}
     {streams.length > 0 && <div className="mapFilters"><label>Find a value stream<input type="search" value={query} onChange={event => updateFilter(setQuery, event.target.value)} placeholder="Search streams, recipes or linked capabilities"/></label>
       <label>Persona<select aria-label="Persona" value={persona} onChange={event => updateFilter(setPersona, event.target.value)}><option value="all">All personas</option>{Array.from(new Set(streams.map(row => row.persona))).map(name => <option key={name} value={name}>{name}</option>)}</select></label>
       <label>Value stream<select aria-label="Value stream" value={stream?.id ?? ''} onChange={event => chooseStream(event.target.value)} disabled={!matches.length}>

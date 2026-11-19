@@ -25,9 +25,11 @@ export default function RecipeDetail({recipe, capability, corpus}) {
       <code>{recipe.id}</code>
       <dl><dt>Definition</dt><dd>Revision {recipe.definitionRevision} · {recipe.orderedStepCount} authored steps</dd>
         <dt>Definition source version</dt><dd>{recipe.sourceVersion}</dd>
-        <dt>Scoped journey</dt><dd>{proof ? 'Established in this source snapshot' : 'No established proof in this source snapshot'}</dd>
+        {recipe.releaseVerification
+          ? <><dt>Recipe verdict</dt><dd><a href={'/catalog/#' + recipe.releaseVerification.snapshotId + '--' + recipe.id}>Fully verified for {recipe.sourceVersion}</a></dd></>
+          : <><dt>Scoped journey</dt><dd>{proof ? 'Established in this source snapshot' : 'No established proof in this source snapshot'}</dd></>}
         <dt>Complete UI journey</dt><dd>Not established</dd><dt>Recipe release membership</dt><dd>Not established</dd></dl>
-      <p>{proof ? 'Retained proof covers only its recorded scopes and build. The reviewed claims below keep their independent capability verdicts; they do not certify the parent stream.' : 'A recipe definition records a plan. It does not establish a passing run.'}</p>
+      <p>{recipe.releaseVerification ? recipe.releaseVerification.scope : proof ? 'Retained proof covers only its recorded scopes and build. The reviewed claims below keep their independent capability verdicts; they do not certify the parent stream.' : 'A recipe definition records a plan. It does not establish a passing run.'}</p>
       <h4>Reviewed capability claims</h4>
       {recipe.reviewedVerifies.length ? <ul>{recipe.reviewedVerifies.map(id => <li key={id}><code>{id}</code></li>)}</ul> : <p>No reviewed claims published for this recipe.</p>}
       {recipe.reviewedVerifies.length > 0 && !proof && <p>These reviewed links have no established scoped SDK proof here.</p>}
