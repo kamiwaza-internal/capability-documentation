@@ -182,7 +182,9 @@ export function primaryCapabilities(publication) {
       JSON.stringify([...row.cap.limits].sort()) === JSON.stringify([...selected.cap.limits].sort());
     if (selected.qualified && accepted.has(status)) {
       const events = rows.filter(applies).flatMap(row => [
-        ...(row.cap.stamp ? [{at: row.cap.stamp.finishedAt, failed: false, snapshotId: row.release.id}] : []),
+        // After a matching failure, only a whole-claim replay can restore whole-claim credit.
+        ...(row.cap.stamp && (!fullyReleaseVerified(selected.cap) || fullyReleaseVerified(row.cap))
+          ? [{at: row.cap.stamp.finishedAt, failed: false, snapshotId: row.release.id}] : []),
         ...row.cap.failures.filter(failure => failure.resolvedByStampId === null).map(failure => ({at: failure.finishedAt, failed: true, snapshotId: row.release.id})),
       ]).filter(event => compareTime(event.at, selected.at) > 0).sort((a, b) => compareTime(a.at, b.at) || Number(a.failed) - Number(b.failed));
       if (events.at(-1)?.failed) status = 'failed';

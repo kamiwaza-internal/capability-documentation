@@ -180,6 +180,10 @@ test('a complete release recipe binds one revision and its evidence without prom
   snapshot.recipeVerifications = [recipe];
   assert.equal(first(validatePublication(publication)).recipeVerifications[0].wholeClaim, true);
   assert.equal(snapshot.counts.wholeCapabilityPromotions, 0);
+  const out = mkdtempSync(join(tmpdir(), 'recipe-release-replay-'));
+  emitBundles(publication, out);
+  const bundle = JSON.parse(readFileSync(join(out, 'release-stamps', snapshot.id, 'bundle.json')));
+  assert.equal(bundle.schema, 'capability-public-release-stamps.v2');
   for (const patch of [
     {wholeClaim: false}, {evidenceSha256: ''}, {scope: 'Private receipt /tmp/test.json'},
     {finishedAt: '2026-10-01T11:30:00Z'}, {rawReceipt: {}},

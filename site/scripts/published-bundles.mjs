@@ -181,7 +181,7 @@ export function emitBundles(publication, out) {
     for (const snapshot of publication.releaseStamps) {
       const dir = join(out, 'release-stamps', snapshot.id);
       mkdirSync(dir, {recursive: true});
-      const schema = snapshot.counts.wholeCapabilityPromotions
+      const schema = snapshot.counts.wholeCapabilityPromotions || snapshot.recipeVerifications
         ? 'capability-public-release-stamps.v2' : 'capability-public-release-stamps.v1';
       const bytes = JSON.stringify({schema, snapshot}, null, 2) + '\n';
       writeFileSync(join(dir, 'bundle.json'), bytes);

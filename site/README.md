@@ -157,7 +157,7 @@ review time, and public names of every documented operation. The Kit must
 revalidate the whole-claim binding against the original replay before export.
 The site validates the public fields and their relation to the stamp, including
 dates and inventory totals. Publication review checks the source of the binding.
-Snapshots carrying a whole-claim review emit a `capability-public-release-stamps.v2` bundle. Scoped-only snapshots keep their v1 bundle bytes.
+Snapshots carrying a whole-claim review or a complete release recipe verdict emit a `capability-public-release-stamps.v2` bundle. Earlier scoped-only snapshots keep their v1 bundle bytes.
 
 `counts.wholeCapabilityPromotions` counts these whole-claim rows within
 `releaseStamped`. A registered operation count and the list of documented
