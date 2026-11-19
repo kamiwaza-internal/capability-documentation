@@ -99,6 +99,17 @@ function ReleaseStamps({snapshot}) {
     <ul>{snapshot.images.map(image => <li key={image.component}>{image.component}: <code>{image.digest}</code></li>)}</ul>
     <p>Fresh replay window (UTC): <time dateTime={snapshot.evidenceWindow.earliestStartedAt}>{snapshot.evidenceWindow.earliestStartedAt}</time> to <time dateTime={snapshot.evidenceWindow.latestFinishedAt}>{snapshot.evidenceWindow.latestFinishedAt}</time>. Snapshot generated <time dateTime={snapshot.generatedAt}>{snapshot.generatedAt}</time>; publication review opened <time dateTime={snapshot.publishedAt}>{snapshot.publishedAt}</time>. Review opening is not a deployment or approval date.</p>
     <p><Link to="/value-streams/">View value streams and recipes</Link></p>
+    {snapshot.recipeVerifications && <section aria-label="Release recipe verification">
+      <h3>Fully verified recipes</h3>
+      <p>Chart archive <code>{snapshot.chartArchiveDigest}</code>.</p>
+      {snapshot.recipeVerifications.map(recipe => <article key={recipe.id} id={snapshot.id + '--' + recipe.id}>
+        <h4>{recipe.title}</h4>
+        <p><code>{recipe.id}</code> · Revision {recipe.revision} · <strong>Fully verified for {snapshot.version}</strong></p>
+        <p>{recipe.scope}</p>
+        <ul>{recipe.limits.map(limit => <li key={limit}>{limit}</li>)}</ul>
+        <p>Replay finished <time dateTime={recipe.finishedAt}>{recipe.finishedAt}</time>.</p>
+      </article>)}
+    </section>}
     <details><summary>Capabilities demonstrated and test coverage</summary>
       <p>{operations ? <><strong>{operations.headline}</strong>. {operations.breakdown}.</> : <><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped.</>} Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner.</p>
       {operations && <p>The total includes registered scenarios and behaviors listed as coverage gaps.</p>}

@@ -29,7 +29,7 @@ function currentRecipeProofs(release) {
 function recipeInventory(entry, sources) {
   const {streams, publication, releaseMap} = sources;
   if (releaseMap?.release === entry.version) return {
-    recipes: releaseMapRecipes(releaseMap), establishedScopedProofs: [],
+    recipes: releaseMapRecipes(releaseMap, entry.replay), establishedScopedProofs: [],
     sourceStreamCount: releaseMap.sourceStreamCount,
     recipeMapPath: `/evidence/${entry.version}/release-recipe-map.json`,
   };
