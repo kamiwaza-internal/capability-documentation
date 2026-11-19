@@ -265,7 +265,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.equal(build.status, 0, build.stdout + build.stderr);
   const map = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
   assert.ok(map.includes('<option selected="">1.4.1</option>'));
-  assert.ok(map.includes('Explore the pinned 1.4.1 recipe definitions'));
+  assert.ok(map.includes('10 of 46 source inventory streams have published 1.4.1 recipe mappings.'));
   assert.ok(map.includes('cold-quantized-model-acquisition'));
   assert.ok(map.includes('Find a value stream'));
   const cards = assertReleaseCards(site);

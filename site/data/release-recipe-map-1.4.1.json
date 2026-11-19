@@ -3,6 +3,7 @@
   "release": "1.4.1",
   "snapshot": "1.4.1-release-replay-r16",
   "coreRevision": "f615ce9d599f2bd09768791b082d1bbe73af9acc",
+  "sourceStreamCount": 46,
   "streams": [
     {
       "id": "Analyst:VS1",

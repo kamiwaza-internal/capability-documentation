@@ -33,7 +33,7 @@ function validateRecipe(recipe, stream, included) {
 }
 
 export function validateReleaseRecipeMap(map, publication) {
-  shape(map, ['schema', 'release', 'snapshot', 'coreRevision', 'streams']);
+  shape(map, ['schema', 'release', 'snapshot', 'coreRevision', 'sourceStreamCount', 'streams']);
   requireValue(map.schema === 'public-release-recipe-map.v1' &&
     /^\d+\.\d+\.\d+$/.test(map.release) && id.test(map.snapshot) && /^[a-f0-9]{40}$/.test(map.coreRevision),
     'Invalid release recipe map binding');
@@ -46,7 +46,8 @@ export function validateReleaseRecipeMap(map, publication) {
   requireValue(latest.source.sourceRevision === map.coreRevision, 'Recipe map does not match current released Core');
   const included = new Set(bound.capabilities.filter(row => row.disposition === 'included').map(row => row.id));
   list(map.streams, 100);
-  requireValue(map.streams.length > 0, 'Empty release recipe map');
+  requireValue(map.streams.length > 0 && Number.isSafeInteger(map.sourceStreamCount) &&
+    map.sourceStreamCount >= map.streams.length, 'Invalid mapped stream inventory count');
   for (const stream of map.streams) {
     shape(stream, ['id', 'title', 'recipes']);
     requireValue(streamId.test(stream.id), 'Invalid parent value stream ID');
