@@ -22,7 +22,8 @@ const prereleaseLabels = {
   'not-yet-verified': 'Not yet verified',
 };
 const filterLabels = {
-  'release-stamped': 'Release verified (scoped release stamp)',
+  'fully-release-verified': 'Fully release verified',
+  'release-stamped': 'Release verified (all release stamps)',
   verified: 'Verified, pre-release or release',
   'qualification-pending': 'Qualification pending',
   partial: 'Partial',
@@ -91,18 +92,31 @@ function ReleaseStamps({snapshot}) {
   const operations = replayOperations(snapshot);
   return <section className="release">
     <Heading as="h2" id={snapshot.id}>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</Heading>
-    <aside className="evidenceNotice">Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification. Full inventory release approval is {decision.status}.</aside>
+    <aside className="evidenceNotice">{c.wholeCapabilityPromotions
+      ? 'Fresh release verification applies to the stated scope and limits. A whole-claim review covers all documented operations.'
+      : 'Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification.'} Full inventory release approval is {decision.status}.</aside>
     <p>Exact source <code>{source.ref}@{source.sourceRevision}</code> · qualified running manifest <code>{snapshot.manifestId}</code>.</p>
     <p>Selected public component digests follow. The manifest identity binds the full captured build, including components and configuration not projected here.</p>
     <ul>{snapshot.images.map(image => <li key={image.component}>{image.component}: <code>{image.digest}</code></li>)}</ul>
     <p>Fresh replay window (UTC): <time dateTime={snapshot.evidenceWindow.earliestStartedAt}>{snapshot.evidenceWindow.earliestStartedAt}</time> to <time dateTime={snapshot.evidenceWindow.latestFinishedAt}>{snapshot.evidenceWindow.latestFinishedAt}</time>. Snapshot generated <time dateTime={snapshot.generatedAt}>{snapshot.generatedAt}</time>; publication review opened <time dateTime={snapshot.publishedAt}>{snapshot.publishedAt}</time>. Review opening is not a deployment or approval date.</p>
     <p><Link to="/value-streams/">View value streams and recipes</Link></p>
+    {snapshot.recipeVerifications && <section aria-label="Release recipe verification">
+      <h3>Fully verified recipes</h3>
+      <p>Chart archive <code>{snapshot.chartArchiveDigest}</code>.</p>
+      {snapshot.recipeVerifications.map(recipe => <article key={recipe.id} id={snapshot.id + '--' + recipe.id}>
+        <h4>{recipe.title}</h4>
+        <p><code>{recipe.id}</code> · Revision {recipe.revision} · <strong>Fully verified for {snapshot.version}</strong></p>
+        <p>{recipe.scope}</p>
+        <ul>{recipe.limits.map(limit => <li key={limit}>{limit}</li>)}</ul>
+        <p>Replay finished <time dateTime={recipe.finishedAt}>{recipe.finishedAt}</time>.</p>
+      </article>)}
+    </section>}
     <details><summary>Capabilities demonstrated and test coverage</summary>
       <p>{operations ? <><strong>{operations.headline}</strong>. {operations.breakdown}.</> : <><strong>{c.releaseStamped} of {c.included} included capabilities release stamped</strong> · {c.failed} failed · {c.notStamped} not stamped.</>} Reviewed declared inventory: {c.catalog}; {c.excluded} excluded, {c.deferred} deferred, {c.otherOwner} assigned to another owner.</p>
       {operations && <p>The total includes registered scenarios and behaviors listed as coverage gaps.</p>}
     </details>
     {decision.status === 'approved' ? <p>Full inventory release decision by {decision.approvedBy}, <time dateTime={decision.approvedAt}>{decision.approvedAt}</time>. Exact public snapshot SHA-256: <code>{decision.snapshotSha256}</code>. Review verifies operator and approver identity; the digest establishes consistency.</p> : <p>Human release approval is pending. Scoped passing replays do not approve the release.</p>}
-    <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>Download scoped release stamps and inventory decision</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
+    <p><a href={'/release-stamps/' + snapshot.id + '/bundle.json'}>{c.wholeCapabilityPromotions ? 'Download release verification and inventory decision' : 'Download scoped release stamps and inventory decision'}</a> · <a href={snapshot.reviewReference}>Publication review</a></p>
     {operations && <dl className="statusKey">{replayStatusKey([snapshot]).map(([label, meaning]) => <React.Fragment key={label}><dt>{label}</dt><dd>{meaning}</dd></React.Fragment>)}</dl>}
     <details><summary>All {c.catalog} inventory dispositions, stamps and failures</summary>
       {snapshot.capabilities.map(cap => <article className="capability" key={cap.id}>
@@ -112,7 +126,10 @@ function ReleaseStamps({snapshot}) {
         <TextList title="Replay limits" items={cap.limits}/>
         {cap.stamp && <p>Fresh replay finished <time dateTime={cap.stamp.finishedAt}>{cap.stamp.finishedAt}</time>; canonical stamp <code>{cap.stamp.id}</code>.</p>}
         {cap.failures.length > 0 && <ul>{cap.failures.map((failure, index) => <li key={index}>{failure.summary} · <time dateTime={failure.finishedAt}>{failure.finishedAt}</time> · {failure.resolvedByStampId ? 'Resolved by the retained corrective replay stamp' : 'Unresolved failure'}</li>)}</ul>}
-        <p>Whole-capability verification is not established.</p>
+        {cap.wholeClaimReview ? <>
+          <TextList title="Verified operations" items={cap.wholeClaimReview.operations}/>
+          <p>Whole-claim review <code>{cap.wholeClaimReview.id}</code> · contract SHA-256 <code>{cap.wholeClaimReview.contractSha256}</code> · chart archive <code>{cap.wholeClaimReview.chartArchiveDigest}</code>.</p>
+        </> : <p>Whole-capability verification is not established.</p>}
       </article>)}
     </details>
   </section>;
@@ -126,7 +143,7 @@ function PrimaryCapabilities({capabilities, query, status, tag, release = 'all'}
     <p>The latest native-scored pre-release revision for a version controls its effective verdict; older proof and scenario records remain in history. A later release-stamp failure requires the same qualified environment and claim scope. Missing descriptions, untested sources and unrelated scoped observations do not remove verification.</p>
     {filterPrimary(capabilities, query, status, release, tag).length === 0 && <p role="status">No matching capability records.</p>}
     {filterPrimary(capabilities, query, status, release, tag).map(cap => <article className="capability" data-tone={cap.failures.some(failure => !failure.superseded) ? 'bad' : ['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'ok' : 'none'} id={'current--' + cap.version + '--' + cap.id} key={cap.version + ':' + cap.id}>
-      <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? (cap.status === 'release-stamped' ? `Release stamped · v${cap.version}` : cap.status === 'not-stamped' ? 'Not stamped' : cap.status)}</span>}</h3>
+      <h3>{cap.title} {stampStatus(cap, tag) ? <><span className="status">{stampStatus(cap, tag)}</span> <span className="status">{`${cap.version} pre-release: ${prereleaseLabels[cap.status] ?? cap.status}`}</span></> : <span className="status">{prereleaseLabels[cap.status] ?? (cap.status === 'release-stamped' ? `${replayLabel(cap.retainedCapability)} · v${cap.version}` : cap.status === 'not-stamped' ? 'Not stamped' : cap.status)}</span>}</h3>
       {cap.releaseStamp?.scope && <><p>Verified release journey: {cap.releaseStamp.scope}</p><TextList title="Release verification limits" items={cap.releaseStamp.limits}/></>}
       <p><code>{cap.id}</code> · version {cap.version} · <a href={'#' + cap.snapshotId}>{['verified', 'prerelease-verified', 'release-stamped'].includes(cap.retainedStatus) ? 'Retained verification snapshot' : 'Published record'}</a> · {cap.verifiedAt ? <>evidence date <time dateTime={cap.verifiedAt}>{cap.verifiedAt}</time></> : 'execution date not established'}</p>
       <details className="capBody"><summary>Scope, limits and evidence</summary>
@@ -134,6 +151,10 @@ function PrimaryCapabilities({capabilities, query, status, tag, release = 'all'}
       {cap.includedInBaseline === false && <p>Outside the included historical verification scope. Exclusion is not an unsupported-feature or failure verdict.</p>}
       {cap.deferred && <p>Deferred; retained inside the historical included denominator. No verification credit is inferred.</p>}
       {cap.retainedCapability.scope && <><p>Original verified scope: {cap.retainedCapability.scope}</p><TextList title="Verification assumptions" items={cap.retainedCapability.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.limits}/></>}
+      {cap.status === 'release-stamped' && cap.retainedCapability.wholeClaimReview && <>
+        <TextList title="Verified operations" items={cap.retainedCapability.wholeClaimReview.operations}/>
+        <p>Whole-claim review <code>{cap.retainedCapability.wholeClaimReview.id}</code>.</p>
+      </>}
       {cap.retainedCapability.proof && <p>Scoped proof {cap.retainedCapability.proof.state}: reviewed recipe <code>{cap.retainedCapability.proof.recipeId}</code> revision {cap.retainedCapability.proof.recipeRevision}, observed <time dateTime={cap.retainedCapability.proof.observedAt}>{cap.retainedCapability.proof.observedAt}</time>. {cap.retainedCapability.proof.scope} {cap.retainedCapability.proof.limits.join(' ')} This is not whole-capability or release verification.</p>}
       {cap.retainedCapability.verificationBasis === 'developer-assessment' && <p>Accepted local-contract developer assessment; no live scenario execution. {cap.retainedCapability.assessment.scope}</p>}
       <NativeEvidence cap={cap.retainedCapability}/>{cap.retainedCapability.assessment && <><TextList title="Verification assumptions" items={cap.retainedCapability.assessment.assumptions}/><TextList title="Verification limits" items={cap.retainedCapability.assessment.limits}/></>}
@@ -209,13 +230,13 @@ export default function Catalog() {
         <button type="button" aria-pressed={release === 'all'} onClick={() => setRelease('all')}><strong>All releases</strong><span>{overview.length} releases</span></button>
         {overview.map(item => <button type="button" key={item.version} aria-pressed={release === item.version} onClick={() => setRelease(item.version)}><strong>{item.version}</strong><span>{item.releaseVerified} release verified · {item.records} records</span></button>)}
       </div>
-      <p className="releasePickerNote">Release verified counts capability records with a passing scoped release stamp for that release. It is not whole-capability certification or release sign-off.</p>
+      <p className="releasePickerNote">Release verified counts passing release stamps for the selected version. Fully release verified identifies the capabilities with independently reviewed coverage of every documented operation. Release sign-off is recorded separately.</p>
       {(release === 'all' || tableVersions.includes(release)) && <CurrentView publication={publication} localStamps={localStamps} releaseStamps={releaseStamps}/>}
         <div className="catalogFilters catalogToolbar" id="catalog-records">
           <label>Search capabilities <input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
           <label>Evidence status <select value={status} onChange={event => setStatus(event.target.value)}>
             <option value="all">All statuses</option>
-            {['release-stamped', 'verified', 'qualification-pending', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{filterLabels[value] ?? prereleaseLabels[value]}</option>)}
+            {['fully-release-verified', 'release-stamped', 'verified', 'qualification-pending', 'partial', 'failed', 'untested', ...Object.keys(prereleaseLabels)].map(value => <option key={value} value={value}>{filterLabels[value] ?? prereleaseLabels[value]}</option>)}
           </select></label>
         </div>
       {reports.map(report => <section className="release" key={report.version}>

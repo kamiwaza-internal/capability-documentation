@@ -136,7 +136,7 @@ test('a replay-only release gets a complete kit and cannot be omitted from the g
   for (const name of ['release-stamps-1.3.2.json', 'descriptions.json', 'sales-guidance.json', 'value-streams.json', 'release-corpora.json', 'release-recipe-map-1.4.1.json'])
     cpSync(join(root, 'site/data', name), join(repo, 'site/data', name));
   const extended = structuredClone(publication);
-  const replay = structuredClone(extended.releaseStamps.at(-1));
+  const replay = structuredClone(extended.releaseStamps.findLast(snapshot => snapshot.counts.wholeCapabilityPromotions === 0));
   replay.id = 'synthetic-135-replay-r1'; replay.version = '1.3.5'; replay.publicationRevision = 1;
   replay.source.ref = 'v1.3.5';
   for (const row of replay.capabilities) if (row.stamp) {

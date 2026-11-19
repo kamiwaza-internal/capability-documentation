@@ -435,7 +435,7 @@ function scopedObservations(value, releases) {
   requireValue(Object.values(overlap).reduce((sum, value) => sum + value, 0) === c.sharedScenarioAssignments, 'Shared scenario assignment count mismatch');
   requireValue(c.wholeCapabilityPromotions === 0 && c.releaseVerified === 0, 'Scoped observations cannot promote whole capabilities or release credit');
 }
-// Canonical release stamps are scoped claims, not the legacy wholeClaim verdict.
+// Canonical release stamps carry scoped credit unless the Kit supplies a bound whole-claim review.
 // This validates a curated projection; upstream replay and human identity stay under review.
 function hash(value) { requireValue(typeof value === 'string' && /^[a-f0-9]{64}$/.test(value), 'Invalid SHA256'); }
 function publicText(value) {
@@ -467,8 +467,49 @@ function operationCounts(included) {
   return {operationsNamed: sum('named'), operationsVerified: sum('verified'),
     ...Object.fromEntries(notStampedReasons.map(reason => [reason, included.filter(cap => cap.notStampedReason === reason).length]))};
 }
+function wholeClaimReview(review, cap, generatedAt) {
+  shape(review, ['id', 'stampId', 'contractSha256', 'kitRevision', 'chartArchiveDigest', 'reviewedAt', 'operations']);
+  [review.id, review.stampId, review.contractSha256].forEach(hash);
+  requireValue(review.stampId === cap.stamp.id && typeof review.kitRevision === 'string' && sha.test(review.kitRevision), 'Whole-claim source or stamp binding mismatch');
+  requireValue(typeof review.chartArchiveDigest === 'string' &&
+    /^sha256:[a-f0-9]{64}$/.test(review.chartArchiveDigest), 'Invalid reviewed chart archive digest');
+  observationInstant(review.reviewedAt);
+  requireValue(orderedObservationTime(cap.stamp.finishedAt) <= orderedObservationTime(review.reviewedAt) &&
+    orderedObservationTime(review.reviewedAt) <= orderedObservationTime(generatedAt), 'Whole-claim review outside its replay and publication window');
+  publicStrings(review.operations);
+  requireValue(review.operations.length > 0, 'Whole-claim review needs documented operations');
+  unique(review.operations);
+}
+function releaseRecipeVerifications(snapshot) {
+  const rows = snapshot.recipeVerifications;
+  requireValue(Array.isArray(rows) && rows.length > 0 && rows.length <= 500, 'Invalid recipe verifications');
+  requireValue(typeof snapshot.chartArchiveDigest === 'string' &&
+    /^sha256:[a-f0-9]{64}$/.test(snapshot.chartArchiveDigest), 'Recipe verification requires the release chart archive digest');
+  requireValue(snapshot.capabilities.every(row => !row.wholeClaimReview ||
+    row.wholeClaimReview.chartArchiveDigest === snapshot.chartArchiveDigest), 'Recipe and capability chart archives differ');
+  for (const row of rows) {
+    shape(row, ['id', 'revision', 'recipeSha256', 'title', 'scope', 'limits', 'status', 'wholeClaim', 'basis',
+      'startedAt', 'finishedAt', 'evidenceSha256', 'kitCommit']);
+    requireValue(typeof row.id === 'string' && /^[a-zA-Z0-9-]+:[a-zA-Z0-9.-]+:[a-zA-Z0-9.-]+$/.test(row.id)
+      && row.id.length <= 180, 'Invalid release recipe ID');
+    requireValue(Number.isSafeInteger(row.revision) && row.revision > 0, 'Invalid recipe revision');
+    requireValue(row.status === 'release-verified' && row.wholeClaim === true &&
+      row.basis === 'complete-release-recipe-replay', 'Full recipe replay required');
+    hash(row.recipeSha256); hash(row.evidenceSha256);
+    requireValue(typeof row.kitCommit === 'string' && sha.test(row.kitCommit), 'Recipe verification requires a pinned Kit commit');
+    publicText(row.title); publicText(row.scope); publicStrings(row.limits);
+    [row.startedAt, row.finishedAt].forEach(observationInstant);
+    const {earliestStartedAt, latestFinishedAt} = snapshot.evidenceWindow;
+    requireValue(orderedObservationTime(earliestStartedAt) <= orderedObservationTime(row.startedAt) &&
+      orderedObservationTime(row.startedAt) <= orderedObservationTime(row.finishedAt) &&
+      orderedObservationTime(row.finishedAt) <= orderedObservationTime(latestFinishedAt), 'Recipe replay outside evidence window');
+  }
+  unique(rows.map(row => row.id));
+}
+
 function releasedSnapshot(value) {
-  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval']);
+  const recipeFields = Object.hasOwn(value ?? {}, 'recipeVerifications') ? ['chartArchiveDigest', 'recipeVerifications'] : [];
+  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval', ...recipeFields]);
   identifier(value.id);
   requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+$/.test(value.version), 'Invalid release version');
   requireValue(value.basis === 'canonical-release-replay', 'Canonical replay required');
@@ -493,12 +534,15 @@ function releasedSnapshot(value) {
   requireValue(Array.isArray(value.capabilities) && value.capabilities.length > 0 && value.capabilities.length <= 2000, 'Full release inventory required');
   const withOperations = Object.hasOwn(value.counts ?? {}, 'operationsNamed');
   for (const cap of value.capabilities) {
-    shape(cap, ['id', 'distribution', 'disposition', 'status', 'wholeClaim', 'scope', 'assumptions', 'limits', 'stamp', 'failures', ...(withOperations ? operationFields(cap) : [])]);
+    requireValue(cap?.wholeClaim === false || cap?.wholeClaim === true && Object.hasOwn(cap, 'wholeClaimReview'),
+      'Scoped release stamps cannot promote whole capabilities without a bound review');
+    shape(cap, ['id', 'distribution', 'disposition', 'status', 'wholeClaim', 'scope', 'assumptions', 'limits', 'stamp', 'failures', ...(cap.wholeClaim === true ? ['wholeClaimReview'] : []), ...(withOperations ? operationFields(cap) : [])]);
     identifier(cap.id);
     requireValue(cap.distribution === 'public', 'Only approved public projections can be rendered');
     requireValue(['included', 'excluded', 'deferred', 'other-owner'].includes(cap.disposition), 'Invalid release inventory disposition');
     requireValue(['release-stamped', 'failed', 'not-stamped'].includes(cap.status), 'Invalid release stamp status');
-    requireValue(cap.wholeClaim === false, 'Scoped release stamps cannot promote whole capabilities');
+    if (cap.wholeClaim) requireValue(cap.status === 'release-stamped' && withOperations && cap.operations?.verified > 0,
+      'Whole-claim review requires a clean release stamp and tested operations');
     publicText(cap.scope); publicStrings(cap.assumptions); publicStrings(cap.limits);
     requireValue(Array.isArray(cap.failures) && cap.failures.length <= 100, 'Invalid release failures');
     for (const failure of cap.failures) {
@@ -519,6 +563,7 @@ function releasedSnapshot(value) {
       observationInstant(stamp.finishedAt);
       requireValue(orderedObservationTime(window.earliestStartedAt) <= orderedObservationTime(stamp.finishedAt) && orderedObservationTime(stamp.finishedAt) <= orderedObservationTime(window.latestFinishedAt), 'Stamp outside fresh replay window');
       requireValue(cap.failures.every(failure => failure.resolvedByStampId === stamp.id && orderedObservationTime(failure.finishedAt) < orderedObservationTime(stamp.finishedAt)), 'Historical failure requires its corrective replay');
+      if (cap.wholeClaim) wholeClaimReview(cap.wholeClaimReview, cap, value.generatedAt);
     } else {
       requireValue(cap.stamp === null && cap.failures.every(failure => failure.resolvedByStampId === null), 'Unstamped capability cannot supply a stamp or failure resolution');
       if (cap.disposition === 'included') requireValue((cap.status === 'failed') === (unresolved.length > 0), 'Failed status must retain unresolved failure');
@@ -531,10 +576,11 @@ function releasedSnapshot(value) {
   const rows = value.capabilities;
   const dispositionCount = disposition => rows.filter(cap => cap.disposition === disposition).length;
   const statusCount = status => rows.filter(cap => cap.disposition === 'included' && cap.status === status).length;
-  const derived = {catalog: rows.length, included: dispositionCount('included'), excluded: dispositionCount('excluded'), deferred: dispositionCount('deferred'), otherOwner: dispositionCount('other-owner'), releaseStamped: statusCount('release-stamped'), failed: statusCount('failed'), notStamped: statusCount('not-stamped'), wholeCapabilityPromotions: 0};
+  const derived = {catalog: rows.length, included: dispositionCount('included'), excluded: dispositionCount('excluded'), deferred: dispositionCount('deferred'), otherOwner: dispositionCount('other-owner'), releaseStamped: statusCount('release-stamped'), failed: statusCount('failed'), notStamped: statusCount('not-stamped'), wholeCapabilityPromotions: rows.filter(cap => cap.wholeClaim).length};
   if (withOperations) Object.assign(derived, operationCounts(rows.filter(cap => cap.disposition === 'included')));
   requireValue(Object.entries(derived).every(([key, number]) => value.counts[key] === number), 'Release counts must match full inventory');
   shape(value.approval, ['status', 'scope', 'approvedBy', 'approvedAt', 'snapshotSha256']);
+  if (recipeFields.length) releaseRecipeVerifications(value);
   const decision = value.approval;
   requireValue(decision.scope === 'full-inventory' && ['pending', 'approved'].includes(decision.status), 'Full inventory release decision required');
   if (decision.status === 'approved') {

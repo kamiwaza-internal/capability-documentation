@@ -8,6 +8,8 @@ import {validatePublication, releaseSnapshotDigest} from '../scripts/publication
 import {preserveHistory} from '../scripts/preserve-history.mjs';
 import {emitBundles} from '../scripts/published-bundles.mjs';
 import {assertPublicOutputSafe} from '../scripts/public-output-privacy.mjs';
+import {agentsMd, operationsVerified, replayLabel} from '../src/evidence.mjs';
+import {dashboardCapabilities} from '../src/dashboard-capabilities.mjs';
 import {releaseStampsFixture} from './fixtures/release-stamps.mjs';
 import {observationsFixture} from './fixtures/observations.mjs';
 const first = publication => publication.releaseStamps[0];
@@ -46,6 +48,7 @@ test('additive migration keeps every old bundle and index byte-identical; new bu
   const index = JSON.parse(readFileSync(join(b, 'release-stamps/index.json')));
   const bytes = readFileSync(join(b, index.snapshots[0].bundle));
   assert.equal(index.snapshots[0].sha256, createHash('sha256').update(bytes).digest('hex'));
+  assert.equal(JSON.parse(bytes).schema, 'capability-public-release-stamps.v1');
   assert.deepEqual(JSON.parse(bytes).snapshot, first(after));
   assertPublicOutputSafe(bytes);
   const changed = structuredClone(after); first(changed).capabilities[2].scope = 'Changed public scope.';
@@ -115,4 +118,79 @@ test('exact fully-qualified tag refs are retained rather than normalized', () =>
   snapshot.capabilities[0].stamp.releaseSource.ref = snapshot.source.ref;
   snapshot.approval.snapshotSha256 = releaseSnapshotDigest(snapshot);
   assert.equal(first(validatePublication(publication)).source.ref, 'refs/tags/v1.3.2');
+});
+
+test('fully verified replay requires the exact reviewed stamp, canonical claim and tested operations', () => {
+  const publication = releaseStampsFixture();
+  const snapshot = first(publication);
+  snapshot.approval = {status: 'pending', scope: 'full-inventory', approvedBy: null, approvedAt: null, snapshotSha256: null};
+  for (const cap of snapshot.capabilities.filter(cap => cap.disposition === 'included')) {
+    cap.operations = {named: 1, verified: Number(cap.status === 'release-stamped')};
+    if (cap.status === 'not-stamped') cap.notStampedReason = 'skipped';
+  }
+  Object.assign(snapshot.counts, {operationsNamed: 3, operationsVerified: 1, untested: 0, skipped: 1, partial: 0, incomplete: 0, wholeCapabilityPromotions: 1});
+  const cap = snapshot.capabilities[0];
+  cap.wholeClaim = true;
+  cap.wholeClaimReview = {
+    id: '5'.repeat(64), stampId: cap.stamp.id, contractSha256: '6'.repeat(64),
+    kitRevision: '7'.repeat(40), chartArchiveDigest: 'sha256:' + '8'.repeat(64),
+    reviewedAt: '2026-10-01T11:30:00Z', operations: ['Load the synthetic configuration', 'Retain the synthetic record'],
+  };
+  assert.doesNotThrow(() => validatePublication(publication));
+  const out = mkdtempSync(join(tmpdir(), 'whole-release-replay-'));
+  emitBundles(publication, out);
+  const bundle = JSON.parse(readFileSync(join(out, 'release-stamps', snapshot.id, 'bundle.json')));
+  assert.equal(bundle.schema, 'capability-public-release-stamps.v2');
+  assert.deepEqual(bundle.snapshot.capabilities[0], cap);
+  assert.equal(replayLabel(cap), 'Fully release verified');
+  assert.equal(operationsVerified(cap), '1 of 1 registered checks passed');
+  assert.match(agentsMd(snapshot.version, {wholeReleaseReview: true}), /✅ only when.*"Fully release verified"/);
+  assert.doesNotMatch(agentsMd(snapshot.version), /"Fully release verified"/);
+  const [dashboard] = dashboardCapabilities({kind: 'release-replay', replay: snapshot}, {});
+  assert.deepEqual(dashboard.details[0], {label: 'Release verification', value: 'Fully release verified'});
+  for (const [mutate, error] of [
+    [c => { delete c.wholeClaimReview; }, /without a bound review/],
+    [c => { c.wholeClaim = false; }, /Unexpected or missing/],
+    [c => { c.wholeClaimReview.stampId = '9'.repeat(64); }, /stamp binding mismatch/],
+    [c => { c.wholeClaimReview.reviewedAt = '2026-10-01T10:30:00Z'; }, /outside its replay/],
+    [c => { c.wholeClaimReview.operations = []; }, /needs documented operations/],
+    [c => { c.wholeClaimReview.operations = ['https://internal.invalid/']; }, /Private release/],
+    [c => { c.operations = {named: 0, verified: 0}; }, /tested operations/],
+  ]) {
+    const changed = structuredClone(publication);
+    mutate(first(changed).capabilities[0]);
+    assert.throws(() => validatePublication(changed), error);
+  }
+  snapshot.counts.wholeCapabilityPromotions = 0;
+  assert.throws(() => validatePublication(publication), /counts must match/);
+});
+
+test('a complete release recipe binds one revision and its evidence without promoting a capability', () => {
+  const publication = releaseStampsFixture();
+  const snapshot = first(publication);
+  snapshot.approval = {status: 'pending', scope: 'full-inventory', approvedBy: null, approvedAt: null, snapshotSha256: null};
+  snapshot.chartArchiveDigest = 'sha256:' + 'f'.repeat(64);
+  const recipe = {
+    id: 'Analyst:VS1:synthetic', revision: 1, recipeSha256: 'a'.repeat(64),
+    title: 'Synthetic recipe', scope: 'One complete synthetic journey.', limits: ['Synthetic fixture.'],
+    status: 'release-verified', wholeClaim: true, basis: 'complete-release-recipe-replay',
+    startedAt: '2026-10-01T10:30:00Z', finishedAt: '2026-10-01T11:00:00Z',
+    evidenceSha256: 'b'.repeat(64), kitCommit: 'c'.repeat(40),
+  };
+  snapshot.recipeVerifications = [recipe];
+  assert.equal(first(validatePublication(publication)).recipeVerifications[0].wholeClaim, true);
+  assert.equal(snapshot.counts.wholeCapabilityPromotions, 0);
+  const out = mkdtempSync(join(tmpdir(), 'recipe-release-replay-'));
+  emitBundles(publication, out);
+  const bundle = JSON.parse(readFileSync(join(out, 'release-stamps', snapshot.id, 'bundle.json')));
+  assert.equal(bundle.schema, 'capability-public-release-stamps.v2');
+  for (const patch of [
+    {wholeClaim: false}, {evidenceSha256: ''}, {scope: 'Private receipt /tmp/test.json'},
+    {finishedAt: '2026-10-01T11:30:00Z'}, {rawReceipt: {}},
+  ]) {
+    snapshot.recipeVerifications = [{...recipe, ...patch}];
+    assert.throws(() => validatePublication(publication));
+  }
+  snapshot.recipeVerifications = [recipe, {...recipe}];
+  assert.throws(() => validatePublication(publication), /Duplicate identifiers/);
 });

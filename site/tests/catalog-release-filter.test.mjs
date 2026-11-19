@@ -33,6 +33,17 @@ test('release verified means a passing scoped release stamp for the selected rel
   assert.ok(filterPrimary(rows, '', 'release-stamped', 'all', tag).every(row => row.status === 'release-stamped' || row.releaseStamp));
 });
 
+test('whole-release filter selects the bound whole claim and leaves scoped coverage in the broader filter', () => {
+  const whole = rows.find(row => row.id === 'apps.deployment-baseline' && row.version === '1.4.1');
+  assert.ok(whole?.wholeClaimReview);
+  const scoped = {...whole, id: 'synthetic.scoped', wholeClaim: false};
+  delete scoped.wholeClaimReview;
+  const input = [whole, scoped];
+  assert.deepEqual(filterPrimary(input, '', 'fully-release-verified', '1.4.1', tag), [whole]);
+  assert.deepEqual(filterPrimary(input, '', 'release-stamped', '1.4.1', tag), input);
+  assert.ok(!filterPrimary(rows, '', 'fully-release-verified', '1.4.1', tag).some(row => row.id === 'apps.app-garden'));
+});
+
 test('the release overview lists every release with records and agrees with the filters', () => {
   const report = {version: '9.9.9', capabilities: [
     {id: 'synthetic.one', status: 'accepted-scoped-release'},
@@ -59,4 +70,27 @@ test('the combined verified filter includes a record verified only by its releas
   // The stamp belongs to the tag: it adds nothing when the baseline version itself is selected.
   const baseline = publication.releases.find(release => release.id === stamps.baselineReleaseId).version;
   assert.ok(filterPrimary(rows, '', 'verified', baseline, tag).every(row => ['prerelease-verified', 'release-stamped'].includes(row.status)));
+});
+
+test('a later matching scoped pass cannot clear a whole-claim failure', () => {
+  const release = publication.releaseStamps.findLast(row => row.version === '1.4.1');
+  const whole = release.capabilities.find(row => row.id === 'apps.deployment-baseline');
+  const {wholeClaimReview, ...scoped} = whole;
+  const later = (minutes) => new Date(Date.parse(whole.stamp.finishedAt) + minutes * 60_000).toISOString();
+  const failed = {...scoped, wholeClaim: false, status: 'failed', stamp: null, failures: [
+    {finishedAt: later(1), summary: 'Synthetic matching failure.', resolvedByStampId: null},
+  ]};
+  const scopedPass = {...scoped, wholeClaim: false, stamp: {...whole.stamp, finishedAt: later(2)}};
+  const statuses = [whole, failed, scopedPass].map((cap, index) => ({
+    ...release, id: 'synthetic-whole-replay-r' + (index + 1), publicationRevision: index + 1, capabilities: [cap],
+  }));
+  const [held] = primaryCapabilities({releases: [], releaseStamps: statuses});
+  assert.equal(held.status, 'failed');
+  const correctedStamp = {...whole.stamp, finishedAt: later(3)};
+  const corrected = {...whole, stamp: correctedStamp};
+  const [passed] = primaryCapabilities({releases: [], releaseStamps: [...statuses, {
+    ...release, id: 'synthetic-whole-replay-r4', publicationRevision: 4, capabilities: [corrected],
+  }]});
+  assert.equal(passed.status, 'release-stamped');
+  assert.equal(passed.wholeClaim, true);
 });

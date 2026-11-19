@@ -281,7 +281,17 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const mapZip = zipMembers(readFileSync(join(site, 'build', mappedRelease.files.zip.path)));
   assert.deepEqual(mapZip.get('machine-readable/release-recipe-map.json'), mapBytes);
   const releaseCard = cards.find(card => card.includes('<span class="releaseVersion">1.4.1</span>'));
-  assert.ok(releaseCard.includes('Scoped build replay') && releaseCard.includes('Human release sign-off: pending'));
+  assert.ok(releaseCard.includes('Release verification') && releaseCard.includes('fully release verified') &&
+    releaseCard.includes('Human release sign-off: pending'));
+  const bundleName = `machine-readable/${mappedRelease.source.snapshotId}.bundle.json`;
+  const replay = JSON.parse(mapZip.get(bundleName));
+  const baseline = replay.snapshot.capabilities.find(row => row.id === 'apps.deployment-baseline');
+  assert.equal(replay.schema, 'capability-public-release-stamps.v2');
+  assert.equal(baseline.wholeClaim, true);
+  assert.equal(baseline.wholeClaimReview.stampId, baseline.stamp.id);
+  assert.equal(baseline.wholeClaimReview.operations.length, 5);
+  assert.match(mapZip.get('AGENTS.md').toString(), /✅ only when.*"Fully release verified"/);
+
   const corpusCard = cards.find(card => card.includes('<span class="releaseVersion">1.3.4</span>'));
   assert.ok(corpusCard.includes('Original tagged release') && corpusCard.includes('30 of 88'));
   assert.ok(!corpusCard.includes('73'), 'later cumulative proof count must not relabel the original release');
@@ -300,6 +310,7 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(human.includes('## Recipe 1:') && human.includes('## Ingredient glossary'));
   assert.ok(human.includes('73 of 87'));
   const catalog = readFileSync(join(site, 'build/catalog/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  assert.match(catalog, /id="current--1\.4\.1--apps\.deployment-baseline"[^>]*>[\s\S]{0,400}Fully release verified/);
   assert.ok(catalog.includes('73 of 87 capabilities with retained scoped evidence available for qualification'));
   assert.ok(catalog.includes('not fresh 1.3.5 tests or accepted release carry-forward'));
   assert.ok(catalog.includes('Inherited assumptions and limits about mocked tests'));

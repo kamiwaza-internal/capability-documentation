@@ -1,6 +1,6 @@
 # Release verification publication: implementation contract
 
-This is the proposed successor contract; the existing publication and schema remain in force until its implementation lands.
+This contract describes the release verification format and the remaining successor work.
 
 Capability-kit derives a release verification when the complete functional claim passes on artifacts attributable to the named released installer. The observation can predate or follow publication of the release. Equivalent artifacts may use the original evidence. “Verified” and “fully verified” are synonymous. A verified scoped claim is shown with its scope and does not silently become a whole-capability result.
 
@@ -8,4 +8,4 @@ The publication format must distinguish release artifact identity from the setup
 
 Each update appends a new immutable publication revision for the existing release and retains previous revisions and bundle bytes. The website, downloadable bundles and agent-readable data must use the same canonical status source. Publication review and human release approval remain distinct from functional verification.
 
-Schema 6 currently limits release stamps to `wholeClaim: false` and binds a snapshot to one replay manifest and window. Implement a versioned successor that supports whole-capability and scoped release evidence, artifact equivalence and multiple setups without changing existing schema 6 snapshots. Validate release and evidence bindings, unique capability counts, observation dates, failure resolution, public-safe projection and immutable history. Update every renderer and download together, with tests for old and new revisions. Do not present this contract as implemented until the consumer and kit exporter actually support it.
+Scoped snapshots keep their v1 bundle format. A new exact-build snapshot can project a pinned Kit whole-claim review with its matching stamp, documented operations, artifact identity and limits. The [site contract](site/README.md#scoped-release-stamps-and-full-release-sign-off) describes the v2 bundle and validation. Artifact-equivalent and multiple-setup observations still need a versioned intake and projection design.
