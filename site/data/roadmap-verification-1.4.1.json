@@ -1,0 +1,676 @@
+{
+  "schema": "release-roadmap-verification.v1",
+  "release": "1.4.1",
+  "sourceKitRevision": "9da84f4134f425a42815961ccbd1f3b7f702959d",
+  "streams": [
+    {
+      "id": "SysAdmin:Provision-and-Configure-Platform",
+      "roadmapRef": "SysAdmin:VS1",
+      "title": "Provision and configure the platform",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "scale1",
+        "scale2",
+        "openshift1",
+        "fips1",
+        "aiops1",
+        "telem1",
+        "caac1",
+        "pchains1",
+        "echains1",
+        "mon1",
+        "a2a1",
+        "imesh1",
+        "imesh2",
+        "aitevv1",
+        "cchains1"
+      ]
+    },
+    {
+      "id": "SysAdmin:Monitor-Health-and-Respond-to-Incidents",
+      "roadmapRef": "SysAdmin:VS4",
+      "title": "Monitor health and respond to incidents",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "scale1",
+        "fips1",
+        "aiops1",
+        "telem1",
+        "pchains1",
+        "mon1",
+        "a2a1"
+      ]
+    },
+    {
+      "id": "SysAdmin:Track-Usage-by-Users",
+      "roadmapRef": "SysAdmin:VS7",
+      "title": "Track usage by users",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "scale1",
+        "scale2",
+        "telem1",
+        "wrmetrics1",
+        "a2a1",
+        "imesh2"
+      ]
+    },
+    {
+      "id": "SysAdmin:VS9",
+      "roadmapRef": "SysAdmin:VS9",
+      "title": "Provision and govern agent mesh infrastructure",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "scale1",
+        "scale2",
+        "openshift1",
+        "aiops1",
+        "telem1",
+        "pchains1",
+        "mon1",
+        "ats1",
+        "a2a1",
+        "imesh1",
+        "agarden1",
+        "imesh2"
+      ]
+    },
+    {
+      "id": "Operator:VS6",
+      "roadmapRef": "Operator:VS6",
+      "title": "Configure agent management and A2A policies",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "scale1",
+        "scale2",
+        "telem1",
+        "pchains1",
+        "ats1",
+        "wrmetrics1",
+        "a2a1",
+        "imesh1",
+        "modelrec1",
+        "agarden1",
+        "imesh2",
+        "aitevv1",
+        "hitl1",
+        "ncapp1"
+      ]
+    },
+    {
+      "id": "SysAdmin:Assist-Operator-with-Remote-Source-Performance",
+      "roadmapRef": "SysAdmin:VS6",
+      "title": "Assist operators with remote source performance",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "openshift1",
+        "telem1",
+        "mon1",
+        "wrmetrics1",
+        "a2a1",
+        "imesh1",
+        "imesh2"
+      ]
+    },
+    {
+      "id": "SysAdmin:System-High-and-Banner-Configuration",
+      "roadmapRef": "SysAdmin:VS8",
+      "title": "Configure system-high mode and the security banner",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "fips1",
+        "a2a1",
+        "cchains1",
+        "dataclass1"
+      ]
+    },
+    {
+      "id": "SysAdmin:SysAdmin-Assistant-for-Operational-Questions",
+      "roadmapRef": "SysAdmin:VS10",
+      "title": "Answer operational questions with the SysAdmin assistant",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "aiops1",
+        "mon1",
+        "a2a1",
+        "imesh2"
+      ]
+    },
+    {
+      "id": "Analyst:Workroom",
+      "roadmapRef": "Analyst:VS3",
+      "title": "Use a Workroom",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "caac1",
+        "pchains1",
+        "echains1",
+        "a2a1",
+        "imesh1",
+        "dstoolbox1",
+        "imesh2",
+        "aitevv1",
+        "custontology1",
+        "hitl1",
+        "cchains1",
+        "ifcvalid1",
+        "dataclass1",
+        "intelprod1"
+      ]
+    },
+    {
+      "id": "Analyst:VS4",
+      "roadmapRef": "Analyst:VS4",
+      "title": "Run background agent tasks",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "caac1",
+        "pchains1",
+        "echains1",
+        "ats1",
+        "a2a1",
+        "imesh1",
+        "imesh2",
+        "aitevv1",
+        "custontology1",
+        "stream1",
+        "hitl1",
+        "cchains1"
+      ]
+    },
+    {
+      "id": "Operator:VS5",
+      "roadmapRef": "Operator:VS5",
+      "title": "Use preconfigured application profiles",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "pchains1",
+        "a2a1",
+        "dstoolbox1",
+        "modelrec1",
+        "agarden1",
+        "aitevv1",
+        "cchains1",
+        "ifcvalid1",
+        "ncapp1",
+        "intelprod1"
+      ]
+    },
+    {
+      "id": "Operator:Configure-Data-Connectors-Service-Accounts",
+      "roadmapRef": "Operator:VS2B",
+      "title": "Configure connectors with service accounts",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": []
+    },
+    {
+      "id": "Analyst:VS2-5",
+      "roadmapRef": "Analyst:VS2.5",
+      "title": "Use self-service no-code connector integration",
+      "status": "unverified",
+      "recipeStatus": "unmapped",
+      "features": [
+        "ncdc1",
+        "stream1"
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "scale1",
+      "title": "250-user end-to-end load validation",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Target: 1.1.0 - Complete",
+      "relatedCapabilities": [
+        "platform.observability"
+      ],
+      "scopeGap": "Telemetry is documented. The catalog has no 250-user end-to-end load result."
+    },
+    {
+      "id": "scale2",
+      "title": "10,000-user capacity blueprint",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Target: 1.1.0 - Complete",
+      "relatedCapabilities": [
+        "platform.observability"
+      ],
+      "scopeGap": "Observability is adjacent. The catalog has no 10,000-user cost, capacity, or risk blueprint."
+    },
+    {
+      "id": "openshift1",
+      "title": "Azure Red Hat OpenShift with GreyMatter",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Target: 1.2.0 - Complete",
+      "relatedCapabilities": [
+        "platform.kubernetes-install",
+        "platform.greymatter-mesh-integration"
+      ],
+      "scopeGap": "Kubernetes and GreyMatter have separate entries. The specific ARO plus GreyMatter deployment combination is missing."
+    },
+    {
+      "id": "containerlic",
+      "title": "Licensed container distribution",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Target: 1.3.3 - Complete",
+      "relatedCapabilities": [
+        "platform.licensing-and-eula"
+      ],
+      "scopeGap": "Platform license enforcement is documented and the Kit has a Licensed Container Distribution stream. A 1.4.1 recipe for registry entitlement through image pull is missing from the published map."
+    },
+    {
+      "id": "stig1",
+      "title": "STIG coverage across release images",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Target: 1.4",
+      "relatedCapabilities": [],
+      "scopeGap": "The catalog has no full-image STIG compliance claim or per-image STIG evidence register."
+    },
+    {
+      "id": "fips1",
+      "title": "Chainguard FIPS coverage across release images",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Target: 1.4",
+      "relatedCapabilities": [
+        "platform.kubernetes-install"
+      ],
+      "scopeGap": "The release records identify a FIPS Core artifact. Evidence for a full fleet-wide shift to Chainguard FIPS images is missing."
+    },
+    {
+      "id": "oparego1",
+      "title": "OPA/Rego policy evaluation and filtering",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Target: 1.4",
+      "relatedCapabilities": [
+        "federation.execution-gates",
+        "authz.rebac-access-control"
+      ],
+      "scopeGap": "Execution gates and relationship checks are documented. An OPA/Rego policy engine and filtering path are missing."
+    },
+    {
+      "id": "aiops1",
+      "title": "Operational detection through remediation",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "platform.admin-copilot",
+        "platform.observability",
+        "platform.operations-and-notifications"
+      ],
+      "scopeGap": "Assistant tools, telemetry, and operational signals cover pieces. Continuous automated remediation and the complete install-to-escalation sequence are missing."
+    },
+    {
+      "id": "dis1",
+      "title": "Event-triggered data ingestion",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "ingestion.scheduled-ingest"
+      ],
+      "scopeGap": "Scheduled connected-source jobs are directly documented. Confirm event triggers and the specific Kubernetes Jobs deployment when qualifying the roadmap item. The published scope does not establish that the implementation uses Kubernetes Jobs."
+    },
+    {
+      "id": "telem1",
+      "title": "System-wide performance and usage export",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "platform.observability",
+        "platform.usage-and-audit",
+        "kaizen.metrics-dashboard"
+      ],
+      "scopeGap": "Dashboards, metrics, and exports overlap. Full system-wide performance coverage and an end-to-end export contract are unestablished."
+    },
+    {
+      "id": "caac1",
+      "title": "Contextual access policy",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "authz.rebac-access-control",
+        "ingestion.security-markings"
+      ],
+      "scopeGap": "Relationship decisions and a separate marking boundary are documented. Location, device, and sovereignty inputs in one runtime policy are missing."
+    },
+    {
+      "id": "pchains1",
+      "title": "Inference provenance chain",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "platform.usage-and-audit",
+        "delegation.workload-identity-and-attestation"
+      ],
+      "scopeGap": "Audit and workload attestation exist as adjacent claims. Cryptographically verifiable end-to-end inference provenance is missing."
+    },
+    {
+      "id": "echains1",
+      "title": "Inference entitlement chain",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "delegation.capability-grants",
+        "delegation.run-claims-lifecycle"
+      ],
+      "scopeGap": "Grants and run claims cover parts. An inference-wide cryptographic entitlement chain is missing."
+    },
+    {
+      "id": "mon1",
+      "title": "Monitoring and patching toolkit",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "platform.observability",
+        "platform.operations-and-notifications",
+        "platform.kubernetes-install"
+      ],
+      "scopeGap": "Monitoring and install/upgrade operations overlap. The dedicated patching toolkit and its full CLI workflow are missing."
+    },
+    {
+      "id": "mcpext1",
+      "title": "External MCP integration",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "tools.mcp-tool-shed",
+        "connectors.managed-data-sources",
+        "connectors.oauth-tool-policies"
+      ],
+      "scopeGap": "MCP tool management and governed connector functions overlap. The roadmap needs an explicit acceptance scope for external MCP."
+    },
+    {
+      "id": "kuboper1",
+      "title": "Platform Kubernetes Operator reconciliation",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "platform.kubernetes-install"
+      ],
+      "scopeGap": "The catalog documents Helm installation and Kubernetes runtime scope. A general platform Kubernetes Operator with reconcile behavior is missing."
+    },
+    {
+      "id": "gm2.5",
+      "title": "GreyMatter 2.5 compatibility",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.5",
+      "relatedCapabilities": [
+        "platform.greymatter-mesh-integration"
+      ],
+      "scopeGap": "GreyMatter integration is documented. Version 2.5 support and compatibility evidence are missing."
+    },
+    {
+      "id": "ncdc1",
+      "title": "Self-service no-code connector integration",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "connectors.connector-builder",
+        "connectors.ai-assisted-connector-setup"
+      ],
+      "scopeGap": "Connector import, test, generation, and deployment are documented. The roadmap flags usability defects. The full self-service journey is unestablished."
+    },
+    {
+      "id": "ats1",
+      "title": "Agent task scheduling and execution",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "kaizen.scheduled-tasks",
+        "federation.remote-jobs"
+      ],
+      "scopeGap": "Scheduling and remote job capabilities overlap. Kubernetes Jobs-backed triggers for the requested agent-task workflow need a binding."
+    },
+    {
+      "id": "modelmcprouter1",
+      "title": "Policy-aware model routing",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "kaizen.agent-auto-routing",
+        "models.external-endpoints",
+        "models.local-deployment"
+      ],
+      "scopeGap": "Agent routing and model endpoints are adjacent. Automated model selection by workload, policy, and economics is missing."
+    },
+    {
+      "id": "wrmetrics1",
+      "title": "Workroom success and latency metrics",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "kaizen.metrics-dashboard",
+        "platform.usage-and-audit"
+      ],
+      "scopeGap": "Administrative usage metrics are documented. Per-Workroom workflow success, latency, and acceptance dashboards are missing."
+    },
+    {
+      "id": "a2a1",
+      "title": "Agent-to-agent interoperability",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "kaizen.multi-agent-orchestration",
+        "federation.cluster-pairing",
+        "federation.execution-gates"
+      ],
+      "scopeGap": "Delegation and cluster controls cover elements. A complete A2A protocol and alpha release acceptance are missing."
+    },
+    {
+      "id": "imesh1",
+      "title": "Multi-site inference and answer fusion",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "federation.federated-retrieval",
+        "federation.remote-jobs",
+        "federation.cluster-pairing"
+      ],
+      "scopeGap": "Federated retrieval and remote jobs are documented. Parallel multi-site inference and answer fusion without centralized movement need their own recipe."
+    },
+    {
+      "id": "dstoolbox1",
+      "title": "Data science toolbox",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "skills.skills-library",
+        "apps.app-garden",
+        "extensions.developer-path"
+      ],
+      "scopeGap": "The Kit records a notebook-analysis stream and documents reusable skills and apps. A specified data science toolbox with acceptance checks is missing."
+    },
+    {
+      "id": "modelrec1",
+      "title": "Learning model recommender",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "models.discover-and-download",
+        "kaizen.agent-auto-routing"
+      ],
+      "scopeGap": "Discovery and routing are adjacent. A learning model recommender across cost, latency, accuracy, and compliance is missing."
+    },
+    {
+      "id": "agarden1",
+      "title": "Third-party and native agent lifecycle",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "kaizen.prebuilt-agents",
+        "kaizen.custom-agents",
+        "kaizen.agent-packages"
+      ],
+      "scopeGap": "Native agent authoring and packaging are documented. Register, host, and use third-party agents alongside native ones needs a closed journey."
+    },
+    {
+      "id": "adminui1",
+      "title": "Multi-instance Admin UI",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.6",
+      "relatedCapabilities": [
+        "platform.admin-copilot",
+        "kaizen.platform-operator-tools",
+        "kaizen.admin-settings-console",
+        "platform.observability"
+      ],
+      "scopeGap": "Individual operator surfaces exist. One-to-many administration with federation and marketplace coverage is missing. The roadmap stream field is TODO."
+    },
+    {
+      "id": "imesh2",
+      "title": "Production inference mesh",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 1.7",
+      "relatedCapabilities": [
+        "federation.federated-retrieval",
+        "federation.remote-jobs",
+        "federation.cluster-pairing"
+      ],
+      "scopeGap": "The same building blocks overlap. The production nonfunctional gates and full inference-and-fusion workflow are missing."
+    },
+    {
+      "id": "aitevv1",
+      "title": "Native AI evaluation and validation",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "Request: 1.7",
+      "relatedCapabilities": [],
+      "scopeGap": "The release evidence workflow qualifies platform behavior. The catalog has no native platform TEVV suite spanning apps, models, agents, and no-code authoring."
+    },
+    {
+      "id": "custontology1",
+      "title": "Custom ontology administration",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 2.0",
+      "relatedCapabilities": [
+        "ontology.workroom-knowledge-graph"
+      ],
+      "scopeGap": "The Kit documents a workroom graph, excluded from the 1.4.1 public verification scope. Granular ontology administration, mapping, and lifecycle controls are missing."
+    },
+    {
+      "id": "stream1",
+      "title": "Continuous data transformation and ontology output",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "Request: 2.0",
+      "relatedCapabilities": [
+        "context.dataset-indexing",
+        "ingestion.scheduled-ingest",
+        "ontology.workroom-knowledge-graph"
+      ],
+      "scopeGap": "Ingestion and indexing are documented. Continuous transformations and auto-ontology integration need a dedicated capability and recipe."
+    },
+    {
+      "id": "hitl1",
+      "title": "Human review and resumption of scheduled tasks",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "tbd",
+      "relatedCapabilities": [
+        "delegation.consent-and-approval-gates",
+        "delegation.pending-approval-queue",
+        "kaizen.scheduled-tasks"
+      ],
+      "scopeGap": "Approval gates and queues are documented. The scheduled task review, resume, and audit sequence is missing."
+    },
+    {
+      "id": "cchains1",
+      "title": "Inference classification chain",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "tbd",
+      "relatedCapabilities": [
+        "ingestion.security-markings"
+      ],
+      "scopeGap": "Source-level marking is documented. A cryptographically verifiable inference-wide classification chain is missing."
+    },
+    {
+      "id": "ifcvalid1",
+      "title": "Intelligence formatting rules validation",
+      "status": "unverified",
+      "documentation": "gap",
+      "roadmapTarget": "tbd",
+      "relatedCapabilities": [
+        "ingestion.structured-document-outputs",
+        "ingestion.security-markings"
+      ],
+      "scopeGap": "Structured output and marking controls are adjacent. An IC formatting rules validation service is missing."
+    },
+    {
+      "id": "ncapp1",
+      "title": "Visual no-code application builder",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "tbd",
+      "relatedCapabilities": [
+        "platform.app-generation-path",
+        "kaizen.custom-agents",
+        "kaizen.agent-packages"
+      ],
+      "scopeGap": "App generation and authoring primitives exist. A visual no-code builder with composed policy controls and an AG2 scope is missing."
+    },
+    {
+      "id": "dataclass1",
+      "title": "Classification recommendations and rule alignment",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "tbd",
+      "relatedCapabilities": [
+        "ingestion.security-markings"
+      ],
+      "scopeGap": "Marking ingestion and enforcement are documented. Classification recommendations and cross-domain rule alignment are missing."
+    },
+    {
+      "id": "intelprod1",
+      "title": "Intelligence product drafting and controlled export",
+      "status": "unverified",
+      "documentation": "partial",
+      "roadmapTarget": "tbd",
+      "relatedCapabilities": [
+        "kaizen.document-canvas-export",
+        "kaizen.artifacts",
+        "ingestion.security-markings"
+      ],
+      "scopeGap": "Document authoring and exporting are adjacent. An integrated style, marking, validation, and dissemination-readiness workflow is missing."
+    }
+  ]
+}
