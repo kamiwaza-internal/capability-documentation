@@ -47,14 +47,14 @@ export default function Home() {
         <h2 id="releases">Releases</h2>
         {versions.length === 0 ? <p>No releases are published yet. No verification is implied.</p> :
           <ul className="releaseList">{versions.map(entry => {
-            const replay = entry.corpus?.currentVerification ? null : currentReplays.get(entry.version);
+            const replay = entry.originalCorpus || entry.corpus?.currentVerification ? null : currentReplays.get(entry.version);
             return <li key={entry.version} className="releaseRow">
             <div className="releaseText">
               <span className="releaseVersion">{entry.version}</span>
               <details className="releaseChanges">
                 <summary>Capabilities demonstrated and test coverage</summary>
                 {replay ? <>
-                  <p>{replayOperations(replay) ? `${replayOperations(replay).headline}. ${replayOperations(replay).breakdown}.` : `${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities have scoped release stamps; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped.`}</p>
+                  <p>Scoped build replay: {replayOperations(replay) ? `${replayOperations(replay).headline}. ${replayOperations(replay).breakdown}.` : `${replay.counts.releaseStamped} of ${replay.counts.included} included capabilities have scoped release stamps; ${replay.counts.failed} failed selections; ${replay.counts.notStamped} not stamped.`}</p>
                   <p>Human release sign-off: {replay.approval.status}. <Link to={`/catalog/#${replay.id}`}>View capability evidence</Link>.</p>
                 </> : <><p>{entry.headline}</p><p>{entry.basis}</p></>}
               </details>
