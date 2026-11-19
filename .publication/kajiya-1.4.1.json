@@ -1,1 +1,5 @@
-{"release":"1.4.1","status":"pending"}
+{
+  "release": "1.4.1",
+  "snapshotId": "1.4.1-release-replay-r17",
+  "sha256": "5b937263ad41025e686849b7928716fc0b6d74301aceebf9d14de423b2a63a04"
+}
