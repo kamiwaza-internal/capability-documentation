@@ -263,6 +263,11 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const build = spawnSync(process.execPath, [join(site, 'node_modules/@docusaurus/core/bin/docusaurus.mjs'), 'build', site],
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
   assert.equal(build.status, 0, build.stdout + build.stderr);
+  const map = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  assert.ok(map.includes('<option selected="">1.4.0</option>'));
+  assert.ok(map.includes('Showing the latest published map, 1.4.0.'));
+  assert.ok(map.includes('The 1.4.1 release has capability evidence and is still awaiting a published recipe map.'));
+  assert.ok(map.includes('Find a value stream'));
   const cards = assertReleaseCards(site);
   const index = JSON.parse(readFileSync(join(site, 'build/evidence/index.json')));
   assert.deepEqual(index.versions.map(entry => entry.version), ['1.4.1', '1.4.0', '1.3.5', '1.3.4', '1.3.2', '1.3.0', '1.2.1']);
@@ -292,8 +297,8 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not generate a vendor response'));
   assert.ok(archive.get('AGENTS.md').toString().includes('Do not add a bid/no-bid verdict, unsolicited outreach'));
   const dashboard = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
-  for (const entry of index.versions) assert.ok(dashboard.includes(`<option${entry.version === index.versions[0].version ? ' selected=""' : ''}>${entry.version}</option>`), `dashboard lists ${entry.version}`);
-  assert.ok(dashboard.includes('platform.api-reference'), 'the selected release renders the public API Reference stamp');
+  for (const entry of index.versions) assert.ok(dashboard.includes(`<option${entry.version === '1.4.0' ? ' selected=""' : ''}>${entry.version}</option>`), `dashboard lists ${entry.version}`);
+  assert.ok(catalog.includes('platform.api-reference'), 'the catalog retains the public API Reference stamp');
   console.log(`Offline release-card build evidence: ${root}`);
 });
 

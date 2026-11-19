@@ -95,12 +95,16 @@ function Dashboard({corpus}) {
 export default function ValueStreams() {
   const {siteConfig} = useDocusaurusContext();
   const releases = siteConfig.customFields.dashboardReleases ?? [];
-  const [version, setVersion] = useState(releases[0]?.release ?? '');
+  const latest = releases[0];
+  const latestMapped = releases.find(release => release.recipes.length > 0);
+  const [version, setVersion] = useState(latestMapped?.release ?? latest?.release ?? '');
   const corpus = releases.find(row => row.release === version);
   return <Layout title="Value stream map" description="Explore value streams, recipes and distinct Kamiwaza capabilities, with scoped proof and mapping gaps kept visible.">
     <header className="mapHero"><div className="container"><h1>Value-stream verification</h1><p>Start with the value stream, then inspect its recipes and capability evidence.</p></div></header>
     <main className="container mapMain">
       {releases.length > 0 && <label className="mapVersion">Release<select aria-label="Release" value={version} onChange={event => setVersion(event.target.value)}>{releases.map(row => <option key={row.release}>{row.release}</option>)}</select></label>}
+      {latestMapped && version === latestMapped.release && latestMapped !== latest && <p>Showing the latest published map, {latestMapped.release}. The {latest.release} release has capability evidence and is still awaiting a published recipe map.</p>}
+      {corpus && !corpus.recipes.length && latestMapped && <p><button type="button" className="button button--secondary" onClick={() => setVersion(latestMapped.release)}>Open {latestMapped.release} recipe map</button></p>}
       {corpus ? <Dashboard key={version} corpus={corpus}/> : <p>No release data is published yet. <Link to="/catalog/">Browse capability evidence</Link>.</p>}
     </main>
   </Layout>;
