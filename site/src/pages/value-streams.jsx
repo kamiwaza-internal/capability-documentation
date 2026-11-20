@@ -7,6 +7,21 @@ import RecipeDetail from '../components/RecipeDetail';
 import {findStreams, linkedCapabilityIds, mappingSummary, streamInventory} from '../value-stream-map.mjs';
 import '../css/value-streams.css';
 import {salesKitPath} from '../sales-kit.mjs';
+import roadmap from '../../data/roadmap-verification-1.4.1.json';
+
+function RoadmapVerification() {
+  return <section aria-labelledby="roadmap-verification-pending">
+    <h2 id="roadmap-verification-pending">Roadmap verification pending</h2>
+    <p>These roadmap items are unverified for {roadmap.release}. Some items still need confirmation that the behavior ships on this release.</p>
+    <p><a href={`/evidence/${roadmap.release}/roadmap-verification.json`}>Download the verification backlog (JSON)</a></p>
+    <details><summary>{roadmap.streams.length} value streams awaiting recipe mapping</summary>
+      <ul>{roadmap.streams.map(row => <li key={row.id}>{row.title} ({row.roadmapRef}) · Unverified</li>)}</ul>
+    </details>
+    <details><summary>{roadmap.features.length} capability coverage gaps</summary>
+      <ul>{roadmap.features.map(row => <li key={row.id}><strong>{row.title} ({row.id})</strong> · Unverified. {row.scopeGap}</li>)}</ul>
+    </details>
+  </section>;
+}
 
 function CapabilityInventory({corpus, selection, onSelect}) {
   const [query, setQuery] = useState('');
@@ -88,6 +103,7 @@ function Dashboard({corpus}) {
         ? <ul>{corpus.capabilities.filter(cap => demonstrated.has(cap.id)).map(cap => <li key={cap.id}>{cap.title}</li>)}</ul>
         : <p>No recipe-based capability results are published for {corpus.release}. <Link to="/catalog/">View capability evidence</Link>.</p>}
     </section>
+    {corpus.release === roadmap.release && <RoadmapVerification/>}
     <CapabilityInventory corpus={corpus} selection={effective} onSelect={setSelection}/>
     <details className="mapSnapshot"><summary>{corpus.release} release evidence</summary><p>{corpus.headline}</p>
       <p>{corpus.basis} <a href={salesKitPath(corpus.release) + '.md'}>Read this release’s scope and limits</a>.</p>

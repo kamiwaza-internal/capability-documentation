@@ -13,6 +13,7 @@ import {loadReleaseCorpora} from './release-corpora.mjs';
 import {loadReleaseWork} from './release-work.mjs';
 import {validateGuidance} from './sales-guidance.mjs';
 import {validateReleaseRecipeMap} from './release-recipe-map.mjs';
+import {loadRoadmapVerification, roadmapBlocks, roadmapFilename} from './roadmap-verification.mjs';
 import {validateStreams} from './value-streams.mjs';
 import {loadVerificationReports} from './verification-reports.mjs';
 import {salesKitDocument, salesKitPath} from '../src/sales-kit.mjs';
@@ -36,6 +37,10 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
       ? {...streams, streams: streams.streams.map(row => row.recipe?.source_version === entry.version
         ? row : {...row, status: 'unmapped', recipe: null})} : null;
     const blocks = evidenceDocument(entry, publication, releaseStamps);
+    const roadmap = entry.version === '1.4.1' && entry.replay && releaseMap
+      ? loadRoadmapVerification(entry.replay, releaseMap) : null;
+    const pending = roadmap ? roadmapBlocks(roadmap.roadmap) : [];
+    blocks.push(...pending);
     const name = 'kamiwaza-capabilities-' + entry.version;
     const markdown = Buffer.from(toMarkdown(blocks), 'utf8');
     const pdf = toPdf(blocks, {title: `Kamiwaza platform capabilities, version ${entry.version}`, footer: `Kamiwaza capabilities ${entry.version} · capabilities.kamiwaza.dev`});
@@ -68,6 +73,7 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
     // Render each document once; the ZIP reuses those exact standalone bytes.
     const summary = summaryDocument(entry, publication, releaseStamps, descriptions);
     const sales = salesKitDocument(entry, publication, releaseStamps, guidance, scopedStreams);
+    sales.push(...pending);
     const salesPath = salesKitPath(entry.version);
     const files = {
       md: {path: entry.path + '.md', bytes: markdown, audience: 'machine'},
@@ -86,7 +92,11 @@ export function emitEvidence(publication, releaseStamps, out, descriptions, guid
       files.recipeMapJson = {path: `/evidence/${entry.version}/release-recipe-map.json`, bytes, audience: 'machine'};
       records.push({name: 'machine-readable/release-recipe-map.json', data: bytes});
     }
-    const readable = Object.entries(files).filter(([key]) => !['streamsJson', 'recipeMapJson'].includes(key))
+    if (roadmap) {
+      files.roadmapJson = {path: `/evidence/${entry.version}/${roadmapFilename}`, bytes: roadmap.bytes, audience: 'machine'};
+      records.push({name: 'machine-readable/' + roadmapFilename, data: roadmap.bytes});
+    }
+    const readable = Object.entries(files).filter(([key]) => !key.endsWith('Json'))
       .map(([, file]) => ({name: 'human-readable/' + file.path.split('/').at(-1), data: file.bytes}));
     if (scopedStreams) records.push({name: 'machine-readable/value-stream-recipes.json', data: files.streamsJson.bytes});
     const reportFiles = entry.originalCorpus ? [] : reports.filter(report =>
