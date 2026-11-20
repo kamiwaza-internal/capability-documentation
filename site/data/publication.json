@@ -76570,6 +76570,24 @@
           "finishedAt": "2026-11-18T13:27:59.728572Z",
           "evidenceSha256": "15b245fec9d46bad83590e0deb2f7582c0374608f9ad301ac1ffc81b4f73926f",
           "kitCommit": "84c27e0f232fb239959a1d4ad38dfdca1755ea6c"
+        },
+        {
+          "id": "Analyst:VS2:owned-oauth-two-user",
+          "revision": 2,
+          "recipeSha256": "ad325de5b51895939189d1641cc3b794bf70396215e27fe244712a5aac77de00",
+          "title": "Connect an owned OAuth provider, isolate two users and disconnect",
+          "scope": "Two ordinary users authorize an owned OAuth provider in the browser, see only their own content, and disconnect independently. The second user retains access after the first disconnects.",
+          "limits": [
+            "One owned authorization-code provider and two enrolled users. Device-code, other providers, refresh and cancellation paths are outside this recipe.",
+            "The replay covers this OAuth journey. Other Analyst VS2 recipes and the complete OAuth capability require separate evidence."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:42:44.512466Z",
+          "finishedAt": "2026-11-18T17:43:04.457369Z",
+          "evidenceSha256": "792e1673730189752274aa9d98ca44c44ac76a53067f776d703d5cd21a30edfc",
+          "kitCommit": "1ca79eb98cdffeb32c35386deda53f340c8aa800"
         }
       ]
     }
