@@ -31,6 +31,7 @@ function recipeInventory(entry, sources) {
   if (releaseMap?.release === entry.version) return {
     recipes: releaseMapRecipes(releaseMap, entry.replay), establishedScopedProofs: [],
     sourceStreamCount: releaseMap.sourceStreamCount,
+    valueStreamVerification: entry.replay?.valueStreamVerification,
     recipeMapPath: `/evidence/${entry.version}/release-recipe-map.json`,
   };
   const release = entry.work?.fresh?.release ?? entry.releaseIds.map(id => publication.releases.find(row => row.id === id)).find(row => row.recipeInventory);

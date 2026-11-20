@@ -51,6 +51,7 @@ export default function Home() {
             return <li key={entry.version} className="releaseRow">
             <div className="releaseText">
               <span className="releaseVersion">{entry.version}</span>
+              {replay?.valueStreamVerification && <p><Link to="/value-streams/">{replay.valueStreamVerification.counts.passed} of {replay.valueStreamVerification.counts.parents} value streams verified</Link> · {replay.recipeVerifications.length} recipes succeeded</p>}
               <details className="releaseChanges">
                 <summary>Capabilities demonstrated and test coverage</summary>
                 {replay ? <>
