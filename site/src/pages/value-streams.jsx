@@ -59,7 +59,8 @@ function Dashboard({corpus}) {
   const capability = corpus.capabilities.find(row => row.id === selection.capability);
   const scopedRecipes = new Set(corpus.establishedScopedProofs.map(proof => proof.recipeId));
   const verifiedRecipes = corpus.recipes.filter(row => row.releaseVerification);
-  const demonstrated = new Set(corpus.establishedScopedProofs.flatMap(proof => proof.creditedCapabilityIds));
+  const demonstrated = new Set([...verifiedRecipes.flatMap(recipe => recipe.reviewedVerifies),
+    ...corpus.establishedScopedProofs.flatMap(proof => proof.creditedCapabilityIds)]);
   function updateFilter(setFilter, value) {
     setFilter(value);
     setSelection(current => ({...current, capability:null}));
@@ -69,14 +70,15 @@ function Dashboard({corpus}) {
     setSelection({recipe: streams.find(row => row.id === id).recipes[0].id, capability: null});
   }
   return <>
-    <div className="mapStats" aria-label="Inventory snapshot counts">{[
-      [counts.streams, 'value stream groups'], [counts.recipes, 'recipe definitions'],
-      [corpus.capabilities.length, 'capability definitions'], [counts.unmapped, 'without a reviewed recipe link'],
-    ].map(([count, label]) => <div key={label}><strong>{count}</strong><span>{label}</span></div>)}</div>
     <section aria-labelledby="stream-results"><h2 id="stream-results">Value streams verified</h2>
-      <p>Complete value-stream verification results are not published for {corpus.release}.</p>
+      {corpus.valueStreamVerification ? <>
+        <p><strong>{corpus.valueStreamVerification.counts.passed} of {corpus.valueStreamVerification.counts.parents}</strong> value streams verified for {corpus.release}.</p>
+        <ul>{corpus.valueStreamVerification.passed.map(row => <li key={row.id}>{row.title}</li>)}</ul>
+        <p>{corpus.valueStreamVerification.counts.failed} failed · {corpus.valueStreamVerification.counts.incomplete} incomplete · {corpus.valueStreamVerification.counts.not_run} not run · {corpus.valueStreamVerification.counts.undefined} without a registered recipe</p>
+      </> : <p>Complete value-stream verification results are not published for {corpus.release}.</p>}
     </section>
     <h2 id="recipes-succeeded">Recipes succeeded</h2>
+    {verifiedRecipes.length > 0 && <p>{verifiedRecipes.length} recipes succeeded for {corpus.release}.</p>}
     {corpus.recipeMapPath && <p>{counts.streams} of {corpus.sourceStreamCount} source inventory streams have published {corpus.release} recipe mappings. <a href={corpus.recipeMapPath}>Download the release recipe map (JSON)</a>.</p>}
     {verifiedRecipes.length > 0 && <ul>{verifiedRecipes.map(row => <li key={row.id}>
       <a href={'/catalog/#' + row.releaseVerification.snapshotId + '--' + row.id}>{row.title}</a> · Fully verified for {corpus.release}
@@ -90,7 +92,7 @@ function Dashboard({corpus}) {
         {!matches.length && <option value="">No matching streams</option>}{matches.map(row => <option key={row.id} value={row.id}>{row.persona} · {row.title}</option>)}
       </select></label></div>}
     {stream ? <section className="mapWorkspace" aria-labelledby="selected-stream">
-      <div className="mapSectionHeading"><div><p className="mapEyebrow">{stream.id}</p><h2 id="selected-stream">{stream.title}</h2></div><span className="mapBadge">Whole-stream proof not established</span></div>
+      <div className="mapSectionHeading"><div><p className="mapEyebrow">{stream.id}</p><h2 id="selected-stream">{stream.title}</h2></div><span className="mapBadge">{corpus.valueStreamVerification?.passed.some(row => row.id === stream.id) ? 'Whole stream verified' : 'Whole-stream proof not established'}</span></div>
       <p className="mapReadingKey">Select a recipe to highlight its separate capability relationships. Lines show recorded relationships; highlighting indicates selection. Only authored recipe steps define order.</p>
       <div className="mapWorkspaceGrid"><div className="mapCanvas"><div className="mapColumnLabels"><span>Value stream</span><span>Recipes</span><span>Linked capabilities</span></div>
         <StreamGraph stream={stream} corpus={corpus} selection={effective} onSelect={setSelection}/>

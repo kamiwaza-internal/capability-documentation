@@ -59,6 +59,15 @@ export function validateReleaseRecipeMap(map, publication) {
   unique(map.streams.map(stream => stream.id));
   unique(map.streams.flatMap(stream => stream.recipes.map(recipe => recipe.id)));
   const definitions = new Map(map.streams.flatMap(stream => stream.recipes.map(recipe => [recipe.id, recipe])));
+  for (const replay of releases.filter(row => row.valueStreamVerification)) {
+    const result = replay.valueStreamVerification;
+    const completed = new Set(replay.recipeVerifications.map(row => row.id));
+    requireValue(result.counts.parents === map.sourceStreamCount, 'Value-stream totals do not match the mapped inventory');
+    for (const row of result.passed) {
+      const stream = map.streams.find(stream => stream.id === row.id && stream.title === row.title);
+      requireValue(stream?.recipes.every(recipe => completed.has(recipe.id)), 'Passing stream needs its mapped recipe verdicts');
+    }
+  }
   for (const verdict of releases.flatMap(row => row.recipeVerifications ?? [])) {
     const definition = definitions.get(verdict.id);
     requireValue(definition?.definitionRevision === verdict.revision &&

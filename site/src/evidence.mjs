@@ -641,7 +641,13 @@ function historicalSummaryDocument(entry, publication, releaseStamps, descriptio
 
 function replayIntro(entry) {
   const {replay} = entry, {counts} = replay;
-  return [li(`Public replay snapshot: ${replay.id}, revision ${replay.publicationRevision}, published ${replay.publishedAt}`),
+  const streams = replay.valueStreamVerification;
+  return [...(streams ? [
+    h(2, 'Value streams verified'), p(`${streams.counts.passed} of ${streams.counts.parents} value streams verified.`),
+    ...streams.passed.map(row => li(row.title)),
+    p(`${streams.counts.failed} failed, ${streams.counts.incomplete} incomplete, ${streams.counts.not_run} not run, ${streams.counts.undefined} without a registered recipe.`),
+    h(2, 'Recipes succeeded'), p(`${replay.recipeVerifications.length} recipes succeeded.`),
+  ] : []), li(`Public replay snapshot: ${replay.id}, revision ${replay.publicationRevision}, published ${replay.publishedAt}`),
     li(`Release source: ${replay.source.ref}, revision ${replay.source.sourceRevision}; manifest ${replay.manifestId}`),
     li(`Scenario window: ${replay.evidenceWindow.earliestStartedAt} to ${replay.evidenceWindow.latestFinishedAt}`),
     li(`Human full-inventory release sign-off: ${replay.approval.status}. Scenario stamps alone do not establish whole-capability verification.`),
@@ -651,6 +657,7 @@ function replayIntro(entry) {
       li(recipe.scope), ...recipe.limits.map(limit => li(limit)),
       li(`Chart archive: ${replay.chartArchiveDigest}; recipe SHA-256: ${recipe.recipeSha256}; evidence binding SHA-256: ${recipe.evidenceSha256}.`),
     ]),
+    ...(streams ? [h(2, 'Capability evidence and coverage')] : []),
     countTable([['Inventory definitions', counts.catalog], ['Included', counts.included], ['Excluded', counts.excluded],
       ['Deferred', counts.deferred], ['Other owner', counts.otherOwner], [counts.wholeCapabilityPromotions ? 'Release stamps' : 'Scoped release stamps', counts.releaseStamped],
       ...(counts.wholeCapabilityPromotions ? [['Fully release verified', counts.wholeCapabilityPromotions]] : []),

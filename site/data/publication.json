@@ -76588,8 +76588,339 @@
           "finishedAt": "2026-11-18T17:43:04.457369Z",
           "evidenceSha256": "792e1673730189752274aa9d98ca44c44ac76a53067f776d703d5cd21a30edfc",
           "kitCommit": "1ca79eb98cdffeb32c35386deda53f340c8aa800"
+        },
+        {
+          "id": "Analyst:VS2:core-multimedia-ingest-search-sdk",
+          "revision": 2,
+          "recipeSha256": "427736937282b200d8b3f50207ba939ea7c303fa0fb3f09739b69f4c9a130acc",
+          "title": "Ingest and search synthetic image, audio and video through Core",
+          "scope": "Submit one synthetic PNG, WAV and MP4 through Core to an owned fresh collection, wait for each job to complete, retrieve the expected extracted facts with fresh source identities, and perform the original owned cleanup.",
+          "limits": [
+            "One synthetic PNG, WAV and MP4 in a task-owned Workroom. Scope is Core REST, searchable sample facts and owned cleanup.",
+            "The producer verifies cleanup of discovered parser documents using invocation input hashes and owner identity, plus absence of owned jobs and the collection. It revokes its temporary PAT.",
+            "Video search must yield both visual and spoken facts. The assertion establishes their presence in the indexed output.",
+            "The r1 evidence reference records the historical scenario and node binding. A 1.4.1 verdict requires that binding to match an original receipt on the published 1.4.1 build.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T16:04:44.883663Z",
+          "finishedAt": "2026-11-18T16:06:43.049287Z",
+          "evidenceSha256": "1cf08126b373fd0cec72397b2095c123a0ba0c8414976f3a28fefacda77eadb4",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Analyst:VS2:registered-dataset-sdk-retrieval",
+          "revision": 2,
+          "recipeSha256": "0a059795f16162f06044ad841a0a4555759ff18a1293640f038d893b482976de",
+          "title": "Register owned S3 datasets and retrieve exact seeded rows over inline and trusted Flight transports",
+          "scope": "Ingest run-unique S3 objects, check their exact catalog URNs and paths, retrieve exact seeded rows inline and through verified-TLS Arrow Flight, confirm completed jobs, then prove owned dataset, object and secret absence.",
+          "limits": [
+            "The inline and Flight tests use separate owned datasets.",
+            "The scoped receipts cover the named retrieval journey. The catalog registry is an ingredient.",
+            "The scoped streamer exercises retrieval runtime behavior. The replay leaves default chart installation and cert-manager provisioning unverified.",
+            "Scheduled ingestion, other retrieval operations, and the remaining Analyst VS2 recipes are outside this journey.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T20:21:37.741356Z",
+          "finishedAt": "2026-11-17T20:21:46.267633Z",
+          "evidenceSha256": "643630ec3756765198810dbfba3c1e807a407213b11db87c1f252e32f3429810",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Analyst:VS5:package-authoring-member-delegation",
+          "revision": 2,
+          "recipeSha256": "670683810d4dc829835fb33aa9ce403d844214ffc24f1225744e59ddb8737171",
+          "title": "Create and approve a skill package, then delegate to its agent",
+          "scope": "Create and approve a skill package, then delegate to its agent",
+          "limits": [
+            "Only the pinned browser journey and its observed configuration are exercised.",
+            "The journey uses a reviewed package revision for sandbox validation. Original model-authored package quality and automatic routing are outside this scope.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-19T00:33:07Z",
+          "finishedAt": "2026-11-19T00:36:00Z",
+          "evidenceSha256": "c2f11a86f48d308d75b74df0680c94e84e3a8c6f15643983f86a58999786c0dc",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS1:cold-gguf-acquisition",
+          "revision": 2,
+          "recipeSha256": "a6fb235b3420ede6b82bd22241d820f84bdfab50feddac266f988082e6b09090",
+          "title": "Acquire one previously absent quantized GGUF through the native SDK",
+          "scope": "Find the exact configured repository and Q5_K_M GGUF file, confirm it is cold, start a new SDK download, poll acquired readiness, and reread nonzero size and storage metadata.",
+          "limits": [
+            "One Hugging Face repository and Q5_K_M GGUF file in an administrator session.",
+            "Scope covers download initiation and acquired-file reread. Warm-cache reuse, cancellation, authorization boundaries, hub degradation, storage admission, physical weight integrity and deployment are outside this recipe.",
+            "Cleanup confirms absence of the run-owned repository from the model registry after native deletion.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:08:34.049810Z",
+          "finishedAt": "2026-11-18T17:09:29.330152Z",
+          "evidenceSha256": "9179003d5374c0ef9baf15c144add36a8622c3ade4a5056940eb5be56579b1e9",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS1:cpu-model-lifecycle-and-text-client",
+          "revision": 3,
+          "recipeSha256": "e5841ed841d43cd3fe2e2590fafd7be786a3607412ce052b2d7ee8fd99ddc55e",
+          "title": "Deploy and retire one CPU model with real native OpenAI arithmetic completions",
+          "scope": "Create, read, list and update an owned model config; deploy an already acquired CPU llama.cpp model, check its instances, list the served model and answer two run-specific arithmetic challenges through the native OpenAI client; read captured/streamed logs, stop the deployment and prove config absence.",
+          "limits": [
+            "CPU llama.cpp and non-streaming text chat on one existing GGUF only; no GPU placement, every engine, embeddings, transcription, image generation or streamed inference claim.",
+            "The original full inference-operation-set record and diffusion failures remain intact. This scoped passing journey does not resolve those broader modality failures or the failed local-deployment release checks.",
+            "The source test deliberately declines whole-operation-set capability credit under the older per-capability policy. The reviewed scoped recipe uses the current many-to-many verifies policy; the broader canonical contract and its unmet operations remain unchanged.",
+            "The test calls no model download method; acquired weights are retained.",
+            "The historical receipt pins the SDK scenario and test name. This revision requires a qualifying original 1.4.1 receipt for the same journey.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:05:01.451961Z",
+          "finishedAt": "2026-11-18T17:14:57.335691Z",
+          "evidenceSha256": "426761aca3a3a1743819fafa2f925071bda42c317e749f4aacbbf3c9678fdcb2",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS1:existing-external-chat-sdk",
+          "revision": 2,
+          "recipeSha256": "41e561e2f1b2195d66837d2d7e6a9ceee0e8d86502b818568e06ef39e204c937",
+          "title": "Use an existing external model for one chat completion",
+          "scope": "Use an active external chat deployment to discover its sole served model, get one non-streamed completion through the trusted same-origin Kamiwaza SDK route and confirm the deployment stays active with the same model and engine.",
+          "limits": [
+            "One administrator session, one model and one non-streamed chat response from a test-owned synthetic OpenAI-compatible provider.",
+            "The marker confirms one provider invocation. Commercial-provider coverage, upstream TLS, access control, streaming and other modalities remain outside the exercised scope.",
+            "External endpoint registration and cleanup supply a fixture. The verified Recipe operation covers inference on the already-active deployment.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:12:39.860748Z",
+          "finishedAt": "2026-11-18T17:13:15.049013Z",
+          "evidenceSha256": "26616aabe21431aa78b2ad69e487109af44a15f57977e23e7de66e5705c63471",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS1:nightly-llamacpp-lifecycle",
+          "revision": 2,
+          "recipeSha256": "59dc67bb5d4ff54a28081c7ab16874870337f0d1de7ff40799426d02579a4a62",
+          "title": "Deploy and retire one llama.cpp model on Helm 1.4.1",
+          "scope": "Create, read, list and update a model configuration; deploy one prepared llama.cpp GGUF model, verify readiness and instances, send a nonempty native chat completion, read logs, stop the deployment and delete the test configuration.",
+          "limits": [
+            "The journey covers one llama.cpp GGUF model and non-streaming chat. Model acquisition, GPU, other engines, streaming inference, and arithmetic correctness are outside its scope.",
+            "The journey covers the linked lifecycle assertions. Error codes, health refresh, access-control variants, and novice mode are outside its scope.",
+            "The original immutable recipe and passing 1.4.0 evidence retain their original build identities. A release result requires a matching 1.4.1 receipt.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:05:01.451961Z",
+          "finishedAt": "2026-11-18T17:14:57.335691Z",
+          "evidenceSha256": "7fd5aaf17d4eb8daf693809c7de87112b1e695fa49901251322814024355dea4",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS2:catalog-secret-lifecycle-sdk",
+          "revision": 3,
+          "recipeSha256": "9e97368cf57b64eca79669aa8b8e75fc0c817ba8fe89c091f488e843fa9cb81f",
+          "title": "Create, find and delete one governed catalog secret through the SDK",
+          "scope": "Create a run-unique catalog secret, read it back by URN, find it in a name-filtered catalog listing, delete it, and prove a subsequent get returns NotFound.",
+          "limits": [
+            "The journey covers one run-owned secret. Secret value readback, masking, updates, cross-user access, and absence from listings after deletion are outside its scope.",
+            "The separate metadata and clobber contract is outside this recipe. The recipe establishes no whole-capability stamp or human release sign-off.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T18:26:46.126627Z",
+          "finishedAt": "2026-11-17T18:32:38.494688Z",
+          "evidenceSha256": "e44a73dcd5e8a520347b5bd23bfbbf6a04e9b94e1b8f6389be9ec9c429873752",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS3:app-garden-sdk-lifecycle",
+          "revision": 3,
+          "recipeSha256": "5153de8d881958804d269fbb7925a0d786366a1fefa3e8db5c84badbe16b7cc8",
+          "title": "Deploy, inspect and retire one owned App Garden application through the SDK",
+          "scope": "Resolve a template, deploy one run-unique app, verify actual owned runtime instances and the reserved-environment-key boundary, then stop, purge and prove absence.",
+          "limits": [
+            "One template, one reserved environment key and two passthrough controls. Browser flows, application HTTP traffic, workroom isolation and broader policy behavior are outside scope.",
+            "The recipe covers the scoped SDK journey. Other Operator VS3 recipes and whole-capability release verification are evaluated separately.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T14:36:08.252949Z",
+          "finishedAt": "2026-11-18T14:36:41.630128Z",
+          "evidenceSha256": "58ca1cc26ba3f381a1398df4c16b39a7c323118266fdbc322182595238f87807",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS3:skills-library-lifecycle-sdk",
+          "revision": 2,
+          "recipeSha256": "7fdbdc476fda9b04278eb7c1c875b9d578cc1247e6adc86ead0f39fc92129c0b",
+          "title": "Import, curate, export and soft-delete one skill package through the SDK",
+          "scope": "Import a run-unique skill package, verify its checksum in PostgreSQL and exact package bytes in object storage, curate it and cycle its publication status, check filters and exports, soft-delete it and confirm API absence while the row and package survive, then re-import it.",
+          "limits": [
+            "One synthetic skill package lifecycle, including a single-entry bundle export.",
+            "The runner independently confirms the exact owned name is absent from active results. Soft-deleted rows and packages remain by design.",
+            "Skill execution, invalid-package and conflict handling, reader authorization, non-admin writes, tenant isolation, marking comparison, hard delete and UI are outside this journey.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:10:41.733546Z",
+          "finishedAt": "2026-11-18T17:11:02.495463Z",
+          "evidenceSha256": "2ae4a390963b445ed24eeba6c4cad22f891eb01276232640bceec21334ecb228",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Operator:VS4:rebac-decisions-sdk",
+          "revision": 3,
+          "recipeSha256": "721f0591c1af0521914e86ef790b35a10c7427d27792cfc86b19acc7cab1c0f6",
+          "title": "Grant, check and revoke one ReBAC viewer relation through the SDK",
+          "scope": "On a fresh synthetic dataset object, prove deny-by-default, grant one attribute-bearing subject viewer and obtain two distinct-id reasoned allows, prove a sibling subject is denied, revoke to restore deny, then delete the subjects and prove absence.",
+          "limits": [
+            "Scope is one direct viewer relation on a synthetic dataset object identifier. Group and inherited relations, attribute-gated checks, decision audit export and non-admin subject mismatch are outside this scenario.",
+            "Attribution is asserted for allows. Denials are checked for HTTP 403 with the access_denied reason. Denied decision IDs are outside this scenario.",
+            "The sealed record demonstrates the scoped SDK journey within Operator VS4.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T18:26:46.126627Z",
+          "finishedAt": "2026-11-17T18:32:38.494688Z",
+          "evidenceSha256": "1a24627d4a4b63919868dbfdb0dec860bfe0b41101dbd85a3c7bea52597f1b49",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "SysAdmin:Manage-Users-and-Access-Control:local-user-administration-sdk",
+          "revision": 3,
+          "recipeSha256": "c7051e87ab7bb3bd345ae14d3b849b05b456a33c5e76c9ad49607f05e4adea25",
+          "title": "Administer one disposable local user end to end through the SDK",
+          "scope": "Create a run-unique local user, sign in as it, prove a non-admin is refused 403 on list, get, update, reset and delete, admin-update its email and complete its credential reset, then delete it and prove absence.",
+          "limits": [
+            "The journey is scoped to administration of one disposable local account through the SDK.",
+            "The journey excludes admin role changes, non-admin create denial, deactivation without deletion, SSO, UI administration and universal credential invalidation after deletion.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T18:26:46.126627Z",
+          "finishedAt": "2026-11-17T18:32:38.494688Z",
+          "evidenceSha256": "8d6b79126846626318786a369f87590ba13efc1feaa41e2c55110e03855815d9",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "SysAdmin:Manage-Users-and-Access-Control:personal-access-token-lifecycle-sdk",
+          "revision": 3,
+          "recipeSha256": "9b774b56a7b222abc73c0cb6c3e94e28e98bc1fd2ff36ed8c9520a360de2ec35",
+          "title": "Mint, inventory and revoke personal access tokens through the SDK",
+          "scope": "Mint operator PATs, prove a PAT authenticates as the same subject, prove the inventory lists PATs by owner without exposing token material and reports valid PAT configuration, revoke one by jti and prove only it stops authenticating, then revoke all.",
+          "limits": [
+            "The SDK scenarios use operator credentials and one PAT audience and scope. They check reported TTL bounds, scope metadata, and revocation. They do not exercise token expiry, scope or audience enforcement, or cross-user PAT administration.",
+            "This scoped SDK journey covers the run-owned tokens. Browser flows and the rest of the parent stream are outside its scope.",
+            "Revision 3 preserves the two revision 2 test bindings. Both original SDK receipts come from the same sealed 1.4.1 replay with successful cleanup.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T18:26:46.126627Z",
+          "finishedAt": "2026-11-17T18:32:38.494688Z",
+          "evidenceSha256": "fe642d985e94af402a281797af6f81363c34fd848295ac77146124a53b1857b5",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "SysAdmin:Manage-Users-and-Access-Control:session-revocation-sdk",
+          "revision": 3,
+          "recipeSha256": "29849e10c07be6c545755384dc7c43d8dc2abce119e5400e3b9b16127f45372e",
+          "title": "Revoke exactly the targeted login session through admin and logout paths",
+          "scope": "For one disposable local user, verify administrator purge removes both records in a pair, administrator deletion and refresh-token logout each remove the selected record for either session in a pair, the logged-out refresh token is rejected, and an untouched control session still refreshes.",
+          "limits": [
+            "Previously issued access tokens, session listing, non-admin and cross-tenant controls, browser logout, and other session-store configurations are outside the tested scope.",
+            "The result covers this SDK journey within Manage Users and Access Control.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T18:26:46.126627Z",
+          "finishedAt": "2026-11-17T18:32:38.494688Z",
+          "evidenceSha256": "59724c4b2f4bac7adc5cdae6dbc88a5e260e63591c8ed5b6dbde18a8cbe0645d",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "SysAdmin:Support-Audit-and-Compliance:attributable-decision-export-sdk",
+          "revision": 3,
+          "recipeSha256": "c42b2d21e3160d2276b48b99d45569890786e4b3626bd6236670907fe93528cc",
+          "title": "Trace a disposable viewer’s allowed and refused Workroom access through audit export",
+          "scope": "Create one disposable viewer and two owned Workrooms; produce allowed and refused reads with that same actor, correlate fresh activity and decision reasons to the exact fixtures, inspect filtered cursor-based export, refuse member access to admin audit routes, then remove the owned Workrooms and account.",
+          "limits": [
+            "The journey covers SDK and API behavior.",
+            "Decision history and cursors are bounded and process-local. The replay shows coherent history for the exercised requests.",
+            "The absent-tenant filter exercises an empty result. Cross-tenant identity isolation, cross-process completeness and durable archival are outside the tested scope.",
+            "Synthetic activity and decision events remain in their normal history buffers after the account and Workrooms are removed.",
+            "The recipe covers one scoped audit journey within the SysAdmin Support Audit and Compliance stream.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-17T18:35:22.993935Z",
+          "finishedAt": "2026-11-17T18:35:38.241555Z",
+          "evidenceSha256": "fcbf1ce3c029829882cdaebf495cb5b038ce3e714f933a20e208ebd8fb41e9a7",
+          "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
         }
-      ]
+      ],
+      "valueStreamVerification": {
+        "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e",
+        "ledgerSha256": "6e4d1f671f140a7e977a467516eab9ad874c326f7eddabbbd37105991fcf5ed2",
+        "counts": {
+          "parents": 46,
+          "passed": 4,
+          "failed": 2,
+          "incomplete": 5,
+          "not_run": 1,
+          "undefined": 34
+        },
+        "passed": [
+          {
+            "id": "Operator:VS2",
+            "title": "VS2: Configure Data Connectors"
+          },
+          {
+            "id": "Operator:VS4",
+            "title": "VS4: Configure Users and Access"
+          },
+          {
+            "id": "SysAdmin:Manage-Users-and-Access-Control",
+            "title": "Manage Users and Access Control"
+          },
+          {
+            "id": "SysAdmin:Support-Audit-and-Compliance",
+            "title": "Support Audit and Compliance"
+          }
+        ]
+      }
     }
   ]
 }

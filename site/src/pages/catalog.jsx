@@ -92,6 +92,7 @@ function ReleaseStamps({snapshot}) {
   const operations = replayOperations(snapshot);
   return <section className="release">
     <Heading as="h2" id={snapshot.id}>{snapshot.version} · {decision.status === 'approved' ? 'Release signed off' : 'Release sign-off pending'}</Heading>
+    {snapshot.valueStreamVerification && <p><Link to="/value-streams/">{snapshot.valueStreamVerification.counts.passed} of {snapshot.valueStreamVerification.counts.parents} value streams verified</Link> · {snapshot.recipeVerifications.length} recipes succeeded</p>}
     <aside className="evidenceNotice">{c.wholeCapabilityPromotions
       ? 'Fresh release verification applies to the stated scope and limits. A whole-claim review covers all documented operations.'
       : 'Fresh scoped release stamps apply to the stated scope and limits. They do not establish whole-capability certification.'} Full inventory release approval is {decision.status}.</aside>
