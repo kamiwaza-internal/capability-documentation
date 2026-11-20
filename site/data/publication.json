@@ -74346,9 +74346,9 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-19T18:37:55.594712Z"
+        "latestFinishedAt": "2026-11-20T19:55:43.640543Z"
       },
-      "generatedAt": "2026-11-19T18:40:03Z",
+      "generatedAt": "2026-11-20T20:00:46.975Z",
       "publicationRevision": 20,
       "publishedAt": "2026-11-19T17:22:16Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/89",
@@ -76791,6 +76791,24 @@
           "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
         },
         {
+          "id": "Operator:VS3:tool-shed-mcp-lifecycle-sdk",
+          "revision": 3,
+          "recipeSha256": "ed2e766a0436910902b807c4e360f2092261893183682ff361e4d227ebb83307",
+          "title": "Deploy, discover and stop one MCP tool server from the Tool Shed",
+          "scope": "Deploy one DDE MCP template, complete initialization over HTTPS, confirm discovery, and stop the deployment.",
+          "limits": [
+            "The replay covers one template. Tool invocation, other templates, and browser flows were outside its scope.",
+            "The test client used a pinned SDK revision with a compatibility fix for null tags in the template catalog."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-20T19:54:48.684477Z",
+          "finishedAt": "2026-11-20T19:55:43.640543Z",
+          "evidenceSha256": "d13f6af4dafa4bdc98ba773a826587fc62528813b711075300a9b2b6b053f6e9",
+          "kitCommit": "2f754ad2df22265c040e2b70a07f7f5ed11cc3e6"
+        },
+        {
           "id": "Operator:VS4:rebac-decisions-sdk",
           "revision": 3,
           "recipeSha256": "721f0591c1af0521914e86ef790b35a10c7427d27792cfc86b19acc7cab1c0f6",
@@ -76892,8 +76910,8 @@
         }
       ],
       "valueStreamVerification": {
-        "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e",
-        "ledgerSha256": "6e4d1f671f140a7e977a467516eab9ad874c326f7eddabbbd37105991fcf5ed2",
+        "kitCommit": "2f754ad2df22265c040e2b70a07f7f5ed11cc3e6",
+        "ledgerSha256": "1c2bfd26fe1bd90c5182452204d7ced764c8ff51783b7ad91b37d6a1026f9a6f",
         "counts": {
           "parents": 46,
           "passed": 4,
