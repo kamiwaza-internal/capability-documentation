@@ -74346,9 +74346,9 @@
       ],
       "evidenceWindow": {
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
-        "latestFinishedAt": "2026-11-20T19:55:43.640543Z"
+        "latestFinishedAt": "2026-11-23T00:29:03.940152Z"
       },
-      "generatedAt": "2026-11-20T20:00:46.975Z",
+      "generatedAt": "2026-11-23T00:33:04.368Z",
       "publicationRevision": 20,
       "publishedAt": "2026-11-19T17:22:16Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/89",
@@ -76910,13 +76910,13 @@
         }
       ],
       "valueStreamVerification": {
-        "kitCommit": "2f754ad2df22265c040e2b70a07f7f5ed11cc3e6",
-        "ledgerSha256": "1c2bfd26fe1bd90c5182452204d7ced764c8ff51783b7ad91b37d6a1026f9a6f",
+        "kitCommit": "e5a48de38c9dc98d377f731883c58bea21749b62",
+        "ledgerSha256": "6b1c3270fcc110ad524d186278bb9d0970e044bfe5fa42e73fd939bd0db64b08",
         "counts": {
           "parents": 46,
-          "passed": 4,
+          "passed": 5,
           "failed": 2,
-          "incomplete": 5,
+          "incomplete": 4,
           "not_run": 1,
           "undefined": 34
         },
@@ -76924,6 +76924,10 @@
           {
             "id": "Operator:VS2",
             "title": "VS2: Configure Data Connectors"
+          },
+          {
+            "id": "Operator:VS3",
+            "title": "VS3: Configure MCP Tools and Applications"
           },
           {
             "id": "Operator:VS4",
