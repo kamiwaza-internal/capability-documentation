@@ -507,9 +507,31 @@ function releaseRecipeVerifications(snapshot) {
   unique(rows.map(row => row.id));
 }
 
+function valueStreamVerification(result) {
+  shape(result, ['kitCommit', 'ledgerSha256', 'counts', 'passed']);
+  hash(result.ledgerSha256);
+  requireValue(typeof result.kitCommit === 'string' && sha.test(result.kitCommit), 'Value-stream results require a pinned Kit commit');
+  const {counts, passed} = result;
+  const states = ['passed', 'failed', 'incomplete', 'not_run', 'undefined'];
+  shape(counts, ['parents', ...states]);
+  requireValue(Object.values(counts).every(value => Number.isSafeInteger(value) && value >= 0)
+    && counts.parents === states.reduce((sum, state) => sum + counts[state], 0), 'Invalid value-stream totals');
+  requireValue(Array.isArray(passed) && passed.length === counts.passed, 'Passing stream totals disagree');
+  for (const row of passed) {
+    shape(row, ['id', 'title']);
+    publicText(row.id); publicText(row.title);
+  }
+  unique(passed.map(row => row.id));
+}
+
 function releasedSnapshot(value) {
   const recipeFields = Object.hasOwn(value ?? {}, 'recipeVerifications') ? ['chartArchiveDigest', 'recipeVerifications'] : [];
-  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval', ...recipeFields]);
+  const streamFields = Object.hasOwn(value ?? {}, 'valueStreamVerification') ? ['valueStreamVerification'] : [];
+  shape(value, ['id', 'version', 'basis', 'source', 'manifestId', 'images', 'evidenceWindow', 'generatedAt', 'publicationRevision', 'publishedAt', 'reviewReference', 'capabilities', 'counts', 'approval', ...recipeFields, ...streamFields]);
+  if (streamFields.length) {
+    requireValue(recipeFields.length > 0, 'Published stream verdicts require recipe verification results');
+    valueStreamVerification(value.valueStreamVerification);
+  }
   identifier(value.id);
   requireValue(typeof value.version === 'string' && /^\d+\.\d+\.\d+$/.test(value.version), 'Invalid release version');
   requireValue(value.basis === 'canonical-release-replay', 'Canonical replay required');

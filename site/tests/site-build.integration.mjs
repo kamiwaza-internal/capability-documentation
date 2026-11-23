@@ -266,6 +266,13 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   const map = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
   assert.ok(map.includes('<option selected="">1.4.1</option>'));
   assert.ok(map.includes('10 of 46 source inventory streams have published 1.4.1 recipe mappings.'));
+  const latest = JSON.parse(readFileSync(join(site, 'data/publication.json'))).releaseStamps
+    .filter(row => row.version === '1.4.1').sort((a, b) => b.publicationRevision - a.publicationRevision)[0];
+  const streamCount = latest.valueStreamVerification.counts;
+  const streamHeadline = `${streamCount.passed} of ${streamCount.parents}`;
+  const recipeHeadline = `${latest.recipeVerifications.length} recipes succeeded`;
+  assert.ok(map.includes(`<strong>${streamHeadline}</strong> value streams verified for 1.4.1`));
+  assert.ok(map.includes(recipeHeadline + ' for 1.4.1'));
   assert.ok(map.includes('cold-quantized-model-acquisition'));
   assert.ok(map.includes('Find a value stream'));
   const cards = assertReleaseCards(site);
@@ -289,6 +296,10 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
   assert.deepEqual(mapZip.get('machine-readable/roadmap-verification.json'), roadmapBytes);
   assert.ok(map.includes('id="roadmap-verification-pending"'));
   assert.ok(mapZip.get('human-readable/kamiwaza-sales-dev-kit-1.4.1.md').toString().includes('## Roadmap verification pending'));
+  const kit = mapZip.get('human-readable/kamiwaza-sales-dev-kit-1.4.1.md').toString();
+  assert.ok(kit.includes(streamHeadline + ' value streams verified'));
+  assert.ok(kit.includes(recipeHeadline));
+  assert.ok(kit.indexOf('## Value streams verified') < kit.indexOf('## Capability evidence and coverage'));
   assert.ok(index.versions.filter(row => row.version !== roadmap.release).every(row => !row.files.roadmapJson));
   const releaseCard = cards.find(card => card.includes('<span class="releaseVersion">1.4.1</span>'));
   assert.ok(releaseCard.includes('Release verification') && releaseCard.includes('fully release verified') &&
