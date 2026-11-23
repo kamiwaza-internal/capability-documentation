@@ -74348,7 +74348,7 @@
         "earliestStartedAt": "2026-11-17T18:26:46.126627Z",
         "latestFinishedAt": "2026-11-23T00:29:03.940152Z"
       },
-      "generatedAt": "2026-11-23T00:33:04.368Z",
+      "generatedAt": "2026-11-23T03:16:14.925Z",
       "publicationRevision": 20,
       "publishedAt": "2026-11-19T17:22:16Z",
       "reviewReference": "https://github.com/kamiwaza-internal/capability-documentation/pull/89",
@@ -76907,6 +76907,28 @@
           "finishedAt": "2026-11-17T18:35:38.241555Z",
           "evidenceSha256": "fcbf1ce3c029829882cdaebf495cb5b038ce3e714f933a20e208ebd8fb41e9a7",
           "kitCommit": "c1733e3b81b0aa8ffb3dd7b214bf832c4d291d7e"
+        },
+        {
+          "id": "Analyst:VS5:conversation-streaming",
+          "revision": 2,
+          "recipeSha256": "0b0ccb56c227e49ecf71b6a5f004df78e9f062830b6cc5c9ab0ef93edab37291",
+          "title": "Follow and replay a primary Kaizen agent conversation turn",
+          "scope": "An authorized member submits one synthetic turn, receives its exact reply over ordered events, and replays from a journal cursor.",
+          "limits": [
+            "One canonical conversation and one exact synthetic reply. The recipe covers ordered events, exclusive terminal replay, cursor conflict and anonymous refusal.",
+            "Interrupted connections, concurrent turns, retention duration, cross-owner access, browser flows, and the rest of Analyst VS5 are outside this scope.",
+            "The 1.4.0 prerelease record and the 1.4.1 sibling recipe retain their original scope. This recipe does not grant separate prerelease capability credit.",
+            "One sealed local replay. This Recipe result grants no capability stamp.",
+            "The installed Helm release state was not captured at replay time; the chart is bound by its acquired archive digest only.",
+            "The runtime image observations were not bound to the tested app at replay time."
+          ],
+          "status": "release-verified",
+          "wholeClaim": true,
+          "basis": "complete-release-recipe-replay",
+          "startedAt": "2026-11-18T17:18:54.336144Z",
+          "finishedAt": "2026-11-18T17:20:11.258279Z",
+          "evidenceSha256": "cd7d0813b4dffd71c2d9ead4df90d2fc8de498f781b4f7a1033d2002a7988723",
+          "kitCommit": "cac98c2daef8f9b2f69cabf7d539c7630db02ce8"
         }
       ],
       "valueStreamVerification": {
