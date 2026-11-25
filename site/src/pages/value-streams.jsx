@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import StreamGraph from '../components/StreamGraph';
@@ -91,8 +92,8 @@ function Dashboard({corpus}) {
       <label>Value stream<select aria-label="Value stream" value={stream?.id ?? ''} onChange={event => chooseStream(event.target.value)} disabled={!matches.length}>
         {!matches.length && <option value="">No matching streams</option>}{matches.map(row => <option key={row.id} value={row.id}>{row.persona} · {row.title}</option>)}
       </select></label></div>}
-    {stream ? <section className="mapWorkspace" aria-labelledby="selected-stream">
-      <div className="mapSectionHeading"><div><p className="mapEyebrow">{stream.id}</p><h2 id="selected-stream">{stream.title}</h2></div><span className="mapBadge">{corpus.valueStreamVerification?.passed.some(row => row.id === stream.id) ? 'Whole stream verified' : 'Whole-stream proof not established'}</span></div>
+    {stream ? <section className="mapWorkspace" aria-labelledby="stream-map">
+      <div className="mapSectionHeading"><div><p className="mapEyebrow">{stream.id}</p><Heading as="h2" id="stream-map">{stream.title}</Heading></div><span className="mapBadge">{corpus.valueStreamVerification?.passed.some(row => row.id === stream.id) ? 'Whole stream verified' : 'Whole-stream proof not established'}</span></div>
       <p className="mapReadingKey">Select a recipe to highlight its separate capability relationships. Lines show recorded relationships; highlighting indicates selection. Only authored recipe steps define order.</p>
       <div className="mapWorkspaceGrid"><div className="mapCanvas"><div className="mapColumnLabels"><span>Value stream</span><span>Recipes</span><span>Linked capabilities</span></div>
         <StreamGraph stream={stream} corpus={corpus} selection={effective} onSelect={setSelection}/>

@@ -264,6 +264,13 @@ test('BUILD-3 production homepage groups downloads per version and retains all Z
     {cwd: site, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024});
   assert.equal(build.status, 0, build.stdout + build.stderr);
   const map = readFileSync(join(site, 'build/value-streams/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  const home = readFileSync(join(site, 'build/index.html'), 'utf8').replaceAll('<!-- -->', '');
+  const preview = home.match(/<figure class="homeFlow">([\s\S]*?)<\/figure>/)?.[1];
+  assert.ok(preview, 'the published homepage includes a mapped flow');
+  assert.match(preview, /Published mapping for 1\.4\.1/);
+  assert.match(preview, /Value stream<\/span>.*Recipe<\/span>.*Linked capability<\/span>/);
+  assert.ok(preview.includes('href="/value-streams/#stream-map"'));
+  assert.ok(map.includes('id="stream-map"'), 'the homepage link targets the interactive graph');
   assert.ok(map.includes('<option selected="">1.4.1</option>'));
   assert.ok(map.includes('10 of 46 source inventory streams have published 1.4.1 recipe mappings.'));
   const latest = JSON.parse(readFileSync(join(site, 'data/publication.json'))).releaseStamps
