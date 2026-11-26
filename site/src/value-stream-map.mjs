@@ -21,6 +21,10 @@ export function streamInventory(corpus) {
   }));
 }
 
+export function defaultStream(streams) {
+  return streams.find(stream => stream.id === 'Operator:VS1') ?? streams[0];
+}
+
 export function findStreams(streams, query, persona, corpus) {
   const needle = query.trim().toLowerCase();
   const names = new Map(corpus.capabilities.map(cap => [cap.id, cap.title]));

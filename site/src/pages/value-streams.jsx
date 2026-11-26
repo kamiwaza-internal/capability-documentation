@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import StreamGraph from '../components/StreamGraph';
 import RecipeDetail from '../components/RecipeDetail';
-import {findStreams, linkedCapabilityIds, mappingSummary, streamInventory} from '../value-stream-map.mjs';
+import {defaultStream, findStreams, linkedCapabilityIds, mappingSummary, streamInventory} from '../value-stream-map.mjs';
 import '../css/value-streams.css';
 import {salesKitPath} from '../sales-kit.mjs';
 import roadmap from '../../data/roadmap-verification-1.4.1.json';
@@ -48,7 +48,7 @@ function CapabilityInventory({corpus, selection, onSelect}) {
 function Dashboard({corpus}) {
   const streams = streamInventory(corpus);
   const counts = mappingSummary(corpus);
-  const initial = streams.find(stream => stream.id === 'Operator:VS1') ?? streams[0];
+  const initial = defaultStream(streams);
   const [streamId, setStreamId] = useState(initial?.id);
   const [query, setQuery] = useState('');
   const [persona, setPersona] = useState('all');
