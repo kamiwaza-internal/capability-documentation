@@ -31,7 +31,7 @@ export default function StreamGraph({stream, corpus, selection, onSelect}) {
         <small>Recipe · revision {recipe.definitionRevision}</small><strong>{cleanTitle(recipe.title)}</strong>
         <span>{recipe.releaseVerification ? 'Recipe succeeded' : recipeProof(recipe, corpus) ? 'Scoped journey proof retained' : 'No scoped journey proof recorded'}</span>
       </button>)}</div>
-    <div className="streamColumn" style={{gridTemplateRows: `repeat(${Math.max(1, caps.length)}, 1fr)`}}>{caps.length ? caps.map(cap =>
+    <div className={caps.some(cap => active.has(cap.id)) ? "streamColumn mobileClaimLink" : "streamColumn"} style={{gridTemplateRows: `repeat(${Math.max(1, caps.length)}, 1fr)`}}>{caps.length ? caps.map(cap =>
       <button type="button" key={cap.id} title={cap.title} className={'streamNode capabilityNode' + (active.has(cap.id) ? ' connectedNode' : '')}
         aria-pressed={cap.id === selection.capability} onClick={() => onSelect({...selection, capability: cap.id})}>
         <small>{cap.id.split('.')[0]} · Capability</small><strong>{cap.title}</strong><code>{cap.id}</code>

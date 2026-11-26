@@ -87,13 +87,14 @@ function Dashboard({corpus}) {
     {scopedRecipes.size > 0
       ? <p>{scopedRecipes.size} recipes have published scoped proof. Select a recipe to inspect its evidence.</p>
       : verifiedRecipes.length === 0 && <p>No passing recipe results are published for {corpus.release}.</p>}
+    {streams.length > 0 && <Heading as="h2" id="stream-map">Value-stream map</Heading>}
     {streams.length > 0 && <div className="mapFilters"><label>Find a value stream<input type="search" value={query} onChange={event => updateFilter(setQuery, event.target.value)} placeholder="Search streams, recipes or linked capabilities"/></label>
       <label>Persona<select aria-label="Persona" value={persona} onChange={event => updateFilter(setPersona, event.target.value)}><option value="all">All personas</option>{Array.from(new Set(streams.map(row => row.persona))).map(name => <option key={name} value={name}>{name}</option>)}</select></label>
       <label>Value stream<select aria-label="Value stream" value={stream?.id ?? ''} onChange={event => chooseStream(event.target.value)} disabled={!matches.length}>
         {!matches.length && <option value="">No matching streams</option>}{matches.map(row => <option key={row.id} value={row.id}>{row.persona} · {row.title}</option>)}
       </select></label></div>}
-    {stream ? <section className="mapWorkspace" aria-labelledby="stream-map">
-      <div className="mapSectionHeading"><div><p className="mapEyebrow">{stream.id}</p><Heading as="h2" id="stream-map">{stream.title}</Heading></div><span className="mapBadge">{corpus.valueStreamVerification?.passed.some(row => row.id === stream.id) ? 'Whole stream verified' : 'Whole-stream proof not established'}</span></div>
+    {stream ? <section className="mapWorkspace" aria-labelledby="selected-stream">
+      <div className="mapSectionHeading"><div><p className="mapEyebrow">{stream.id}</p><h3 id="selected-stream">{stream.title}</h3></div><span className="mapBadge">{corpus.valueStreamVerification?.passed.some(row => row.id === stream.id) ? 'Whole stream verified' : 'Whole-stream proof not established'}</span></div>
       <p className="mapReadingKey">Select a recipe to highlight its separate capability relationships. Lines show recorded relationships; highlighting indicates selection. Only authored recipe steps define order.</p>
       <div className="mapWorkspaceGrid"><div className="mapCanvas"><div className="mapColumnLabels"><span>Value stream</span><span>Recipes</span><span>Linked capabilities</span></div>
         <StreamGraph stream={stream} corpus={corpus} selection={effective} onSelect={setSelection}/>

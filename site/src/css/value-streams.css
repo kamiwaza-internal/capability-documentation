@@ -17,7 +17,7 @@
 .mapMain :is(button, input, select, summary):focus-visible { outline: 3px solid var(--ifm-color-primary); outline-offset: 4px; }
 .mapWorkspace { border: 1px solid var(--ifm-color-emphasis-300); border-radius: 12px; overflow: hidden; margin-bottom: 3rem; }
 .mapSectionHeading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.5rem 1.5rem .5rem; }
-.mapSectionHeading h2 { font-size: 1.5rem; margin-bottom: .5rem; }
+.mapSectionHeading h3 { font-size: 1.5rem; margin-bottom: .5rem; }
 .mapBadge { border: 1px solid var(--ifm-color-emphasis-400); padding: .4rem .6rem; border-radius: 6px; font-size: .7rem; white-space: nowrap; }
 .mapReadingKey, .mapBoundary { padding: 0 1.5rem; font-size: .83rem; color: var(--ifm-color-emphasis-700); }
 .mapWorkspaceGrid { display: grid; grid-template-columns: minmax(0, 1fr) 310px; border-block: 1px solid var(--ifm-color-emphasis-300); }
@@ -87,7 +87,7 @@
   .streamEdges, .mapColumnLabels { display: none; }
   .streamColumn { display: flex; flex-direction: column; gap: .75rem; align-items: stretch; }
   .streamColumn + .streamColumn { position: relative; }
-  .streamColumn + .streamColumn::after { content: ''; position: absolute; bottom: 100%; left: 50%; height: 1rem; border-left: 2px solid var(--map-line); }
+  .streamColumn:nth-of-type(2)::after, .mobileClaimLink::after { content: ''; position: absolute; bottom: 100%; left: 50%; height: 1rem; border-left: 2px solid var(--map-line); }
   .streamNode { height: auto; }
   .streamNode strong { display: block; }
   .streamColumn::before { text-transform: uppercase; font-size: .7rem; letter-spacing: .1em; font-weight: 700; }
