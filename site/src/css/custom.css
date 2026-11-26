@@ -163,9 +163,17 @@ code { overflow-wrap: anywhere; }
 .instructions pre code { color: inherit; }
 .panel .faq:last-child { border-bottom: 0; padding-bottom: 0; }
 .faq summary:hover { color: var(--ifm-color-primary); }
+.homeFlow { margin: 1.25rem 0 0; }
+.homeFlow figcaption { margin-bottom: .65rem; font-size: .875rem; }
+.homeFlow ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.3rem; list-style: none; padding: 0; margin: 0 0 1rem; }
+.homeFlow li { position: relative; display: flex; flex-direction: column; gap: .35rem; min-width: 0; padding: .8rem; margin: 0; border: 1px solid var(--kit-tint-border); border-radius: 8px; background: var(--kit-card); overflow-wrap: anywhere; }
+.homeFlow li span { font-size: .875rem; color: var(--ifm-color-emphasis-700); }
+.homeFlow li + li::before { content: ''; position: absolute; top: 50%; right: 100%; width: 1.3rem; border-top: 2px solid var(--ifm-color-primary); }
 @media (max-width: 640px) {
   .panel { padding: 1.25rem 1rem; }
   .instructions > li { padding-left: 3rem; }
   .instructions > li::before { left: .75rem; }
+  .homeFlow ol { grid-template-columns: 1fr; }
+  .homeFlow li + li::before { top: auto; bottom: 100%; right: 50%; width: 0; height: 1.3rem; border-top: 0; border-right: 2px solid var(--ifm-color-primary); }
 }
 

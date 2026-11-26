@@ -7,6 +7,7 @@ import releaseStamps from '../../data/release-stamps-1.3.2.json';
 import releaseCorpora from '../../data/release-corpora.json';
 import {CHANGE_NOTE, changesSince, evidenceVersions, shortList, STATUS_KEY, replayOperations, replayStatusKey} from '../evidence.mjs';
 import {salesKitPath} from '../sales-kit.mjs';
+import {cleanTitle, defaultStream, linkedCapabilityIds, streamInventory} from '../value-stream-map.mjs';
 
 function Changes({entry}) {
   const changes = changesSince(entry, publication, releaseStamps);
@@ -16,6 +17,25 @@ function Changes({entry}) {
     <p>{CHANGE_NOTE}</p>
     <dl>{changes.lists.map(([label, names]) => <React.Fragment key={label}><dt>{label}: {names.length}</dt>{names.length > 0 && <dd>{shortList(names)}</dd>}</React.Fragment>)}</dl>
   </details>;
+}
+
+function FlowPreview({releases}) {
+  const corpus = releases.find(release => release.recipes.length > 0);
+  const stream = corpus && defaultStream(streamInventory(corpus));
+  const recipe = stream?.recipes[0];
+  const ids = recipe ? linkedCapabilityIds(recipe) : [];
+  const capability = corpus?.capabilities.find(cap => ids.includes(cap.id));
+  if (!capability) return <p>Browse the value-stream map for published mappings and verification results.</p>;
+
+  return <figure className="homeFlow">
+    <figcaption>Published mapping for {corpus.release}</figcaption>
+    <ol>{[
+      ['Value stream', stream.title],
+      ['Recipe', cleanTitle(recipe.title)],
+      ['Linked capability', capability.title],
+    ].map(([label, title]) => <li key={label}><span>{label}</span><strong>{title}</strong></li>)}</ol>
+    <Link className="button button--primary" to="/value-streams/#stream-map">Explore the value-stream map</Link>
+  </figure>;
 }
 
 export default function Home() {
@@ -40,7 +60,7 @@ export default function Home() {
           <li>Recipes succeeded</li>
           <li><Link to="/catalog/">Capabilities demonstrated</Link></li>
         </ol>
-        <p>The value-stream map shows the recipe and capability evidence available for each release.</p>
+        <FlowPreview releases={siteConfig.customFields.dashboardReleases ?? []}/>
       </section>
 
       <section aria-labelledby="releases">
